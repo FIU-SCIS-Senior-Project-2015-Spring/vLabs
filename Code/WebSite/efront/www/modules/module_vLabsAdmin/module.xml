@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<module>
+	<title>vLabsAdmin</title>
+	<author>Crystal Rivera</author>
+	<date>2015 5 28</date>
+	<version>1.0</version>
+	<description>vLabsAdmin</description>
+	<className>module_vLabsAdmin</className>
+	<requires>3.6.8</requires>
+</module>
