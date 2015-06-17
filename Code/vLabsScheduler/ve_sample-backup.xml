@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<VirtualEnvironment 
+    xmlns="http://acrl.cis.fiu.edu/vescheduler/ws/vetypes"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="ve_types.xsd">
+
+  <VEName>K2_2</VEName>
+  <VENumPorts>5</VENumPorts>
+  <VENumMacs>6</VENumMacs>
+  
+  <VENodeList>
+
+    <VENode>
+      <VirtualAppliance count="3">
+	<name>XP_Workstation</name>
+	<guestOS>Windows XP</guestOS>
+	<networkInterface id="0" mode="DYNAMIC" />
+	<cpuCount>1</cpuCount>
+	<memorySize>512</memorySize>
+	<diskSize>5000</diskSize>
+	<role>WXP</role>
+      </VirtualAppliance>
+    </VENode>
+
+  </VENodeList>
+
+  <VENodeRelationList>
+
+    <VENodeRelation>
+      <node1Name>XP_Workstation</node1Name>
+      <node1Interface>0</node1Interface>
+      <node2Name>SW1></node2Name>
+      <node2Interface>0</node2Interface>
+    </VENodeRelation>
+
+
+  </VENodeRelationList>
+
+</VirtualEnvironment>

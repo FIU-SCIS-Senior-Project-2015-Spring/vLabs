@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_vlabsscheduler" default="compile.module.vlabsscheduler">
+  <dirname property="module.vlabsscheduler.basedir" file="${ant.file.module_vlabsscheduler}"/>
+  
+  <property name="module.jdk.home.vlabsscheduler" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.vlabsscheduler" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.vlabsscheduler" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.vlabsscheduler" value="-encoding UTF-8 -source 8 ${compiler.args}"/>
+  
+  <property name="vlabsscheduler.output.dir" value="${module.vlabsscheduler.basedir}/out/production/vLabsScheduler"/>
+  <property name="vlabsscheduler.testoutput.dir" value="${module.vlabsscheduler.basedir}/out/test/vLabsScheduler"/>
+  
+  <path id="vlabsscheduler.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="vlabsscheduler.module.production.classpath">
+    <path refid="${module.jdk.classpath.vlabsscheduler}"/>
+  </path>
+  
+  <path id="vlabsscheduler.runtime.production.module.classpath">
+    <pathelement location="${vlabsscheduler.output.dir}"/>
+  </path>
+  
+  <path id="vlabsscheduler.module.classpath">
+    <path refid="${module.jdk.classpath.vlabsscheduler}"/>
+    <pathelement location="${vlabsscheduler.output.dir}"/>
+  </path>
+  
+  <path id="vlabsscheduler.runtime.module.classpath">
+    <pathelement location="${vlabsscheduler.testoutput.dir}"/>
+    <pathelement location="${vlabsscheduler.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.vlabsscheduler">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.vlabsscheduler">
+    <patternset refid="excluded.from.module.vlabsscheduler"/>
+  </patternset>
+  
+  <path id="vlabsscheduler.module.sourcepath">
+    <dirset dir="${module.vlabsscheduler.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.vlabsscheduler" depends="compile.module.vlabsscheduler.production,compile.module.vlabsscheduler.tests" description="Compile module vLabsScheduler"/>
+  
+  <target name="compile.module.vlabsscheduler.production" depends="register.custom.compilers" description="Compile module vLabsScheduler; production classes">
+    <mkdir dir="${vlabsscheduler.output.dir}"/>
+    <javac2 destdir="${vlabsscheduler.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.vlabsscheduler}/javac">
+      <compilerarg line="${compiler.args.vlabsscheduler}"/>
+      <bootclasspath refid="vlabsscheduler.module.bootclasspath"/>
+      <classpath refid="vlabsscheduler.module.production.classpath"/>
+      <src refid="vlabsscheduler.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.vlabsscheduler"/>
+    </javac2>
+    
+    <copy todir="${vlabsscheduler.output.dir}">
+      <fileset dir="${module.vlabsscheduler.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.vlabsscheduler.tests" depends="register.custom.compilers,compile.module.vlabsscheduler.production" description="compile module vLabsScheduler; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.vlabsscheduler" description="cleanup module">
+    <delete dir="${vlabsscheduler.output.dir}"/>
+    <delete dir="${vlabsscheduler.testoutput.dir}"/>
+  </target>
+</project>

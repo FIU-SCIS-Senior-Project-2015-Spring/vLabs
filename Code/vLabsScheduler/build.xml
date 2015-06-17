@@ -1,0 +1,107 @@
+<project name="vLabsScheduler" default="build" basedir=".">
+
+  <property environment="env" />
+
+  <property name="build.sysclasspath" value="last"/>
+  <property name="axis2Libs" value="${env.AXIS2_LIBS}"/>
+  <property name="axis2Home" value="${env.AXIS2_HOME}"/>
+  <property name="remoteAxis2Home" value="/opt/axis2-1.6.2"/>
+  <property name="remoteServer" value="vlabs.cis.fiu.edu"/>
+  <property name="remoteUsername" value="portal"/>
+  <property name="remotePassword" value="k4se*prt4l"/>
+  <property name="home" value="${env.HOME}"/>
+
+  <path id="classpath">
+    <pathelement path="." />
+    <fileset dir="${axis2Home}/lib">
+      <include name="*.jar" />
+    </fileset>
+    <fileset dir="lib">
+      <include name="*.jar" />
+    </fileset>
+    <pathelement location="." />
+  </path>
+
+  <target name="build" depends="deploy" />
+
+  <target name="deploy" depends="jar_server">
+    <copy file="lib/vLabsScheduler.jar"
+	  tofile="${axis2Home}/repository/services/vLabsScheduler.aar"
+	  overwrite="true"/>
+    <copy file="lib/vLabsScheduler.jar"
+	  tofile="${axis2Home}/lib/vLabsScheduler.jar"
+	  overwrite="true"/>
+    <copy file="vlabsscheduler.conf"
+	  tofile="${home}/vlabsscheduler.conf"
+	  overwrite="true"/>
+    <copy file="ve_sample.xml"
+	  tofile="${home}/ve_sample.xml"
+	  overwrite="true"/>
+    <copy file="ve_sample_K2_6.xml"
+	  tofile="${home}/ve_sample_K2_6.xml"
+	  overwrite="true"/>
+  </target>
+	
+	<target name="deployRemotely" depends="deploy">
+	    <scp file="${axis2Home}/repository/services/vLabsScheduler.aar"
+	  	  todir="${remoteUsername}:${remotePassword}@${remoteServer}:${remoteAxis2Home}/repository/services/"/>
+	    <!-- scp file="lib/VirtualLabs.jar"
+	  	  todir="${remoteUsername}:${remotePassword}@ita-provisioner.cis.fiu.edu:/usr/local/axis2-1.5/lib"/ -->
+		<sshexec 
+			host="${remoteServer}"
+			username="${remoteUsername}"
+			password="${remotePassword}"
+			command="cp ${remoteAxis2Home}/repository/services/vLabsScheduler.aar ${remoteAxis2Home}/lib/vLabsScheduler.jar"/>
+      <scp file="vlabsscheduler.conf"
+           todir="${remoteUsername}:${remotePassword}@${remoteServer}:~/"/>
+      <scp file="virtuallabs.conf"
+           todir="${remoteUsername}:${remotePassword}@${remoteServer}:~/"/>
+      <scp file="vescheduler.conf"
+           todir="${remoteUsername}:${remotePassword}@${remoteServer}:~/"/>
+      <scp file="quotasystem.conf"
+           todir="${remoteUsername}:${remotePassword}@${remoteServer}:~/"/>
+      <scp file="mentorscheduler.conf"
+           todir="${remoteUsername}:${remotePassword}@${remoteServer}:~/"/>
+	    <scp file="ve_sample.xml"
+	  	  todir="${remoteUsername}:${remotePassword}@${remoteServer}:~/"/>
+	    <scp file="ve_sample_K2_6.xml"
+	  	  todir="${remoteUsername}:${remotePassword}@${remoteServer}:~/"/>
+	</target>
+	
+  <target name="jar_server" depends="compile">
+    <copy toDir="classes/META-INF" failonerror="false">
+      <fileset dir="resources">
+        <include name="*.xml"/>
+        <include name="*.wsdl"/>
+        <include name="*.xsd"/>
+      </fileset>
+    </copy>
+    <jar destfile="lib/vLabsScheduler.jar">
+      <fileset dir="classes" includes="META-INF/*, 
+		kaseyaws/**/*,
+      	edu/fiu/cis/acrl/**/*"/>
+    </jar>
+  </target>
+
+  
+  <target name="compile">
+    <mkdir dir="classes"/>
+    <javac
+       fork="true"
+       srcdir="src"
+       destdir="classes"
+       classpathref="classpath"
+    	debug="false"
+       includeantruntime="false"
+       memoryinitialsize="256m"
+       memorymaximumsize="256m"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="classes"/>
+    <delete>
+      <fileset dir="lib" includes="**/*"/>
+    </delete>
+  </target>
+
+</project>
