@@ -27,14 +27,26 @@ public class MentorSchedulerDB {
 	
 	// Debug level for this class
 	private static int DEBUG_LEVEL = 2;
-	
+
+	private MentorSchedulerSettings settings;
 	private Connection conn;
 	
 	/**
 	 * Default Constructor.
 	 */
 	public MentorSchedulerDB() {
-		
+		DebugTools.println(DEBUG_LEVEL, "[MentorSchedulerDB - MentorSchedulerDB] Inside!");
+
+		settings= MentorSchedulerSettings.instance();
+		DebugTools.println(DEBUG_LEVEL, "[MentorSchedulerDB - MentorSchedulerDB] " +
+				"settings: " + settings.toString());
+		connect(
+				settings.getDbUser(),
+				settings.getDbPassword(),
+				settings.getDbHost(),
+				settings.getDbName());
+
+		DebugTools.println(DEBUG_LEVEL, "[MentorSchedulerDB - MentorSchedulerDB] Ready to get out!");
 	}
 
 	/**
@@ -51,9 +63,9 @@ public class MentorSchedulerDB {
     	
     	try {
     		
-    	    Class.forName("org.postgresql.Driver");
+    	    Class.forName("com.mysql.jdbc.Driver");
     	    
-    	    conn = DriverManager.getConnection("jdbc:postgresql://" + host + "/" + 
+    	    conn = DriverManager.getConnection("jdbc:mysql://" + host + "/" +
     	    		database, user, password);
     	
     	}
@@ -112,7 +124,7 @@ public class MentorSchedulerDB {
     	try {
 	    
     		PreparedStatement ps = conn.prepareStatement(
-    				"SELECT * FROM configuration WHERE active='t'");
+    				"SELECT * FROM " + settings.getDbTableName("configuration") + " WHERE active='t'");
 	    
     		DebugTools.println(DEBUG_LEVEL, "[MentorSchedulerDB] ps: " + ps);
     		
@@ -172,7 +184,7 @@ public class MentorSchedulerDB {
     	try {
 	    
     		PreparedStatement ps = conn.prepareStatement(
-    				"SELECT * FROM configuration WHERE id=?");
+    				"SELECT * FROM " + settings.getDbTableName("configuration") + " WHERE id=?");
 	    
     		ps.setInt(1, id);
     		
@@ -234,7 +246,7 @@ public class MentorSchedulerDB {
     	try {
 
     		PreparedStatement ps = conn.prepareStatement(
-    				"UPDATE configuration SET active='f'");
+    				"UPDATE " + settings.getDbTableName("configuration") + " SET active='f'");
 	    
     		DebugTools.println(DEBUG_LEVEL, "[MentorSchedulerDB] ps: " + ps);
     		
@@ -276,7 +288,7 @@ public class MentorSchedulerDB {
 	    
     		PreparedStatement ps = conn.prepareStatement(
     				"INSERT INTO " +
-    				"configuration(user_start_time,user_end_time," +
+    				"" + settings.getDbTableName("configuration") + "(user_start_time,user_end_time," +
     				"admin_start_time,admin_end_time,active) " +
     				"VALUES(?,?,?,?,?) " +
 					"RETURNING id");
@@ -339,7 +351,7 @@ public class MentorSchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM mentor WHERE username=?");
+					"SELECT * FROM " + settings.getDbTableName("mentor") + " WHERE username=?");
 	    
 			ps.setString(1, mentorUsername);
 			
@@ -387,7 +399,7 @@ public class MentorSchedulerDB {
 		try {
 	
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE mentor SET active=? " +
+					"UPDATE " + settings.getDbTableName("mentor") + " SET active=? " +
 					"WHERE username=?");
 	
 			ps.setBoolean(1, mentor.isActive());
@@ -441,7 +453,7 @@ public class MentorSchedulerDB {
 			ps.close();
 
 			ps = conn.prepareStatement(
-					"DELETE FROM mentor_course " +
+					"DELETE FROM " + settings.getDbTableName("mentor_course") + " " +
 					"WHERE mentor_username=?");
 			
 			ps.setString(1, mentorUsername);
@@ -453,7 +465,7 @@ public class MentorSchedulerDB {
 			ps.close();
 			
 			ps = conn.prepareStatement(
-					"DELETE FROM mentoring_sch " +
+					"DELETE FROM " + settings.getDbTableName("mentoring_sch") + " " +
 					"WHERE mentor_username=?");
 			
 			ps.setString(1, mentorUsername);
@@ -465,7 +477,7 @@ public class MentorSchedulerDB {
 			ps.close();
 
 			ps = conn.prepareStatement(
-			"DELETE FROM mentor WHERE username=?");
+			"DELETE FROM " + settings.getDbTableName("mentor") + " WHERE username=?");
 	
 			ps.setString(1, mentorUsername);
 			
@@ -503,7 +515,7 @@ public class MentorSchedulerDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"INSERT INTO mentor(username,active) VALUES(?,?) " +
+    				"INSERT INTO " + settings.getDbTableName("mentor") + "(username,active) VALUES(?,?) " +
     				"RETURNING username");
     		
     		ps.setString(1, mentor.getUsername());
@@ -550,7 +562,7 @@ public class MentorSchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM mentor WHERE active='t'");
+					"SELECT * FROM " + settings.getDbTableName("mentor") + " WHERE active='t'");
 	    
 			DebugTools.println(DEBUG_LEVEL, "[MentorSchedulerDB] ps: " + ps);
 			
@@ -597,7 +609,7 @@ public class MentorSchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM mentor,mentor_course " +
+					"SELECT * FROM " + settings.getDbTableName("mentor") + " as mentor ," + settings.getDbTableName("mentor_course") + " as mentor_course " +
 					"WHERE username=mentor_username AND " +
 					"mentor.active='t' AND " +
 					"mentor_course.active='t' AND " +
@@ -647,7 +659,7 @@ public class MentorSchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM mentor_course WHERE " +
+					"SELECT * FROM " + settings.getDbTableName("mentor_course") + " WHERE " +
 					"mentor_username=? AND " +
 					"course_id=?");
 			
@@ -696,7 +708,7 @@ public class MentorSchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE mentor_course SET active=? WHERE " +
+					"UPDATE " + settings.getDbTableName("mentor_course") + " SET active=? WHERE " +
 					"mentor_username=? AND " +
 					"course_id=?");
 			
@@ -746,7 +758,7 @@ public class MentorSchedulerDB {
 			
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"mentor_course(mentor_username,course_id,active) " +
+					"" + settings.getDbTableName("mentor_course") + "(mentor_username,course_id,active) " +
 					"VALUES(?,?,?)");
 			
 			ps.setString(1, mentorCourse.getMentorUsername());
@@ -781,7 +793,7 @@ public class MentorSchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT count(*) FROM mentoring_sch WHERE " +
+					"SELECT count(*) FROM " + settings.getDbTableName("mentoring_sch") + " WHERE " +
 					"mentor_username=? AND " +
 					"course_id=?");
 			
@@ -799,7 +811,7 @@ public class MentorSchedulerDB {
 				if (count == 0) {
 			
 					PreparedStatement ps2 = conn.prepareStatement(
-							"DELETE FROM mentor_course WHERE " +
+							"DELETE FROM " + settings.getDbTableName("mentor_course") + " WHERE " +
 							"mentor_username=? AND " +
 							"course_id=?");
 					
@@ -842,7 +854,7 @@ public class MentorSchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM mentor_course WHERE " +
+					"SELECT * FROM " + settings.getDbTableName("mentor_course") + " WHERE " +
 					"mentor_username=? AND " +
 					"active=true");
 			
@@ -889,7 +901,7 @@ public class MentorSchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * from mentor_unallocated_worktime_sch " +
+					"SELECT * from " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " " +
 					"WHERE id=?"
 					);
 			
@@ -950,7 +962,7 @@ public class MentorSchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE mentor_unallocated_worktime_sch " +
+					"UPDATE " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " " +
 					"SET mentor_username=?,start_time=?,end_time=?,active=? " +
 					"WHERE id=?"
 					);
@@ -1008,7 +1020,7 @@ public class MentorSchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM mentor_unallocated_worktime_sch " +
+					"SELECT * FROM " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " " +
 					"WHERE active='t' AND mentor_username=? AND " +
 					"start_time<=? AND end_time>=?");
 			
@@ -1099,7 +1111,7 @@ public class MentorSchedulerDB {
 					mentorUnallocatedWorktimeSch.getEndTime().getTime().getTime());
 
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT id FROM mentor_unallocated_worktime_sch " +
+					"SELECT id FROM " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " " +
 					"WHERE mentor_username=? and start_time=? and active='t'");
 			
 			ps.setString(1, mentorUnallocatedWorktimeSch.getMentorUsername());
@@ -1123,7 +1135,7 @@ public class MentorSchedulerDB {
 			ps.close();
 			
 			ps = conn.prepareStatement(
-					"SELECT id FROM mentor_unallocated_worktime_sch " +
+					"SELECT id FROM " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " " +
 					"WHERE mentor_username=? and end_time=? and active='t'");
 			
 			ps.setString(1, mentorUnallocatedWorktimeSch.getMentorUsername());
@@ -1148,7 +1160,7 @@ public class MentorSchedulerDB {
 			
 			ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"mentor_unallocated_worktime_sch(id,mentor_username,start_time,end_time,active) " +
+					"" + settings.getDbTableName("mentor_unallocated_worktime_sch") + "(id,mentor_username,start_time,end_time,active) " +
 					"VALUES(?,?,?,?,?) "
 					);
 			
@@ -1200,7 +1212,7 @@ public class MentorSchedulerDB {
 	    try {
 	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT * FROM mentor_unallocated_worktime_sch " +
+	    		"SELECT * FROM " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " " +
 	    		"WHERE mentor_username=? AND active='t' AND" +
 	    		"((start_time < ? AND start_time >= ?) OR " +
 	    		"(end_time > ? AND end_time <= ?) OR" +
@@ -1302,7 +1314,7 @@ public class MentorSchedulerDB {
 	    	}
 	    	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT start_time,end_time FROM mentor_unallocated_worktime_sch " +
+	    		"SELECT start_time,end_time FROM " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " " +
 	    		"WHERE active='t' " + whereClause + " AND " +
 	    		"((start_time < ? AND start_time >= ?) OR " +
 	    		"(end_time > ? AND end_time <= ?) OR " +
@@ -1372,7 +1384,7 @@ public class MentorSchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * from mentoring_sch " +
+					"SELECT * from " + settings.getDbTableName("mentoring_sch") + " " +
 					"WHERE id=?"
 					);
 			
@@ -1437,7 +1449,7 @@ public class MentorSchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE mentoring_sch " +
+					"UPDATE " + settings.getDbTableName("mentoring_sch") + " " +
 					"SET mentor_username=?,student_username=?,course_id=?," +
 					"start_time=?,end_time=?,active=? " +
 					"WHERE id=?"
@@ -1494,7 +1506,7 @@ public class MentorSchedulerDB {
 			
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"mentoring_sch(id,mentor_username,student_username,course_id," +
+					"" + settings.getDbTableName("mentoring_sch") + "(id,mentor_username,student_username,course_id," +
 					"start_time,end_time,active) " +
 					"VALUES(?,?,?,?,?,?,?) "
 					);
@@ -1569,7 +1581,7 @@ public class MentorSchedulerDB {
 	    		whereClause += " AND course_id='" + courseId + "'";
 	    	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT start_time,end_time,id FROM mentoring_sch " +
+	    		"SELECT start_time,end_time,id FROM " + settings.getDbTableName("mentoring_sch") + " " +
 	    		"WHERE active='t' " + whereClause + " AND " +
 	    		"((start_time < ? AND start_time >= ?) OR " +
 	    		"(end_time > ? AND end_time <= ?) OR " +
@@ -1641,7 +1653,7 @@ public class MentorSchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM mentor_unallocated_worktime_sch,mentor " +
+					"SELECT * FROM " + settings.getDbTableName("mentor_unallocated_worktime_sch") + " as mentor_unallocated_worktime_sch ," + settings.getDbTableName("mentor") + " as mentor  " +
 					"WHERE " +
 					"mentor_unallocated_worktime_sch.mentor_username = mentor.username and " +
 					"mentor.active = 't' and " +
@@ -1690,7 +1702,7 @@ public class MentorSchedulerDB {
 		
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"	reserved_resources(course_id,start_time,end_time,quota,cancel)" +
+					"	" + settings.getDbTableName("reserved_resources") + "(course_id,start_time,end_time,quota,cancel)" +
 					"	VALUES(?,?,?,?,?) " +
 					"	RETURNING id"
 					);

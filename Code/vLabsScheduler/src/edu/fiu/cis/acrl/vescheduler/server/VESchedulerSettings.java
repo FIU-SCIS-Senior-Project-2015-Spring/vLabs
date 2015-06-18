@@ -15,6 +15,7 @@ public class VESchedulerSettings {
     private String dbPassword;
     private String dbHost;
     private String dbName;
+	private String dbTablePrefix;
     private int debugLevel;
   
     // public static final int DEFAULT_PERIOD = 1800;
@@ -55,10 +56,11 @@ public class VESchedulerSettings {
 	
 		vLabsEPR = settings.getProperty("vlabs_epr");
 		
-		dbUser = settings.getProperty("exams_db_user");
-		dbPassword = settings.getProperty("exams_db_password");
-		dbHost = settings.getProperty("exams_db_host");
-		dbName = settings.getProperty("exams_db_name");
+		dbUser = settings.getProperty("vescheduler_db_user");
+		dbPassword = settings.getProperty("vescheduler_db_password");
+		dbHost = settings.getProperty("vescheduler_db_host");
+		dbName = settings.getProperty("vescheduler_db_name");
+		dbTablePrefix = settings.getProperty("vescheduler_db_table_prefix");
 		debugLevel = Integer.valueOf(settings.getProperty("debug_level")).intValue();
 		enabled = Boolean.valueOf(settings.getProperty("enable_scheduler"));
 		period = DEFAULT_PERIOD;
@@ -115,5 +117,20 @@ public class VESchedulerSettings {
     public boolean isSchedulerEnabled() { return enabled; }
     public int getPeriod() { return period; }
 	public String getVLabsEPR() { return vLabsEPR; }
-    
+	public String getDbTablePrefix() { return dbTablePrefix; }
+	public String getDbTableName(String dbTableName) { return getDbTablePrefix()+dbTableName; }
+
+	public String toString() {
+
+		return
+				"vLabsEPR: " + vLabsEPR + "\n" +
+				"dbUser: " + dbUser + "\n" +
+				"dbPassword: " + dbPassword + "\n" +
+				"dbHost: " + dbHost + "\n" +
+				"dbName: " + dbName + "\n" +
+				"dbTablePrefix: " + dbTablePrefix + "\n" +
+				"debugLevel: " + debugLevel + "\n" ;
+
+	}
+
 }

@@ -18,25 +18,33 @@ import edu.fiu.cis.acrl.quotasystem.entity.UsedQuota;
 import edu.fiu.cis.acrl.quotasystem.entity.UserAssignedQuota;
 import edu.fiu.cis.acrl.quotasystem.entity.UserProfile;
 import edu.fiu.cis.acrl.quotasystem.server.QuotaSystem;
+import edu.fiu.cis.acrl.quotasystem.server.QuotaSystemSettings;
 import edu.fiu.cis.acrl.tools.debug.DebugTools;
 
 public class QuotaSystemDB {
 
 	// Debug level for this class
 	private static int DEBUG_LEVEL = 2;
-	
+
+	private QuotaSystemSettings settings;
 	private Connection conn;
 
 	public QuotaSystemDB() {
+		settings= QuotaSystemSettings.instance();
+		connect(
+				settings.getDbUser(),
+				settings.getDbPassword(),
+				settings.getDbHost(),
+				settings.getDbName());
 	}
 
 	public boolean connect(String user, String password, String host,
 			String database) {
 
 		try {
-			Class.forName("org.postgresql.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
 
-			conn = DriverManager.getConnection("jdbc:postgresql://" + host
+			conn = DriverManager.getConnection("jdbc:mysql://" + host
 					+ "/" + database, user, password);
 		}
 
@@ -73,7 +81,7 @@ public class QuotaSystemDB {
 		try {
 
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] addUser("+id+",'"+username+"','"+email+"') Inside!");
-			String sql = "INSERT INTO user_profile (id,username, email) VALUES(?,?, ?)";
+			String sql = "INSERT INTO " + settings.getDbTableName("user_profile") + " (id,username, email) VALUES(?,?, ?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1,id);
 			ps.setString(2, username);
@@ -93,7 +101,7 @@ public class QuotaSystemDB {
 		try {
 
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] modifyUser("+id+",'"+username+"','"+email+"') Inside!");
-			String sql = "UPDATE user_profile SET username=?, email=? WHERE id=?";
+			String sql = "UPDATE " + settings.getDbTableName("user_profile") + " SET username=?, email=? WHERE id=?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(3,id);
 			ps.setString(1, username);
@@ -113,7 +121,7 @@ public class QuotaSystemDB {
 		try {
 
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] deleteUser("+id+") out!");
-			String sql = "DELETE FROM user_profile WHERE id=?";
+			String sql = "DELETE FROM " + settings.getDbTableName("user_profile") + " WHERE id=?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1,id);
 			ps.executeUpdate();
@@ -132,7 +140,7 @@ public class QuotaSystemDB {
 		UserProfile user =  null;
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM user_profile WHERE username = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("user_profile") + " WHERE username = ?");
 			ps.setString(1, username);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -161,7 +169,7 @@ public class QuotaSystemDB {
 		UserProfile user =  null;
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM user_profile WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("user_profile") + " WHERE id = ?");
 			ps.setInt(1, userId);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
@@ -194,7 +202,7 @@ public class QuotaSystemDB {
 
 		List<UserProfile> usersList = new ArrayList<UserProfile>();
 
-		String sql = "SELECT * FROM user_profile";
+		String sql = "SELECT * FROM " + settings.getDbTableName("user_profile") + "";
 
 		try {
 
@@ -231,8 +239,8 @@ public class QuotaSystemDB {
 
 		List<UserProfile> usersList = new ArrayList<UserProfile>();
 
-		String sql = "SELECT DISTINCT * FROM user_profile WHERE id IN("+
-						"SELECT user_id FROM course_enrollment WHERE course_id = "+courses[0];
+		String sql = "SELECT DISTINCT * FROM " + settings.getDbTableName("user_profile") + " WHERE id IN("+
+						"SELECT user_id FROM " + settings.getDbTableName("course_enrollment") + " WHERE course_id = "+courses[0];
 
 
 		if (courses.length > 1) {
@@ -313,7 +321,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] addCourse("+id+",'"+shortname+"','"+fullname+"') Inside!");
-			PreparedStatement ps = conn.prepareStatement("INSERT INTO course(shortname, fullname, id ) VALUES(?, ?, ?)");
+			PreparedStatement ps = conn.prepareStatement("INSERT INTO " + settings.getDbTableName("course") + "(shortname, fullname, id ) VALUES(?, ?, ?)");
 			ps.setString(1, shortname);
 			ps.setString(2, fullname);
 			ps.setInt(3, id);
@@ -332,7 +340,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] modifyCourse("+id+",'"+shortname+"','"+fullname+"') Inside!");
-			PreparedStatement ps = conn.prepareStatement("UPDATE course SET shortname=?, fullname =?  WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("UPDATE " + settings.getDbTableName("course") + " SET shortname=?, fullname =?  WHERE id = ?");
 			ps.setString(1, shortname);
 			ps.setString(2, fullname);
 			ps.setInt(3, id);
@@ -350,7 +358,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] deleteCourse("+id+") inside!");
-			PreparedStatement ps = conn.prepareStatement("DELETE FROM course WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("DELETE FROM " + settings.getDbTableName("course") + " WHERE id = ?");
 			ps.setInt(1, id);
 			ps.executeUpdate();
 			ps.close();
@@ -366,7 +374,7 @@ public class QuotaSystemDB {
 		Course course = null;
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getCourseByFullName Inside! "+fullname);
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM course WHERE fullname = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("course") + " WHERE fullname = ?");
 
 			ps.setString(1, fullname.trim());
 			ResultSet rs = ps.executeQuery();
@@ -403,7 +411,7 @@ public class QuotaSystemDB {
 		Course course = null;
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getCourseById Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM course WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("course") + " WHERE id = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 
@@ -442,7 +450,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getCourses Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM course");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("course") + "");
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -482,7 +490,7 @@ public class QuotaSystemDB {
 	public void addEnrollment(int id, int userId, int courseId){
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] addEnrollment("+id+","+userId+","+courseId+") inside!");
-			String sql = "INSERT INTO course_enrollment (id, user_id, course_id) VALUES(?,?, ?)";
+			String sql = "INSERT INTO " + settings.getDbTableName("course_enrollment") + " (id, user_id, course_id) VALUES(?,?, ?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, id);
 			ps.setInt(2, userId);
@@ -500,7 +508,7 @@ public class QuotaSystemDB {
 	public void deleteEnrollment(int id){
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] deleteEnrollment("+id+") inside!");
-			String sql = "DELETE FROM course_enrollment WHERE id=?";
+			String sql = "DELETE FROM " + settings.getDbTableName("course_enrollment") + " WHERE id=?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, id);
 			ps.executeUpdate();
@@ -519,7 +527,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getEnrollmentId("+userId+","+courseId+") inside!");
-			String sql = "SELECT * FROM course_enrollment WHERE user_id=? and course_id=?";
+			String sql = "SELECT * FROM " + settings.getDbTableName("course_enrollment") + " WHERE user_id=? and course_id=?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, userId);
 			ps.setInt(2, courseId);
@@ -542,7 +550,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getCoursesByUserId Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT c.* FROM course c WHERE id IN (SELECT ce.course_id FROM course_enrollment ce WHERE ce.user_id = ?)");
+			PreparedStatement ps = conn.prepareStatement("SELECT c.* FROM " + settings.getDbTableName("course") + " c WHERE id IN (SELECT ce.course_id FROM " + settings.getDbTableName("course_enrollment") + " ce WHERE ce.user_id = ?)");
 			ps.setInt(1, userId);
 			ResultSet rs = ps.executeQuery();
 
@@ -577,7 +585,7 @@ public class QuotaSystemDB {
 
 		try {
 
-			String sql = "INSERT INTO credit_type(";
+			String sql = "INSERT INTO " + settings.getDbTableName("credit_type") + "(";
 			sql+=	"name, " +
 					"resource, " +
 					"course_id, " +
@@ -603,7 +611,7 @@ public class QuotaSystemDB {
 			int id = 0;
 			ps.executeUpdate();
 
-			sql = "SELECT * FROM credit_type WHERE name = ?";
+			sql = "SELECT * FROM " + settings.getDbTableName("credit_type") + " WHERE name = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
@@ -629,7 +637,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] modifyCreditType Inside!");
-			String sql = "UPDATE credit_type SET ";
+			String sql = "UPDATE " + settings.getDbTableName("credit_type") + " SET ";
 			sql+=	"name = ?, "	+
 					"resource = ?, " 	+
 					"course_id = ?, " 	+
@@ -672,7 +680,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] deleteCreditType Inside!");
 		try {
 
-			String sql = "DELETE FROM credit_type WHERE id = ?";
+			String sql = "DELETE FROM " + settings.getDbTableName("credit_type") + " WHERE id = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, id);
 			ps.executeUpdate();
@@ -690,7 +698,7 @@ public class QuotaSystemDB {
 		boolean response =  false;
 		try{
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] isCreditTypeAssigned Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM user_assigned_quota WHERE credit_type_id = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("user_assigned_quota") + " WHERE credit_type_id = ?");
 			ps.setInt(1, creditTypeId);
 			ResultSet rs = ps.executeQuery();
 
@@ -723,7 +731,7 @@ public class QuotaSystemDB {
 		CreditType creditType = null;
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM credit_type WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("credit_type") + " WHERE id = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 
@@ -775,7 +783,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL,"[QuotaSystem - DB] getCreditTypesByPolicy Inside!");
 		List<CreditType> creditTypesArr = new ArrayList<CreditType>();
 
-		String sql = "SELECT * FROM credit_type WHERE policy_id = "+policyId;
+		String sql = "SELECT * FROM " + settings.getDbTableName("credit_type") + " WHERE policy_id = "+policyId;
 		try {
 
 			PreparedStatement ps = conn.prepareStatement(sql);
@@ -826,7 +834,7 @@ public class QuotaSystemDB {
 
 		List<CreditType> creditTypesArr = new ArrayList<CreditType>();
 
-		String sql = "SELECT * FROM credit_type WHERE course_id = "+courses[0];
+		String sql = "SELECT * FROM " + settings.getDbTableName("credit_type") + " WHERE course_id = "+courses[0];
 
 		if (courses.length > 1) {
 			for (int i = 1; i < courses.length; i++) {
@@ -887,7 +895,7 @@ public class QuotaSystemDB {
 
 		List<CreditType> creditTypesArr = new ArrayList<CreditType>();
 
-		String sql = "SELECT * FROM credit_type WHERE course_id = "+courseId+" and resource = '"+resource+"'";
+		String sql = "SELECT * FROM " + settings.getDbTableName("credit_type") + " WHERE course_id = "+courseId+" and resource = '"+resource+"'";
 
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] SQL query:" + sql);
 
@@ -942,7 +950,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getCreditTypes Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM credit_type");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("credit_type") + "");
 			ResultSet rs = ps.executeQuery();
 
 			while (rs.next()) {
@@ -990,7 +998,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getAssignableCreditTypes Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM credit_type WHERE assignable = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("credit_type") + " WHERE assignable = ?");
 			ps.setBoolean(1, true);
 
 			ResultSet rs = ps.executeQuery();
@@ -1046,7 +1054,7 @@ public class QuotaSystemDB {
 		try {
 
 
-			String sql = "INSERT INTO course_assigned_quota";
+			String sql = "INSERT INTO " + settings.getDbTableName("course_assigned_quota") + "";
 			sql += "(credit_type_id, quantity,purchase_id, start_date, active) ";
 			sql += "VALUES(?, ?,?,?,?)";
 
@@ -1076,7 +1084,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] modifyCourseQuota Inside!");
 		try {
 
-				String sql = "UPDATE course_assigned_quota SET ";
+				String sql = "UPDATE " + settings.getDbTableName("course_assigned_quota") + " SET ";
 				sql += "quantity = ?, ";
 				sql += "start_date =? ";
 				sql += "WHERE  credit_type_id = ? and purchase_id = ?";
@@ -1110,7 +1118,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] cancelCourseQuota Inside!");
 		try {
 
-				String sql = "UPDATE course_assigned_quota SET ";
+				String sql = "UPDATE " + settings.getDbTableName("course_assigned_quota") + " SET ";
 				sql += "active = ? ";
 				sql += "WHERE  credit_type_id=? and purchase_id = ?";
 
@@ -1142,7 +1150,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getCourseAssignedQuota Inside!");
 
 		try {
-			String sql = "SELECT * FROM course_assigned_quota WHERE credit_type_id IN ( SELECT id FROM credit_type WHERE course_id = ? and active = ?) and active = ?";
+			String sql = "SELECT * FROM " + settings.getDbTableName("course_assigned_quota") + " WHERE credit_type_id IN ( SELECT id FROM " + settings.getDbTableName("credit_type") + " WHERE course_id = ? and active = ?) and active = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, courseId);
 			ps.setBoolean(2, true);
@@ -1184,7 +1192,7 @@ public class QuotaSystemDB {
 		try {
 
 
-			String sql = "INSERT INTO user_assigned_quota";
+			String sql = "INSERT INTO " + settings.getDbTableName("user_assigned_quota") + "";
 			sql += "(credit_type_id, user_id, quantity,purchase_id, start_date, active, payment) ";
 			sql += "VALUES(?, ?,?,?,?,?, ?)";
 
@@ -1219,7 +1227,7 @@ public class QuotaSystemDB {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] modifyQuota Inside!");
 			try {
 
-					String sql = "UPDATE user_assigned_quota SET ";
+					String sql = "UPDATE " + settings.getDbTableName("user_assigned_quota") + " SET ";
 					sql += "quantity = ?, ";
 					sql += "start_date =? ";
 					sql += "WHERE purchase_id = ? and credit_type_id = ? and active = ?";
@@ -1254,7 +1262,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] cancelQuota Inside!");
 		try {
 
-				String sql = "UPDATE user_assigned_quota SET ";
+				String sql = "UPDATE " + settings.getDbTableName("user_assigned_quota") + " SET ";
 				sql += "active = ? ";
 				sql += "WHERE purchase_id = ? and credit_type_id = ?";
 
@@ -1287,7 +1295,7 @@ public class QuotaSystemDB {
 
 		try {
 
-			String sql = "INSERT INTO used_quota(period_number,quota,appointment_id,affiliation_id,user_assigned_quota_id,start_time,end_time,cancelled) "+
+			String sql = "INSERT INTO " + settings.getDbTableName("used_quota") + "(period_number,quota,appointment_id,affiliation_id,user_assigned_quota_id,start_time,end_time,cancelled) "+
 			"VALUES(?,?,?,?,?,'"+start.getTime().toString()+"','"+end.getTime().toString()+"',?)";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1,periodNumber);
@@ -1313,7 +1321,7 @@ public class QuotaSystemDB {
 
 		try {
 
-			String sql = "UPDATE used_quota SET cancelled = ? WHERE appointment_id = ?";
+			String sql = "UPDATE " + settings.getDbTableName("used_quota") + " SET cancelled = ? WHERE appointment_id = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setBoolean(1, true);
 			ps.setString(2, appointmentId);
@@ -1337,7 +1345,7 @@ public class QuotaSystemDB {
 
 		try {
 
-			String sql = "UPDATE used_quota SET cancelled = ? WHERE id = ?";
+			String sql = "UPDATE " + settings.getDbTableName("used_quota") + " SET cancelled = ? WHERE id = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setBoolean(1, true);
 			ps.setInt(2, id);
@@ -1372,7 +1380,7 @@ public class QuotaSystemDB {
 			// First, find all the records for this appointment in the reverse order.
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] restoreAppointment: "
 					+ "finding the records for this appointment.");
-			String sql1 = "SELECT * from used_quota WHERE appointment_id = ? order by id desc";
+			String sql1 = "SELECT * from " + settings.getDbTableName("used_quota") + " WHERE appointment_id = ? order by id desc";
 			PreparedStatement ps1 = conn.prepareStatement(sql1);
 			ps1.setString(1, appointmentId);
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] restoreAppointment, ps1: " + ps1);
@@ -1394,7 +1402,7 @@ public class QuotaSystemDB {
 					if (!cancelled) {			
 						DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] restoreAppointment: "
 								+ "Deleting used_quota record with id: " + id);
-						String sql2 = "DELETE FROM used_quota WHERE id = ?";
+						String sql2 = "DELETE FROM " + settings.getDbTableName("used_quota") + " WHERE id = ?";
 						PreparedStatement ps2 = conn.prepareStatement(sql2);
 						ps2.setInt(1, id);
 						DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] restoreAppointment, ps2: " + ps2);
@@ -1415,7 +1423,7 @@ public class QuotaSystemDB {
 						if (endTime.getTime().getTime() > now.getTime().getTime()) {
 							DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] restoreAppointment: "
 									+ "endTime is in the future.");
-							String sql3 = "UPDATE used_quota SET cancelled = ? WHERE id = ?";
+							String sql3 = "UPDATE " + settings.getDbTableName("used_quota") + " SET cancelled = ? WHERE id = ?";
 							PreparedStatement ps3 = conn.prepareStatement(sql3);
 							ps3.setBoolean(1, false);
 							ps3.setInt(2, id);
@@ -1479,7 +1487,7 @@ public class QuotaSystemDB {
 
 		try {
 
-			String sql = "UPDATE used_quota SET cancelled = ? WHERE affiliation_id = ?";
+			String sql = "UPDATE " + settings.getDbTableName("used_quota") + " SET cancelled = ? WHERE affiliation_id = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setBoolean(1, true);
 			ps.setString(2, affiliationId);
@@ -1505,7 +1513,7 @@ public class QuotaSystemDB {
 		UserAssignedQuota assignedQuota= null;
 
 		try {
-			String sql = "SELECT * FROM user_assigned_quota WHERE purchase_id=? and user_id =? and credit_type_id=? and active = TRUE";
+			String sql = "SELECT * FROM " + settings.getDbTableName("user_assigned_quota") + " WHERE purchase_id=? and user_id =? and credit_type_id=? and active = TRUE";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, purchaseId);
 			ps.setInt(2, userId);
@@ -1544,7 +1552,7 @@ public class QuotaSystemDB {
 
 		try {
 
-			String sql = "SELECT * FROM user_assigned_quota WHERE purchase_id=? and credit_type_id = ? and active = ?";
+			String sql = "SELECT * FROM " + settings.getDbTableName("user_assigned_quota") + " WHERE purchase_id=? and credit_type_id = ? and active = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, purchaseId);
 			ps.setInt(2, creditTypeId);
@@ -1587,7 +1595,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getUserAssignedQuotaByPurchaseAndCreditType() inside!");
-			String sql = "SELECT * FROM user_assigned_quota WHERE purchase_id=? and active = TRUE";
+			String sql = "SELECT * FROM " + settings.getDbTableName("user_assigned_quota") + " WHERE purchase_id=? and active = TRUE";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, purchaseId);
 			ResultSet rs = ps.executeQuery();
@@ -1623,7 +1631,7 @@ public class QuotaSystemDB {
 
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM user_assigned_quota WHERE user_id = ? and active = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("user_assigned_quota") + " WHERE user_id = ? and active = ?");
 			ps.setInt(1, user.getId());
 			ps.setBoolean(2, true);
 			ResultSet rs = ps.executeQuery();
@@ -1673,7 +1681,7 @@ public class QuotaSystemDB {
 
 		List<UserAssignedQuota> assignedQuotaList = new ArrayList<UserAssignedQuota>();
 
-		String sql = "SELECT * FROM user_assigned_quota WHERE user_id='"+userId+"' and credit_type_id='"+creditTypeId+"'";
+		String sql = "SELECT * FROM " + settings.getDbTableName("user_assigned_quota") + " WHERE user_id='"+userId+"' and credit_type_id='"+creditTypeId+"'";
 
 		try {
 
@@ -1719,7 +1727,7 @@ public class QuotaSystemDB {
 
 		UserAssignedQuota userAssignedQuota = null;
 
-		String sql = "SELECT * FROM user_assigned_quota WHERE id='"+assignedQuotaId+"'";
+		String sql = "SELECT * FROM " + settings.getDbTableName("user_assigned_quota") + " WHERE id='"+assignedQuotaId+"'";
 
 		try {
 
@@ -1769,7 +1777,7 @@ public class QuotaSystemDB {
 		List<UsedQuota> usedQuotaList = new ArrayList<UsedQuota>();
 
 		try {
-			String sql = "SELECT * FROM used_quota WHERE user_assigned_quota_id= ? and cancelled= ?";
+			String sql = "SELECT * FROM " + settings.getDbTableName("used_quota") + " WHERE user_assigned_quota_id= ? and cancelled= ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, assignedQuotaId);
 			ps.setBoolean(2, false);
@@ -1816,7 +1824,7 @@ public class QuotaSystemDB {
 		List<UsedQuota> usedQuotaList = new ArrayList<UsedQuota>();
 
 		try {
-			String sql = "SELECT * FROM used_quota WHERE appointment_id= ? and cancelled= ?";
+			String sql = "SELECT * FROM " + settings.getDbTableName("used_quota") + " WHERE appointment_id= ? and cancelled= ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, appointmentId);
 			ps.setBoolean(2, false);
@@ -1865,7 +1873,7 @@ public class QuotaSystemDB {
 		List<UsedQuota> usedQuotaList = new ArrayList<UsedQuota>();
 
 		try {
-			String sql = "SELECT * FROM used_quota WHERE affiliation_id= ? and cancelled= ?";
+			String sql = "SELECT * FROM " + settings.getDbTableName("used_quota") + " WHERE affiliation_id= ? and cancelled= ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, affiliationId);
 			ps.setBoolean(2, false);
@@ -1993,7 +2001,7 @@ public class QuotaSystemDB {
 
 		int id = 0;
 
-		String sql = "INSERT INTO policy ";
+		String sql = "INSERT INTO " + settings.getDbTableName("policy") + " ";
 
 		if (absolute)// FIXED-ABS
 		{
@@ -2023,7 +2031,7 @@ public class QuotaSystemDB {
 			ps.executeUpdate();
 			ps.close();
 
-			sql = "SELECT * FROM policy WHERE name = ?";
+			sql = "SELECT * FROM " + settings.getDbTableName("policy") + " WHERE name = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
@@ -2053,7 +2061,7 @@ public class QuotaSystemDB {
 
 		int id = 0;
 
-		String sql = "INSERT INTO policy ";
+		String sql = "INSERT INTO " + settings.getDbTableName("policy") + " ";
 
 		if (absolute)// FIXED-ABS
 		{
@@ -2083,7 +2091,7 @@ public class QuotaSystemDB {
 			ps.executeUpdate();
 			ps.close();
 
-			sql = "SELECT * FROM policy WHERE name = ?";
+			sql = "SELECT * FROM " + settings.getDbTableName("policy") + " WHERE name = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
@@ -2113,7 +2121,7 @@ public class QuotaSystemDB {
 
 		int id = 0;
 
-		String sql = "INSERT INTO policy ";
+		String sql = "INSERT INTO " + settings.getDbTableName("policy") + " ";
 
 
 		if (absolute)// GRADUALEXP-ABS
@@ -2143,7 +2151,7 @@ public class QuotaSystemDB {
 			ps.executeUpdate();
 			ps.close();
 
-			sql = "SELECT * FROM policy WHERE name = ?";
+			sql = "SELECT * FROM " + settings.getDbTableName("policy") + " WHERE name = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
@@ -2173,7 +2181,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] addMinMaxPolicy Inside!");
 
 		int id = 0;
-		String sql = "INSERT INTO policy ";
+		String sql = "INSERT INTO " + settings.getDbTableName("policy") + " ";
 
 		if (absolute)// MINMAXEXP-ABS
 		{
@@ -2204,7 +2212,7 @@ public class QuotaSystemDB {
 			ps.executeUpdate();
 			ps.close();
 
-			sql = "SELECT * FROM policy WHERE name = ?";
+			sql = "SELECT * FROM " + settings.getDbTableName("policy") + " WHERE name = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, name);
 			ResultSet rs = ps.executeQuery();
@@ -2231,7 +2239,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] modifyPolicy Inside!");
-			String sql = "UPDATE policy SET ";
+			String sql = "UPDATE " + settings.getDbTableName("policy") + " SET ";
 			sql+=	"name = ?, "	+
 					"description = ?, " +
 					"policy_type = '" +type+"', "+
@@ -2286,7 +2294,7 @@ public class QuotaSystemDB {
 		DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] deletePolicy inside!");
 		try {
 
-			String sql = "DELETE FROM policy WHERE id = ?";
+			String sql = "DELETE FROM " + settings.getDbTableName("policy") + " WHERE id = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, id);
 			ps.executeUpdate();
@@ -2305,7 +2313,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getPolicies Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM policy");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("policy") + "");
 
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -2365,7 +2373,7 @@ public class QuotaSystemDB {
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getAssignablePolicies Inside!");
 			PreparedStatement ps = conn
-					.prepareStatement("SELECT * FROM policy WHERE assignable = ?");
+					.prepareStatement("SELECT * FROM " + settings.getDbTableName("policy") + " WHERE assignable = ?");
 			ps.setBoolean(1, true);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -2421,7 +2429,7 @@ public class QuotaSystemDB {
 
 		try {
 			DebugTools.println(DEBUG_LEVEL, "[QuotaSystem - DB] getPolicyById Inside!");
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM policy WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("policy") + " WHERE id = ?");
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 

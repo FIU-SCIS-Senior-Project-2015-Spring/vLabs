@@ -59,14 +59,20 @@ public class VESchedulerDB {
 	 * Default Constructor.
 	 */
 	private VESchedulerDB() {
-		
+
+        DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - VESchedulerDB] Inside!");
+
 		settings= VESchedulerSettings.instance();
-		connect(
+        DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - VESchedulerDB] " +
+                "settings: " + settings.toString());
+
+        connect(
 				settings.getDbUser(), 
 				settings.getDbPassword(), 
 				settings.getDbHost(), 
 				settings.getDbName());
-		
+
+        DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - VESchedulerDB] Ready to get out!");
 	}
 
 	/**
@@ -103,9 +109,9 @@ public class VESchedulerDB {
     
     	try {
     		
-    	    Class.forName("org.postgresql.Driver");
+    	    Class.forName("com.mysql.jdbc.Driver");
     	    
-    	    conn = DriverManager.getConnection("jdbc:postgresql://" + host + "/" + 
+    	    conn = DriverManager.getConnection("jdbc:mysql://" + host + "/" +
     	    		database, user, password);
     	
     	}
@@ -162,7 +168,7 @@ public class VESchedulerDB {
     	try {
 	    
     		PreparedStatement ps = conn.prepareStatement(
-    				"SELECT * FROM configuration WHERE active='t'");
+    				"SELECT * FROM " + settings.getDbTableName("configuration") + " WHERE active='t'");
 	    
     		DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB] ps: " + ps);
     		
@@ -222,7 +228,7 @@ public class VESchedulerDB {
     	try {
 	    
     		PreparedStatement ps = conn.prepareStatement(
-    				"SELECT * FROM configuration WHERE id=?");
+    				"SELECT * FROM " + settings.getDbTableName("configuration") + " WHERE id=?");
 	    
     		ps.setInt(1, id);
     		
@@ -284,7 +290,7 @@ public class VESchedulerDB {
     	try {
 
     		PreparedStatement ps = conn.prepareStatement(
-    				"UPDATE configuration SET active='f'");
+    				"UPDATE " + settings.getDbTableName("configuration") + " SET active='f'");
 	    
     		DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB] ps: " + ps);
     		
@@ -326,7 +332,7 @@ public class VESchedulerDB {
 	    
     		PreparedStatement ps = conn.prepareStatement(
     				"INSERT INTO " +
-    				"configuration(user_start_time,user_end_time," +
+    				"" + settings.getDbTableName("configuration") + "(user_start_time,user_end_time," +
     				"admin_start_time,admin_end_time,active) " +
     				"VALUES(?,?,?,?,?) " +
 					"RETURNING id");
@@ -389,7 +395,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host WHERE id=?");
+					"SELECT * FROM " + settings.getDbTableName("host") + " WHERE id=?");
 	    
 			ps.setInt(1, id);
 			
@@ -446,7 +452,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host WHERE name=?");
+					"SELECT * FROM " + settings.getDbTableName("host") + " WHERE name=?");
 	    
 			ps.setString(1, hostName);
 			
@@ -503,7 +509,7 @@ public class VESchedulerDB {
 		try {
 	
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE host SET name=?,ssh_port=?,username=?,password=?," +
+					"UPDATE " + settings.getDbTableName("host") + " SET name=?,ssh_port=?,username=?,password=?," +
 					"ve_num_cap=?,ve_first_free_port=?,ve_port_num=?,active=?," +
 					"new_assignment=? " +
 					"WHERE id=?");
@@ -580,7 +586,7 @@ public class VESchedulerDB {
 			if (count == 0) {
 			*/
 				PreparedStatement ps = conn.prepareStatement(
-				"DELETE from host where id=?");
+				"DELETE from " + settings.getDbTableName("host") + " where id=?");
 		
 				ps.setInt(1, id);
 				
@@ -621,7 +627,7 @@ public class VESchedulerDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"INSERT INTO host(name,ssh_port,username,password,ve_num_cap," +
+    				"INSERT INTO " + settings.getDbTableName("host") + "(name,ssh_port,username,password,ve_num_cap," +
     				"ve_first_free_port,ve_port_num,active,new_assignment) " +
     				"VALUES(?,?,?,?,?,?,?,?,?) " +
     				"RETURNING id");
@@ -692,7 +698,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host WHERE active=? and new_assignment=? ORDER BY id");
+					"SELECT * FROM " + settings.getDbTableName("host") + " WHERE active=? and new_assignment=? ORDER BY id");
 	    
 			ps.setBoolean(1, active);
 			ps.setBoolean(2, newAssignment);
@@ -746,7 +752,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host");
+					"SELECT * FROM " + settings.getDbTableName("host") + "");
 	    
 			DebugTools.println(DEBUG_LEVEL, "[getMaxHostId] ps: " + ps);
 			
@@ -791,7 +797,7 @@ public class VESchedulerDB {
 	    try {
 	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT host_id,start_time,end_time FROM ve_ins,ve_ins_sch WHERE " +
+	    		"SELECT host_id,start_time,end_time FROM ve_ins," + settings.getDbTableName("ve_ins_sch") + " as ve_ins_sch  WHERE " +
 	    		"ve_ins.active='t' AND ve_ins_sch.active='t' AND host_id=? " +
 	    		"AND ve_ins.id=ve_ins_sch.ve_ins_id AND" +
 	    		"((start_time < ? AND start_time >= ?) OR " +
@@ -877,7 +883,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * from host_maintenance_sch WHERE id=?"
+					"SELECT * from " + settings.getDbTableName("host_maintenance_sch") + " WHERE id=?"
 					);
 			
 			ps.setString(1, id);
@@ -930,7 +936,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE host_maintenance_sch " +
+					"UPDATE " + settings.getDbTableName("host_maintenance_sch") + " " +
 					"SET host_id=?,start_time=?,end_time=?,active=? " +
 					"WHERE id=?"
 					);
@@ -983,7 +989,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"host_maintenance_sch(id,host_id,start_time,end_time,active) " +
+					"" + settings.getDbTableName("host_maintenance_sch") + "(id,host_id,start_time,end_time,active) " +
 					"VALUES(?,?,?,?,?) "
 					);
 			
@@ -1040,7 +1046,7 @@ public class VESchedulerDB {
 	    try {
 	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT * FROM host_maintenance_sch WHERE host_id=? AND active='t' AND" +
+	    		"SELECT * FROM " + settings.getDbTableName("host_maintenance_sch") + " WHERE host_id=? AND active='t' AND" +
 	    		"((start_time < ? AND start_time >= ?) OR " +
 	    		"(end_time > ? AND end_time <= ?) OR" +
 	    		"(start_time < ? AND end_time > ?))");
@@ -1111,7 +1117,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins WHERE id=?");
+					"SELECT * FROM " + settings.getDbTableName("ve_ins") + " WHERE id=?");
 	    
 			ps.setString(1, id);
 			
@@ -1189,7 +1195,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE ve_ins " +
+					"UPDATE " + settings.getDbTableName("ve_ins") + " " +
 					"	SET username=?,ve_type=?,storage_id=?,kserver_id=?,first_port=?,num_ports=?," +
 					"		first_mac=?,num_macs=?,store=?,active=?,status=?" +
 					"	WHERE id=?"
@@ -1221,7 +1227,7 @@ public class VESchedulerDB {
 			if (!veIns.isActive() && retVal) {
 				
 				ps = conn.prepareStatement(
-						"UPDATE ve_ins_sch SET active='f' " +
+						"UPDATE " + settings.getDbTableName("ve_ins_sch") + " SET active='f' " +
 						"	WHERE ve_ins_id=?"
 				);
 
@@ -1240,7 +1246,7 @@ public class VESchedulerDB {
 				if (retVal) {
 					
 					ps = conn.prepareStatement(
-							"UPDATE vm_ins SET active='f' " +
+							"UPDATE " + settings.getDbTableName("vm_ins") + " SET active='f' " +
 							"	WHERE ve_ins_id=?"
 					);
 
@@ -1284,7 +1290,7 @@ public class VESchedulerDB {
 			try {
 
 				PreparedStatement ps = conn.prepareStatement(
-						"UPDATE ve_ins " +
+						"UPDATE " + settings.getDbTableName("ve_ins") + " " +
 						"	SET status=?" +
 						"	WHERE id=?"
 				);
@@ -1300,7 +1306,7 @@ public class VESchedulerDB {
 
 				/*
 				ps = conn.prepareStatement(
-						"UPDATE vm_ins SET status=? " +
+						"UPDATE " + settings.getDbTableName("vm_ins") + " SET status=? " +
 						"	WHERE ve_ins_id=?"
 				);
 
@@ -1320,7 +1326,7 @@ public class VESchedulerDB {
 				if (status == VEInsStatusType.DESTROYED) {
 
 					ps = conn.prepareStatement(
-							"UPDATE ve_ins SET active='f' " +
+							"UPDATE " + settings.getDbTableName("ve_ins") + " SET active='f' " +
 							"	WHERE id=?"
 					);
 
@@ -1333,7 +1339,7 @@ public class VESchedulerDB {
 					ps.close();
 
 					ps = conn.prepareStatement(
-							"UPDATE ve_ins_sch SET active='f' " +
+							"UPDATE " + settings.getDbTableName("ve_ins_sch") + " SET active='f' " +
 							"	WHERE ve_ins_id=?"
 					);
 
@@ -1346,7 +1352,7 @@ public class VESchedulerDB {
 					ps.close();
 
 					ps = conn.prepareStatement(
-							"UPDATE vm_ins SET active='f' " +
+							"UPDATE " + settings.getDbTableName("vm_ins") + " SET active='f' " +
 							"	WHERE ve_ins_id=?"
 					);
 
@@ -1391,7 +1397,7 @@ public class VESchedulerDB {
 		
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"	ve_ins(id,username,ve_type,storage_id,kserver_id,first_port,num_ports," +
+					"	" + settings.getDbTableName("ve_ins") + "(id,username,ve_type,storage_id,kserver_id,first_port,num_ports," +
 					"		first_mac,num_macs,store,active,status) " +
 					"	VALUES(?,?,?,?,?,?,?,?,?,?,?,?) " +
 					"	RETURNING id"
@@ -1741,7 +1747,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement( 
-						"UPDATE ve_free_ports_and_macs SET active = 'f' " +
+						"UPDATE " + settings.getDbTableName("ve_free_ports_and_macs") + " SET active = 'f' " +
 						"	WHERE active = 't'");
 			
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - setVEFirstFreeMac] ps: " + ps);
@@ -1753,7 +1759,7 @@ public class VESchedulerDB {
 			PreparedStatement ps2 = 
 				conn.prepareStatement(
 						"INSERT INTO " +
-						"	ve_free_ports_and_macs(ve_first_free_port,ve_first_free_mac,active) " +
+						"	" + settings.getDbTableName("ve_free_ports_and_macs") + "(ve_first_free_port,ve_first_free_mac,active) " +
 						"	VALUES(?,?,'t')");
 
 			ps2.setInt(1, veFirstFreePort);
@@ -1789,7 +1795,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"UPDATE ve_free_ports_and_macs SET active = 'f' " +
+						"UPDATE " + settings.getDbTableName("ve_free_ports_and_macs") + " SET active = 'f' " +
 						"	WHERE active = 't'");
 			
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - setVEFirstFreePort] ps: " + ps);
@@ -1801,7 +1807,7 @@ public class VESchedulerDB {
 			PreparedStatement ps2 = 
 				conn.prepareStatement(
 						"INSERT INTO " +
-						"	ve_free_ports_and_macs(ve_first_free_port,ve_first_free_mac,active) " +
+						"	" + settings.getDbTableName("ve_free_ports_and_macs") + "(ve_first_free_port,ve_first_free_mac,active) " +
 						"	VALUES(?,?,'t')");
 
 			ps2.setInt(1, veFirstFreePort);
@@ -1835,7 +1841,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM ve_free_ports_and_macs WHERE active = 't'");
+						"SELECT * FROM " + settings.getDbTableName("ve_free_ports_and_macs") + " WHERE active = 't'");
 			
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getVEFirstFreeMac] ps: " + ps);
 			
@@ -1872,7 +1878,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM ve_free_ports_and_macs WHERE active = 't'");
+						"SELECT * FROM " + settings.getDbTableName("ve_free_ports_and_macs") + " WHERE active = 't'");
 			
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getVEFirstFreePort] ps: " + ps);
 			
@@ -1913,7 +1919,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * from ve_ins_sch WHERE id=?"
+					"SELECT * from " + settings.getDbTableName("ve_ins_sch") + " WHERE id=?"
 					);
 			
 			ps.setString(1, id);
@@ -1975,7 +1981,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE ve_ins_sch " +
+					"UPDATE " + settings.getDbTableName("ve_ins_sch") + " " +
 					"	SET ve_ins_id=?,host_id=?,start_time=?,end_time=?,done=?,active=? " +
 					"	WHERE id=?"
 					);
@@ -2029,7 +2035,7 @@ public class VESchedulerDB {
 
     		PreparedStatement ps = conn.prepareStatement(
     				"INSERT INTO " +
-    				"	ve_ins_sch(id,ve_ins_id,host_id,start_time,end_time,done,active) " +
+    				"	" + settings.getDbTableName("ve_ins_sch") + "(id,ve_ins_id,host_id,start_time,end_time,done,active) " +
     				"	VALUES(?,?,?,?,?,?,?) " +
     				"	RETURNING id"
     				);
@@ -2083,7 +2089,7 @@ public class VESchedulerDB {
 			try {
 
 				PreparedStatement ps = conn.prepareStatement(
-						"SELECT * FROM ve_ins_sch WHERE ve_ins_id=? AND active='t' AND" +
+						"SELECT * FROM " + settings.getDbTableName("ve_ins_sch") + " WHERE ve_ins_id=? AND active='t' AND" +
 						"((start_time < ? AND start_time >= ?) OR " +
 						"(end_time > ? AND end_time <= ?) OR" +
 				"(start_time < ? AND end_time > ?))");
@@ -2162,8 +2168,8 @@ public class VESchedulerDB {
 	    try {
 
 	    	PreparedStatement ps = conn.prepareStatement(
-    		"SELECT host.*,count FROM host LEFT JOIN (SELECT host.id,count(host.id) " +
-    		"FROM host,ve_ins,ve_ins_sch WHERE host.active='t' AND ve_ins.active='t' " +
+    		"SELECT " + settings.getDbTableName("host") + " as host,count FROM host LEFT JOIN (SELECT host.id,count(host.id) " +
+    		"FROM " + settings.getDbTableName("host") + " as host," + settings.getDbTableName("ve_ins") + " as ve_ins ," + settings.getDbTableName("ve_ins_sch") + " as ve_ins_sch  WHERE host.active='t' AND ve_ins.active='t' " +
     		"AND ve_ins_sch.active='t' AND host.id=ve_ins_sch.host_id AND " +
     		"ve_ins.id=ve_ins_sch.ve_ins_id AND " +
     		"((ve_ins_sch.start_time < ? AND ve_ins_sch.start_time >= ?) OR " +
@@ -2260,7 +2266,7 @@ public class VESchedulerDB {
 		try {
 
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT count(*) FROM host,ve_ins,ve_ins_sch WHERE host.id=? AND " +
+	    		"SELECT count(*) FROM host,ve_ins," + settings.getDbTableName("ve_ins_sch") + " as ve_ins_sch  WHERE host.id=? AND " +
 	    		"host.id=ve_ins_sch.host_id AND ve_ins.id=ve_ins_sch.ve_ins_id AND " +
 	    		"host.active='t' AND ve_ins.active='t' AND ve_ins_sch.active='t' AND" +
 	    		"((ve_ins_sch.start_time < ? AND ve_ins_sch.start_time >= ?) OR " +
@@ -2317,7 +2323,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-				"SELECT * FROM ve_ins,ve_ins_sch WHERE ve_ins_sch.host_id=? AND " +
+				"SELECT * FROM " + settings.getDbTableName("ve_ins") + " as ve_ins ," + settings.getDbTableName("ve_ins_sch") + " as ve_ins_sch  WHERE ve_ins_sch.host_id=? AND " +
 				"ve_ins.id=ve_ins_sch.ve_ins_id AND ve_ins.active='t' AND " +
 				"ve_ins_sch.active='t' AND" +
 	    		"((ve_ins_sch.start_time < ? AND ve_ins_sch.start_time >= ?) OR " +
@@ -2395,7 +2401,7 @@ public class VESchedulerDB {
 							"SELECT ins.id as ve_ins_id, sch.id as ve_ins_sch_id, " +
 							"	sch.host_id, ins.username, ins.ve_type, ins.storage_id, " +
 							"	ins.first_port, ins.num_ports, ins.first_mac, ins.num_macs " +
-							"	FROM ve_ins as ins, ve_ins_sch as sch, host " +
+							"	FROM " + settings.getDbTableName("ve_ins") + " as ins, " + settings.getDbTableName("ve_ins_sch") + " as sch, " + settings.getDbTableName("host") + " as host " +
 							"	WHERE ins.id=sch.ve_ins_id AND sch.host_id=host.id AND " +
 							"	host.active='t' AND ins.active='t' AND sch.active='t' AND " +
 							"	sch.done='f' AND " +
@@ -2433,7 +2439,7 @@ public class VESchedulerDB {
 
 					PreparedStatement ps2 = 
 						conn.prepareStatement(
-								"SELECT router_id from host_used_routers " +
+								"SELECT router_id from " + settings.getDbTableName("host_used_routers") + " " +
 								"WHERE ve_ins_id=?");
 					
 					ps2.setString(1, veInsId);
@@ -2480,7 +2486,7 @@ public class VESchedulerDB {
 							"SELECT ins.id as ve_ins_id, sch.id as ve_ins_sch_id, " +
 							"	sch.host_id, ins.username, ins.ve_type, ins.storage_id, " +
 							"	ins.first_port, ins.num_ports, ins.first_mac, ins.num_macs " +
-							"	FROM ve_ins as ins, ve_ins_sch as sch, host " +
+							"	FROM " + settings.getDbTableName("ve_ins") + " as ins, " + settings.getDbTableName("ve_ins_sch") + " as sch, " + settings.getDbTableName("host") + " as host " +
 							"	WHERE ins.id=sch.ve_ins_id AND sch.host_id=host.id AND " +
 							"	host.active='t' AND ins.active='t' AND sch.active='t' AND " +
 							"	sch.done='f' AND " +
@@ -2518,7 +2524,7 @@ public class VESchedulerDB {
 
 					PreparedStatement ps2 = 
 						conn.prepareStatement(
-								"SELECT * from host_used_routers " +
+								"SELECT * from " + settings.getDbTableName("host_used_routers") + " " +
 								"	WHERE host_id=? and ve_ins_id=?");
 					
 					ps2.setInt(1, hostId);
@@ -2584,7 +2590,7 @@ public class VESchedulerDB {
 		try {
 			PreparedStatement ps;
 			ps = conn.prepareStatement(
-					"SELECT * from host_used_routers " +
+					"SELECT * from " + settings.getDbTableName("host_used_routers") + " " +
 					"	WHERE host_id=? order by router_id");
 
 			ps.setInt(1, hostId);
@@ -2653,7 +2659,7 @@ public class VESchedulerDB {
 		try {
 			
 			ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins_host " +
+					"SELECT * FROM " + settings.getDbTableName("ve_ins_host") + " " +
 					"	WHERE ve_ins_id=? AND host_id=?");
 
 			ps.setString(1, veInsId);
@@ -2697,7 +2703,7 @@ public class VESchedulerDB {
 
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"UPDATE ve_ins SET status=? " +
+						"UPDATE " + settings.getDbTableName("ve_ins") + " SET status=? " +
 						"	WHERE active='t' and id=? and host_id=?");
 
 			if (task.getType() == SchedulingTask.TaskType.STOP) 
@@ -2738,7 +2744,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM host_used_routers " +
+						"SELECT * FROM " + settings.getDbTableName("host_used_routers") + " " +
 						"	WHERE host_id=? and ve_ins_id=?");
 			
 			ps.setInt(1, hostId);
@@ -2784,7 +2790,7 @@ public class VESchedulerDB {
 			PreparedStatement ps = 
 				conn.prepareStatement(
 						"INSERT INTO " +
-						"	host_used_routers(host_id,ve_ins_id,router_id)" +
+						"	" + settings.getDbTableName("host_used_routers") + "(host_id,ve_ins_id,router_id)" +
 						"	VALUES(?,?,?)");
 			
 			ps.setInt(1, hostId);
@@ -2823,7 +2829,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"DELETE FROM host_used_routers " +
+						"DELETE FROM " + settings.getDbTableName("host_used_routers") + " " +
 						"	WHERE host_id=? and ve_ins_id=? and router_id=?");
 			
 			ps.setInt(1, hostId);
@@ -2861,7 +2867,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"DELETE FROM host_used_routers " +
+						"DELETE FROM " + settings.getDbTableName("host_used_routers") + " " +
 						"	WHERE ve_ins_id=?");
 			
 			ps.setString(1, veInsId);
@@ -2964,7 +2970,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM vm_ins WHERE id=?");
+					"SELECT * FROM " + settings.getDbTableName("vm_ins") + " WHERE id=?");
 	    
 			ps.setString(1, id);
 			
@@ -3039,7 +3045,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM vm_ins WHERE ve_ins_id=? ORDER BY access_port");
+					"SELECT * FROM " + settings.getDbTableName("vm_ins") + " WHERE ve_ins_id=? ORDER BY access_port");
 	    
 			ps.setString(1, veInsId);
 			
@@ -3111,7 +3117,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM vm_ins WHERE active='t' and mac_address=?");
+					"SELECT * FROM " + settings.getDbTableName("vm_ins") + " WHERE active='t' and mac_address=?");
 	    
 			ps.setString(1, macAddress);
 			
@@ -3189,7 +3195,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE vm_ins " +
+					"UPDATE " + settings.getDbTableName("vm_ins") + " " +
 					"	SET ve_ins_id=?,name=?,dir=?,domain=?,os=?,internal_address=?,access_port=?," +
 					"	mac_address=?,status=?,last_checkin=?,app_name=?,app_dir=?,active=? " +
 					"	WHERE id=?"
@@ -3252,7 +3258,7 @@ public class VESchedulerDB {
 		try {
 
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE vm_ins " +
+					"UPDATE " + settings.getDbTableName("vm_ins") + " " +
 					"	SET status=?" +
 					"	WHERE id=?"
 			);
@@ -3309,7 +3315,7 @@ public class VESchedulerDB {
 		try {
 	
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE vm_ins " +
+					"UPDATE " + settings.getDbTableName("vm_ins") + " " +
 					"	SET status=?" +
 					"	WHERE ve_ins_id=?"
 			);
@@ -3382,7 +3388,7 @@ public class VESchedulerDB {
 
 				PreparedStatement ps = 
 					conn.prepareStatement(
-							"UPDATE vm_ins SET status=? " +
+							"UPDATE " + settings.getDbTableName("vm_ins") + " SET status=? " +
 							"	WHERE ve_ins_id=? AND status=? AND last_checkin<?");
 
 				ps.setString(1, VMInsStatusType.PAUSED.toString());
@@ -3417,7 +3423,7 @@ public class VESchedulerDB {
 				
 				PreparedStatement ps = 
 					conn.prepareStatement(
-							"SELECT count(*) FROM vm_ins " +
+							"SELECT count(*) FROM " + settings.getDbTableName("vm_ins") + " " +
 							"	WHERE ve_ins_id=? and status=?");
 			
 				ps.setString(1, veInsId);
@@ -3466,7 +3472,7 @@ public class VESchedulerDB {
 		
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"	vm_ins(id,ve_ins_id,name,dir,domain,os,internal_address,access_port," +
+					"	" + settings.getDbTableName("vm_ins") + "(id,ve_ins_id,name,dir,domain,os,internal_address,access_port," +
 					"		mac_address,status,last_checkin,app_name,app_dir,active)" +
 					"	VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) " +
 					"	RETURNING id"
@@ -3522,7 +3528,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM vm_ins" +
+					"DELETE FROM " + settings.getDbTableName("vm_ins") + "" +
 					"	WHERE ve_ins_id=?"
 					);
 			
@@ -3577,7 +3583,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins " +
+					"SELECT * FROM " + settings.getDbTableName("ve_ins") + " " +
 					"	WHERE active='t' AND (status=? OR status=? OR status=?)");
 	    
 			// The temporary statuses are the following ones:
@@ -3647,7 +3653,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins WHERE active='t'");
+					"SELECT * FROM " + settings.getDbTableName("ve_ins") + " WHERE active='t'");
 	    
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getVEInstances] ps: " + ps);
 			
@@ -3711,7 +3717,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins WHERE active='t' AND username=?");
+					"SELECT * FROM " + settings.getDbTableName("ve_ins") + " WHERE active='t' AND username=?");
 	    
 			ps.setString(1, username);
 			
@@ -3781,7 +3787,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps =
 				conn.prepareStatement(
-						"SELECT * from vm_ins " +
+						"SELECT * from " + settings.getDbTableName("vm_ins") + " " +
 						"	WHERE ve_ins_id=? and active='t' order by mac_address");
 			
 			ps.setString(1, veInsId);
@@ -3822,7 +3828,7 @@ public class VESchedulerDB {
 		
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * from vm_ins " +
+						"SELECT * from " + settings.getDbTableName("vm_ins") + " " +
 						"	WHERE active='t' and mac_address=?");
 		
 			ps.setString(1, macAddress);
@@ -3863,7 +3869,7 @@ public class VESchedulerDB {
 		
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"	reserved_resources(ve_type,start_time,end_time,quota,cancel)" +
+					"	" + settings.getDbTableName("reserved_resources") + "(ve_type,start_time,end_time,quota,cancel)" +
 					"	VALUES(?,?,?,?,?) " +
 					"	RETURNING id"
 					);
@@ -3910,7 +3916,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"	storage(dir_path,gb_size,active)" +
+					"	" + settings.getDbTableName("storage") + "(dir_path,gb_size,active)" +
 					"   VALUES(?,?,?)" +
 					"   RETURNING id");
 		
@@ -3947,7 +3953,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM storage WHERE id=?");
+					"DELETE FROM " + settings.getDbTableName("storage") + " WHERE id=?");
 		
 			ps.setInt(1, id);
 			
@@ -3978,7 +3984,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM storage WHERE id=?");
+					"SELECT * FROM " + settings.getDbTableName("storage") + " WHERE id=?");
 		
 			ps.setInt(1, id);
 			
@@ -4042,7 +4048,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM storage WHERE active=?");
+					"SELECT * FROM " + settings.getDbTableName("storage") + " WHERE active=?");
 	    
 			ps.setBoolean(1, active);
 			
@@ -4087,7 +4093,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE storage SET dir_path=?,gb_size=?,active=? WHERE id=?");
+					"UPDATE " + settings.getDbTableName("storage") + " SET dir_path=?,gb_size=?,active=? WHERE id=?");
 		
 			ps.setString(1, storage.getDirPath());
 			ps.setInt(2, storage.getGbSize());
@@ -4123,7 +4129,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE storage SET active=? WHERE id=?");
+					"UPDATE " + settings.getDbTableName("storage") + " SET active=? WHERE id=?");
 		
 			ps.setBoolean(1, status);
 			ps.setInt(2, id);
@@ -4158,7 +4164,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"	host_storage(host_id,storage_id,preference,active)" +
+					"	" + settings.getDbTableName("host_storage") + "(host_id,storage_id,preference,active)" +
 					"   VALUES(?,?,?,?)");
 		
 			ps.setInt(1, hostStorage.getHostId());
@@ -4193,7 +4199,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM host_storage WHERE host_id=? AND storage_id=?");
+					"DELETE FROM " + settings.getDbTableName("host_storage") + " WHERE host_id=? AND storage_id=?");
 		
 			ps.setInt(1, hostId);
 			ps.setInt(2, storageId);
@@ -4225,7 +4231,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host_storage WHERE host_id=? AND storage_id=? AND active='t'");
+					"SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE host_id=? AND storage_id=? AND active='t'");
 		
 			ps.setInt(1, hostId);
 			ps.setInt(2, storageId);
@@ -4295,7 +4301,7 @@ public class VESchedulerDB {
 		try {
 	    
 			String query = 
-					"SELECT * FROM host_storage as hs, host, storage " +
+					"SELECT * FROM " + settings.getDbTableName("host_storage") + " as hs, " + settings.getDbTableName("host") + " as host, " + settings.getDbTableName("storage") + " as storage  " +
 					"	WHERE hs.active=? AND host.active=? AND storage.active=?" +
 					"   AND hs.host_id=host.id AND hs.storage_id=storage.id ";
 			if (hostId >= 0)
@@ -4364,7 +4370,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE host_storage SET preference=?,active=? " +
+					"UPDATE " + settings.getDbTableName("host_storage") + " SET preference=?,active=? " +
 					"	WHERE host_id=? AND storage_id=?");
 		
 			ps.setInt(1, hostStorage.getPreference());
@@ -4401,7 +4407,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE host_storage SET active=? WHERE host_id=? AND storage_id=?");
+					"UPDATE " + settings.getDbTableName("host_storage") + " SET active=? WHERE host_id=? AND storage_id=?");
 		
 			ps.setBoolean(1, status);
 			ps.setInt(2, hostId);
@@ -4437,7 +4443,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host_storage WHERE active='t' AND host_id=? ORDER BY preference");
+					"SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE active='t' AND host_id=? ORDER BY preference");
 	    
 			ps.setInt(1, host.getId());
 
@@ -4471,7 +4477,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host_storage WHERE active='t' AND storage_id=? ORDER BY preference");
+					"SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE active='t' AND storage_id=? ORDER BY preference");
 	    
 			ps.setInt(1, host.getId());
 
@@ -4511,8 +4517,8 @@ public class VESchedulerDB {
 	    try {
 
 	    	PreparedStatement ps = conn.prepareStatement(
-    		"SELECT host.*,count FROM host LEFT JOIN (SELECT host.id,count(host.id) " +
-    		"FROM host,ve_ins,ve_ins_sch WHERE host.active='t' AND ve_ins.active='t' " +
+    		"SELECT " + settings.getDbTableName("host") + " as host,count FROM " + settings.getDbTableName("host") + " as host LEFT JOIN (SELECT host.id,count(host.id) " +
+    		"FROM " + settings.getDbTableName("host") + " as host," + settings.getDbTableName("ve_ins") + " as ve_ins ," + settings.getDbTableName("ve_ins_sch") + " as ve_ins_sch  WHERE host.active='t' AND ve_ins.active='t' " +
     		"AND ve_ins_sch.active='t' AND host.id=ve_ins_sch.host_id AND " +
     		"ve_ins.id=ve_ins_sch.ve_ins_id AND " +
     		"((ve_ins_sch.start_time < ? AND ve_ins_sch.start_time >= ?) OR " +
@@ -4660,7 +4666,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"	ve_ins_host(ve_ins_id,host_id)" +
+					"	" + settings.getDbTableName("ve_ins_host") + "(ve_ins_id,host_id)" +
 					"   VALUES(?,?)");
 		
 			ps.setString(1, veInsHost.getVeInsId());
@@ -4693,7 +4699,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM ve_ins_host WHERE ve_ins_id=? AND host_id=?");
+					"DELETE FROM " + settings.getDbTableName("ve_ins_host") + " WHERE ve_ins_id=? AND host_id=?");
 		
 			ps.setString(1, veInsId);
 			ps.setInt(2, hostId);
@@ -4725,7 +4731,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM ve_ins_host WHERE ve_ins_id=?");
+					"DELETE FROM " + settings.getDbTableName("ve_ins_host") + " WHERE ve_ins_id=?");
 		
 			ps.setString(1, veInsId);
 			
@@ -4756,7 +4762,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins_host WHERE ve_ins_id=? AND host_id=?");
+					"SELECT * FROM " + settings.getDbTableName("ve_ins_host") + " WHERE ve_ins_id=? AND host_id=?");
 		
 			ps.setString(1, veInsId);
 			ps.setInt(2, hostId);
@@ -4795,7 +4801,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins_sch " +
+					"SELECT * FROM " + settings.getDbTableName("ve_ins_sch") + " " +
 					"	WHERE ve_ins_id=? and active='t' and done='f' and " +
 					"	start_time<=? and end_time>?");
 		
@@ -4851,7 +4857,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM vm_ins WHERE id=?");
+					"SELECT * FROM " + settings.getDbTableName("vm_ins") + " WHERE id=?");
 	    
 			ps.setString(1, vmInsId);
 			
@@ -4888,7 +4894,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins_host WHERE ve_ins_id=?");
+					"SELECT * FROM " + settings.getDbTableName("ve_ins_host") + " WHERE ve_ins_id=?");
 	    
 			ps.setString(1, veInsId);
 			
@@ -4927,7 +4933,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM ve_ins_sch" +
+					"DELETE FROM " + settings.getDbTableName("ve_ins_sch") + "" +
 					"	WHERE ve_ins_id=?"
 					);
 			
@@ -4950,7 +4956,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM ve_ins" +
+					"DELETE FROM " + settings.getDbTableName("ve_ins") + "" +
 					"	WHERE id=?"
 					);
 			
@@ -4975,7 +4981,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host_used_routers WHERE ve_ins_id=?");
+					"SELECT * FROM " + settings.getDbTableName("host_used_routers") + " WHERE ve_ins_id=?");
 			
 			ps.setString(1, veInsId);
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - isVEInsDispatched] ps: " + ps);
@@ -5004,7 +5010,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM host_used_routers " +
+						"SELECT * FROM " + settings.getDbTableName("host_used_routers") + " " +
 						"	WHERE ve_ins_id=?");
 			
 			ps.setString(1, veInsId);
@@ -5042,7 +5048,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM vm_ins WHERE ve_ins_id=? and name=?");
+					"SELECT * FROM " + settings.getDbTableName("vm_ins") + " WHERE ve_ins_id=? and name=?");
 	    
 			ps.setString(1, veInsId);
 			ps.setString(2, vmName);
@@ -5125,7 +5131,7 @@ public class VESchedulerDB {
 							"SELECT ins.id as ve_ins_id, sch.id as ve_ins_sch_id, " +
 							"	sch.host_id, ins.username, ins.ve_type, ins.storage_id, " +
 							"	ins.first_port, ins.num_ports, ins.first_mac, ins.num_macs " +
-							"	FROM ve_ins as ins, ve_ins_sch as sch, host " +
+							"	FROM " + settings.getDbTableName("ve_ins") + " as ins, " + settings.getDbTableName("ve_ins_sch") + " as sch, " + settings.getDbTableName("host") + " as host  " +
 							"	WHERE ins.id=sch.ve_ins_id AND sch.host_id=host.id AND " +
 							"	host.active='t' AND ins.active='t' AND sch.active='t' AND " +
 							"	sch.done='f' AND " +
@@ -5165,7 +5171,7 @@ public class VESchedulerDB {
 
 					PreparedStatement ps2 = 
 						conn.prepareStatement(
-								"SELECT router_id from host_used_routers " +
+								"SELECT router_id from " + settings.getDbTableName("host_used_routers") + " " +
 								"WHERE ve_ins_id=?");
 					
 					ps2.setString(1, veInsId);
@@ -5212,7 +5218,7 @@ public class VESchedulerDB {
 							"SELECT ins.id as ve_ins_id, sch.id as ve_ins_sch_id, " +
 							"	sch.host_id, ins.username, ins.ve_type, ins.storage_id, " +
 							"	ins.first_port, ins.num_ports, ins.first_mac, ins.num_macs " +
-							"	FROM ve_ins as ins, ve_ins_sch as sch, host " +
+							"	FROM " + settings.getDbTableName("ve_ins") + " as ins, " + settings.getDbTableName("ve_ins_sch") + " as sch, " + settings.getDbTableName("host") + " as host  " +
 							"	WHERE ins.id=sch.ve_ins_id AND sch.host_id=host.id AND " +
 							"	host.active='t' AND ins.active='t' AND sch.active='t' AND " +
 							"	sch.done='f' AND " +
@@ -5252,7 +5258,7 @@ public class VESchedulerDB {
 
 					PreparedStatement ps2 = 
 						conn.prepareStatement(
-								"SELECT * from host_used_routers " +
+								"SELECT * from " + settings.getDbTableName("host_used_routers") + " " +
 								"	WHERE host_id=? and ve_ins_id=?");
 					
 					ps2.setInt(1, hostId);
@@ -5312,7 +5318,7 @@ public class VESchedulerDB {
 			PreparedStatement ps = 
 				conn.prepareStatement(
 						"SELECT sch.host_id " +
-						"	FROM ve_ins as ins, ve_ins_sch as sch, host " +
+						"	FROM " + settings.getDbTableName("ve_ins") + " as ins, " + settings.getDbTableName("ve_ins_sch") + " as sch, " + settings.getDbTableName("host") + " as host  " +
 						"	WHERE ins.id=sch.ve_ins_id AND sch.host_id=host.id AND " +
 						"		host.active='t' AND ins.active='t' AND sch.active='t' " +
 						"		AND sch.done='f' AND (((ins.status='RUNNING' OR " +
@@ -5357,7 +5363,7 @@ public class VESchedulerDB {
 
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT COUNT(*) FROM user_group WHERE group_name=?");
+						"SELECT COUNT(*) FROM " + settings.getDbTableName("user_group") + " WHERE group_name=?");
 			ps.setString(1, groupName);
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getMigrationTasks] ps: " + ps);
 			ResultSet rs = ps.executeQuery();
@@ -5375,7 +5381,7 @@ public class VESchedulerDB {
 				
 				ps = 
 					conn.prepareStatement(
-							"SELECT SUM(ve_num_cap) FROM host WHERE active='t'");
+							"SELECT SUM(ve_num_cap) FROM " + settings.getDbTableName("host") + " as host  WHERE active='t'");
 				DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getMigrationTasks] ps: " + ps);
 				rs = ps.executeQuery();
 				int veNumCapTotal = 0;
@@ -5516,7 +5522,7 @@ public class VESchedulerDB {
 					
 					ps = 
 						conn.prepareStatement(
-								"SELECT username FROM user_group WHERE group_name=? order by id");
+								"SELECT username FROM " + settings.getDbTableName("user_group") + " WHERE group_name=? order by id");
 					ps.setString(1, groupName);
 					DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getMigrationTasks] ps: " + ps);
 					rs = ps.executeQuery();
@@ -5587,7 +5593,7 @@ public class VESchedulerDB {
 			int storageId = -1;
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM ve_ins WHERE username=?");
+						"SELECT * FROM " + settings.getDbTableName("ve_ins") + " WHERE username=?");
 			ps.setString(1, username);
 			DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getUserAssignedHost] ps: " + ps);
 			ResultSet rs = ps.executeQuery();
@@ -5600,7 +5606,7 @@ public class VESchedulerDB {
 			if (storageId >= 0) {
 				ps = 
 					conn.prepareStatement(
-					"SELECT * FROM host_storage WHERE storage_id=? AND preference=1");
+					"SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE storage_id=? AND preference=1");
 				ps.setInt(1, storageId);
 				DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getUserAssignedHost] ps: " + ps);
 				rs = ps.executeQuery();
@@ -5642,7 +5648,7 @@ public class VESchedulerDB {
 			PreparedStatement ps = conn.prepareStatement(
 					"SELECT storage_id,COUNT(*) " +
 					"	FROM (SELECT DISTINCT ins.username,storage_id " +
-					"		FROM user_group AS grp, ve_ins AS ins " +
+					"		FROM " + settings.getDbTableName("user_group") + " AS grp, " + settings.getDbTableName("ve_ins") + " AS ins " +
 					"		WHERE grp.group_name=? AND grp.username=ins.username " +
 					"		AND active='t' ORDER BY storage_id,username) AS foo GROUP BY storage_id");
 
@@ -5684,7 +5690,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host WHERE active='t' ORDER BY ve_num_cap DESC");
+					"SELECT * FROM " + settings.getDbTableName("host") + " as host  WHERE active='t' ORDER BY ve_num_cap DESC");
 			
 	    	DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getHostListOrderByRevVeNumCap] ps: " + ps);	
 			
@@ -5747,7 +5753,7 @@ public class VESchedulerDB {
 				
 				PreparedStatement ps = 
 					conn.prepareStatement(
-							"SELECT * FROM ve_ins WHERE username=?");
+							"SELECT * FROM " + settings.getDbTableName("ve_ins") + " WHERE username=?");
 				ps.setString(1, username);
 				DebugTools.println(DEBUG_LEVEL, "[VESchedulerDB - getMigrateUserTasks] ps: " + ps);
 				ResultSet rs = ps.executeQuery();
@@ -5794,7 +5800,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins WHERE username=? and ve_type=? and first_port=?");
+					"SELECT * FROM " + settings.getDbTableName("ve_ins") + " WHERE username=? and ve_type=? and first_port=?");
 	    
 			ps.setString(1, username);
 			ps.setString(2, veTypeName);
@@ -5863,7 +5869,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM promo_kserver WHERE promo_id=?");
+					"SELECT * FROM " + settings.getDbTableName("promo_kserver") + " WHERE promo_id=?");
 	    
 			ps.setInt(1, promoId);
 			
@@ -5903,7 +5909,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host_storage WHERE storage_id=? ORDER BY preference");
+					"SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE storage_id=? ORDER BY preference");
 	    
 			ps.setInt(1, storageId);
 			
@@ -5940,7 +5946,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM host_storage WHERE host_id=? ORDER BY preference");
+					"SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE host_id=? ORDER BY preference");
 	    
 			ps.setInt(1, hostId);
 			
@@ -5977,7 +5983,7 @@ public class VESchedulerDB {
 	    try {
 	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT storage_id FROM ve_ins WHERE " +
+	    		"SELECT storage_id FROM " + settings.getDbTableName("ve_ins") + " WHERE " +
 	    		"	active='t' AND username=?");
 		    
 			ps.setString(1, username);
@@ -6027,17 +6033,17 @@ public class VESchedulerDB {
 		    		"SELECT sc.storage_id, sc.count, ve_num_cap, gb_size, " +
 		    		"gb_size*ve_num_cap/(sc.count+1)::float as free_cap " +
 		    		"from (select s.id as storage_id, COALESCE(count, 0) as count " +
-		    		"from storage as s left join (select storage_id, count(*) " +
-		    		"from ve_ins where active ='t' and update_ts >= now() - " +
+		    		"from " + settings.getDbTableName("storage") + " as s left join (select storage_id, count(*) " +
+		    		"from " + settings.getDbTableName("ve_ins") + " where active ='t' and update_ts >= now() - " +
 		    		"'1 month'::interval group by storage_id order by storage_id) " +
-		    		"as t on s.id=t.storage_id) as sc, storage, host where " +
+		    		"as t on s.id=t.storage_id) as sc, " + settings.getDbTableName("storage") + " as storage , " + settings.getDbTableName("host") + " as host  where " +
 		    		"sc.storage_id=storage.id and sc.storage_id=host.id order by " +
 		    		"free_cap desc");
 	    	/*
 	    	PreparedStatement ps = conn.prepareStatement(
 		    		"SELECT sc.storage_id, sc.count, ve_num_cap, gb_size, " +
 	    			"gb_size*ve_num_cap/(sc.count+1)::float as free_cap " +
-	    			"from (select storage_id, count(*) from ve_ins " +
+	    			"from (select storage_id, count(*) from " + settings.getDbTableName("ve_ins") + " " +
 	    			"where active ='t' and update_ts >= now() - '1 month'::interval " +
 	    			"group by storage_id order by storage_id) as sc, " +
 	    			"storage, host where sc.storage_id=storage.id and " +
@@ -6050,10 +6056,10 @@ public class VESchedulerDB {
 	    		"		(SELECT storage.id AS storage_id, tmp1.username, tmp1.count " +
 	    		"			FROM storage LEFT JOIN " +
 	    		"				(SELECT storage_id,username,count(*) " +
-	    		"					FROM ve_ins GROUP BY storage_id,username ORDER BY storage_id) as tmp1 " +
+	    		"					FROM " + settings.getDbTableName("ve_ins") + " GROUP BY storage_id,username ORDER BY storage_id) as tmp1 " +
 	    		"						ON storage.id=tmp1.storage_id) AS tmp " +
 	    		"			GROUP BY storage_id) AS tmp2, " +
-	    		"			(SELECT * FROM host_storage WHERE active='t' AND preference=1) AS hs,host,storage " +
+	    		"			(SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE active='t' AND preference=1) AS hs,host,storage " +
 	    		"				WHERE tmp2.storage_id=hs.storage_id AND hs.host_id=host.id AND " +
 	    		"					host.new_assignment='t' AND host.active='t' AND tmp2.storage_id=storage.id " +
 	    		"					AND storage.active='t'");
@@ -6063,9 +6069,9 @@ public class VESchedulerDB {
 		    		"SELECT tmp2.storage_id,count,host_id,ve_num_cap FROM " +
 		    		"	(SELECT storage_id,count(*) FROM " +
 		    		"		(SELECT storage_id,username,count(*) FROM " +
-		    		"			ve_ins GROUP BY storage_id,username ORDER BY storage_id) AS tmp " +
+		    		"			" + settings.getDbTableName("ve_ins") + " GROUP BY storage_id,username ORDER BY storage_id) AS tmp " +
 		    		"			GROUP BY storage_id) AS tmp2, " +
-		    		"			(SELECT * FROM host_storage WHERE active='t' AND preference=1) AS hs,host,storage " +
+		    		"			(SELECT * FROM " + settings.getDbTableName("host_storage") + " WHERE active='t' AND preference=1) AS hs,host,storage " +
 		    		"				WHERE tmp2.storage_id=hs.storage_id AND hs.host_id=host.id AND " +
 		    		"					host.new_assignment='t' AND host.active='t' AND tmp2.storage_id=storage.id " +
 		    		"					AND storage.active='t'");
@@ -6142,7 +6148,7 @@ public class VESchedulerDB {
 
 	    	PreparedStatement ps = conn.prepareStatement(
     		"SELECT host.*,count FROM host LEFT JOIN (SELECT host.id,count(host.id) " +
-    		"FROM host,ve_ins,ve_ins_sch WHERE host.active='t' AND ve_ins.active='t' " +
+    		"FROM host," + settings.getDbTableName("ve_ins") + "," + settings.getDbTableName("ve_ins_sch") + " as ve_ins_sch  WHERE host.active='t' AND ve_ins.active='t' " +
     		"AND ve_ins_sch.active='t' AND host.id=ve_ins_sch.host_id AND " +
     		"ve_ins.id=ve_ins_sch.ve_ins_id AND " +
     		"((ve_ins_sch.start_time < ? AND ve_ins_sch.start_time >= ?) OR " +
@@ -6252,7 +6258,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM kserver WHERE id=?");
+					"SELECT * FROM " + settings.getDbTableName("kserver") + " WHERE id=?");
 	    
 			ps.setInt(1, id);
 			
@@ -6303,7 +6309,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM ve_ins WHERE username=? AND id=?");
+					"SELECT * FROM " + settings.getDbTableName("ve_ins") + " WHERE username=? AND id=?");
 	    
 			ps.setString(1, username);
 			ps.setString(2, veInsId);
@@ -6350,7 +6356,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM kserver WHERE name=?");
+					"SELECT * FROM " + settings.getDbTableName("kserver") + " WHERE name=?");
 	    
 			String shortKserverName = kserverName;
 			if (shortKserverName.contains("http://"))
@@ -6409,7 +6415,7 @@ public class VESchedulerDB {
 		try {
 	
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE kserver SET name=?,http_port=?,username=?,password=?," +
+					"UPDATE " + settings.getDbTableName("kserver") + " SET name=?,http_port=?,username=?,password=?," +
 					"total_cap=?,active_cap=?,active=?," +
 					"new_assignment=? " +
 					"WHERE id=?");
@@ -6462,7 +6468,7 @@ public class VESchedulerDB {
 			
 		/*
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT count(*) FROM ve_ins WHERE kserver_id=?");
+					"SELECT count(*) FROM " + settings.getDbTableName("ve_ins") + " WHERE kserver_id=?");
 			
 			ps.setInt(1, id);
 			
@@ -6485,7 +6491,7 @@ public class VESchedulerDB {
 			if (count == 0) {
 			*/
 				PreparedStatement ps = conn.prepareStatement(
-				"DELETE from kserver where id=?");
+				"DELETE from " + settings.getDbTableName("kserver") + " where id=?");
 		
 				ps.setInt(1, id);
 				
@@ -6526,7 +6532,7 @@ public class VESchedulerDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"INSERT INTO kserver(name,http_port,username,password,total_cap," +
+    				"INSERT INTO " + settings.getDbTableName("kserver") + "(name,http_port,username,password,total_cap," +
     				"active_cap,active,new_assignment) " +
     				"VALUES(?,?,?,?,?,?,?,?) " +
     				"RETURNING id");
@@ -6596,7 +6602,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM kserver WHERE active=? and new_assignment=? ORDER BY id");
+					"SELECT * FROM " + settings.getDbTableName("kserver") + " WHERE active=? and new_assignment=? ORDER BY id");
 	    
 			ps.setBoolean(1, active);
 			ps.setBoolean(2, newAssignment);
@@ -6649,7 +6655,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM kserver");
+					"SELECT * FROM " + settings.getDbTableName("kserver") + "");
 	    
 			DebugTools.println(DEBUG_LEVEL, "[getMaxKServerId] ps: " + ps);
 			
@@ -6694,7 +6700,7 @@ public class VESchedulerDB {
 	    try {
 	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT kserver_id,start_time,end_time FROM ve_ins,ve_ins_sch WHERE " +
+	    		"SELECT kserver_id,start_time,end_time FROM " + settings.getDbTableName("ve_ins") + " as ve_ins ," + settings.getDbTableName("ve_ins_sch") + " as ve_ins_sch  WHERE " +
 	    		"ve_ins.active='t' AND ve_ins_sch.active='t' AND kserver_id=? " +
 	    		"AND ve_ins.id=ve_ins_sch.ve_ins_id AND" +
 	    		"((start_time < ? AND start_time >= ?) OR " +
@@ -6780,7 +6786,7 @@ public class VESchedulerDB {
 		try {
 		
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * from kserver_maintenance_sch WHERE id=?"
+					"SELECT * from " + settings.getDbTableName("kserver_maintenance_sch") + " WHERE id=?"
 					);
 			
 			ps.setString(1, id);
@@ -6833,7 +6839,7 @@ public class VESchedulerDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE kserver_maintenance_sch " +
+					"UPDATE " + settings.getDbTableName("kserver_maintenance_sch") + " " +
 					"SET kserver_id=?,start_time=?,end_time=?,active=? " +
 					"WHERE id=?"
 					);
@@ -6886,7 +6892,7 @@ public class VESchedulerDB {
 			
 			PreparedStatement ps = conn.prepareStatement(
 					"INSERT INTO " +
-					"kserver_maintenance_sch(id,kserver_id,start_time,end_time,active) " +
+					"" + settings.getDbTableName("kserver_maintenance_sch") + "(id,kserver_id,start_time,end_time,active) " +
 					"VALUES(?,?,?,?,?) "
 					);
 			
@@ -6943,7 +6949,7 @@ public class VESchedulerDB {
 	    try {
 	
 	    	PreparedStatement ps = conn.prepareStatement(
-	    		"SELECT * FROM kserver_maintenance_sch WHERE kserver_id=? AND active='t' AND" +
+	    		"SELECT * FROM " + settings.getDbTableName("kserver_maintenance_sch") + " WHERE kserver_id=? AND active='t' AND" +
 	    		"((start_time < ? AND start_time >= ?) OR " +
 	    		"(end_time > ? AND end_time <= ?) OR" +
 	    		"(start_time < ? AND end_time > ?))");
@@ -7010,7 +7016,7 @@ public class VESchedulerDB {
 
 	    	PreparedStatement ps = 
 	    		conn.prepareStatement(
-	    			"SELECT * FROM host_kserver WHERE host_id=? ORDER BY preference");
+	    			"SELECT * FROM " + settings.getDbTableName("host_kserver") + " WHERE host_id=? ORDER BY preference");
 	    			
     		ps.setInt(1, host.getId());
     		
@@ -7052,7 +7058,7 @@ public class VESchedulerDB {
 		try {
 
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE ve_ins SET kserver_id=? WHERE id=?");
+					"UPDATE " + settings.getDbTableName("ve_ins") + " SET kserver_id=? WHERE id=?");
 
 			ps.setInt(1, kServerId);
 			ps.setString(2, veInsId);
@@ -7092,7 +7098,7 @@ public class VESchedulerDB {
 
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM user_group WHERE group_name=?");
+						"SELECT * FROM " + settings.getDbTableName("user_group") + " WHERE group_name=?");
 			
 			ps.setString(1, groupName);
 			
@@ -7140,7 +7146,7 @@ public class VESchedulerDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"INSERT INTO tenant(ve_ins_id,username,password,kserver_id,customer_id,account_id,group_id,url,end_date,agents,admins) " +
+    				"INSERT INTO " + settings.getDbTableName("tenant") + "(ve_ins_id,username,password,kserver_id,customer_id,account_id,group_id,url,end_date,agents,admins) " +
     				"VALUES(?,?,?,?,?,?,?,?,?,?,?)");
     		
     		ps.setString(1, tenant.getVeInsId());
@@ -7202,7 +7208,7 @@ public class VESchedulerDB {
     			PreparedStatement ps = conn.prepareStatement(
     					// start changes
     					// SMS: I added -_____@ to make sure the its-fw and its-fw-63 do not mix!
-    					"SELECT * FROM tenant WHERE username LIKE '" + promoCode.toLowerCase() + "-_____@%' ORDER BY username DESC");
+    					"SELECT * FROM " + settings.getDbTableName("tenant") + " WHERE username LIKE '" + promoCode.toLowerCase() + "-_____@%' ORDER BY username DESC");
     					// "SELECT * FROM tenant WHERE username LIKE '" + promoCode.toLowerCase() + "%' ORDER BY username DESC");
     					// end changes
 
@@ -7274,7 +7280,7 @@ public class VESchedulerDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"UPDATE tenant SET password = ? WHERE username = ?");
+    				"UPDATE " + settings.getDbTableName("tenant") + " SET password = ? WHERE username = ?");
     		
     		ps.setString(1, password);
     		ps.setString(2, username);
@@ -7317,7 +7323,7 @@ public class VESchedulerDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"UPDATE tenant SET username=?, password=?, kserver_id=?, customer_id=?, " +
+    				"UPDATE " + settings.getDbTableName("tenant") + " SET username=?, password=?, kserver_id=?, customer_id=?, " +
     				"account_id=?, group_id=?, url=?, end_date=?, agents=?, admins=? " +
     				"WHERE ve_ins_id = ?");
 
@@ -7372,7 +7378,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM tenant WHERE username=?");
+					"SELECT * FROM " + settings.getDbTableName("tenant") + " WHERE username=?");
 	    
 			ps.setString(1, username);
 			
@@ -7432,7 +7438,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM tenant WHERE ve_ins_id=?");
+					"SELECT * FROM " + settings.getDbTableName("tenant") + " WHERE ve_ins_id=?");
 	    
 			ps.setString(1, veInsId);
 			
@@ -7486,7 +7492,7 @@ public class VESchedulerDB {
 		
 		try {
 				PreparedStatement ps = conn.prepareStatement(
-				"DELETE from tenant where ve_ins_id = ?");
+				"DELETE from " + settings.getDbTableName("tenant") + " where ve_ins_id = ?");
 		
 				ps.setString(1, veInsId);
 				
@@ -7522,7 +7528,7 @@ public class VESchedulerDB {
 		try {
 
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE tenant SET ve_ins_id = 'Tenant is disabled!' where ve_ins_id = ?");
+					"UPDATE " + settings.getDbTableName("tenant") + " SET ve_ins_id = 'Tenant is disabled!' where ve_ins_id = ?");
 
 			ps.setString(1, veInsId);
 
@@ -7559,7 +7565,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM tenant WHERE password=''");
+					"SELECT * FROM " + settings.getDbTableName("tenant") + " WHERE password=''");
 	    
 			DebugTools.println(MY_DL, "[VESchedulerDB - isAnotherTenantBeingCreated] ps: " + ps);
 			
@@ -7601,8 +7607,8 @@ public class VESchedulerDB {
 
 			PreparedStatement ps = 
 				conn.prepareStatement(
-					"UPDATE ve_ins_sch SET active='f', done='t' where id in " +
-					"(SELECT sch.id FROM ve_ins as ins, ve_ins_sch as sch " +
+					"UPDATE " + settings.getDbTableName("ve_ins_sch") + " SET active='f', done='t' where id in " +
+					"(SELECT sch.id FROM " + settings.getDbTableName("ve_ins") + " as ins, " + settings.getDbTableName("ve_ins_sch") + " as sch " +
 					"WHERE ins.id=sch.ve_ins_id AND ins.active='t' AND sch.active='t' AND sch.done='f' " +
 					"AND (ins.status=? OR ins.status=? OR ins.status=?) " +
 					"AND sch.start_time<=now() AND sch.end_time<=now())");
@@ -7682,7 +7688,7 @@ public class VESchedulerDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"INSERT INTO tenant_created(username) " +
+    				"INSERT INTO " + settings.getDbTableName("tenant_created") + "(username) " +
     				"VALUES(?)");
     		
     		ps.setString(1, username);
@@ -7718,7 +7724,7 @@ public class VESchedulerDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM tenant_created WHERE username=?");
+					"SELECT * FROM " + settings.getDbTableName("tenant_created") + " WHERE username=?");
 	    
 			ps.setString(1, username);
 			

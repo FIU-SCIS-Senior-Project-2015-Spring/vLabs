@@ -14,6 +14,7 @@ public class QuotaSystemSettings {
     private String dbPassword;
     private String dbHost;
     private String dbName;
+	private String dbTablePrefix;
     private int debugLevel;
   
     /**
@@ -37,6 +38,7 @@ public class QuotaSystemSettings {
 		dbPassword = settings.getProperty("quotasystem_db_password");
 		dbHost = settings.getProperty("quotasystem_db_host");
 		dbName = settings.getProperty("quotasystem_db_name");
+		dbTablePrefix = settings.getProperty("quotasystem_db_table_prefix");
 		debugLevel = Integer.valueOf(settings.getProperty("debug_level")).intValue();
 
     }
@@ -99,17 +101,20 @@ public class QuotaSystemSettings {
     public String getDbName() { return dbName; }
     public int getDebugLevel() { return debugLevel; }
 	public String getVirtualLabsEPR() { return virtualLabsEPR; }
-    
+	public String getDbTablePrefix() { return dbTablePrefix; }
+	public String getDbTableName(String dbTableName) { return getDbTablePrefix()+dbTableName; }
+
 	public String toString() {
-		
+
 		return
-			"\n" +
-			"virtualLabsEPR: " + virtualLabsEPR + "\n" +
-			"dbUser: " + dbUser + "\n" +
-			"dbPassword: " + dbPassword + "\n" + 
-			"dbHost: " + dbHost + "\n" +
-			"dbName: " +dbName;
-	
+				"virtualLabsEPR: " + virtualLabsEPR + "\n" +
+				"dbUser: " + dbUser + "\n" +
+				"dbPassword: " + dbPassword + "\n" +
+				"dbHost: " + dbHost + "\n" +
+				"dbName: " + dbName + "\n" +
+				"dbTablePrefix: " + dbTablePrefix + "\n" +
+				"debugLevel: " + debugLevel + "\n" ;
+
 	}
 
 }

@@ -70,9 +70,9 @@ public class VirtualLabsDB {
 
 		try {
 			
-			Class.forName("org.postgresql.Driver");
+			Class.forName("com.mysql.jdbc.Driver");
 
-			conn = DriverManager.getConnection("jdbc:postgresql://" + host + "/" + database, user, password);
+			conn = DriverManager.getConnection("jdbc:mysql://" + host + "/" + database, user, password);
 
 		}
 
@@ -119,7 +119,7 @@ public class VirtualLabsDB {
 
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM appointments WHERE affiliation_id = ?" );
+						"SELECT * FROM " + settings.getDbTableName("appointments") + " WHERE affiliation_id = ?" );
 			ps.setString(1, affiliationId);	 	    
 			ResultSet rs = ps.executeQuery();
 
@@ -168,7 +168,7 @@ public class VirtualLabsDB {
 		try {
 
 			PreparedStatement ps = 
-				conn.prepareStatement("SELECT * FROM appointments WHERE sch_id = ?" );
+				conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("appointments") + " WHERE sch_id = ?" );
 			ps.setString(1, schId);
 
 			ResultSet rs = ps.executeQuery();
@@ -209,7 +209,7 @@ public class VirtualLabsDB {
 		try {
 
 			PreparedStatement ps = 
-				conn.prepareStatement("UPDATE appointments SET " +
+				conn.prepareStatement("UPDATE " + settings.getDbTableName("appointments") + " SET " +
 						"quota_id = ?," +
 						"affiliation_id = ?," +
 						"username = ?," +
@@ -273,7 +273,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"INSERT INTO appointments  " +
+						"INSERT INTO " + settings.getDbTableName("appointments") + "  " +
 						"(sch_id, quota_id, affiliation_id, username, course, resource_type, active) " +
 						"values(?,?,?,?,?,?,?)");
 			ps.setString(1, app.getSchId());
@@ -378,7 +378,7 @@ public class VirtualLabsDB {
 		try {
 			// Try to find the user by username
 			PreparedStatement ps = 
-				conn.prepareStatement("SELECT * FROM appointments WHERE sch_id = ? and active = 't'");
+				conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("appointments") + " WHERE sch_id = ? and active = 't'");
 			ps.setString(1, app.getSchId());
 
 			ResultSet rs = ps.executeQuery();
@@ -693,7 +693,7 @@ public class VirtualLabsDB {
 				if((password == null) || (password == "")) {
 					// delete the cached record
 					PreparedStatement ps = conn.prepareStatement(
-							"DELETE FROM cached_password " +
+							"DELETE FROM " + settings.getDbTableName("cached_password") + " " +
 							"	WHERE username=?");				
 					ps.setString(1, userName);
 					DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - setUserCachedPassword] ps:" + ps);
@@ -703,7 +703,7 @@ public class VirtualLabsDB {
 				} else if (cachedPassword != null) {
 					// else if a record for the user exists, then update the record
 					PreparedStatement ps = conn.prepareStatement(
-							"UPDATE cached_password SET password = ? WHERE username = ?");
+							"UPDATE " + settings.getDbTableName("cached_password") + " SET password = ? WHERE username = ?");
 					ps.setString(1, encryptedPassword);
 					ps.setString(2, userName);
 					DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - setUserCachedPassword] ps:" + ps);
@@ -713,7 +713,7 @@ public class VirtualLabsDB {
 					// else add it
 					PreparedStatement ps = conn.prepareStatement(
 							"INSERT INTO " +
-									"	cached_password(username, password) " +
+									"	" + settings.getDbTableName("cached_password") + "(username, password) " +
 							"	VALUES(?,?)");
 					ps.setString(1, userName);
 					ps.setString(2, encryptedPassword);
@@ -751,7 +751,7 @@ public class VirtualLabsDB {
 
 			// Try to find the cached password by userName
 			PreparedStatement ps = conn.prepareStatement(
-				"SELECT * FROM cached_password WHERE username = ?");
+				"SELECT * FROM " + settings.getDbTableName("cached_password") + " WHERE username = ?");
 			ps.setString(1, userName);
 
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - getUserCachedPassword] ps:" + ps);
@@ -798,7 +798,7 @@ public class VirtualLabsDB {
 		try {
 
 			PreparedStatement ps = conn.prepareStatement(
-				"SELECT * FROM cached_password");
+				"SELECT * FROM " + settings.getDbTableName("cached_password") + "");
 
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - getUsernamesFromUserCachedPassword] ps:" + ps);
 			
@@ -852,7 +852,7 @@ public class VirtualLabsDB {
 		try {
 
 			PreparedStatement ps = 
-				conn.prepareStatement("DELETE FROM cached_password WHERE username = ?");
+				conn.prepareStatement("DELETE FROM " + settings.getDbTableName("cached_password") + " WHERE username = ?");
 			ps.setString(1, username);
 			
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - delUserCachedPassword] ps: " + ps);
@@ -1056,7 +1056,7 @@ public class VirtualLabsDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-					"DELETE FROM appointments " +
+					"DELETE FROM " + settings.getDbTableName("appointments") + " " +
 					"	WHERE username=?");
 			
 			ps.setString(1, userName);
@@ -1130,7 +1130,7 @@ public class VirtualLabsDB {
 			try {
 
 				String role = getUserRole(user);
-				PreparedStatement ps = conn.prepareStatement("SELECT * FROM role_resource WHERE user_role = ? ");
+				PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("role_resource") + " WHERE user_role = ? ");
 				ps.setString(1, role);
 
 				ResultSet rs = ps.executeQuery();
@@ -1170,7 +1170,7 @@ public class VirtualLabsDB {
 
 			if (flag) {
 				
-				PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM user_course WHERE username = ? and course = ?");
+				PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("user_course") + " WHERE username = ? and course = ?");
 				ps1.setString(1, user);
 				ps1.setString(2, course);
 
@@ -1187,7 +1187,7 @@ public class VirtualLabsDB {
 
 				PreparedStatement ps = 
 					conn.prepareStatement(
-					"INSERT INTO user_course(username, course) VALUES(?,?)");
+					"INSERT INTO " + settings.getDbTableName("user_course") + "(username, course) VALUES(?,?)");
 
 				ps.setString(1, user);
 				ps.setString(2, course);
@@ -1202,7 +1202,7 @@ public class VirtualLabsDB {
 			}
 			else {
 				
-				PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM user_course WHERE username = ? and course = ?");
+				PreparedStatement ps1 = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("user_course") + " WHERE username = ? and course = ?");
 				ps1.setString(1, user);
 				ps1.setString(2, course);
 
@@ -1219,7 +1219,7 @@ public class VirtualLabsDB {
 
 				PreparedStatement ps = 
 					conn.prepareStatement(
-					"DELETE FROM user_course WHERE username = ? and course = ?");
+					"DELETE FROM " + settings.getDbTableName("user_course") + " WHERE username = ? and course = ?");
 
 				ps.setString(1, user);
 				ps.setString(2, course);
@@ -1231,7 +1231,7 @@ public class VirtualLabsDB {
 				ps.close();
 			
 				ps = 
-					conn.prepareStatement("DELETE FROM appointments WHERE username = ? and course = ?");
+					conn.prepareStatement("DELETE FROM " + settings.getDbTableName("appointments") + " WHERE username = ? and course = ?");
 				ps.setString(1, user);
 				ps.setString(2, course);
 				
@@ -1281,11 +1281,11 @@ public class VirtualLabsDB {
 				
 				if (user.equals(VirtualLabs.ALL_STUDENTS)) {
 					
-					ps = conn.prepareStatement("SELECT course FROM user_course GROUP BY course ORDER BY course");
+					ps = conn.prepareStatement("SELECT course FROM " + settings.getDbTableName("user_course") + " GROUP BY course ORDER BY course");
 				
 				} else {
 
-					ps = conn.prepareStatement("SELECT course FROM user_course WHERE username = ? ");
+					ps = conn.prepareStatement("SELECT course FROM " + settings.getDbTableName("user_course") + " WHERE username = ? ");
 					ps.setString(1, user);
 					
 				}				
@@ -1322,7 +1322,7 @@ public class VirtualLabsDB {
 
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM ve_types WHERE course = ? and resource_type = ?" );
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("ve_types") + " WHERE course = ? and resource_type = ?" );
 			ps.setString(1, course);
 			ps.setString(2, resourceType.toUpperCase());
 
@@ -1745,7 +1745,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM vm_ins_task " +
+						"SELECT * FROM " + settings.getDbTableName("vm_ins_task") + " " +
 						"	WHERE mac_address=? and active='t' and execution_time<Now() " +
 						"	ORDER BY execution_time");
 			
@@ -1809,7 +1809,7 @@ public class VirtualLabsDB {
 			PreparedStatement ps =
 				conn.prepareStatement(
 						"INSERT INTO " +
-						"	vm_ins_task(mac_address,task," +
+						"	" + settings.getDbTableName("vm_ins_task") + "(mac_address,task," +
 						"		execution_time,active) " +
 						"   VALUES(?,?,?,?) " +
 						"   RETURNING id");
@@ -1851,7 +1851,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM vm_ins_task " +
+						"SELECT * FROM " + settings.getDbTableName("vm_ins_task") + " " +
 						"	WHERE mac_address=? and active='t' " +
 						"	ORDER BY execution_time");
 			
@@ -1910,7 +1910,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"UPDATE vm_ins_task " +
+						"UPDATE " + settings.getDbTableName("vm_ins_task") + " " +
 						"	SET mac_address=?,task=?,execution_time=?,active=? " +
 						"	WHERE id=?");
 			
@@ -1948,7 +1948,7 @@ public class VirtualLabsDB {
 			PreparedStatement ps =
 				conn.prepareStatement(
 						"INSERT INTO " +
-						"	vm_ins_sync_user_task(task_id,username,password,active) " +
+						"	" + settings.getDbTableName("vm_ins_sync_user_task") + "(task_id,username,password,active) " +
 						"   VALUES(?,?,?,?) ");
 		
 			ps.setInt(1, vmInsSyncUserTask.getTaskId());
@@ -1983,7 +1983,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM vm_ins_sync_user_task " +
+						"SELECT * FROM " + settings.getDbTableName("vm_ins_sync_user_task") + " " +
 						"	WHERE task_id=? ");
 			
 			ps.setInt(1, taskId);
@@ -2029,7 +2029,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"UPDATE vm_ins_sync_user_task " +
+						"UPDATE " + settings.getDbTableName("vm_ins_sync_user_task") + " " +
 						"	SET username=?,password=?,active=? " +
 						"	WHERE task_id=?");
 			
@@ -2127,7 +2127,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM ve_types WHERE course=?");
+						"SELECT * FROM " + settings.getDbTableName("ve_types") + " WHERE course=?");
 			
 			ps.setString(1, courseName);
 			
@@ -2140,7 +2140,7 @@ public class VirtualLabsDB {
 				PreparedStatement ps2 = 
 					conn.prepareStatement(
 							"INSERT INTO " +
-							"	ve_types(ve_type,course,resource_type,active) " +
+							"	" + settings.getDbTableName("ve_types") + "(ve_type,course,resource_type,active) " +
 							"	values(?,?,?,?)");
 				
 				// TODO
@@ -2157,7 +2157,7 @@ public class VirtualLabsDB {
 				ps2 = 
 					conn.prepareStatement(
 							"INSERT INTO " +
-							"	ve_types(ve_type,course,resource_type,active) " +
+							"	" + settings.getDbTableName("ve_types") + "(ve_type,course,resource_type,active) " +
 							"	values(?,?,?,?)");
 				
 				// TODO
@@ -2203,7 +2203,7 @@ public class VirtualLabsDB {
 			
 			PreparedStatement ps = 
 				conn.prepareStatement(
-						"SELECT * FROM role_resource WHERE user_role=? ");
+						"SELECT * FROM " + settings.getDbTableName("role_resource") + " WHERE user_role=? ");
 			
 			ps.setString(1, userRole);
 			
@@ -2328,7 +2328,7 @@ public class VirtualLabsDB {
 				try {
 					PreparedStatement ps = 
 						conn.prepareStatement(
-								"SELECT id FROM vm_ins_task " +
+								"SELECT id FROM " + settings.getDbTableName("vm_ins_task") + " " +
 								"	WHERE mac_address=?");
 					ps.setString(1, macAddress[i]);
 					DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - deleteVMTasks] ps: " + ps);
@@ -2337,7 +2337,7 @@ public class VirtualLabsDB {
 						int taskId = rs.getInt("id");
 						PreparedStatement ps2 =
 							conn.prepareStatement(
-									"DELETE FROM vm_ins_sync_user_task " +
+									"DELETE FROM " + settings.getDbTableName("vm_ins_sync_user_task") + " " +
 									"	WHERE task_id=?");
 						ps2.setInt(1, taskId);
 						DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - deleteVMTasks] ps2: " + ps2);
@@ -2349,7 +2349,7 @@ public class VirtualLabsDB {
 					
 					PreparedStatement ps3 = 
 						conn.prepareStatement(
-								"DELETE FROM vm_ins_task " +
+								"DELETE FROM " + settings.getDbTableName("vm_ins_task") + " " +
 								"	WHERE mac_address=?");
 					ps3.setString(1, macAddress[i]);
 					DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - deleteVMTasks] ps3: " + ps3);
@@ -2431,7 +2431,7 @@ public class VirtualLabsDB {
 		try {
 
 			PreparedStatement ps = 
-				conn.prepareStatement("SELECT c.username, p.user_role FROM user_course as c,user_profile as p WHERE course=? AND c.username=p.username AND user_role=? ORDER BY username");
+				conn.prepareStatement("SELECT c.username, p.user_role FROM " + settings.getDbTableName("user_course") + " as c,user_profile as p WHERE course=? AND c.username=p.username AND user_role=? ORDER BY username");
 
 			ps.setString(1, course);
 			ps.setString(2, "STUDENT");
@@ -2473,7 +2473,7 @@ public class VirtualLabsDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"INSERT INTO course(id,full_name,short_name,promo_code) " +
+    				"INSERT INTO " + settings.getDbTableName("course") + "(id,full_name,short_name,promo_code) " +
     				"VALUES(?,?,?,?)");
     		
     		ps.setInt(1, course.getId());
@@ -2515,7 +2515,7 @@ public class VirtualLabsDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM course WHERE full_name=?");
+					"SELECT * FROM " + settings.getDbTableName("course") + " WHERE full_name=?");
 	    
 			ps.setString(1, fullName);
 			
@@ -2565,7 +2565,7 @@ public class VirtualLabsDB {
 		Course course = null;
 		try {
 
-			PreparedStatement ps = conn.prepareStatement("SELECT * FROM course WHERE id = ?");
+			PreparedStatement ps = conn.prepareStatement("SELECT * FROM " + settings.getDbTableName("course") + " WHERE id = ?");
 			ps.setInt(1, id);
 
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB] ps: " + ps);
@@ -2609,7 +2609,7 @@ public class VirtualLabsDB {
 			if (!oldCourse.getFullName().equals(course.getFullName())) {
 				
 				PreparedStatement ps = 
-					conn.prepareStatement("UPDATE ve_types SET course = ? WHERE course = ?");
+					conn.prepareStatement("UPDATE " + settings.getDbTableName("ve_types") + " SET course = ? WHERE course = ?");
 				ps.setString(1, course.getFullName());
 				ps.setString(2, oldCourse.getFullName());
 				
@@ -2619,7 +2619,7 @@ public class VirtualLabsDB {
 				ps.close();
 				
 				ps = 
-					conn.prepareStatement("UPDATE appointments SET course = ? WHERE course = ?");
+					conn.prepareStatement("UPDATE " + settings.getDbTableName("appointments") + " SET course = ? WHERE course = ?");
 				ps.setString(1, course.getFullName());
 				ps.setString(2, oldCourse.getFullName());
 				
@@ -2629,7 +2629,7 @@ public class VirtualLabsDB {
 				ps.close();
 				
 				ps = 
-					conn.prepareStatement("UPDATE user_ve_instances SET course = ? WHERE course = ?");
+					conn.prepareStatement("UPDATE " + settings.getDbTableName("user_ve_instances") + " SET course = ? WHERE course = ?");
 				ps.setString(1, course.getFullName());
 				ps.setString(2, oldCourse.getFullName());
 				
@@ -2639,7 +2639,7 @@ public class VirtualLabsDB {
 				ps.close();
 				
 				ps = 
-					conn.prepareStatement("UPDATE user_course SET course = ? WHERE course = ?");
+					conn.prepareStatement("UPDATE " + settings.getDbTableName("user_course") + " SET course = ? WHERE course = ?");
 				ps.setString(1, course.getFullName());
 				ps.setString(2, oldCourse.getFullName());
 				
@@ -2651,7 +2651,7 @@ public class VirtualLabsDB {
 			}
 			
 			PreparedStatement ps = 
-				conn.prepareStatement("UPDATE course SET full_name =?, short_name=?, promo_code=? WHERE id = ?");
+				conn.prepareStatement("UPDATE " + settings.getDbTableName("course") + " SET full_name =?, short_name=?, promo_code=? WHERE id = ?");
 			ps.setString(1, course.getFullName());
 			ps.setString(2, course.getShortName());
 			ps.setString(3, course.getPromoCode());
@@ -2683,7 +2683,7 @@ public class VirtualLabsDB {
 		try {
 
 			PreparedStatement ps = 
-				conn.prepareStatement("DELETE FROM ve_types WHERE course = ?");
+				conn.prepareStatement("DELETE FROM " + settings.getDbTableName("ve_types") + " WHERE course = ?");
 			ps.setString(1, course.getFullName());
 			
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB] ps: " + ps);
@@ -2692,7 +2692,7 @@ public class VirtualLabsDB {
 			ps.close();
 			
 			ps = 
-				conn.prepareStatement("DELETE FROM appointments WHERE course = ?");
+				conn.prepareStatement("DELETE FROM " + settings.getDbTableName("appointments") + " WHERE course = ?");
 			ps.setString(1, course.getFullName());
 			
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB] ps: " + ps);
@@ -2701,7 +2701,7 @@ public class VirtualLabsDB {
 			ps.close();
 			
 			ps = 
-				conn.prepareStatement("DELETE FROM user_ve_instances WHERE course = ?");
+				conn.prepareStatement("DELETE FROM " + settings.getDbTableName("user_ve_instances") + " WHERE course = ?");
 			ps.setString(1, course.getFullName());
 			
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB] ps: " + ps);
@@ -2710,7 +2710,7 @@ public class VirtualLabsDB {
 			ps.close();
 			
 			ps = 
-				conn.prepareStatement("DELETE FROM user_course WHERE course = ?");
+				conn.prepareStatement("DELETE FROM " + settings.getDbTableName("user_course") + " WHERE course = ?");
 			ps.setString(1, course.getFullName());
 			
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB] ps: " + ps);
@@ -2719,7 +2719,7 @@ public class VirtualLabsDB {
 			ps.close();
 			
 			ps = 
-				conn.prepareStatement("DELETE FROM course WHERE id = ?");
+				conn.prepareStatement("DELETE FROM " + settings.getDbTableName("course") + " WHERE id = ?");
 			ps.setInt(1, course.getId());
 			
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB] ps: " + ps);
@@ -2754,7 +2754,7 @@ public class VirtualLabsDB {
 			
 			// Try to find the username using the veInsId
 			PreparedStatement ps = conn.prepareStatement(
-				"SELECT * FROM user_ve_instances WHERE ve_id=?");
+				"SELECT * FROM " + settings.getDbTableName("user_ve_instances") + " WHERE ve_id=?");
 			
 			ps.setString(1, veInsId);
 
@@ -2800,7 +2800,7 @@ public class VirtualLabsDB {
 		try {
 
 			PreparedStatement ps = 
-				conn.prepareStatement("UPDATE appointments SET sch_id = ? WHERE sch_id = ?");
+				conn.prepareStatement("UPDATE " + settings.getDbTableName("appointments") + " SET sch_id = ? WHERE sch_id = ?");
 			ps.setString(1, newVeInsId);
 			ps.setString(2, oldVeInsId);
 
@@ -2810,7 +2810,7 @@ public class VirtualLabsDB {
 			ps.close();
 
 			ps = 
-				conn.prepareStatement("UPDATE appointments SET affiliation_id = ? WHERE affiliation_id = ?");
+				conn.prepareStatement("UPDATE " + settings.getDbTableName("appointments") + " SET affiliation_id = ? WHERE affiliation_id = ?");
 			ps.setString(1, newVeInsId);
 			ps.setString(2, oldVeInsId);
 
@@ -2820,7 +2820,7 @@ public class VirtualLabsDB {
 			ps.close();
 
 			ps = 
-				conn.prepareStatement("UPDATE user_ve_instances SET ve_id = ? WHERE ve_id = ?");
+				conn.prepareStatement("UPDATE " + settings.getDbTableName("user_ve_instances") + " SET ve_id = ? WHERE ve_id = ?");
 			ps.setString(1, newVeInsId);
 			ps.setString(2, oldVeInsId);
 
@@ -2847,7 +2847,7 @@ public class VirtualLabsDB {
 		try {
 			
 			PreparedStatement ps = conn.prepareStatement(
-				"SELECT * FROM promo WHERE promo_code=?");
+				"SELECT * FROM " + settings.getDbTableName("promo") + " WHERE promo_code=?");
 			
 			ps.setString(1, promoCode);
 
@@ -2889,7 +2889,7 @@ public class VirtualLabsDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM htpasswd_host WHERE active='t' order by id");
+					"SELECT * FROM " + settings.getDbTableName("htpasswd_host") + " WHERE active='t' order by id");
 	    
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB] ps: " + ps);
 			
@@ -2940,7 +2940,7 @@ public class VirtualLabsDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM htpasswd_host WHERE id=?");
+					"SELECT * FROM " + settings.getDbTableName("htpasswd_host") + " WHERE id=?");
 	    
 			ps.setInt(1, id);
 			
@@ -2993,7 +2993,7 @@ public class VirtualLabsDB {
 		try {
 	    
 			PreparedStatement ps = conn.prepareStatement(
-					"SELECT * FROM htpasswd_host WHERE name=?");
+					"SELECT * FROM " + settings.getDbTableName("htpasswd_host") + " WHERE name=?");
 	    
 			ps.setString(1, htpasswdHostName);
 			
@@ -3046,7 +3046,7 @@ public class VirtualLabsDB {
 		try {
 	
 			PreparedStatement ps = conn.prepareStatement(
-					"UPDATE htpasswd_host SET name=?,ssh_port=?,username=?,password=?," +
+					"UPDATE " + settings.getDbTableName("htpasswd_host") + " SET name=?,ssh_port=?,username=?,password=?," +
 					"active=?," +
 					"WHERE id=?");
 	
@@ -3091,7 +3091,7 @@ public class VirtualLabsDB {
 		
 		try {
 				PreparedStatement ps = conn.prepareStatement(
-				"DELETE from htpasswd_host where id=?");
+				"DELETE from " + settings.getDbTableName("htpasswd_host") + " where id=?");
 		
 				ps.setInt(1, id);
 				
@@ -3129,7 +3129,7 @@ public class VirtualLabsDB {
     	try {
     		
     		PreparedStatement ps = conn.prepareStatement(
-    				"INSERT INTO htpasswd_host(name,ssh_port,username,password,ve_num_cap," +
+    				"INSERT INTO " + settings.getDbTableName("htpasswd_host") + "(name,ssh_port,username,password,ve_num_cap," +
     				"active) " +
     				"VALUES(?,?,?,?,?) " +
     				"RETURNING id");
@@ -3179,7 +3179,7 @@ public class VirtualLabsDB {
 			
 			try {
 
-				String queryStr = "SELECT * FROM vm_ins_task AS t, vm_ins_sync_user_task AS st "
+				String queryStr = "SELECT * FROM " + settings.getDbTableName("vm_ins_task") + " AS t, " + settings.getDbTableName("vm_ins_sync_user_task") + " AS st "
 						+ "WHERE t.active=\'t\' AND st.active=\'t\' AND t.id=st.task_id "
 						+ "AND t.task=\'" + TodoType.SYNC_USER_CREDENTIALS.toString() + "\'"
 						+ "AND t.mac_address in (";
@@ -3277,7 +3277,7 @@ public class VirtualLabsDB {
 
 			// Try to find the user by username
 			PreparedStatement ps = conn.prepareStatement(
-				"SELECT * FROM user_profile WHERE UPPER(username) = UPPER(?)");
+				"SELECT * FROM " + settings.getDbTableName("user_profile") + " WHERE UPPER(username) = UPPER(?)");
 			ps.setString(1, userName);
 
 			DebugTools.println(DEBUG_LEVEL, "[VirtualLabsDB - isNoPlainTextPasswordInEffect4ThisUser] ps:" + ps);
@@ -3331,7 +3331,7 @@ public class VirtualLabsDB {
 
 			try {
 
-				String sqlStatement = "UPDATE user_profile SET time_zone_id = ? WHERE username = ?";
+				String sqlStatement = "UPDATE " + settings.getDbTableName("user_profile") + " SET time_zone_id = ? WHERE username = ?";
 				PreparedStatement ps = conn.prepareStatement(sqlStatement);
 				ps.setString(1, user.getTimeZone());
 				ps.setString(2, user.getUserName());

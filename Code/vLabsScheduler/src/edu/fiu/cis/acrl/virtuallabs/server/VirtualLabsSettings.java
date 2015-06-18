@@ -21,6 +21,7 @@ public class VirtualLabsSettings {
     private String dbPassword;
     private String dbHost;
     private String dbName;
+	private String dbTablePrefix;
     private int debugLevel;
     
     private int checkinInterval;
@@ -55,6 +56,7 @@ public class VirtualLabsSettings {
 		dbPassword = settings.getProperty("virtuallabs_db_password");
 		dbHost = settings.getProperty("virtuallabs_db_host");
 		dbName = settings.getProperty("virtuallabs_db_name");
+		dbTablePrefix = settings.getProperty("virtuallabs_db_table_prefix");
 		debugLevel = Integer.valueOf(settings.getProperty("debug_level")).intValue();
 		
 		checkinInterval = Integer.valueOf(settings.getProperty("checkin_interval")).intValue();
@@ -103,7 +105,9 @@ public class VirtualLabsSettings {
     public int getDebugLevel() { return debugLevel; }
     public int getCheckinInterval() { return checkinInterval; }
     public int getCachedPasswordTimeout() { return cachedPasswordTimeout; }
-    
+	public String getDbTablePrefix() { return dbTablePrefix; }
+	public String getDbTableName(String dbTableName) { return getDbTablePrefix()+dbTableName; }
+
 	public String toString() {
 		
 		return
@@ -114,9 +118,11 @@ public class VirtualLabsSettings {
 			"dbPassword: " + dbPassword + "\n" + 
 			"dbHost: " + dbHost + "\n" +
 			"dbName: " + dbName + "\n" +
+			"dbTablePrefix: " + dbTablePrefix + "\n" +
+			"debugLevel: " + debugLevel + "\n" +
 			"checkinInterval: " + checkinInterval + "\n" +
 			"cachedPasswordTimeout: " + cachedPasswordTimeout;
-	
+
 	}
 
 }

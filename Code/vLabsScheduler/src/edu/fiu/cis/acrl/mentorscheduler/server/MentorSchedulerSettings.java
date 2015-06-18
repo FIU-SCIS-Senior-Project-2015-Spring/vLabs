@@ -10,6 +10,7 @@ public class MentorSchedulerSettings {
     private String dbPassword;
     private String dbHost;
     private String dbName;
+	private String dbTablePrefix;
     private int debugLevel;
   
     /**
@@ -27,10 +28,11 @@ public class MentorSchedulerSettings {
 		    throw new MentorSchedulerSettingsException("Could not find " + configFile + " file");
 		}
 	
-		dbUser = settings.getProperty("exams_db_user");
-		dbPassword = settings.getProperty("exams_db_password");
-		dbHost = settings.getProperty("exams_db_host");
-		dbName = settings.getProperty("exams_db_name");
+		dbUser = settings.getProperty("mentorscheduler_db_user");
+		dbPassword = settings.getProperty("mentorscheduler_db_password");
+		dbHost = settings.getProperty("mentorscheduler_db_host");
+		dbName = settings.getProperty("mentorscheduler_db_name");
+		dbTablePrefix = settings.getProperty("mentorscheduler_db_table_prefix");
 		debugLevel = Integer.valueOf(settings.getProperty("debug_level")).intValue();
 
     }
@@ -70,15 +72,19 @@ public class MentorSchedulerSettings {
     public String getDbHost() { return dbHost; }
     public String getDbName() { return dbName; }
     public int getDebugLevel() { return debugLevel; }
-    
-    public String toString() {
-    	
-    	return 
-    		"dbUser: " + getDbUser() +  " " +
-    		"dbPassword: "  + getDbPassword() + " " +
-    		"dbHost: " + getDbHost() + " " + 
-    		"dbName: " + getDbName() + " " +
-    		"debugLevel: " + getDebugLevel();
-    	
-    }
+	public String getDbTablePrefix() { return dbTablePrefix; }
+	public String getDbTableName(String dbTableName) { return getDbTablePrefix()+dbTableName; }
+
+	public String toString() {
+
+		return
+				"dbUser: " + dbUser + "\n" +
+				"dbPassword: " + dbPassword + "\n" +
+				"dbHost: " + dbHost + "\n" +
+				"dbName: " + dbName + "\n" +
+				"dbTablePrefix: " + dbTablePrefix + "\n" +
+				"debugLevel: " + debugLevel + "\n" ;
+
+	}
+
 }
