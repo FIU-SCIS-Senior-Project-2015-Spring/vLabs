@@ -81,15 +81,7 @@ class module_vLabsAdmin extends EfrontModule {
 	public function onInstall() {
 		//delete the settings enabled user tables if they exist
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabsadmin_enabled_user_types");
-
-		//create the settings table
-		//eF_executeQuery("CREATE TABLE IF NOT EXISTS module_vlabsadmin_settings( 
-		//			theme_id mediumint(8) unsigned NOT NULL PRIMARY KEY,
-  		//			theme_name text NOT NULL)");
-
-		//initialize the settings table with default
-		//eF_insertTableData("module_vlabsadmin_settings", array('theme_id'=>'1', 'theme_name'=>'default'));
-
+		
 		//create the user enabled table
 		eF_executeQuery("CREATE TABLE module_vlabsadmin_enabled_user_types(
 					user_type_id mediumint(8) unsigned NOT NULL PRIMARY KEY,

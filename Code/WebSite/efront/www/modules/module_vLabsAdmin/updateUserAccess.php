@@ -11,13 +11,26 @@
 			removeUser($uid);
 			break;
 		case 'adduser':
-			$uid = $_POST['utid'];
-			$uname = $_POST['utname'];
+			$data = $_POST['data'];
+			addUser($data);
 			break;
 	}
 
-	function addUser($uid, $uname){
+	function addUser($data){
 		//add user to the enabled_user_types table
+		//check to make sure user isn't already there!
+
+		$arr = explode(',', $data);
+		echo count($arr);
+
+		for($i = 0; $i < count($arr); $i=$i+2){
+			try{
+				eF_insertTableData("module_vlabsadmin_enabled_user_types", array("user_type_id" => $arr[$i], "user_type_name" => $arr[$i+1]));
+			}catch(Exception $e){
+				echo $e->getMessage();
+			}
+		}
+
 	}
 
 	function removeUser($uid){
