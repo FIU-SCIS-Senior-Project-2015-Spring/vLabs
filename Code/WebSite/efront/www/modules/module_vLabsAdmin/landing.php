@@ -65,7 +65,7 @@
 
 		<!-- Add New User Dialog -->
 		<div id="addDialog" title="Grant vLabs Access">
-			<p>Select user types that apply:</p>
+			<p>Select user type to grant access:</p>
 			<form>
 				<fieldset>
 					<?php
@@ -147,7 +147,7 @@
 		
 
 		//when a remove button is clicked
-		$("#remove").on("click", function(){
+		$("#vlabsaccess").on("click", "#remove", function(){
 			//grab the user type and id of the selected row
 			//$this.parent.parent gets us to the td level in the hierarchy, the .prev gets the previous td sibling
 			var user = $(this).parent().parent().prev().text();
@@ -164,47 +164,40 @@
 						$("#" + user).remove();
 					});
 				}
-			});
+			});	
 		});
 
 
 		function addUser(){
-			//grab data from form and ajax
-			//close dialog and update table on ajax success
-
-			//array to hold checked info
-
-			var datastring = "";
-	
+			addDialog.hide();
 			//for each checked box...
 			$("input:checked").each(function(){
-				//get the name of the user type and the id of the user type and add them to the array 
-				//checkedarray.push($(this).val());
-				//checkedarray.push($(this).attr("name"));
-				datastring = datastring + $(this).val() + "," + $(this).attr("name") + ",";
-			});
+				//grab the id and name of the current checked box
+				var id = $(this).val();
+				var name = $(this).attr("name");
 
-			addDialog.dialog("close");
-
-			//make ajax call
-			alert("making ajax: " + datastring);
-			$.ajax({
-				url: "updateUserAccess.php",
-				type: "post",
-				data: {"request" : "adduser", "data" : datastring},
-				success: function(){
-					//update table
-					var temparr = datastring.split(",");
-					for(var i = 0; i < temparr.length - 1; i=i+2){
-						//create the table row to append
-						$("#vlabsaccess").append("<tr id='" + temparr[i] + "'><td><center>" + temparr[i] + "</center></td>" + 
-							"<td><center>" + temparr[i+1] + "</center></td>" + 
+				//make ajax call
+				$.ajax({
+					url: "updateUserAccess.php",
+					type: "post",
+					data: {"request" : "adduser", "id" : id, "name" : name},
+					success: function(){
+						//update table
+						//if the row already exists because the user is trying to add a user that already has access, do nothing
+						if($("#" + name).length){} 
+						else{
+							//create the row and append it
+							$("#vlabsaccess").append("<tr id='" + name + "'><td><center>" + id + "</center></td>" + 
+							"<td><center>" + name + "</center></td>" + 
 							"<td><center><img id='remove' title='Remove User' src='/themes/default/images/16x16/error_delete.png'></center></td></tr>" +"</tr>");
-						//display it
-						$("#" + temparr[i]).fadeIn(function(){});
+							//display it
+							$("#" + id).fadeIn(function(){});
+						}
 					}
-				}
+				});
 			});
+			//close the dialog
+			addDialog.dialog("close");
 		}
 	});
 </script>

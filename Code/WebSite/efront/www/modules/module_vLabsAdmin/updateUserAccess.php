@@ -11,32 +11,26 @@
 			removeUser($uid);
 			break;
 		case 'adduser':
-			$data = $_POST['data'];
-			addUser($data);
+			$id = $_POST['id'];
+			$name = $_POST['name'];
+			addUser($id, $name);
 			break;
 	}
 
-	function addUser($data){
+	function addUser($id, $name){
 		//add user to the enabled_user_types table
-		//check to make sure user isn't already there!
-
-		$arr = explode(',', $data);
-		echo count($arr);
-
-		for($i = 0; $i < count($arr); $i=$i+2){
-			try{
-				eF_insertTableData("module_vlabsadmin_enabled_user_types", array("user_type_id" => $arr[$i], "user_type_name" => $arr[$i+1]));
-			}catch(Exception $e){
-				echo $e->getMessage();
-			}
+		try{
+			//this inserts the record if it doesn't already exist, if it does, it just updates. 
+			eF_insertOrupdateTableData("module_vlabsadmin_enabled_user_types", array("user_type_id" => "$id", "user_type_name" => "$name"), "user_type_id=$id");
+		}catch(Exception $e){
+			echo $e->getMessage();
 		}
-
 	}
 
 	function removeUser($uid){
 		//remove user from the enabled_user_types table
 		try{
-			eF_deleteTableData("module_vlabsadmin_enabled_user_types", "user_type_ID=$uid");
+			eF_deleteTableData("module_vlabsadmin_enabled_user_types", "user_type_id=$uid");
 		}catch(Exception $e){
 			echo $e->getMessage();
 		}
