@@ -7,11 +7,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<!--Bootstrap Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
-<!--jQuery and jQueryUI-->
+<!--jQuery-->
 <script src="jquery/jquery-2.1.4.min.js"></script>
+<!--Bootstrap Latest compiled and minified CSS/JS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+<!-- jQueryUI-->
 <?php
 	//grab the theme parameter passed from the url
 	$themeset = $_GET['theme'];
@@ -38,18 +40,34 @@
 	}
 ?>
 <script type="text/javascript" src="jquery-ui/jquery-ui.min.js"></script>
-
-<!-- Latest compiled and minified JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script src="jqtimer/jquery.simple.timer.js"></script>
 
 </head>
 <body>
-<!--<input id="username" type="hidden" value="< echo $_GET["user"]; ?>"/>-->
-<!-- main page -->
+<!-- nav bar -->
+<div id="toolbar" class="ui-widget-header ui-corner-all">
+	<div style="display:inline">
+		 minutes: <input type="text" id="timetochange" name="timetochange" placeholder="5" maxlength="2" size="2">
+	 	<button id="addtime">Add time to your virtual-lab appointment</button>
+	 	<button id="removetime">Remove time from your virtual-lab appointment</button>
+	 	<button id="ejecttime">Cancel the remaining virtual-lab appointment</button>
+	</div>
+	<div class="timer" style="white-space:nowrap;display:inline" data-minutes-left=1440></div>
+	<div id="vmcontrols" style="display:inline">
+		<button id="poweroffvm">Power Off</button>
+		<button id="poweronvm">Power On</button>
+		<button id="shutdownvm">Shutdown</button>
+		<button id="restartvm">Restart</button>
+		<button id="pausevm">Pause</button>
+		<button id="refreshvm">Refresh</button>
+	</div>
+</div>
+
+<!-- Tabs -->
 <div id="tabs">
 	<ul>
-		<li><a href="#tabs-1">Network Diagram</a></li>
-		<li><a href="#tabs-2">Connection Info</a></li>
+		<li><a class="nonrdptab" href="#tabs-1">Network Diagram</a></li>
+		<li><a class="nonrdptab" href="#tabs-2">Connection Info</a></li>
 		<li><a class="rdptab" href="#tabs-3" rel="http://vlabs-dev.cs.fiu.edu:8080/guacamole/#/client/c/vc9-50491-dc">Domain Controller</a>
 		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
@@ -156,10 +174,79 @@
 	$(function() {	
 		//laod tab UI
 		$("#tabs").tabs();
+
+		//load the nav buttons
+		$("#addtime").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-plus"
+	      }
+	    });
+	    $("#removetime").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-minus"
+	      }
+	    });
+	    $("#ejecttime").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-eject"
+	      }
+	    });
+	    $("#poweroffvm").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-power"
+	      }
+	    });
+	    $("#poweronvm").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-play"
+	      }
+	    });
+	    $("#shutdownvm").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-stop"
+	      }
+	    });
+	    $("#restartvm").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-refresh"
+	      }
+	    });
+	    $("#pausevm").button({
+	      text: false,
+	      icons: {
+	        primary: "ui-icon-pause"
+	      }
+	    });
+	    $("#refreshvm").button({
+	      icons: {
+	        primary: "ui-icon-trash"
+	      }
+	    });
 		
+		//start timer and display inline
+	    $(".timer").startTimer();
+	    $(".timer div").css("display", "inline-block")
+
+		//hide the vm controls on document load
+		$("#vmcontrols").hide();
+
 		//clicking a rdp tab
 		$("a.rdptab").click(function(){
+			//show vm controls
+			$("#vmcontrols").show();
 			loadTab($(this).attr("href"), $(this).attr("rel"));		
+		});
+
+		$("a.nonrdptab").click(function(){
+			//hide vm controls
+			$("#vmcontrols").hide();
 		});
 		
 		//new tab button clicks

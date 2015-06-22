@@ -156,15 +156,6 @@ class module_vLabs extends EfrontModule {
         return true;
     }
 	
-	/**
-	* Code to execute when a theme is set
-	* @param int $theme The current system theme that was just set
-	*/
-	public function onSetTheme($theme){
-		//when the eFront theme is changed, update the settings table with the new theme id and name
-		eF_updateTableData("module_vlabs_settings", array("theme_id" => "{$theme->themes['id']}", "theme_name" => "{$theme->themes['name']}"), "theme_id>=0");
-	}
-	
     /**
      * Specify which file to include for template
      *
