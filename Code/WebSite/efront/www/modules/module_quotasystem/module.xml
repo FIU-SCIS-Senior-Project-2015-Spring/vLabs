@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<module>
+	<title>Quota System</title>
+	<author>Trung Ngo</author>
+	<date>2015 06 01</date>
+	<version>1.0</version>
+	<description>Quota System</description>
+	<className>module_quotasystem</className>
+	<requires>3.6.8</requires>
+</module>
