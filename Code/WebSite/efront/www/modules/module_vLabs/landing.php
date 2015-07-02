@@ -40,19 +40,22 @@
 	}
 ?>
 <script type="text/javascript" src="jquery-ui/jquery-ui.min.js"></script>
-<script src="jqtimer/jquery.simple.timer.js"></script>
+<script src="jqtimer/jquery.countdown.js"></script>
 
 </head>
 <body>
+<input id ="username" type="hidden" value="<?php echo $_GET['username']; ?>" />
 <!-- nav bar -->
 <div id="toolbar" class="ui-widget-header ui-corner-all">
 	<div style="display:inline">
-		 minutes: <input type="text" id="timetochange" name="timetochange" placeholder="5" maxlength="2" size="2">
+		<div id="timecontrols" style="display:inline">
+		 minutes: <input type="text" id="timetochange" name="timetochange" placeholder="5" value="5" maxlength="2" size="2">
 	 	<button id="addtime">Add time to your virtual-lab appointment</button>
 	 	<button id="removetime">Remove time from your virtual-lab appointment</button>
 	 	<button id="ejecttime">Cancel the remaining virtual-lab appointment</button>
+	 	</div>
+	 	<span class="clock" style="rgb(0,0,0);"></span>
 	</div>
-	<div class="timer" style="white-space:nowrap;display:inline" data-minutes-left=1440></div>
 	<div id="vmcontrols" style="display:inline">
 		<button id="poweroffvm">Power Off</button>
 		<button id="poweronvm">Power On</button>
@@ -169,73 +172,30 @@
 	</div>
 </div>
 </body>
-
+<script type="text/javascript" src="scheduler/fullcalendar/fullcalendar.js"></script>
+<script type="text/javascript" src="navbarcontrols.js"></script> 
 <script>
 	$(function() {	
 		//laod tab UI
 		$("#tabs").tabs();
 
-		//load the nav buttons
-		$("#addtime").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-plus"
-	      }
-	    });
-	    $("#removetime").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-minus"
-	      }
-	    });
-	    $("#ejecttime").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-eject"
-	      }
-	    });
-	    $("#poweroffvm").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-power"
-	      }
-	    });
-	    $("#poweronvm").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-play"
-	      }
-	    });
-	    $("#shutdownvm").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-stop"
-	      }
-	    });
-	    $("#restartvm").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-refresh"
-	      }
-	    });
-	    $("#pausevm").button({
-	      text: false,
-	      icons: {
-	        primary: "ui-icon-pause"
-	      }
-	    });
-	    $("#refreshvm").button({
-	      icons: {
-	        primary: "ui-icon-trash"
-	      }
-	    });
+		//load the nav buttons and countdown
+		setupTimeControlButtons();
+		setTimeControl();
+	    setupVMControlButtons();
 		
-		//start timer and display inline
-	    $(".timer").startTimer();
-	    $(".timer div").css("display", "inline-block")
-
 		//hide the vm controls on document load
 		$("#vmcontrols").hide();
+
+	  //   $('span.clock').countDown({
+	  //   	startNumber: new Date(),
+	  //   	endNumber: new Date("July 12, 2015 11:00:00"),
+	  //   	returnDate: true,
+	  //   	callBack: function(me) {
+			// 	$(me).text('00:00:00').css('color','#b00');
+			// }
+	  //   });
+	    //$(".timer div").css("display", "inline-block")
 
 		//clicking a rdp tab
 		$("a.rdptab").click(function(){
@@ -244,6 +204,7 @@
 			loadTab($(this).attr("href"), $(this).attr("rel"));		
 		});
 
+		//clicking a non-rdp tab
 		$("a.nonrdptab").click(function(){
 			//hide vm controls
 			$("#vmcontrols").hide();
@@ -271,7 +232,7 @@ function loadTab(tab, url){
 		//create and load iframe
 		var html = [];
 		html.push('<div class="tabIframeWrapper">');
-		html.push('<iframe class="iframetab" src="' + url + '" width="100%" height="75%" style="border:none"></iframe>');
+		html.push('<iframe class="iframetab" src="' + url + '" width="100%" height="70%" style="border:none"></iframe>');
 		html.push('</div>');
 		$(tab).append(html.join(""));
 		$("iframe").focus();

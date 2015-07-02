@@ -129,28 +129,28 @@ class module_vLabs extends EfrontModule {
 			case '2':
 			case '7':
 				//default
-				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default");	
+				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default&username=$username");	
 				break;
 			case '3':
 			case '5':
 				//blue
-				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=blue");	
+				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=blue&username=$username");	
 				break;
 			case '4':
 			case '9':
 				//bluehtml
-				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=bluehtml");	
+				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=bluehtml&username=$username");	
 				break;
 			case '6':
 				//green
-				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=green");	
+				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=green&username=$username");	
 				break;
 			case '11':
 				//flatgrey
-				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=flatgrey");	
+				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=flatgrey&username=$username");	
 				break;
 			default:
-				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default");	
+				$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default&username=$username");	
 				break;
 		}
         return true;
