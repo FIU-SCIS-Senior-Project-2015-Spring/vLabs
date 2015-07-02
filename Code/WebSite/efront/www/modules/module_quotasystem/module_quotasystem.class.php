@@ -55,7 +55,10 @@ class module_quotasystem extends EfrontModule {
         $smarty -> assign("T_QS_MODULE_BASELINK" , $this -> moduleBaseLink);
         $smarty -> assign("T_QS_MODULE_BASEURL" , $this -> moduleBaseUrl);
 		$tid = $_SESSION['s_theme'];
-		
+		$userlogin = 'tcruz';//$this->getCurrentUser()->user['login'];
+		$uid = eF_getTableData('module_vlabs_quotasystem_user_profile','*',"username = '" . $userlogin. "'");
+		//$uid = 215;
+		$smarty->assign("T_QS_UID", $uid[0]['id']);
 		switch($tid){
 			case '1':
 			case '2':
@@ -113,7 +116,11 @@ class module_quotasystem extends EfrontModule {
 						update_ts timestamp DEFAULT now() ON UPDATE now(),
 						PRIMARY KEY (id)
 		)");
+<<<<<<< HEAD
 				eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_policy");
+=======
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_policy");
+>>>>>>> Story 177, Migrate quota system from Moodle to eFront
 		$res4 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_policy (
 						id integer NOT NULL AUTO_INCREMENT,
 						name character varying(45) NOT NULL,
@@ -193,6 +200,14 @@ class module_quotasystem extends EfrontModule {
 						PRIMARY KEY (id),
 						FOREIGN KEY (user_assigned_quota_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
 						ON DELETE CASCADE ON UPDATE CASCADE
+<<<<<<< HEAD
+=======
+						//,FOREIGN KEY (appointment_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
+						//ON DELETE CASCADE ON UPDATE CASCADE,
+						//FOREIGN KEY (affiliation_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
+						//ON DELETE CASCADE ON UPDATE CASCADE
+						
+>>>>>>> Story 177, Migrate quota system from Moodle to eFront
 		)");
 
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_user_assigned_quota");
