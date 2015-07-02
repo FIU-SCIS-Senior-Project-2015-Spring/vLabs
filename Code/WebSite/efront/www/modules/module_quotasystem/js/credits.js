@@ -6,6 +6,7 @@ var ct_open_validation_forms = new Array();
 
 function ct_init(){
 	jQuery("#add-creditType").button();
+	jQuery("#add-creditType").button("enable");
 	jQuery("#add-creditType").click(function() {
     	ct_openForm("#addCreditTypeForm", true, null);
     	jQuery("#add-creditType").button("disable");
@@ -24,7 +25,7 @@ function ct_loadTable()
 
     jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/creditTypeManager.php',
+        url: 'modules/module_quotasystem/server/creditTypeManager.php',
         dataType: 'json',
         data: {
             action: 'getCreditTypes'
@@ -35,7 +36,7 @@ function ct_loadTable()
 			if(data){
         		if(!jQuery.isArray(data))
 	        		data = [data];
-				//console.log(data);
+				
 				removeLoadingDivAfter("#creditsTableContainer");
 	
 				jQuery('#creditsTableContainer').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="creditsTable"></table>' );
@@ -166,9 +167,9 @@ function ct_openForm(containerId, add, nTr, creditTypeId)
 
         jQuery(containerId+" .submit").button();
         jQuery(containerId+" .cancel").button();
-
+		//alert("before the load");
         ct_loadResourcesCoursesPolicies(containerId, add, nTr, creditTypeId);
-
+		//alert("after the load");
         ct_addFormValidation(containerId);
     });
 }
@@ -206,7 +207,7 @@ function ct_fillOutForm(containerId, nTr, id){
 	createLoadingDivAfter(containerId, "Loading Credit Type data");
 	  jQuery.ajax({
 	        type: 'POST',
-	        url: '/modules/module_quotasystem/server/creditTypeManager.php',
+	        url: 'modules/module_quotasystem/server/creditTypeManager.php',
 	        dataType: 'json',
 	        data: {
 	            action: 'getCreditType',
@@ -214,8 +215,8 @@ function ct_fillOutForm(containerId, nTr, id){
 	        },
 	        success: function(data){
 	        	removeLoadingDivAfter(containerId);
-				console.log(data);
-	        	var creditType =  data.creditType[0];//.creditType;
+
+	        	var creditType =  data.creditType;
 	        	jQuery(containerId+" .nameCreditType").val(creditType.name);
 	        	jQuery(containerId+" .resourceCreditType").val(creditType.resource);
 	        	jQuery(containerId+" .policyCreditType").val(creditType.policyId);
@@ -246,7 +247,7 @@ function ct_add(containerId, name, resource, policyId,policyName, courseId,cours
 
     jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/creditTypeManager.php',
+        url: 'modules/module_quotasystem/server/creditTypeManager.php',
         dataType: 'json',
         data: {
             action: 'addCreditType',
@@ -288,7 +289,7 @@ function ct_modify(containerId, nTr, id, name, resource, policyId,policyName, co
 
     jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/creditTypeManager.php',
+        url: 'modules/module_quotasystem/server/creditTypeManager.php',
         dataType: 'json',
         data: {
             action: 'modifyCreditType',
@@ -302,7 +303,6 @@ function ct_modify(containerId, nTr, id, name, resource, policyId,policyName, co
         },
         success: function(data){
         	removeLoadingDivAfter(containerId);
-
         	if(!data.success){
         		displayError(containerId,data.message, function(){
                 	jQuery(nTr).css("color","");
@@ -345,8 +345,8 @@ function ct_delete(divId, nTr, id)
 	createLoadingDivAfter(divId, "Deleting Credit Type");
     jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/creditTypeManager.php',
-        dataType: 'json',
+        url: 'modules/module_quotasystem/server/creditTypeManager.php',
+        dataType: 'text',
         data: {
             action: 'deleteCreditType',
             id:id
@@ -387,7 +387,7 @@ function ct_delete(divId, nTr, id)
 function ct_getCreditType(id){
 	   jQuery.ajax({
 	        type: 'POST',
-	        url: '/modules/module_quotasystem/server/creditTypeManager.php',
+	        url: 'modules/module_quotasystem/server/creditTypeManager.php',
 	        dataType: 'json',
 	        data: {
 	            action: 'getCreditType',
@@ -420,24 +420,27 @@ function ct_loadResourcesCoursesPolicies(containerId, add, nTr, creditTypeId)
     // load resources and courses
     jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/creditTypeManager.php',
+        url: 'modules/module_quotasystem/server/creditTypeManager.php',
         dataType: 'json',
         data: {
             action: 'getResources'
         },
         success: function(data){
-			//console.log("data from getresouces");
 			//console.log(data);
             //Fill out select boxes for resources and courses
-            //var resources = data.resources;
+            var resources = data.resources;
             var courses = data.courses;
-
-            //for (var i in resources )
-            //    content_resources+="<option value='"+resources[i]+"'>"+resources[i]+"</option>";
-
-            for (var i in courses ){
-				if(isNaN(courses[i].id))
+			//strange bug that to prevent odd undefined issues
+            for (var i in resources ){
+				if(isNaN(i)){
 					break;
+				}
+				content_resources+="<option value='"+resources[i]+"'>"+resources[i]+"</option>";
+			}
+            for (var i in courses ){
+				if(isNaN(courses[i].id)){
+					break;
+				}
 				content_courses+="<option value='"+courses[i].id+"'>"+courses[i].shortname+"</option>";
 			}
             jQuery(containerId+" .resourceCreditType").empty();
@@ -447,19 +450,19 @@ function ct_loadResourcesCoursesPolicies(containerId, add, nTr, creditTypeId)
             // load policies
             jQuery.ajax({
                 type: 'POST',
-                url: 'server/policyManager.php',
+                url: 'modules/module_quotasystem/server/policyManager.php',
                 dataType: 'json',
                 data: {
                     action: 'getAssignablePolicies'
                 },
                 success: function(data){
-					//console.log("data from assignablepolicies");
-					//console.log(data);
+
                 	removeLoadingDivAfter(containerId);
-					//TN 6/16/2015 addition to prevent undefined glitch
+
                     for (var p in data ){
-						if(isNaN(data[p].id))
+						if(isNaN(data[p].id)){
 							break;
+						}
                         content_policies+="<option value='"+data[p].id+"'>"+data[p].name+" : "+data[p].type+"</option>";
 					}
                     jQuery(containerId+" .policyCreditType").empty();

@@ -44,7 +44,7 @@ function getCurrentReport(courseId){
 	jQuery("#currentReportTab .byCourseSelects .breadcrumb").empty();
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getCurrentReport',
@@ -112,7 +112,7 @@ function getCurrentReportByCreditType(creditTypeId){
 	createLoadingInId("#currentReportTab .loadingId");
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getCurrentReportByCreditType',
@@ -159,7 +159,7 @@ function getCurrentReportByUser(userId){
 	createLoadingInId("#currentReportTab .loadingId");
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getCurrentReportByUser',
@@ -206,7 +206,7 @@ function getCurrentReportByUserAndCourse(userId, courseId){
 	createLoadingInId("#currentReportTab .loadingId");
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getCurrentReportByUserAndCourse',
@@ -226,6 +226,9 @@ function getCurrentReportByUserAndCourse(userId, courseId){
 	        	var colors = ["#afd8f8", "#edc240", "#cb4b4b"];
 	        	
 	        	for(var i=0 ; i<data.length ; i++){
+					if(isNaN(data[i].creditType.id)){
+							break;
+					}
 	        		ids[i] = data[i].creditType.id;
 	        		names[i] = data[i].creditType.name;
 	        		quotaAvailable[i] = [i, data[i].quotaAvailable];
@@ -360,7 +363,7 @@ function getHistoricReport(courseId){
 	jQuery("#histReportTab .byCourseSelects .breadcrumb").empty();	
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getHistoricReport',
@@ -383,6 +386,9 @@ function getHistoricReport(courseId){
 	        	
 	        	content_creditTypeSelect = "";
 	        	for(var i=0 ; i<data.length ; i++){
+					if(isNaN(data[i].creditType.id)){
+							break;
+					}
 	        		ids[i] = data[i].creditType.id;
 	        		names[i] = data[i].creditType.name;
 	        		quotaAvailable[i] = [i, data[i].quotaAvailable];
@@ -413,7 +419,7 @@ function getHistoricReportPerPeriods(creditTypeId, userId){
 
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getHistoricReportPerPeriods',
@@ -434,6 +440,9 @@ function getHistoricReportPerPeriods(creditTypeId, userId){
 
 	        	var content_periodNoSelect = '<option value="all">All</option>';
 	        	for(var i=0 ; i<data.length ; i++){
+					if(isNaN(data[i].periodNumber)){
+							break;
+					}
 	        		ids[i] = data[i].periodNumber;
 	        		names[i] = data[i].label;
 	        		quotaAvailable[i] = [i, data[i].quotaAvailable];
@@ -507,7 +516,7 @@ function getHistoricReportPerUsers(creditTypeId, periodNumber){
 
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getHistoricReportPerUsers',
@@ -602,7 +611,7 @@ function getHistoricReportByUser(userId, courseId){
 
 	jQuery.ajax({
         type: 'POST',
-        url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getHistoricReportByUser',
@@ -672,7 +681,7 @@ function getHistoricReportByUserAndCreditType(userId, creditTypeId){
 
 	jQuery.ajax({
         type: 'POST',
-		url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
 		data: {
 			action: 'getHistoricReportByUserAndCreditType',
@@ -1081,19 +1090,21 @@ function fixControlsPosition(containerId, offset){
 function getCourses(containerId, changeHandler){
 	jQuery.ajax({
         type: 'POST',
-		url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
         data: {
             action: 'getAllCourses'
         },
         success: function(data){
             //Fill out select box for courses
-			
             var courses = data.courses;
             var content_courses = '<option value="all">All</option>';
-            for (var i in courses )
+            for (var i in courses ){
+				if(isNaN(i)){
+						break;
+				}
                 content_courses+="<option value='"+courses[i].id+"'>"+courses[i].shortname+"</option>";
-				
+            }
             jQuery(containerId+" .container .byCourseSelects .course").empty();
             jQuery(containerId+" .container .byCourseSelects .course").append(content_courses);
         },
@@ -1109,7 +1120,7 @@ function getCourses(containerId, changeHandler){
 function getStudents(containerId, changeHandler){
     jQuery.ajax({
         type: 'POST',
-		url: '/modules/module_quotasystem/server/reportManager.php',
+        url: 'modules/module_quotasystem/server/reportManager.php',
         dataType: 'json',
         data: {
             action: 'getAllUsers'
@@ -1129,7 +1140,7 @@ function getStudents(containerId, changeHandler){
             	if(userId!="none"){
 	            	jQuery.ajax({
 	                    type: 'POST',
-	                    url: '/modules/module_quotasystem/server/reportManager.php',
+	                    url: 'modules/module_quotasystem/server/reportManager.php',
 	                    dataType: 'json',
 	                    data: {
 	                        action: 'getCoursesByUser',
