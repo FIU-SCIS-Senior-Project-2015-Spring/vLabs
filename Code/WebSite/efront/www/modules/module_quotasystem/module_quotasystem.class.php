@@ -54,7 +54,40 @@ class module_quotasystem extends EfrontModule {
         $smarty -> assign("T_QS_MODULE_BASEDIR" , $this -> moduleBaseDir);
         $smarty -> assign("T_QS_MODULE_BASELINK" , $this -> moduleBaseLink);
         $smarty -> assign("T_QS_MODULE_BASEURL" , $this -> moduleBaseUrl);
-		
+		$tid = $_SESSION['s_theme'];
+		$userlogin = 'tcruz';//$this->getCurrentUser()->user['login'];
+		$uid = eF_getTableData('module_vlabs_quotasystem_user_profile','*',"username = '" . $userlogin. "'");
+		//$uid = 215;
+		$smarty->assign("T_QS_UID", $uid[0]['id']);
+		switch($tid){
+			case '1':
+			case '2':
+			case '7':
+				//default
+				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/default/jquery-ui.css");	
+				break;
+			case '3':
+			case '5':
+				//blue
+				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/blue/jquery-ui.css");	
+				break;
+			case '4':
+			case '9':
+				//bluehtml
+				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/bluehtml/jquery-ui.css");	
+				break;
+			case '6':
+				//green
+				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/green/jquery-ui.css");	
+				break;
+			case '11':
+				//flatgrey
+				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/flatgrey/jquery-ui.css");	
+				break;
+			default:
+				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/default/jquery-ui.css");	
+				break;
+		}
 		//$_SESSION["userid"] = 10;
 		//echo $this->getCurrentUser()->getType();
         return true;
@@ -82,46 +115,10 @@ class module_quotasystem extends EfrontModule {
 						shortname character varying(45) NOT NULL,
 						update_ts timestamp DEFAULT now() ON UPDATE now(),
 						PRIMARY KEY (id)
-						
 		)");
-
-		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_course_assigned_quota");
-		$res2 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_course_assigned_quota (
-						id integer NOT NULL,
-						purchase_id character varying(20),
-						quantity double precision NOT NULL,
-						credit_type_id integer NOT NULL,
-						active boolean NOT NULL,
-						update_ts timestamp DEFAULT now() ON UPDATE now(),
-						start_date timestamp NOT NULL,
-						PRIMARY KEY (id)
-		)");
-
-		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_course_enrollment");
-		$res3 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_course_enrollment (
-						id integer NOT NULL,
-						user_id integer NOT NULL,
-						course_id integer NOT NULL,
-						update_ts timestamp DEFAULT now() ON UPDATE now(),
-						PRIMARY KEY (id)
-		)");
-
-		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_credit_type");
-		$res4 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_credit_type (
-						id integer NOT NULL,
-						name character varying(45) NOT NULL,
-						resource character varying(45) NOT NULL,
-						course_id integer NOT NULL,
-						policy_id integer,
-						active boolean NOT NULL,
-						assignable boolean NOT NULL,
-						update_ts timestamp DEFAULT now() ON UPDATE now(),
-						PRIMARY KEY (id)
-		)");
-
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_policy");
 		$res4 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_policy (
-						id integer NOT NULL,
+						id integer NOT NULL AUTO_INCREMENT,
 						name character varying(45) NOT NULL,
 						description character varying(255),
 						policy_type character varying(20) NOT NULL,
@@ -138,10 +135,55 @@ class module_quotasystem extends EfrontModule {
 						start_date timestamp,
 						PRIMARY KEY (id)
 		)");
+		
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_course_assigned_quota");
+		$res2 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_course_assigned_quota (
+						id integer NOT NULL AUTO_INCREMENT,
+						purchase_id character varying(20),
+						quantity double precision NOT NULL,
+						credit_type_id integer NOT NULL,
+						active boolean NOT NULL,
+						update_ts timestamp DEFAULT now() ON UPDATE now(),
+						start_date timestamp NOT NULL,
+						PRIMARY KEY (id),
+						FOREIGN KEY (credit_type_id) REFERENCES module_vlabs_quotasystem_credit_type(id)
+						ON DELETE CASCADE ON UPDATE CASCADE
+		)");
 
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_course_enrollment");
+		$res3 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_course_enrollment (
+						id integer NOT NULL,
+						user_id integer NOT NULL,
+						course_id integer NOT NULL,
+						update_ts timestamp DEFAULT now() ON UPDATE now(),
+						PRIMARY KEY (id), 
+						FOREIGN KEY (course_id) REFERENCES module_vlabs_quotasystem_course(id)
+						ON DELETE CASCADE ON UPDATE CASCADE,
+						FOREIGN KEY (user_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
+						ON DELETE CASCADE ON UPDATE CASCADE
+		)");
+
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_credit_type");
+		$res4 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_credit_type (
+						id integer NOT NULL AUTO_INCREMENT,
+						name character varying(45) NOT NULL,
+						resource character varying(45) NOT NULL,
+						course_id integer NOT NULL,
+						policy_id integer,
+						active boolean NOT NULL,
+						assignable boolean NOT NULL,
+						update_ts timestamp DEFAULT now() ON UPDATE now(),
+						PRIMARY KEY (id)
+						FOREIGN KEY (course_id) REFERENCES vlabs_quotasystem_course(id)
+						ON DELETE CASCADE ON UPDATE CASCADE,
+						FOREIGN KEY (policy_id) REFERENCES vlabs_quotasystem_policy(id)
+						ON DELETE CASCADE ON UPDATE CASCADE
+		)");
+		
+		// still need to add constraints on table I currently do not have
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_used_quota");
 		$res5 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_used_quota (
-						id integer NOT NULL,
+						id integer NOT NULL AUTO_INCREMENT,
 						period_number integer NOT NULL,
 						quota integer NOT NULL,
 						cancelled boolean NOT NULL,
@@ -151,12 +193,19 @@ class module_quotasystem extends EfrontModule {
 						update_ts timestamp DEFAULT now() ON UPDATE now(),
 						start_time timestamp  NOT NULL,
 						end_time timestamp  NOT NULL,
-						PRIMARY KEY (id)
+						PRIMARY KEY (id),
+						FOREIGN KEY (user_assigned_quota_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
+						ON DELETE CASCADE ON UPDATE CASCADE
+						//,FOREIGN KEY (appointment_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
+						//ON DELETE CASCADE ON UPDATE CASCADE,
+						//FOREIGN KEY (affiliation_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
+						//ON DELETE CASCADE ON UPDATE CASCADE
+						
 		)");
 
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_user_assigned_quota");
 		$res6 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_user_assigned_quota (
-						id integer NOT NULL,
+						id integer NOT NULL AUTO_INCREMENT,
 						purchase_id character varying(20),
 						quantity double precision NOT NULL,
 						user_id integer NOT NULL,
@@ -165,7 +214,9 @@ class module_quotasystem extends EfrontModule {
 						payment boolean NOT NULL,
 						update_ts timestamp DEFAULT now() ON UPDATE now(),
 						start_date timestamp  NOT NULL,
-						PRIMARY KEY (id)
+						PRIMARY KEY (id),
+						FOREIGN KEY (username, email) REFERENCES users(login, email)
+						ON DELETE CASCADE ON UPDATE CASCADE
 		)");
 
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_user_profile");
@@ -177,10 +228,81 @@ class module_quotasystem extends EfrontModule {
 						PRIMARY KEY (id), 
 						CONSTAINT fk_users FOREIGN KEY (username, email) REFERENCES users(login, email)
 		)");
- 		eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_profile
-ADD CONSTRAINT [FK_EmpEducation_Employees]
-FOREIGN KEY (empno)REFERENCES employees(empno)
-ON DELETE CASCADE ON UPDATE CASCADE"); 
+		eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_profile
+						ADD CONSTRAINT username
+						FOREIGN KEY (username, email) REFERENCES users(login, email)
+						ON DELETE CASCADE ON UPDATE CASCADE;");
+
+//User assigned Quota
+//credit type id
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_assigned_quota
+Add CONSTRAINT credit_type_id
+FOREIGN KEY (credit_type_id) REFERENCES module_vlabs_quotasystem_credit_type(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//user id
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_assigned_quota
+Add CONSTRAINT user_id
+FOREIGN KEY (user_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//purchase id, to do once files are uploaded
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_assigned_quota
+Add CONSTRAINT purchase_id
+FOREIGN KEY (purchase_id) REFERENCES module_vlabs_quotasystem_purchase(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+
+//used quota
+//appointment id???
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_used_quota
+Add CONSTRAINT appointment_id
+FOREIGN KEY (appointment_id) REFERENCES module_vlabs_quotasystem_appointment(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//user assigned quota
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_used_quota
+Add CONSTRAINT user_assigned_quota_id
+FOREIGN KEY (user_assigned_quota_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//affiliation id ????
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_used_quota
+Add CONSTRAINT affiliation_id
+FOREIGN KEY (affiliation_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
+ON DELETE CASCADE ON UPDATE CASCADE;")
+
+//credit type
+//course id
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_credit_type
+Add CONSTRAINT course_id
+FOREIGN KEY (course_id) REFERENCES module_vlabs_quotasystem_course(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//policy id
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_credit_type
+Add CONSTRAINT policy_id
+FOREIGN KEY (policy_id) REFERENCES module_vlabs_quotasystem_policy(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+
+//course enrollment
+//course id duplicate key???
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_enrollment
+Add CONSTRAINT course_id
+FOREIGN KEY (course_id) REFERENCES module_vlabs_quotasystem_course(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//user id duplicate key???
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_enrollment
+Add CONSTRAINT user_id
+FOREIGN KEY (user_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+
+//course_assigned quota
+//purchase id
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_assigned
+Add CONSTRAINT user_id
+FOREIGN KEY (user_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//credit type id
+eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_assigned
+Add CONSTRAINT credit_type_id
+FOREIGN KEY (credit_type_id) REFERENCES module_vlabs_quotasystem_credit_type(id)
+ON DELETE CASCADE ON UPDATE CASCADE;");
+//course
 		return ($res1 && $res2 && $res3 && $res4 && $res5 && $res6);
 	}
 	public function onUninstall(){

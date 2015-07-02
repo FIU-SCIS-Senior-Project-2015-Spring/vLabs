@@ -6,8 +6,9 @@
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}jquery/dataTables/media/css/demo_table_jui.css" rel="stylesheet" />
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}jquery/css/jquery-ui-timepicker.css" rel="stylesheet" />
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}css/reports.css" rel="stylesheet" />
-<link rel="stylesheet" type="{$T_QS_MODULE_BASELINK}text/css" href="css/styles.css" />
+<link rel="stylesheet" type="text/css" href="{$T_QS_MODULE_BASELINK}css/styles.css" />
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}css/validation.css" rel="stylesheet" />
+<link type='text/css' rel='stylesheet' href='{$T_QS_MODULE_THEME_CSS}'>
 
 <!-- js Libraries -->
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery-1.4.2.min.js"></script>
@@ -16,7 +17,6 @@
 <script type='text/javascript' src='{$T_QS_MODULE_BASELINK}js/DateFormat.js'></script>
 <script type='text/javascript' src='{$T_QS_MODULE_BASELINK}js/date.js'></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery.ui.timepicker.js"></script>
-
 
 <!-- Reports (flot) -->
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/excanvas.js"></script>
@@ -160,7 +160,7 @@
 <script type="text/javascript">
 	function loadTabs(){ldelim}
 		$("#page").css("min-width","940px");
-		tz_init();
+		//tz_init();
     	{php}
 			echo "\n";
 				echo "\t\t".'pol_init();'."\n";

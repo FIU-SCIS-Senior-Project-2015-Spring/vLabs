@@ -18,24 +18,20 @@ else
     
 
 if ($action == "getResources") {
-	//$resources = ct_getResources();
+	$resources = ct_getResources();
 	$courses = db_getAllCourses();
 	
-	//$response = array("resources" => $resources, "courses" => $courses);
-	$response = array("courses" => $courses);
+	$response = array("resources" => $resources, "courses" => $courses);
 	echo json_encode($response);
-	//echo json_encode($courses);
-}else if ($action == "getCreditTypesByCourses") {
-	$user = isset($_POST['user']) ? $_POST['user'] : "";
-	$response = ct_getCreditTypesByCourses($user);
-	echo json_encode($response);
+	
 } else if ($action == "getCourses") {
-	//$response = db_getAllCourses();
+	$response = db_getAllCourses();
 	echo json_encode($response);
 	
 } else if ($action == "getCreditTypes") {
 	$response = ct_getCreditTypes();
 	echo json_encode($response);
+	
 } else if ($action == "getCreditType") {
 	$id = isset($_POST['id']) ? $_POST['id'] : "";
 	
@@ -52,9 +48,8 @@ if ($action == "getResources") {
 	$assignable = isset($_POST['assignable']) ? $_POST['assignable'] : "";
 	$assignval = $assignable=="true" ? 1 : 0;
 	
-	
     $response = ct_addCreditType($name, $resource, $policyId, $courseId, $activeval, $assignval);
-	echo json_encode($response);
+    echo json_encode($response);
 
 } else if ($action == "modifyCreditType") {
 	$id = isset($_POST['id']) ? $_POST['id'] : ""; 
@@ -72,8 +67,7 @@ if ($action == "getResources") {
     
 } else if ($action == "deleteCreditType") {
 	$id = isset($_POST['id']) ? $_POST['id'] : "";
-	$response = ct_deleteCreditType($id);
-	echo json_encode($response);
+	ct_deleteCreditType($id);
 }
 
 ?>
