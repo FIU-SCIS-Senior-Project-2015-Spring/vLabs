@@ -207,6 +207,23 @@ function setTimeControl(){
 				success: function(data){
 					if(data){
 						if(data.success){
+							if(data.resourceType == "CERTIFICATE"){
+								//useCertCSS = true;
+								
+								$("#addtime").addClass('certificate-nav');
+								$("#removetime").addClass('certificate-nav');
+								$("#ejecttime").addClass('certificate-nav');
+								$("#timetochange").addClass('certificate-nav');
+																
+								$("#addtime").button("option", "disabled", false);
+								$("#removetime").button("option", "disabled", true);
+								$("#ejecttime").button("option", "disabled", true);
+								
+							}else{
+								$("#timetools button.addtime").button("option", "disabled", false);
+								$("#timetools button.minustime").button("option", "disabled", false);
+								$("#timetools button.cancel").button("option", "disabled", false);
+							}
 							var curDate = $.fullCalendar.parseISO8601(data.curDate);
 							currentAppointmentEndDate = $.fullCalendar.parseISO8601(data.endDate);
 							currentAppointmentId = data.veInsSchId;
