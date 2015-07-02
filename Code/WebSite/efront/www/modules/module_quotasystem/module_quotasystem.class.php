@@ -116,11 +116,7 @@ class module_quotasystem extends EfrontModule {
 						update_ts timestamp DEFAULT now() ON UPDATE now(),
 						PRIMARY KEY (id)
 		)");
-<<<<<<< HEAD
-				eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_policy");
-=======
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_policy");
->>>>>>> Story 177, Migrate quota system from Moodle to eFront
 		$res4 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_policy (
 						id integer NOT NULL AUTO_INCREMENT,
 						name character varying(45) NOT NULL,
@@ -200,14 +196,10 @@ class module_quotasystem extends EfrontModule {
 						PRIMARY KEY (id),
 						FOREIGN KEY (user_assigned_quota_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
 						ON DELETE CASCADE ON UPDATE CASCADE
-<<<<<<< HEAD
-=======
 						//,FOREIGN KEY (appointment_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
 						//ON DELETE CASCADE ON UPDATE CASCADE,
 						//FOREIGN KEY (affiliation_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
 						//ON DELETE CASCADE ON UPDATE CASCADE
-						
->>>>>>> Story 177, Migrate quota system from Moodle to eFront
 		)");
 
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_user_assigned_quota");
@@ -237,79 +229,8 @@ class module_quotasystem extends EfrontModule {
 		)");
 		eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_profile
 						ADD CONSTRAINT username
-						FOREIGN KEY (username, email) REFERENCES users(login, email)
+						FOREIGN KEY (username) REFERENCES users(login)
 						ON DELETE CASCADE ON UPDATE CASCADE;");
-
-//User assigned Quota
-//credit type id
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_assigned_quota
-Add CONSTRAINT credit_type_id
-FOREIGN KEY (credit_type_id) REFERENCES module_vlabs_quotasystem_credit_type(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//user id
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_assigned_quota
-Add CONSTRAINT user_id
-FOREIGN KEY (user_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//purchase id, to do once files are uploaded
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_user_assigned_quota
-Add CONSTRAINT purchase_id
-FOREIGN KEY (purchase_id) REFERENCES module_vlabs_quotasystem_purchase(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-
-//used quota
-//appointment id???
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_used_quota
-Add CONSTRAINT appointment_id
-FOREIGN KEY (appointment_id) REFERENCES module_vlabs_quotasystem_appointment(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//user assigned quota
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_used_quota
-Add CONSTRAINT user_assigned_quota_id
-FOREIGN KEY (user_assigned_quota_id) REFERENCES module_vlabs_quotasystem_user_assigned_quota(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//affiliation id ????
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_used_quota
-Add CONSTRAINT affiliation_id
-FOREIGN KEY (affiliation_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
-ON DELETE CASCADE ON UPDATE CASCADE;")
-
-//credit type
-//course id
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_credit_type
-Add CONSTRAINT course_id
-FOREIGN KEY (course_id) REFERENCES module_vlabs_quotasystem_course(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//policy id
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_credit_type
-Add CONSTRAINT policy_id
-FOREIGN KEY (policy_id) REFERENCES module_vlabs_quotasystem_policy(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-
-//course enrollment
-//course id duplicate key???
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_enrollment
-Add CONSTRAINT course_id
-FOREIGN KEY (course_id) REFERENCES module_vlabs_quotasystem_course(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//user id duplicate key???
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_enrollment
-Add CONSTRAINT user_id
-FOREIGN KEY (user_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-
-//course_assigned quota
-//purchase id
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_assigned
-Add CONSTRAINT user_id
-FOREIGN KEY (user_id) REFERENCES module_vlabs_quotasystem_user_profile(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//credit type id
-eF_executeQuery("ALTER TABLE module_vlabs_quotasystem_course_assigned
-Add CONSTRAINT credit_type_id
-FOREIGN KEY (credit_type_id) REFERENCES module_vlabs_quotasystem_credit_type(id)
-ON DELETE CASCADE ON UPDATE CASCADE;");
-//course
 		return ($res1 && $res2 && $res3 && $res4 && $res5 && $res6);
 	}
 	public function onUninstall(){

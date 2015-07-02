@@ -601,6 +601,7 @@ function pol_openForm(containerId, add, nTr, policyId)
 
 		            	}else if(policyType=="FIXED"){
 		            		var expDate = null;
+							var expDateFormatted = null;
             				if(absolute){
             		        	var date = jQuery(containerId+" .expDatePolicy").val();
             		        	var expDate  = new Date(date+" "+time);

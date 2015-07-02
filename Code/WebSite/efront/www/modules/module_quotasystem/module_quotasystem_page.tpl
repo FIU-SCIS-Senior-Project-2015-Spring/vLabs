@@ -113,15 +113,17 @@
     </div>
 </div>
 <script type="text/javascript">
-	
+	var uid = {$T_QS_UID};
 	function loadTabs(){ldelim}
 		$("#page").css("min-width","940px");
 		//tz_init();
     	{php}
 			echo "\n";
 			//for tcruz, id: 215, until the database is properly converted
-			echo "\t\t".'initCurrentReport(215);'."\n";
-		    echo "\t\t".'initHistoricReport(215);'."\n";
+			//echo "\t\t".'initCurrentReport(215);'."\n";
+		    //echo "\t\t".'initHistoricReport(215);'."\n";
+			echo "\t\t".'initCurrentReport(uid);'."\n";
+		    echo "\t\t".'initHistoricReport(uid);'."\n";
 			echo "\n";
 		{/php}
 		
