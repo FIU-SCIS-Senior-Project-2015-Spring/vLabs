@@ -11,12 +11,10 @@ function reloadDevaFrontEmbedded() {
         devaWasDisplayed = getCurDevaInsInfo();
         
         if (!devaWasDisplayed) {
-        	alert("RDFE: in if");
             // sms: updated 6/4/2011 commented out the below line
             // interval = setInterval('getCurDevaInsInfo()', 10000);
             
 			if ($('#resourcetype').val() == "VIRTUAL LAB") {
-				alert("calling createInstantAppointmentEmbedded");
 				createInstantAppointmentEmbedded(
                         $('#username').val(), 
 						$('#encryptedPassword').val(),
@@ -108,7 +106,6 @@ function getCurDevaInsInfo() {
 
 				setupTimeControlButtons();
 				setupVMControlButtons();
-				alert("vms.success = " + vms.success);		
 				if(vms != null) {
 					if (vms.success) {
 						//vmc_init();
@@ -190,7 +187,6 @@ function getCurDevaInsInfo() {
                             	$('#tabs').tabs("refresh");
                             	$('#tabs').show();
 						
-							alert("veinsid= " + vms.vmInfo[0].veInsId);
 						 	$('#veInsId').val(vms.vmInfo[0].veInsId);
 						}
 						
@@ -254,14 +250,11 @@ function getCurDevaInsInfo() {
 		}	
 	}
 	*/
-	alert("getCurDevaInsInfo returning: " + devaWasDisplayed);
 	return devaWasDisplayed;
 }
 
 
 function createInstantAppointmentEmbedded(username, encryptedPassword, course, type, hours, minutes) {
-
-	alert("in createInstantAppointmentEmbedded");
 			                
 	//progressDialogBox(true);
 				
@@ -280,8 +273,6 @@ function createInstantAppointmentEmbedded(username, encryptedPassword, course, t
 }
 
 function getCreateNewEventObjFromInstantAppEmbedded(username, encryptedPassword, course, type, hours, minutes){
-
-	alert("In getCreateNewEventObjFromInstantAppEmbedded");
 			
 	var userCurTime = getUserCurrentTime(username); // new Date();
 	var end = parseISO8601(userCurTime, true);
@@ -349,8 +340,6 @@ function scheduleAppointmentWithEncryptedPassword(eventWithEncryptedPassword, us
 	var requestType;
 	var startDate;
     
-	alert("in scheduleAppointmentWithEncryptedPassword");
-
 	// showProgressBar(true);
 	if (eventWithEncryptedPassword.start != "") {
 		startDate = event.start.format(dateformatter);
