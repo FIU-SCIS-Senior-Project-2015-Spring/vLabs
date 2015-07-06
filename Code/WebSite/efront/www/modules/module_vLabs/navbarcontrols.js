@@ -2,11 +2,13 @@ var timeOverIsSet = false;
 var currentAppointmentId;
 var currentAppointmentEndDate;
 var isTimeSet = false;
+var stateInterval = null;
+var iscerttest = false;
 
 function setupTimeControlButtons(){
 	$("#addtime").button({
 		text: false, 
-		//disabled: true, 
+		disabled: true, 
 		icons: {primary: "ui-icon-plus"}
 	}).click(function(){
 		var addmins = parseInt($("#timetochange").val());
@@ -24,7 +26,7 @@ function setupTimeControlButtons(){
 
 	$("#removetime").button({
 		text: false, 
-		//disabled: true, 
+		disabled: true, 
 		icons: {primary: "ui-icon-minus"}
 	}).click(function(){
 		var addmins = parseInt($("#timetochange").val());
@@ -42,7 +44,7 @@ function setupTimeControlButtons(){
 	
 	$("#ejecttime").button({
 		text: false, 
-		//disabled: true, 
+		disabled: true, 
 		icons: {primary: "ui-icon-eject"}
 	}).click(function(){
 		cancelAppointment();
@@ -50,46 +52,84 @@ function setupTimeControlButtons(){
 }
 
 function setupVMControlButtons(){
+	var instanceId = $('#veInsId').val();
+	var state; //GET THIS SOMEHOW?
+	var vmname;
+	//get vm name by using the selected tab index
+	var curTab = $('.ui-tabs-active');
+	switch(curTab){
+		case '3':
+			vmname = "dc (Domain Controller)";
+			break;
+		case '4':
+			vmname = "ws1 (Workstation 1)";
+			break;
+		case '5':
+			vmname = "ws2 (Workstation 2)";
+			break;
+		case '6':
+			vmname = "reception";
+			break;
+		case '7':
+			vmname = "laptop-ceo";
+			break;
+	}
+
 	$("#poweroffvm").button({
 		text: false, 
 		icons: {primary: "ui-icon-power"}
 	}).click(function(){
-
+		markCurrentInstanceState("disabled");
+		var bvObj = new vmcObj();
+		setTimeout(function(){ buttonBundleClick('powerOff', instanceId, vmname, bvObj); },3000);
 	});
 
     $("#poweronvm").button({
     	text: false, 
     	icons: {primary: "ui-icon-play"}
     }).click(function(){
-
+    	markCurrentInstanceState("disabled");
+    	var bvObj = new vmcObj();
+		setTimeout(function(){ buttonBundleClick('powerOn', instanceId, vmname, bvObj); },3000);
     });
 
     $("#shutdownvm").button({
     	text: false, 
     	icons: {primary: "ui-icon-stop"}
     }).click(function(){
-
+    	markCurrentInstanceState("disabled");
+    	var bvObj = new vmcObj();
+		setTimeout(function(){ buttonBundleClick('shutdown', instanceId, vmname, bvObj); },3000);
     });
     
     $("#restartvm").button({
     	text: false, 
     	icons: {primary: "ui-icon-refresh"}
     }).click(function(){
-
+    	markCurrentInstanceState("disabled");
+    	var bvObj = new vmcObj();
+		setTimeout(function(){ buttonBundleClick('restart', instanceId, vmname, bvObj); },3000);
     });
     
     $("#pausevm").button({
     	text: false, 
     	icons: {primary: "ui-icon-pause"}
     }).click(function(){
-
+    	markCurrentInstanceState("disabled");
+    	var bvObj = new vmcObj();
+		setTimeout(function(){ buttonBundleClick('suspend', instanceId, vmname, bvObj); },3000);
     });
     
     $("#refreshvm").button({
     	icons: {primary: "ui-icon-trash"}
     }).click(function(){
-
+    	markCurrentInstanceState("disabled");
+    	var bvObj = new vmcObj();
+		setTimeout(function(){ buttonBundleClick('refresh', instanceId, vmname, bvObj); },3000);
     });
+
+    if(state)
+		markCurrentInstanceState(state);
 }
 
 function modifyAppointment(mins, addmins){
@@ -106,11 +146,8 @@ function modifyAppointment(mins, addmins){
 		async: true,
 		data: {
 			action: 'extendAppointment',
-			//requestingUser:  $('#username').val(),
-			//username: $('#username').val(),
-			//hardcoded for testing purposes
-			requestingUser: "icard005test",
-			username: "icard005test",
+			requestingUser:  $('#username').val(),
+			username: $('#username').val(),
 			id: currentAppointmentId,
 			minutes: mins,
 			requestType: "User"
@@ -190,8 +227,7 @@ function cancelAppointment(){
 }
 
 function setTimeControl(){
-	//for testing:
-	var instanceid = '19281120-2fee-43bb-ab6f-de3228d6ac7b';
+	var instanceid = $('#veInsId').val();
 
 	if(!timeOverIsSet){	
 		if(instanceid){
@@ -218,11 +254,11 @@ function setTimeControl(){
 								$("#addtime").button("option", "disabled", false);
 								$("#removetime").button("option", "disabled", true);
 								$("#ejecttime").button("option", "disabled", true);
-								
+
 							}else{
-								$("#timetools button.addtime").button("option", "disabled", false);
-								$("#timetools button.minustime").button("option", "disabled", false);
-								$("#timetools button.cancel").button("option", "disabled", false);
+								$("#addtime").button("option", "disabled", false);
+								$("#minustime").button("option", "disabled", false);
+								$("#ejecttime").button("option", "disabled", false);
 							}
 							var curDate = $.fullCalendar.parseISO8601(data.curDate);
 							currentAppointmentEndDate = $.fullCalendar.parseISO8601(data.endDate);
@@ -273,8 +309,7 @@ function setTimeControl(){
 }
 
 function checkAppointmentOver(me){
-	//for testing:
-	var instanceid = '19281120-2fee-43bb-ab6f-de3228d6ac7b';
+	var instanceId = $('#veInsId').val();
 	
 	$.ajax({
 		type: 'POST',
@@ -303,3 +338,96 @@ function checkAppointmentOver(me){
 
 }
 
+function markCurrentInstanceState(state){	
+	
+	if(state == "disabled"){
+	
+		$("#poweroffvm").button("option", "disabled", true);
+		$("#poweronvm").button("option", "disabled", true);
+		$("#pausevm").button("option", "disabled", true);
+		$("#shutdownvm").button("option", "disabled", true);
+		$("#restartvm").button("option", "disabled", true);
+		$("#refreshvm").button("option", "disabled", true);
+	
+	}else if(state == "off"){
+	
+		$("#poweroffvm").button("option", "disabled", true);
+		$("#poweronvm").button("option", "disabled", false);
+		$("#pausevm").button("option", "disabled", true);
+		$("#shutdownvm").button("option", "disabled", true);
+		$("#restartvm").button("option", "disabled", true);
+		$("#refreshvm").button("option", "disabled", false);
+		
+	}else if(state == "suspended"){
+	
+		$("#poweroffvm").button("option", "disabled", true);
+		$("#poweronvm").button("option", "disabled", false);
+		$("#pausevm").button("option", "disabled", true);
+		$("#shutdownvm").button("option", "disabled", true);
+		$("#restartvm").button("option", "disabled", true);
+		$("#refreshvm").button("option", "disabled", false);
+	
+	}else if(state == "on"){
+		
+		$("#poweroffvm").button("option", "disabled", false);
+		$("#poweronvm").button("option", "disabled", true);
+		$("#pausevm").button("option", "disabled", false);
+		$("#shutdownvm").button("option", "disabled", false);
+		$("#restartvm").button("option", "disabled", false);
+		$("#refreshvm").button("option", "disabled", false);
+	
+	}else{
+	
+		$("#poweroffvm").button("option", "disabled", true);
+		$("#poweronvm").button("option", "disabled", false);
+		$("#pausevm").button("option", "disabled", true);
+		$("#shutdownvm").button("option", "disabled", true);
+		$("#restartvm").button("option", "disabled", true);
+		$("#refreshvm").button("option", "disabled", false);
+		
+	}	
+}
+
+function buttonBundleClick(command, instanceId, vmname, obj){
+	obj.vmInstanceCmd(command, instanceId, vmname);
+}
+
+function showCmdMessages(command){
+	if(command == "powerOn"){
+		var message = "This virtual machine is turning on! This process may take from 5 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again by clicking on the tab for this virtual machine.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "powerOff"){
+		var message = "This virtual machine has been turned off! If you want to turn it on, you would need to click the Power On button.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "shutdown"){
+		var message = "This virtual machine has been shutdown! If you want to turn it on, you would need to click the Power On button.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "suspend"){
+		var message = "This virtual machine has been suspended/paused! If you want to turn it on, you would need to click the Power On button.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "restart"){
+		var message = "This virtual machine is being restarted! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again by clicking on the tab for this virtual machine.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "refresh"){
+		markCurrentInstanceState('disabled');
+		var message = "This virtual machine is being refreshed! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again by clicking on the tab for this virtual machine.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "off"){
+		var message = "This virtual machine has been turned off! If you want to turn it on, you would need to click the Power On button.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "suspended"){
+		var message = "This virtual machine has been suspended/paused! If you want to turn it on, you would need to click the Power On button.";
+		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		
+	}else if(command == "on"){
+		var message = "This virtual machine is getting ready! This process may take from 5 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again, by clicking on the tab for this virtual machine.";
+		alert(message);
+	}
+}

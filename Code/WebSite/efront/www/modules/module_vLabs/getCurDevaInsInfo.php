@@ -1,20 +1,11 @@
 <?php
 
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
-require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/user/profile/lib.php');
-
-require_once($CFG->libdir .'/ddllib.php');
-
-// require_once('parser.php');
-// require_once 'xmlserializer/serialize.php';
-// require_once 'xmlserializer/classes.php';
-
 ini_set("soap.wsdl_cache_enabled", "0");
 
 header("Access-Control-Allow-Origin: *");
 
-$wsdl="http://ita-provisioner.cis.fiu.edu:8080/axis2/services/VirtualLabs?wsdl";
-	$location ="http://ita-provisioner.cis.fiu.edu:8080/axis2/services/VirtualLabs";
+$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
 
 if (isset($_POST['requestingUser'])) {
 

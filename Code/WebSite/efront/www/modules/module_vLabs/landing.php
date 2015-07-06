@@ -43,13 +43,29 @@
 <script src="jqtimer/jquery.countdown.js"></script>
 
 </head>
-<body>
-<input id ="username" type="hidden" value="<?php echo $_GET['username']; ?>" />
+<body id="docbody">
+	<input id ="username" type="hidden" value="<?php echo $_GET['username']; ?>" />
+	<input id="hours" type="hidden" value="<?php echo $_GET['hours']; ?>" />
+	<input id="minutes" type="hidden" value="<?php echo $_GET['minutes']; ?>" />
+	<input id ="encryptedPassword" type="hidden" value="<?php echo $_GET['encrypted_password']; ?>" />
+	<input id="courseURL" type="hidden" value="KU-poweredby-ITS.html"/>
+	<input id="resourcetype" type="hidden" value="VIRTUAL LAB" />
+	<input id="veInsId" type="hidden" value="false"/>
+	<?php
+	//grab the course name
+		$courseId = $_GET['course'];
+		$courseInfo = eF_getTableData("courses", "name", "id=$courseId");
+		foreach($courseInfo as $cinfo){
+			$cname = $cinfo['name'];
+			echo "<input id='course' type='hidden' value='$cname'/>";
+		}
+	?>
+
 <!-- nav bar -->
 <div id="toolbar" class="ui-widget-header ui-corner-all">
 	<div style="display:inline">
 		<div id="timecontrols" style="display:inline">
-		 minutes: <input type="text" id="timetochange" name="timetochange" placeholder="5" value="5" maxlength="2" size="2">
+		 minutes: <input type="text" id="timetochange" name="timetochange" value="5" placeholder="5" maxlength="2" size="2">
 	 	<button id="addtime">Add time to your virtual-lab appointment</button>
 	 	<button id="removetime">Remove time from your virtual-lab appointment</button>
 	 	<button id="ejecttime">Cancel the remaining virtual-lab appointment</button>
@@ -71,6 +87,7 @@
 	<ul>
 		<li><a class="nonrdptab" href="#tabs-1">Network Diagram</a></li>
 		<li><a class="nonrdptab" href="#tabs-2">Connection Info</a></li>
+
 		<li><a class="rdptab" href="#tabs-3" rel="http://vlabs-dev.cs.fiu.edu:8080/guacamole/#/client/c/vc9-50491-dc">Domain Controller</a>
 		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
@@ -92,7 +109,7 @@
 	</div>
 	<!-- Connection Info -->
 	<div id="tabs-2">
-		<table class="table table-striped">
+		<table id="conninfotable" class="table table-striped">
 			<tr>
 				<td><center><strong>Machine Name</strong></center></td>
 				<td><center><strong>Connection Protocol</strong></center></td>
@@ -101,61 +118,6 @@
 				<td><center><strong>Username</strong></center></td>
 				<td><center><strong>Password</strong></center></td>
 				<td><center><strong>Domain</strong></center></td>
-
-			</tr>
-			<tr>
-				<td><center>Kaseya Server</center></td>
-				<td><center>http</center></td>
-				<td><center>http://university-cdn.kaseya.net</center></td>
-				<td><center>80</center></td>
-				<td><center>icard005test</center></td>
-				<td><center>ic********st</center></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td><center>dc (Domain Controller)</center></td>
-				<td><center>RDP</center></td>
-				<td><center>vc9.cis.fiu.edu</a></center></td>
-				<td><center>50491</center></td>
-				<td><center>icard005test</center></td>
-				<td><center>ic********st</center></td>
-				<td><center>ITTC</center></td>
-			</tr>
-			<tr>
-				<td><center>ws1 (Workstation 1)</center></td>
-				<td><center>RDP</center></td>
-				<td><center>vc9.cis.fiu.edu</a></center></td>
-				<td><center>50492</center></td>
-				<td><center>icard005test</center></td>
-				<td><center>ic********st</center></td>
-				<td><center>ITTC</center></td>
-			</tr>
-			<tr>
-				<td><center>ws2 (Workstation 2)</center></td>
-				<td><center>RDP</center></td>
-				<td><center>vc9.cis.fiu.edu</a></center></td>
-				<td><center>50493</center></td>
-				<td><center>icard005test</center></td>
-				<td><center>ic********st</center></td>
-				<td><center>ITTC</center></td>
-			</tr>
-			<tr>
-				<td><center>reception</center></td>
-				<td><center>RDP</center></td>
-				<td><center>vc9.cis.fiu.edu</a></center></td>
-				<td><center>50494</center></td>
-				<td><center>icard005test</center></td>
-				<td><center>ic********st</center></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td><center>laptop-ceo</center></td>
-				<td><center>RDP</center></td>
-				<td><center>vc9.cis.fiu.edu</a></center></td>
-				<td><center>50495</center></td>
-				<td><center>icard005test</center></td>
-				<td><center>ic********st</center></td>
-				<td></td>
 			</tr>
 		</table>
 	</div>
@@ -173,29 +135,24 @@
 </div>
 </body>
 <script type="text/javascript" src="scheduler/fullcalendar/fullcalendar.js"></script>
+<script type="text/javascript" src="dateFormat.js"></script>
 <script type="text/javascript" src="navbarcontrols.js"></script> 
+<script type="text/javascript" src="getandschedule.js"></script> 
 <script>
-	$(function() {	
-		//laod tab UI
-		$("#tabs").tabs();
-
-		//load the nav buttons and countdown
-		setupTimeControlButtons();
-		setTimeControl();
-	    setupVMControlButtons();
-		
+	$(function() {
 		//hide the vm controls on document load
 		$("#vmcontrols").hide();
 
-	  //   $('span.clock').countDown({
-	  //   	startNumber: new Date(),
-	  //   	endNumber: new Date("July 12, 2015 11:00:00"),
-	  //   	returnDate: true,
-	  //   	callBack: function(me) {
-			// 	$(me).text('00:00:00').css('color','#b00');
-			// }
-	  //   });
-	    //$(".timer div").css("display", "inline-block")
+		//laod tab UI
+		$("#tabs").tabs();
+		$("#tabs").hide();
+
+		//load the nav buttons and countdown
+		reloadDevaFrontEmbedded();
+		//setupTimeControlButtons();
+		alert("calling setTimeControl");
+		setTimeControl();
+	    //setupVMControlButtons();
 
 		//clicking a rdp tab
 		$("a.rdptab").click(function(){
