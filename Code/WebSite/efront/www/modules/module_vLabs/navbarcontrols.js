@@ -52,33 +52,16 @@ function setupTimeControlButtons(){
 }
 
 function setupVMControlButtons(){
-	var instanceId = $('#veInsId').val();
-	var state; //GET THIS SOMEHOW?
-	var vmname;
 	//get vm name by using the selected tab index
-	var curTab = $('.ui-tabs-active');
-	switch(curTab){
-		case '3':
-			vmname = "dc (Domain Controller)";
-			break;
-		case '4':
-			vmname = "ws1 (Workstation 1)";
-			break;
-		case '5':
-			vmname = "ws2 (Workstation 2)";
-			break;
-		case '6':
-			vmname = "reception";
-			break;
-		case '7':
-			vmname = "laptop-ceo";
-			break;
-	}
+	//var curTab = $('#tabs').tabs("option", "active");	//0 based index
 
 	$("#poweroffvm").button({
 		text: false, 
 		icons: {primary: "ui-icon-power"}
 	}).click(function(){
+		var instanceId = $('#veInsId').val();
+		var state = getRdpTabInfo('state', currentTabSelected);
+		var vmname = getRdpTabInfo('veName', currentTabSelected);
 		markCurrentInstanceState("disabled");
 		var bvObj = new vmcObj();
 		setTimeout(function(){ buttonBundleClick('powerOff', instanceId, vmname, bvObj); },3000);
@@ -88,6 +71,9 @@ function setupVMControlButtons(){
     	text: false, 
     	icons: {primary: "ui-icon-play"}
     }).click(function(){
+    	var instanceId = $('#veInsId').val();
+    	var state = getRdpTabInfo('state', currentTabSelected);
+		var vmname = getRdpTabInfo('veName', currentTabSelected);
     	markCurrentInstanceState("disabled");
     	var bvObj = new vmcObj();
 		setTimeout(function(){ buttonBundleClick('powerOn', instanceId, vmname, bvObj); },3000);
@@ -97,6 +83,9 @@ function setupVMControlButtons(){
     	text: false, 
     	icons: {primary: "ui-icon-stop"}
     }).click(function(){
+    	var instanceId = $('#veInsId').val();
+    	var state = getRdpTabInfo('state', currentTabSelected);
+		var vmname = getRdpTabInfo('veName', currentTabSelected);
     	markCurrentInstanceState("disabled");
     	var bvObj = new vmcObj();
 		setTimeout(function(){ buttonBundleClick('shutdown', instanceId, vmname, bvObj); },3000);
@@ -106,6 +95,9 @@ function setupVMControlButtons(){
     	text: false, 
     	icons: {primary: "ui-icon-refresh"}
     }).click(function(){
+    	var instanceId = $('#veInsId').val();
+    	var state = getRdpTabInfo('state', currentTabSelected);
+		var vmname = getRdpTabInfo('veName', currentTabSelected);
     	markCurrentInstanceState("disabled");
     	var bvObj = new vmcObj();
 		setTimeout(function(){ buttonBundleClick('restart', instanceId, vmname, bvObj); },3000);
@@ -115,6 +107,9 @@ function setupVMControlButtons(){
     	text: false, 
     	icons: {primary: "ui-icon-pause"}
     }).click(function(){
+    	var instanceId = $('#veInsId').val();
+    	var state = getRdpTabInfo('state', currentTabSelected);
+		var vmname = getRdpTabInfo('veName', currentTabSelected);
     	markCurrentInstanceState("disabled");
     	var bvObj = new vmcObj();
 		setTimeout(function(){ buttonBundleClick('suspend', instanceId, vmname, bvObj); },3000);
@@ -123,13 +118,18 @@ function setupVMControlButtons(){
     $("#refreshvm").button({
     	icons: {primary: "ui-icon-trash"}
     }).click(function(){
+    	var instanceId = $('#veInsId').val();
+    	var state = getRdpTabInfo('state', currentTabSelected);
+		var vmname = getRdpTabInfo('veName', currentTabSelected);
     	markCurrentInstanceState("disabled");
     	var bvObj = new vmcObj();
 		setTimeout(function(){ buttonBundleClick('refresh', instanceId, vmname, bvObj); },3000);
     });
 
-    if(state)
-		markCurrentInstanceState(state);
+  //   if(state)
+		// markCurrentInstanceState(state);
+
+	$("#vmcontrols").hide();
 }
 
 function modifyAppointment(mins, addmins){
@@ -257,7 +257,7 @@ function setTimeControl(){
 
 							}else{
 								$("#addtime").button("option", "disabled", false);
-								$("#minustime").button("option", "disabled", false);
+								$("#removetime").button("option", "disabled", false);
 								$("#ejecttime").button("option", "disabled", false);
 							}
 							var curDate = $.fullCalendar.parseISO8601(data.curDate);
@@ -389,45 +389,70 @@ function markCurrentInstanceState(state){
 }
 
 function buttonBundleClick(command, instanceId, vmname, obj){
+	alert("inside buttonBundleClick");
 	obj.vmInstanceCmd(command, instanceId, vmname);
 }
 
 function showCmdMessages(command){
+	var message = "";
+
 	if(command == "powerOn"){
-		var message = "This virtual machine is turning on! This process may take from 5 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again by clicking on the tab for this virtual machine.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
-		
+		message = "This virtual machine is turning on! This process may take from 5 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again by reloading the tab.";
+
 	}else if(command == "powerOff"){
-		var message = "This virtual machine has been turned off! If you want to turn it on, you would need to click the Power On button.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
-		
+		message = "This virtual machine has been turned off! If you want to turn it on, you would need to click the Power On button.";
+
 	}else if(command == "shutdown"){
-		var message = "This virtual machine has been shutdown! If you want to turn it on, you would need to click the Power On button.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		message = "This virtual machine has been shutdown! If you want to turn it on, you would need to click the Power On button.";
 		
 	}else if(command == "suspend"){
-		var message = "This virtual machine has been suspended/paused! If you want to turn it on, you would need to click the Power On button.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		message = "This virtual machine has been suspended/paused! If you want to turn it on, you would need to click the Power On button.";
 		
 	}else if(command == "restart"){
-		var message = "This virtual machine is being restarted! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again by clicking on the tab for this virtual machine.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		message = "This virtual machine is being restarted! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
 		
 	}else if(command == "refresh"){
 		markCurrentInstanceState('disabled');
-		var message = "This virtual machine is being refreshed! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again by clicking on the tab for this virtual machine.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		message = "This virtual machine is being refreshed! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
 		
 	}else if(command == "off"){
-		var message = "This virtual machine has been turned off! If you want to turn it on, you would need to click the Power On button.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		message = "This virtual machine has been turned off! If you want to turn it on, you would need to click the Power On button.";
 		
 	}else if(command == "suspended"){
-		var message = "This virtual machine has been suspended/paused! If you want to turn it on, you would need to click the Power On button.";
-		$(".iframetab").attr('src','webRDPMessage.php?tab='+currentTabSelected+'&message='+message);
+		message = "This virtual machine has been suspended/paused! If you want to turn it on, you would need to click the Power On button.";
 		
 	}else if(command == "on"){
-		var message = "This virtual machine is getting ready! This process may take from 5 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try again, by clicking on the tab for this virtual machine.";
-		alert(message);
+		message = "This virtual machine is getting ready! This process may take from 5 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
 	}
+
+	alert(message);
+}
+
+function parseStatefromCommand(command, workingTab){
+	alert("in parseStatefromCommand, working tab is: " + workingTab);
+	if(command == 'powerOff' || command == 'shutdown'){
+		setRdpTabInfo('state', workingTab, 'off', 'parseStatefromCommand');
+	}else if(command == 'suspend'){
+		setRdpTabInfo('state', workingTab, 'suspended', 'parseStatefromCommand');
+	}else if(command == 'powerOn'){
+		setRdpTabInfo('state', workingTab, 'on', 'parseStatefromCommand');
+	}else{
+		// if 'restart' or 'refresh'	
+		setRdpTabInfo('state', workingTab, null, 'parseStatefromCommand');
+	}
+}
+
+function setRdpTabInfo(pair, tabId, value){
+	for(var i = 0; i < rdpTabInfo.length; i++){
+		if(rdpTabInfo[i].tabId == tabId)
+			rdpTabInfo[i][pair] = value;
+	}
+}
+function getRdpTabInfo(pair, tabId){
+	var value;
+	for(var i = 0; i < rdpTabInfo.length; i++){
+		if(rdpTabInfo[i].tabId == tabId)
+			value = rdpTabInfo[i][pair];
+	}
+	return value;
 }

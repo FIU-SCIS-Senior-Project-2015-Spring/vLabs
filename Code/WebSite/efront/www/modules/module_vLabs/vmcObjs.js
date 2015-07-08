@@ -18,26 +18,25 @@ function checkRDPMachineStatus(init) {
 	var obj = new vmcObj();
 	obj.workingTab = currentTabSelected;
 	var today = new Date();
-	//$("#vmcDebug").html("checkRDPMachineStatus: "+today);
-	//$("#vmcDebug").append("<br/>rdpIsReady: "+getRdpTabInfo('ready', currentTabSelected));
-	//$("#vmcDebug").html("<br/>this.workingTab: "+currentTabSelected+" ready: "+getRdpTabInfo('ready', currentTabSelected));
 	
 	if(init){
 		stateInterval = setInterval(function(){ checkRDPMachineStatus(false); },30000);	
 
 	}
+
+	alert("In checkRDPMachineStatus");
 	
-	if(currentTabSelected){
-		var istab = currentTabSelected.indexOf("tab");
+	//if(currentTabSelected){
+		//var istab = currentTabSelected.indexOf("tab");
 		
-		if(istab >= 0){
-			
-			var vmname = $("#"+currentTabSelected+" span").html();
-			var instanceId = $('#veInsId').html();
-			var hostName = $("#veInsAddr").html();
-			var hostPort = $("#veInsPort-"+currentTabSelected).html();
+		if(currentTabSelected >= 0){	
+			var vmname = getRdpTabInfo('veName', currentTabSelected);
+			var instanceId = $('#veInsId').val();
+			var hostName = getRdpTabInfo('veInsAddr', currentTabSelected);
+			var hostPort = getRdpTabInfo('veInsPort', currentTabSelected);
 			
 			//var state = 
+			alert("in checkRDPMachineStatus calling getInstanceState");
 			obj.getInstanceState(instanceId, vmname, hostName, hostPort);
 			
 			/*
@@ -53,11 +52,8 @@ function checkRDPMachineStatus(init) {
 				showCmdMessages(state);
 				//vmInstanceCmd(command, instanceId, vmName);
 			}
-			*/
-		}
+			*/	
 	}
-	
-
 }
 
 vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, hostPort) {
@@ -65,11 +61,12 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 	//this.workingTab = currentTabSelected;
 	var workingTab = this.workingTab;
 	var debug = "";
-	//$("#vmcDebug").html("<br/>this.workingTab: "+this.workingTab+" ready: "+getRdpTabInfo('ready', this.workingTab));
  
+	alert("in isRDPMachineReady");
+
 	$.ajax({
 		type: 'POST',
-		url: 'php/vmcontrols.php',
+		url: 'vmcontrols.php',
 		dataType: 'json',
 		async: true,
 		data: {
@@ -77,52 +74,36 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 			hostName: hostName,
 			hostPort: hostPort,
 			userid: $('#userid').val(),	// JAM added: 03.21.2012
-			defaultHeight: $("#bottomFrameHeightPercentage").val()
+			defaultHeight: '70'
 		},
 		success: function(data) {
 			if(data){
 				if(data.success){
-								
-					//$("#vmcDebug").html("<br/>isRDPMachineReady: "+data.ready);
-					//$("#vmcDebug").append("<br/>this.workingTab: "+workingTab+" ready: "+getRdpTabInfo('ready', workingTab));
-					//$("#vmcDebug").append("<br/>currentTabSelected: "+currentTabSelected);
-					//$("#vmcDebug").append("<br/>Showing: "+getRdpTabInfo('showing', workingTab));
-					
 					if(data.ready){
 						clearInterval(stateInterval);
 						
 						if(workingTab == currentTabSelected){
 							if(!getRdpTabInfo('ready', workingTab)){
 								setRdpTabInfo('ready', workingTab, true);
-								//alert('mainscreenid');
-								if(!getRdpTabInfo('showing', workingTab)){
-									var url = $("#veInsURL-"+workingTab).html();
-									url = url + "&frameBpp=" + data.bpp;
-									url = url + "&frameHeight=" + data.height;
-									url = url + "&frameWidth=" + data.width;
+
+								if(!getRdpTabInfo('showing', workingTab)){	//if not showing
+									var url = getRdpTabInfo('veInsURL', workingTab); //$("#veInsURL").val(); //Guacamole url?
+									//url = url + "&frameBpp=" + data.bpp;
+									//url = url + "&frameHeight=" + data.height;
+									//url = url + "&frameWidth=" + data.width;
 									
-									var currentSRC = $("#mainscreenid").attr('src');
+									var currentSRC = $(".iframetab").attr('src');
+
+									alert("url is: " + url + "   src is: " + currentSRC);
 									//$("#mainscreenid").attr('src',url.replace(/&amp;/g,"&"));
 									
 									if(currentSRC == url){
-									    $('#mainscreenid')[0].contentWindow.location.reload(true);
+									    $('.iframetab')[0].contentWindow.location.reload(true);
 									}else{
-									    $("#mainscreenid").attr('src',url.replace(/&amp;/g,"&"));
+									    $(".iframetab").attr('src',url.replace(/&amp;/g,"&"));
 									}
 									
 									setRdpTabInfo('showing', workingTab, true);
-									/*
-									var iframeInterval = setInterval(function(){
-									    ////console.log("pageIsLoaded:"+window.frames.mainscreen.pageIsLoaded);
-									    ////console.log("isActive:"+window.frames.mainscreen.isActive());
-									    if(window.frames.mainscreen.pageIsLoaded){
-										if(window.frames.mainscreen.isActive()){
-										    clearInterval(iframeInterval);
-										    $("iframe#mainscreenid").contents().find("p.message").css("display","none");
-										}
-									    }
-									},10000);
-									*/
 								}
 							}
 							markCurrentInstanceState(getRdpTabInfo('state', workingTab),'isRDPMachineReady - '+getRdpTabInfo('state', workingTab));
@@ -134,10 +115,10 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 							debug = "debug2 4";
 							if(getRdpTabInfo('ready', workingTab)){
 								// Shows a message while waiting
-								var message = "This virtual machine is not ready!<br/> Please be patient while the RDP server loads.";
+								var message = "This virtual machine is not ready! Please be patient while the RDP server loads.";
 								markCurrentInstanceState('disabled');
-			
-								$("#mainscreenid").attr('src','webRDPMessage.php?tab='+workingTab+'&message='+message);
+								alert(message);
+								//$("#mainscreenid").attr('src','webRDPMessage.php?tab='+workingTab+'&message='+message);
 								
 								setRdpTabInfo('ready', workingTab, false);
 								setRdpTabInfo('showing', workingTab, false);
@@ -146,6 +127,7 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 					}
 				
 				}else{
+					alert("RDP Validation: " + data.reason);
 					//noticeDialog("RDP Validation", data.reason, "alert");		
 					setRdpTabInfo('ready', workingTab, false);
 					setRdpTabInfo('showing', workingTab, false);
@@ -158,10 +140,10 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 			// current.vmInstanceCmd('getState',instanceId, vmname);
 			var header = "Instance Command Error: isRDPReady";
 			var message = "Command could not be completed.";
-			var icon = "alert";
 			//noticeDialog(header, message, icon);
-			popDownErrorNoticeBox("<b>"+header+"</b><br/> "+message);
-			
+			//popDownErrorNoticeBox("<b>"+header+"</b><br/> "+message);
+			alert(header + " " + message);
+			console.log(textStatus + " " + errorThrown);
 			setRdpTabInfo('ready', workingTab, false);
 			//wasRDPMachineReady = false;
 		}/*,
@@ -182,7 +164,7 @@ vmcObj.prototype.getInstanceState = function(instanceId, vmName, hostName, hostP
 
 	$.ajax({
 		type: 'POST',
-		url: 'php/vmcontrols.php',
+		url: 'vmcontrols.php',
 		dataType: 'text',
 		async: true,
 		data: {
@@ -195,11 +177,13 @@ vmcObj.prototype.getInstanceState = function(instanceId, vmName, hostName, hostP
 			if(data){
 				// result = data;
 				var state = data;
+				alert("in getinstancestate: " + state);
 				result = state;
 		
 				setRdpTabInfo('state', obj.workingTab, state, 'checkRDPMachineStatus');
 				
 				if(state == 'on'){
+					alert("calling isRDPMachineReady");
 					obj.isRDPMachineReady(instanceId, vmName, hostName, hostPort);
 					//alert('here');
 				}else{
@@ -221,7 +205,6 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 	var current = this;
 	//this.workingTab = currentTabSelected;
 	var workingTab = this.workingTab;
-	
 
 	parseStatefromCommand(command,workingTab);
 	
@@ -229,6 +212,8 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 	if(command == "getState")
 		isASync = false;
 		
+	alert("in vmInstanceCmd");
+
 	$.ajax({
 		type: 'POST',
 		url: 'vmcontrols.php',
@@ -238,7 +223,7 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 			action: command,
 			instanceId:  instanceId,
 			vmName: vmName,
-			requestingUser:  $('#username').val()		//might need to hardcode for debug
+			requestingUser:  $('#username').val()
 		},
 		success: function(data) {
 			if(data){
@@ -246,6 +231,7 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 					//setRdpTabInfo('state', workingTab, data,'vmInstanceCmd: getState');
 					markCurrentInstanceState(data,'vmInstanceCmd');
 				}else{
+					alert("getState failed");
 					// if the command fails
 					//noticeDialog("VM Command", "Please retry your request.", "alert");
 					alert("Please retry your request.");	
@@ -271,6 +257,7 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 						//setRdpTabInfo('state', workingTab, 'suspended','vmInstanceCmd: getState');
 						markCurrentInstanceState(data,'vmInstanceCmd');
 					}else{
+						alert("calling vmInstanceCmd with insid: " + instanceId + "and vmName: " + vmName);
 						current.vmInstanceCmd('getState', instanceId, vmName);	// -- original
 						checkRDPMachineStatus(true);
 					}
@@ -280,7 +267,7 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 		error: function(XMLHttpRequest, textStatus, errorThrown){
 			// current.vmInstanceCmd('getState',instanceId, vmname);
 			var header = "Instance Command Error: "+command;
-			var message = "Command could not be completed.";
+			var message = " Command could not be completed.";
 			alert(header + message);
 		}
 

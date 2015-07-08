@@ -1,12 +1,12 @@
 <?php
 
-require_once('config.php');
+require('config.php');
 ini_set("soap.wsdl_cache_enabled", "0");
 
 header("Access-Control-Allow-Origin: *");
 
-$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+$location =$WEB_SERVICES_URL;
 
 		
 if (isset($_POST['action'])){
@@ -180,9 +180,9 @@ if($action == 'getState'){
 //*****************************************************************************************
 
 function instanceCmdRequest($devaInsId, $vmName, $cmd1, $cmd2){
-
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	//$devaInsId = 'c9bfaa50-2036-4b93-a701-848a6671864f';
 	//$vmName = 'xp-4';
@@ -216,9 +216,9 @@ function instanceCmdRequest($devaInsId, $vmName, $cmd1, $cmd2){
 
 
 function refreshInstanceRequest($devaInsId, $vmName){
-
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	//$devaInsId = 'c9bfaa50-2036-4b93-a701-848a6671864f';
 	//$vmName = 'Laptop 1 (laptop1)';
@@ -246,9 +246,9 @@ function refreshInstanceRequest($devaInsId, $vmName){
 
 
 function getAppointmentTimer($devaInsId){
-
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	//$devaInsId = 'c9bfaa50-2036-4b93-a701-848a6671864f';
 	
@@ -275,9 +275,9 @@ function getAppointmentTimer($devaInsId){
 }
 
 function isRDPReady($hostName, $hostPort, $userid, $defaultHeight){	// Edited: JAM 03.21.2012
-
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	try{
 					
@@ -305,9 +305,9 @@ function isRDPReady($hostName, $hostPort, $userid, $defaultHeight){	// Edited: J
 }
 
 function getUserCurAppId($username, $course, $resourceType){
-
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	try{
 					

@@ -3,6 +3,7 @@
 	require_once("../../../libraries/configuration.php");	
 	require_once("../../../libraries/database.php");
 	require_once("../../../libraries/globals.php");
+	require_once("config.php");
 ?>
 <html>
 <head>
@@ -44,13 +45,15 @@
 
 </head>
 <body id="docbody">
-	<input id ="username" type="hidden" value="<?php echo $_GET['username']; ?>" />
+	<input id="userid" type="hidden" value="<?php echo $_GET['uid']; ?>" />
+	<input id="username" type="hidden" value="<?php echo $_GET['username']; ?>" />
 	<input id="hours" type="hidden" value="<?php echo $_GET['hours']; ?>" />
 	<input id="minutes" type="hidden" value="<?php echo $_GET['minutes']; ?>" />
-	<input id ="encryptedPassword" type="hidden" value="<?php echo $_GET['encrypted_password']; ?>" />
+	<input id="encryptedPassword" type="hidden" value="<?php echo $_GET['encrypted_password']; ?>" />
 	<input id="courseURL" type="hidden" value="KU-poweredby-ITS.html"/>
 	<input id="resourcetype" type="hidden" value="VIRTUAL LAB" />
 	<input id="veInsId" type="hidden" value="false"/>
+	<input id="guacUrl" type="hidden" value="<?php echo $GUACAMOLE_URL; ?>" />
 	<?php
 	//grab the course name
 		$courseId = $_GET['course'];
@@ -137,25 +140,22 @@
 <script type="text/javascript" src="scheduler/fullcalendar/fullcalendar.js"></script>
 <script type="text/javascript" src="dateFormat.js"></script>
 <script type="text/javascript" src="navbarcontrols.js"></script> 
-<script type="text/javascript" src="getandschedule.js"></script> 
+<script type="text/javascript" src="getandschedule.js"></script>
+<script type="text/javascript" src="vmcObjs.js"></script> 
 <script>
 	$(function() {
-		//hide the vm controls on document load
-		$("#vmcontrols").hide();
-
-		//laod tab UI
+		//initialize tab UI but hide until user is verified and the tabs have been properly loaded
 		$("#tabs").tabs();
 		$("#tabs").hide();
 
-		//load the nav buttons and countdown
+		//load the user's instance
 		reloadDevaFrontEmbedded();
-		//setupTimeControlButtons();
-		alert("calling setTimeControl");
 		setTimeControl();
-	    //setupVMControlButtons();
+		startStatusInterval();
 
 		//clicking a rdp tab
 		$("a.rdptab").click(function(){
+			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
 			//show vm controls
 			$("#vmcontrols").show();
 			loadTab($(this).attr("href"), $(this).attr("rel"));		
@@ -163,6 +163,7 @@
 
 		//clicking a non-rdp tab
 		$("a.nonrdptab").click(function(){
+			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
 			//hide vm controls
 			$("#vmcontrols").hide();
 		});

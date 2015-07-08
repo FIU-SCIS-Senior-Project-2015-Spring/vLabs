@@ -4,8 +4,8 @@ require_once('config.php');
 ini_set("soap.wsdl_cache_enabled", "0");
 
 
-$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+$location =$WEB_SERVICES_URL;
 
 		
 if (isset($_POST['action'])){

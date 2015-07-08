@@ -3,8 +3,12 @@ var interval = -1;
 var certinterval = null;
 var firstTime = true;
 var isLeftOpen = 0;
+var iscerttest = false;
 var is_admin_user = false;
 var is_mentor_user = false;
+var rdpTabInfo = [];
+var currentTabSelected = 0; 
+
 
 function reloadDevaFrontEmbedded() { 
     if(!iscerttest){
@@ -154,7 +158,12 @@ function getCurDevaInsInfo() {
 								
                             }else{
                             	//load the tabs and fill in the connection info table
-                            	$('#conninfotable').append("<tr><td><center>" + vms.vmInfo[0].name + "</center></td><td><center>http</center></td><td><center>" 
+                            	$('#conninfotable').append("<tr><td><center>Kaseya Server</center></td><td><center>http</center></td><td><center>" 
+                            		+ vms.kserver.name + ":" + vms.kserver.httpPort + "</center></td><td><center>" 
+                            		+ vms.kserver.httpPort + "</center></td><td><center>" 
+                            		+ vms.kserver.username +"</center></td><td><center>" 
+                            		+ hideVMPassword(vms.kserver.password) + "</center></td><td><center></center></td></tr>");
+                            	$('#conninfotable').append("<tr><td><center>" + vms.vmInfo[0].name + "</center></td><td><center>RDP</center></td><td><center>" 
                             		+ vms.vmInfo[0].accessAddress + "</center></td><td><center>" 
                             		+ vms.vmInfo[0].accessPort + "</center></td><td><center>" 
                             		+ vms.vmInfo[0].username +"</center></td><td><center>" 
@@ -184,10 +193,34 @@ function getCurDevaInsInfo() {
                             		+ vms.vmInfo[4].username +"</center></td><td><center>" 
                             		+ hideVMPassword(vms.vmInfo[4].password) + "</center></td><td><center>"
                             		+ vms.vmInfo[4].domain + "</center></td></tr>");
+
+                            	//store vminfo
+                            	for (var i=0; i<vms.vmInfo.length; i++) {
+                            		var linkURL = $("#guacUrl").val() +'?guac.hostname='+
+									vms.vmInfo[i].accessAddress+'&guac.protocol=rdp'+'&guac.hostport='+vms.vmInfo[i].accessPort+
+									'&guac.username='+escape(vms.vmInfo[i].username)+
+									'&guac.password='+escape($('#encryptedPassword').val())+
+									'&guac.domain='+vms.vmInfo[i].domain;
+
+									//alert("linkurl= " +linkURL);
+
+                            		rdpTabInfo.push({ 
+													tabId:		i+2, //because our vm tabs start at index 2 since it's 0 based
+													ready:		false, 
+													showing:	false, 
+													state:		null,
+													veInsId:	vms.vmInfo[i].veInsId,
+													veInsAddr:	vms.vmInfo[i].accessAddress,
+													veInsPort:	vms.vmInfo[i].accessPort,
+													veName:		vms.vmInfo[i].name,
+													veInsURL: 	linkURL 	
+													});
+                            	}
+                            	console.log(rdpTabInfo);
                             	$('#tabs').tabs("refresh");
                             	$('#tabs').show();
 						
-						 	$('#veInsId').val(vms.vmInfo[0].veInsId);
+						 		$('#veInsId').val(vms.vmInfo[0].veInsId);
 						}
 						
 						if(iscerttest){
@@ -545,3 +578,6 @@ function parseISO8601(s, ignoreTimezone) {
 	return new Date(+date + (offset * 60 * 1000));
 }
 
+function startStatusInterval(){
+	checkRDPMachineStatus(true);
+}

@@ -1,6 +1,6 @@
 <?php
 
-require_once('config.php');
+require('config.php');
 require_once('parser.php');
 //require_once 'xmlserializer/serialize.php';
 //require_once 'xmlserializer/classes.php';
@@ -8,8 +8,8 @@ require_once('parser.php');
 ini_set("soap.wsdl_cache_enabled", "0");
 
 
-$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+$location =$WEB_SERVICES_URL;
 // sms: updated 6/4/2011 added the below two lines for debug mode
 // $wsdl="http://ita-provisioner.cis.fiu.edu:8100/axis2/services/VirtualLabs?wsdl";
 // $location ="http://ita-provisioner.cis.fiu.edu:8100/axis2/services/VirtualLabs";
@@ -624,7 +624,7 @@ $file = file_get_contents('calendarEvents4.xml');
 		echo json_encode($result);
 
 	} catch (SoapFault $soapfault) {
-		//echo $soapfault->getMessage();
+		echo $soapfault->getMessage();
 		echo $soapfault->getTraceAsString();
 	} catch (Exception $e) {
 		echo $e->getMessage();
@@ -1134,9 +1134,9 @@ $file = file_get_contents('calendarEvents4.xml');
 
 
 function setWSUserDefaultTimeZone($requestingUser, $usernew){
-
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 
 	$zone = get_record('user_info_data','userid',$usernew->id,'fieldid',4);
 	if (!empty($zone->data)) {
@@ -1229,8 +1229,9 @@ function isValidMentorUser($username){
 // --- Called from login/confirm.php - line: 53 - commentted out
 // --- Called from admin/user.php - line: 53 - commented out
 function createUserProfile($requestingUser, $usernew, $isSignup){
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	// Get the user timezone information
 	$user = profile_user_record($usernew->id);
@@ -1315,8 +1316,9 @@ function createUserProfile($requestingUser, $usernew, $isSignup){
 // --- Called from user/edit.php - line: 192
 // --- Called from login/change_password.php - line: 
 function editUserProfile($requestingUser, $userold){
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 
 	// Get the user timezone information
 	$user = profile_user_record($userold->id);
@@ -1379,8 +1381,9 @@ function editUserProfile($requestingUser, $userold){
 
 // --- Called from login/change_password.php - line: 72
 function editUserProfilePassword($requestingUser, $username, $password){
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	require_once($CFG->libdir."/crypt.php");
 	echo "<br/>\$password: $password";
@@ -1413,8 +1416,9 @@ function editUserProfilePassword($requestingUser, $username, $password){
 
 // --- Called from admin/roles/assign.php - line: 72
 function editUserProfileRole($requestingUser, $userid, $roleid,$addingRole){
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 	
 	$username = get_field('user', 'username', 'id', $userid);
 	
@@ -1464,8 +1468,9 @@ function editUserProfileRole($requestingUser, $userid, $roleid,$addingRole){
 
 // --- Called from admin/user.php - line: 82
 function deleteUserProfile($requestingUser, $userold){
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 
 	try {
 		
@@ -1495,8 +1500,9 @@ function deleteUserProfile($requestingUser, $userold){
 // --- Called from course/enrol.php - line: 92
 // --- Called from course/unenrol.php - line: 66, 77
 function enrollUserInCourse($requestingUser, $username, $courseName, $enrolled){
-	$wsdl="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
-	$location ="http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs";
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
 
 	try {
 		
