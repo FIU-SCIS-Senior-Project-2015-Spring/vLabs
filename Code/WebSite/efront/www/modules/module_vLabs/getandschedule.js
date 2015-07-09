@@ -196,12 +196,12 @@ function getCurDevaInsInfo() {
 
                             	//store vminfo
                             	for (var i=0; i<vms.vmInfo.length; i++) {
-                            		var gid = createGuacId(15);
-                            		var linkURL = $("#guacUrl").val() +gid+ '?id=' +gid+ '&guac.hostname='+
-									'vc9.cis.fiu.edu'+'&guac.hostport='+vms.vmInfo[i].accessPort+	//vms.vmInfo[i].accessAddress
+                            		//var gid = createGuacId(15);
+                            		var linkURL = $("#guacUrl").val() +vms.vmInfo[i].accessPort+ '?id=' +vms.vmInfo[i].accessPort+ '&guac.hostname='+
+									vms.vmInfo[i].accessAddress+'&guac.port='+vms.vmInfo[i].accessPort+
 									'&guac.domain='+vms.vmInfo[i].domain+
 									'&guac.username='+escape(vms.vmInfo[i].username)+
-									'&guac.password='+escape('icard005test');	//$('#encryptedPassword').val() //use nonencrypted for testing
+									'&guac.password=icard005test';	//vms.vmInfo[i].password 
 
 									//alert("linkurl= " +linkURL);
 
@@ -220,7 +220,6 @@ function getCurDevaInsInfo() {
                             	console.log(rdpTabInfo);
                             	$('#tabs').tabs("refresh");
                             	$('#tabs').show();
-						
 						 		$('#veInsId').val(vms.vmInfo[0].veInsId);
 						}
 						

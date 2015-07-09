@@ -105,19 +105,19 @@
 		<li><a class="nonrdptab" href="#tabs-2">Connection Info</a></li>
 
 		<li><a class="rdptab" href="#tabs-3">Domain Controller</a>
-		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="2" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
 		<li><a class="rdptab" href="#tabs-4">Workstation 1</a>
-		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span></li>
+		<span id="3" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span></li>
 		
 		<li><a class="rdptab" href="#tabs-5">Workstation 2</a>
-		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="4" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
 		<li><a class="rdptab" href="#tabs-6">Reception</a>
-		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="5" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
 		<li><a class="rdptab" href="#tabs-7">Laptop-Ceo</a>
-		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="6" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 	</ul>
 	<!-- Network Diagram -->
 	<div id="tabs-1"> 
@@ -185,9 +185,9 @@
 		//new tab button clicks
 		$("span.ui-icon-extlink").click(function(){
 			//grab the appropriate rdp link
-			//var link = $(this).prev().attr("rel");
-			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
-			var link = getRdpTabInfo('veInsURL', currentTabSelected);
+			var tab = $(this).attr("id");
+			var link = getRdpTabInfo('veInsURL', tab);
+			loadTab(tab, link);
 			window.open(link);
 		});
 		
