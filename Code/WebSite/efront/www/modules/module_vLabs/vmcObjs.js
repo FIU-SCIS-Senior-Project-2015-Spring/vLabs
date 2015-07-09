@@ -23,8 +23,6 @@ function checkRDPMachineStatus(init) {
 		stateInterval = setInterval(function(){ checkRDPMachineStatus(false); },30000);	
 
 	}
-
-	alert("In checkRDPMachineStatus");
 	
 	//if(currentTabSelected){
 		//var istab = currentTabSelected.indexOf("tab");
@@ -36,7 +34,6 @@ function checkRDPMachineStatus(init) {
 			var hostPort = getRdpTabInfo('veInsPort', currentTabSelected);
 			
 			//var state = 
-			alert("in checkRDPMachineStatus calling getInstanceState");
 			obj.getInstanceState(instanceId, vmname, hostName, hostPort);
 			
 			/*
@@ -62,8 +59,6 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 	var workingTab = this.workingTab;
 	var debug = "";
  
-	alert("in isRDPMachineReady");
-
 	$.ajax({
 		type: 'POST',
 		url: 'vmcontrols.php',
@@ -177,13 +172,11 @@ vmcObj.prototype.getInstanceState = function(instanceId, vmName, hostName, hostP
 			if(data){
 				// result = data;
 				var state = data;
-				alert("in getinstancestate: " + state);
 				result = state;
 		
 				setRdpTabInfo('state', obj.workingTab, state, 'checkRDPMachineStatus');
 				
 				if(state == 'on'){
-					alert("calling isRDPMachineReady");
 					obj.isRDPMachineReady(instanceId, vmName, hostName, hostPort);
 					//alert('here');
 				}else{
@@ -212,8 +205,6 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 	if(command == "getState")
 		isASync = false;
 		
-	alert("in vmInstanceCmd");
-
 	$.ajax({
 		type: 'POST',
 		url: 'vmcontrols.php',
@@ -231,7 +222,6 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 					//setRdpTabInfo('state', workingTab, data,'vmInstanceCmd: getState');
 					markCurrentInstanceState(data,'vmInstanceCmd');
 				}else{
-					alert("getState failed");
 					// if the command fails
 					//noticeDialog("VM Command", "Please retry your request.", "alert");
 					alert("Please retry your request.");	
@@ -257,7 +247,6 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 						//setRdpTabInfo('state', workingTab, 'suspended','vmInstanceCmd: getState');
 						markCurrentInstanceState(data,'vmInstanceCmd');
 					}else{
-						alert("calling vmInstanceCmd with insid: " + instanceId + "and vmName: " + vmName);
 						current.vmInstanceCmd('getState', instanceId, vmName);	// -- original
 						checkRDPMachineStatus(true);
 					}

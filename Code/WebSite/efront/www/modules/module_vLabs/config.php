@@ -9,7 +9,7 @@
 	$VE_SCHEDULER_WSDL     = $WEB_SERVICES_URL . "VEScheduler?wsdl";
 	$QUOTA_SYSTEM_WSDL     = $WEB_SERVICES_URL . "QuotaSystem?wsdl";
 
-	$GUACAMOLE_HOST = "http://vlabs.cis.fiu.edu";
+	$GUACAMOLE_HOST = "http://167.114.169.54";//"http://vlabs.cis.fiu.edu";
 	$GUACAMOLE_PORT = "8080";
 	$GUACAMOLE_URL  = $GUACAMOLE_HOST . ":" . $GUACAMOLE_PORT . "/guacamole/#/client/c/";
 

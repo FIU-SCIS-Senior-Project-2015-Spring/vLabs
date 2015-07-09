@@ -196,11 +196,12 @@ function getCurDevaInsInfo() {
 
                             	//store vminfo
                             	for (var i=0; i<vms.vmInfo.length; i++) {
-                            		var linkURL = $("#guacUrl").val() +'?guac.hostname='+
-									vms.vmInfo[i].accessAddress+'&guac.protocol=rdp'+'&guac.hostport='+vms.vmInfo[i].accessPort+
+                            		var gid = createGuacId(15);
+                            		var linkURL = $("#guacUrl").val() +gid+ '?id=' +gid+ '&guac.hostname='+
+									'vc9.cis.fiu.edu'+'&guac.hostport='+vms.vmInfo[i].accessPort+	//vms.vmInfo[i].accessAddress
+									'&guac.domain='+vms.vmInfo[i].domain+
 									'&guac.username='+escape(vms.vmInfo[i].username)+
-									'&guac.password='+escape($('#encryptedPassword').val())+
-									'&guac.domain='+vms.vmInfo[i].domain;
+									'&guac.password='+escape('icard005test');	//$('#encryptedPassword').val() //use nonencrypted for testing
 
 									//alert("linkurl= " +linkURL);
 
@@ -286,6 +287,14 @@ function getCurDevaInsInfo() {
 	return devaWasDisplayed;
 }
 
+function createGuacId(num){
+	var temp = "";
+	for(var i=0; i < num; i++){
+		var digit = Math.floor(Math.random()*10);
+		temp += digit;
+	}
+	return temp;
+}
 
 function createInstantAppointmentEmbedded(username, encryptedPassword, course, type, hours, minutes) {
 			                

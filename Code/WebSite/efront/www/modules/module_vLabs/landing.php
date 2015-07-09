@@ -9,7 +9,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <!--jQuery-->
-<script src="jquery/jquery-2.1.4.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 <!--Bootstrap Latest compiled and minified CSS/JS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
@@ -40,7 +40,7 @@
 			break;
 	}
 ?>
-<script type="text/javascript" src="jquery-ui/jquery-ui.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 <script src="jqtimer/jquery.countdown.js"></script>
 
 </head>
@@ -82,6 +82,19 @@
 		<button id="restartvm">Restart</button>
 		<button id="pausevm">Pause</button>
 		<button id="refreshvm">Refresh</button>
+		<label for="res">Resolution: </label>
+		<select name="res" id="resolution" width="100px">
+			<option>default</option>
+			<option>640x480</option>
+			<option>800x600</option>
+			<option>1024x768</option>
+		</select>
+		<label for="color">Color Depth: </label>
+		<select name="color" id="cdepth" width="100px">
+			<option>8</option>
+			<option>15</option>
+			<option>16</option>
+		</select>
 	</div>
 </div>
 
@@ -91,19 +104,19 @@
 		<li><a class="nonrdptab" href="#tabs-1">Network Diagram</a></li>
 		<li><a class="nonrdptab" href="#tabs-2">Connection Info</a></li>
 
-		<li><a class="rdptab" href="#tabs-3" rel="http://vlabs-dev.cs.fiu.edu:8080/guacamole/#/client/c/vc9-50491-dc">Domain Controller</a>
+		<li><a class="rdptab" href="#tabs-3">Domain Controller</a>
 		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
-		<li><a class="rdptab" href="#tabs-4" rel="http://vlabs-dev.cs.fiu.edu:8080/guacamole/#/client/c/vc9-50492-ws1">Workstation 1</a>
+		<li><a class="rdptab" href="#tabs-4">Workstation 1</a>
 		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span></li>
 		
-		<li><a class="rdptab" href="#tabs-5" rel="http://vlabs-dev.cs.fiu.edu:8080/guacamole/#/client/c/vc9-50493-ws2">Workstation 2</a>
+		<li><a class="rdptab" href="#tabs-5">Workstation 2</a>
 		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
-		<li><a class="rdptab" href="#tabs-6" rel="http://vlabs-dev.cs.fiu.edu:8080/guacamole/#/client/c/vc9-50494-reception">Reception</a>
+		<li><a class="rdptab" href="#tabs-6">Reception</a>
 		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 		
-		<li><a class="rdptab" href="#tabs-7" rel="http://vlabs-dev.cs.fiu.edu:8080/guacamole/#/client/c/vc9-50492-laptop-ceo">Laptop-Ceo</a>
+		<li><a class="rdptab" href="#tabs-7">Laptop-Ceo</a>
 		<span class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
 	</ul>
 	<!-- Network Diagram -->
@@ -151,14 +164,15 @@
 		//load the user's instance
 		reloadDevaFrontEmbedded();
 		setTimeControl();
-		startStatusInterval();
+		//startStatusInterval();
 
 		//clicking a rdp tab
 		$("a.rdptab").click(function(){
 			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
+			var srcUrl = getRdpTabInfo('veInsURL', currentTabSelected);
 			//show vm controls
 			$("#vmcontrols").show();
-			loadTab($(this).attr("href"), $(this).attr("rel"));		
+			loadTab($(this).attr("href"), srcUrl);		//$(this).attr("rel")
 		});
 
 		//clicking a non-rdp tab
@@ -171,7 +185,9 @@
 		//new tab button clicks
 		$("span.ui-icon-extlink").click(function(){
 			//grab the appropriate rdp link
-			var link = $(this).prev().attr("rel");
+			//var link = $(this).prev().attr("rel");
+			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
+			var link = getRdpTabInfo('veInsURL', currentTabSelected);
 			window.open(link);
 		});
 		
