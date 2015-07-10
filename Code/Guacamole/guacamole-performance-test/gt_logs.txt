@@ -1,0 +1,1296 @@
+Start of Guacamole testing log capture:
+----------
+Initial memory and cpu usage:
+Memory | Total: 8176632 | Used: 18.72%
+CPU usage: 0.17%
+----------
+Jun  7 12:43:53 vlabs guacd[28393]: Connection ID is "$4bdce3b9-a997-47ea-855f-b62164647636"
+Jun  7 12:43:53 vlabs guacd[28393]: Starting client
+Memory | Total: 8176632 | Used: 18.81%
+CPU usage: 3.83%
+Number of active conections: 1
+----------
+Jun  7 12:43:54 vlabs guacd[28407]: Connection ID is "$38bcb413-6319-4565-8ed8-d9278357039a"
+Jun  7 12:43:54 vlabs guacd[28407]: Starting client
+Memory | Total: 8176632 | Used: 18.91%
+CPU usage: 3.83%
+Number of active conections: 2
+----------
+Jun  7 12:43:55 vlabs guacd[28421]: Connection ID is "$6c2724c8-602f-4619-b144-47efeb95f940"
+Jun  7 12:43:55 vlabs guacd[28421]: Starting client
+Memory | Total: 8176632 | Used: 19.12%
+CPU usage: 0.50%
+Number of active conections: 3
+----------
+Jun  7 12:44:26 vlabs guacd[28436]: Connection ID is "$fa59ce6a-7767-437e-b9da-1dd22d6bda5b"
+Jun  7 12:44:26 vlabs guacd[28436]: Starting client
+Memory | Total: 8176632 | Used: 19.18%
+CPU usage: 1.67%
+Number of active conections: 4
+----------
+Jun  7 12:44:27 vlabs guacd[28453]: Connection ID is "$1e89dd4e-f43c-4e4b-936f-56a2d9be146f"
+Jun  7 12:44:28 vlabs guacd[28453]: Starting client
+Memory | Total: 8176632 | Used: 19.34%
+CPU usage: 5.66%
+Number of active conections: 5
+----------
+Jun  7 12:44:29 vlabs guacd[28471]: Connection ID is "$a2e877ba-04d3-4fee-9a84-3e59be6bd637"
+Jun  7 12:44:29 vlabs guacd[28471]: Starting client
+Memory | Total: 8176632 | Used: 19.59%
+CPU usage: 5.00%
+Number of active conections: 6
+----------
+Jun  7 12:44:46 vlabs guacd[28491]: Connection ID is "$a7cdd71d-e2f5-4917-89af-8d439274347a"
+Jun  7 12:44:46 vlabs guacd[28491]: Starting client
+Memory | Total: 8176632 | Used: 19.68%
+CPU usage: 1.00%
+Number of active conections: 7
+----------
+Jun  7 12:44:49 vlabs guacd[28506]: Connection ID is "$55c26c08-9970-455a-b197-74734225212d"
+Jun  7 12:44:49 vlabs guacd[28506]: Starting client
+Memory | Total: 8176632 | Used: 19.80%
+CPU usage: 3.67%
+Number of active conections: 8
+----------
+Jun  7 12:44:49 vlabs guacd[28520]: Connection ID is "$1a6efade-44bd-464d-99e9-5ac5b6c7583a"
+Jun  7 12:44:50 vlabs guacd[28520]: Starting client
+Memory | Total: 8176632 | Used: 19.99%
+CPU usage: 1.00%
+Number of active conections: 9
+----------
+Jun  7 12:45:16 vlabs guacd[28537]: Connection ID is "$169a38d9-dcdd-4179-b162-c8784d259441"
+Jun  7 12:45:16 vlabs guacd[28537]: Starting client
+Memory | Total: 8176632 | Used: 20.04%
+CPU usage: 0.83%
+Number of active conections: 10
+----------
+Jun  7 12:45:17 vlabs guacd[28551]: Connection ID is "$c5ad78e3-a1aa-4ed8-9704-76fe31d7b7f5"
+Jun  7 12:45:18 vlabs guacd[28551]: Starting client
+Memory | Total: 8176632 | Used: 20.16%
+CPU usage: 6.17%
+Number of active conections: 11
+----------
+Jun  7 12:45:18 vlabs guacd[28565]: Connection ID is "$17ee7118-9520-4574-a4c1-5a16640e6ce9"
+Jun  7 12:45:19 vlabs guacd[28565]: Starting client
+Memory | Total: 8176632 | Used: 20.27%
+CPU usage: 2.00%
+Number of active conections: 12
+----------
+Jun  7 12:47:47 vlabs guacd[28718]: Connection ID is "$6a4c3174-3014-41bd-a3fe-21ef324c4eb4"
+Jun  7 12:47:47 vlabs guacd[28718]: Starting client
+Memory | Total: 8176632 | Used: 20.44%
+CPU usage: 1.17%
+Number of active conections: 13
+----------
+Jun  7 12:47:49 vlabs guacd[28738]: Connection ID is "$2e172837-d281-4038-aec7-9afbdc2aff90"
+Jun  7 12:47:50 vlabs guacd[28738]: Starting client
+Memory | Total: 8176632 | Used: 20.56%
+CPU usage: 2.83%
+Number of active conections: 14
+----------
+Jun  7 12:47:50 vlabs guacd[28756]: Connection ID is "$ef704ebe-13c4-4e9b-bb0b-47dda96ef83c"
+Jun  7 12:47:50 vlabs guacd[28756]: Starting client
+Memory | Total: 8176632 | Used: 20.74%
+CPU usage: 2.00%
+Number of active conections: 15
+----------
+Jun  7 12:49:14 vlabs guacd[28908]: Connection ID is "$a0e8543b-feba-433a-9fe0-64d7d5f8896a"
+Jun  7 12:49:14 vlabs guacd[28908]: Starting client
+Memory | Total: 8176632 | Used: 20.79%
+CPU usage: 2.67%
+Number of active conections: 16
+----------
+Jun  7 12:49:16 vlabs guacd[28926]: Connection ID is "$8960bfb5-a497-412c-81bf-d0c1af87710f"
+Jun  7 12:49:16 vlabs guacd[28926]: Starting client
+Memory | Total: 8176632 | Used: 20.90%
+CPU usage: 2.51%
+Number of active conections: 17
+----------
+Jun  7 12:49:17 vlabs guacd[28943]: Connection ID is "$6b1f160f-e7f1-4332-b2ce-5d6a2669d912"
+Jun  7 12:49:17 vlabs guacd[28943]: Starting client
+Memory | Total: 8176632 | Used: 21.03%
+CPU usage: 1.84%
+Number of active conections: 18
+----------
+Jun  7 12:51:03 vlabs guacd[28967]: Connection ID is "$30f00605-4dde-44eb-aeef-883452bd7ed7"
+Jun  7 12:51:03 vlabs guacd[28967]: Starting client
+Memory | Total: 8176632 | Used: 21.16%
+CPU usage: 3.17%
+Number of active conections: 19
+----------
+Jun  7 12:51:04 vlabs guacd[28983]: Connection ID is "$ff21b25e-15fb-4623-82bf-5accbe880fd4"
+Jun  7 12:51:04 vlabs guacd[28983]: Starting client
+Memory | Total: 8176632 | Used: 21.30%
+CPU usage: 4.17%
+Number of active conections: 20
+----------
+Jun  7 12:51:04 vlabs guacd[29000]: Connection ID is "$ab3bb60a-4403-4b0b-aeb8-ef0fea4b98b6"
+Jun  7 12:51:04 vlabs guacd[29000]: Starting client
+Memory | Total: 8176632 | Used: 21.45%
+CPU usage: 3.84%
+Number of active conections: 21
+----------
+Jun  7 12:52:44 vlabs guacd[29022]: Connection ID is "$cbd5cabc-0924-4e8a-bd72-9830dfd2e0e2"
+Jun  7 12:52:44 vlabs guacd[29022]: Starting client
+Memory | Total: 8176632 | Used: 21.62%
+CPU usage: 3.01%
+Number of active conections: 22
+----------
+Jun  7 12:52:44 vlabs guacd[29031]: Connection ID is "$6c481fe9-26a1-40e1-bb5d-2a75c1658571"
+Jun  7 12:52:44 vlabs guacd[29031]: Starting client
+Memory | Total: 8176632 | Used: 21.77%
+CPU usage: 2.33%
+Number of active conections: 23
+----------
+Jun  7 12:52:57 vlabs guacd[29057]: Connection ID is "$d53cf58d-19b8-4f18-81b4-763df7ac42a3"
+Jun  7 12:52:57 vlabs guacd[29057]: Starting client
+Memory | Total: 8176632 | Used: 21.79%
+CPU usage: 1.00%
+Number of active conections: 24
+----------
+Jun  7 12:53:00 vlabs guacd[28393]: Client disconnected
+Memory | Total: 8176632 | Used: 21.84%
+CPU usage: 0.17%
+Number of active conections: 23
+----------
+Jun  7 12:53:00 vlabs guacd[28407]: Client disconnected
+Memory | Total: 8176632 | Used: 21.47%
+CPU usage: 0.17%
+Number of active conections: 22
+----------
+Jun  7 12:53:00 vlabs guacd[28421]: Client disconnected
+Memory | Total: 8176632 | Used: 21.46%
+CPU usage: 0.33%
+Number of active conections: 21
+----------
+Jun  7 12:53:06 vlabs guacd[29099]: Connection ID is "$b46aefbf-05e3-4d98-98bb-bdc20106026c"
+Jun  7 12:53:06 vlabs guacd[29099]: Starting client
+Memory | Total: 8176632 | Used: 21.53%
+CPU usage: 5.17%
+Number of active conections: 22
+----------
+Jun  7 12:53:06 vlabs guacd[29113]: Connection ID is "$654c359e-4202-486f-bf68-1d349bc3cdc1"
+Jun  7 12:53:06 vlabs guacd[29113]: Starting client
+Memory | Total: 8176632 | Used: 21.80%
+CPU usage: 5.52%
+Number of active conections: 23
+----------
+Jun  7 12:53:07 vlabs guacd[29119]: Connection ID is "$07b6402a-82de-4fed-9c18-72314dc06dd5"
+Jun  7 12:53:07 vlabs guacd[29119]: Starting client
+Memory | Total: 8176632 | Used: 21.82%
+CPU usage: 1.00%
+Number of active conections: 24
+----------
+Jun  7 12:53:40 vlabs guacd[28471]: Client disconnected
+Memory | Total: 8176632 | Used: 21.82%
+CPU usage: 0.17%
+Number of active conections: 23
+----------
+Jun  7 12:53:40 vlabs guacd[28453]: Client disconnected
+Memory | Total: 8176632 | Used: 21.32%
+CPU usage: 0.33%
+Number of active conections: 22
+----------
+Jun  7 12:53:41 vlabs guacd[28436]: Client disconnected
+Memory | Total: 8176632 | Used: 21.31%
+CPU usage: 0.17%
+Number of active conections: 21
+----------
+Jun  7 12:53:55 vlabs guacd[28491]: Client disconnected
+Memory | Total: 8176632 | Used: 21.11%
+CPU usage: 0.17%
+Number of active conections: 20
+----------
+Jun  7 12:53:55 vlabs guacd[28506]: Client disconnected
+Memory | Total: 8176632 | Used: 20.96%
+CPU usage: 0.17%
+Number of active conections: 19
+----------
+Jun  7 12:53:56 vlabs guacd[28520]: Client disconnected
+Memory | Total: 8176632 | Used: 20.96%
+CPU usage: 0.17%
+Number of active conections: 18
+----------
+Jun  7 12:54:01 vlabs guacd[29197]: Connection ID is "$e9eff1a9-8aea-4624-ac11-b04762a29e65"
+Jun  7 12:54:01 vlabs guacd[29197]: Starting client
+Memory | Total: 8176632 | Used: 21.00%
+CPU usage: 1.00%
+Number of active conections: 19
+----------
+Jun  7 12:54:04 vlabs guacd[29211]: Connection ID is "$8921700f-31ac-46cd-9867-466f6f18140f"
+Jun  7 12:54:04 vlabs guacd[29211]: Starting client
+Memory | Total: 8176632 | Used: 21.11%
+CPU usage: 1.17%
+Number of active conections: 20
+----------
+Jun  7 12:54:06 vlabs guacd[29225]: Connection ID is "$f0c4505b-c139-4c87-b402-127ed3f04bd0"
+Jun  7 12:54:06 vlabs guacd[29225]: Starting client
+Memory | Total: 8176632 | Used: 21.25%
+CPU usage: 1.84%
+Number of active conections: 21
+----------
+Jun  7 12:54:28 vlabs guacd[28537]: Client disconnected
+Memory | Total: 8176632 | Used: 21.30%
+CPU usage: 0.17%
+Number of active conections: 20
+----------
+Jun  7 12:54:28 vlabs guacd[28565]: Client disconnected
+Memory | Total: 8176632 | Used: 20.94%
+CPU usage: 0.17%
+Number of active conections: 19
+----------
+Jun  7 12:54:28 vlabs guacd[28551]: Client disconnected
+Memory | Total: 8176632 | Used: 20.93%
+CPU usage: 0.17%
+Number of active conections: 18
+----------
+Jun  7 12:58:26 vlabs guacd[29277]: Connection ID is "$e7c70bc0-6051-4d36-8ec7-dbe01a8ec78c"
+Jun  7 12:58:26 vlabs guacd[29277]: Starting client
+Memory | Total: 8176632 | Used: 21.09%
+CPU usage: 4.83%
+Number of active conections: 19
+----------
+Jun  7 12:58:26 vlabs guacd[29294]: Connection ID is "$7ca573ac-71d1-445e-baaa-7d0fd18c459b"
+Jun  7 12:58:26 vlabs guacd[29294]: Starting client
+Memory | Total: 8176632 | Used: 21.30%
+CPU usage: 3.33%
+Number of active conections: 20
+----------
+Jun  7 12:58:27 vlabs guacd[29302]: Connection ID is "$fb35b37d-9c33-4b5e-8b1b-853b05a95d06"
+Jun  7 12:58:27 vlabs guacd[29302]: Starting client
+Memory | Total: 8176632 | Used: 21.41%
+CPU usage: 2.66%
+Number of active conections: 21
+----------
+Jun  7 13:01:19 vlabs guacd[29333]: Connection ID is "$d0fa7e3e-3268-4f15-8bf0-cba954e42271"
+Jun  7 13:01:20 vlabs guacd[29333]: Starting client
+Memory | Total: 8176632 | Used: 21.51%
+CPU usage: 3.50%
+Number of active conections: 22
+----------
+Jun  7 13:01:20 vlabs guacd[29351]: Connection ID is "$fdf2b990-6e62-4056-93af-115b1b3760be"
+Jun  7 13:01:20 vlabs guacd[29351]: Starting client
+Memory | Total: 8176632 | Used: 21.67%
+CPU usage: 3.50%
+Number of active conections: 23
+----------
+Jun  7 13:01:21 vlabs guacd[29359]: Connection ID is "$5adcdf93-5f6e-42a5-b15b-705a9058e772"
+Jun  7 13:01:21 vlabs guacd[29359]: Starting client
+Memory | Total: 8176632 | Used: 21.81%
+CPU usage: 3.17%
+Number of active conections: 24
+----------
+Jun  7 13:02:20 vlabs guacd[29383]: Connection ID is "$732b3b9d-b09b-40c7-bd3e-5511e1daf0d9"
+Jun  7 13:02:21 vlabs guacd[29383]: Starting client
+Memory | Total: 8176632 | Used: 21.90%
+CPU usage: 3.51%
+Number of active conections: 25
+----------
+Jun  7 13:02:21 vlabs guacd[29397]: Connection ID is "$7b6e5ea6-ef3e-4a8c-91e2-ca3b6c5690b9"
+Jun  7 13:02:21 vlabs guacd[29397]: Starting client
+Memory | Total: 8176632 | Used: 22.09%
+CPU usage: 5.69%
+Number of active conections: 26
+----------
+Jun  7 13:02:22 vlabs guacd[29404]: Connection ID is "$868a0fbf-b77e-4f97-a6e9-94c1cabbeb46"
+Jun  7 13:02:22 vlabs guacd[29404]: Starting client
+Memory | Total: 8176632 | Used: 22.19%
+CPU usage: 2.33%
+Number of active conections: 27
+----------
+Jun  7 13:02:52 vlabs guacd[29428]: Connection ID is "$e4dc6b42-7250-4219-8c42-1574c437764b"
+Jun  7 13:02:52 vlabs guacd[29428]: Starting client
+Memory | Total: 8176632 | Used: 22.26%
+CPU usage: 1.67%
+Number of active conections: 28
+----------
+Jun  7 13:02:53 vlabs guacd[29442]: Connection ID is "$e2479fda-b017-4e88-a1af-caf3fe75d9f8"
+Jun  7 13:02:53 vlabs guacd[29442]: Starting client
+Memory | Total: 8176632 | Used: 22.39%
+CPU usage: 1.50%
+Number of active conections: 29
+----------
+Jun  7 13:03:19 vlabs guacd[29456]: Connection ID is "$b446cdb9-9b98-49e6-8b86-f649c85b2140"
+Jun  7 13:03:20 vlabs guacd[29456]: Starting client
+Memory | Total: 8176632 | Used: 22.50%
+CPU usage: 4.67%
+Number of active conections: 30
+----------
+Jun  7 13:03:20 vlabs guacd[29471]: Connection ID is "$b77d4f51-380f-41a5-b91a-2a4fca0b042d"
+Jun  7 13:03:20 vlabs guacd[29471]: Starting client
+Memory | Total: 8176632 | Used: 22.73%
+CPU usage: 4.01%
+Number of active conections: 31
+----------
+Jun  7 13:03:21 vlabs guacd[29479]: Connection ID is "$b48715e5-cf2d-4c0c-a7b3-fcd771ce55f7"
+Jun  7 13:03:21 vlabs guacd[29479]: Starting client
+Memory | Total: 8176632 | Used: 22.86%
+CPU usage: 1.83%
+Number of active conections: 32
+----------
+Jun  7 13:06:08 vlabs guacd[29515]: Connection ID is "$67f14d1d-5bc4-418d-852a-de2a419c3b2f"
+Jun  7 13:06:08 vlabs guacd[29515]: Starting client
+Memory | Total: 8176632 | Used: 22.91%
+CPU usage: 1.17%
+Number of active conections: 33
+----------
+Jun  7 13:06:10 vlabs guacd[29531]: Connection ID is "$27ca4b6a-2db7-48cb-9d43-7ac04d8fd26f"
+Jun  7 13:06:10 vlabs guacd[29531]: Starting client
+Memory | Total: 8176632 | Used: 23.04%
+CPU usage: 4.34%
+Number of active conections: 34
+----------
+Jun  7 13:06:10 vlabs guacd[29548]: Connection ID is "$b35e6820-444a-4ae9-9ce8-6a8285fedafc"
+Jun  7 13:06:10 vlabs guacd[29548]: Starting client
+Memory | Total: 8176632 | Used: 23.24%
+CPU usage: 5.67%
+Number of active conections: 35
+----------
+Jun  7 13:07:33 vlabs guacd[29572]: Connection ID is "$e0c4494e-f6f9-4c76-b3cc-7099408408f7"
+Jun  7 13:07:33 vlabs guacd[29572]: Starting client
+Memory | Total: 8176632 | Used: 23.27%
+CPU usage: 2.66%
+Number of active conections: 36
+----------
+Jun  7 13:07:34 vlabs guacd[29588]: Connection ID is "$5e14b4b3-bfa8-4c56-a54c-613ea6525976"
+Jun  7 13:07:34 vlabs guacd[29588]: Starting client
+Memory | Total: 8176632 | Used: 23.40%
+CPU usage: 3.83%
+Number of active conections: 37
+----------
+Jun  7 13:07:35 vlabs guacd[29605]: Connection ID is "$f1cc84ec-8a4f-43f8-b9f1-6fab2e07ed9f"
+Jun  7 13:07:35 vlabs guacd[29605]: Starting client
+Memory | Total: 8176632 | Used: 23.54%
+CPU usage: 3.16%
+Number of active conections: 38
+----------
+Jun  7 13:08:42 vlabs guacd[29620]: Connection ID is "$0b51aed1-5375-4699-812c-374a173c0ac4"
+Jun  7 13:08:42 vlabs guacd[29620]: Starting client
+Memory | Total: 8176632 | Used: 23.63%
+CPU usage: 2.34%
+Number of active conections: 39
+----------
+Jun  7 13:08:43 vlabs guacd[29635]: Connection ID is "$bdbd9d6b-430f-4a52-96ba-6c8a8ec64319"
+Jun  7 13:08:43 vlabs guacd[29635]: Starting client
+Memory | Total: 8176632 | Used: 23.76%
+CPU usage: 2.34%
+Number of active conections: 40
+----------
+Jun  7 13:08:47 vlabs guacd[29653]: Connection ID is "$c9185796-3805-4562-b3d2-d481548c1aaf"
+Jun  7 13:08:47 vlabs guacd[29653]: Starting client
+Memory | Total: 8176632 | Used: 23.85%
+CPU usage: 1.34%
+Number of active conections: 41
+----------
+Jun  7 13:09:57 vlabs guacd[29680]: Connection ID is "$231fb2b6-fda9-4dfb-a5d9-942abad84fc5"
+Jun  7 13:09:57 vlabs guacd[29680]: Starting client
+Memory | Total: 8176632 | Used: 24.02%
+CPU usage: 3.51%
+Number of active conections: 42
+----------
+Jun  7 13:09:57 vlabs guacd[29694]: Connection ID is "$ab4e9932-b42b-41bf-ac65-9d7c984acfa1"
+Jun  7 13:09:58 vlabs guacd[29694]: Starting client
+Memory | Total: 8176632 | Used: 24.19%
+CPU usage: 1.00%
+Number of active conections: 43
+----------
+Jun  7 13:10:40 vlabs guacd[29709]: Connection ID is "$616a908a-bb69-4b91-91d9-3db607a112d1"
+Jun  7 13:10:40 vlabs guacd[29709]: Starting client
+Memory | Total: 8176632 | Used: 24.26%
+CPU usage: 1.00%
+Number of active conections: 44
+----------
+Jun  7 13:11:31 vlabs guacd[29728]: Connection ID is "$edc975f9-049c-4f8a-b7cd-40bb5a295a50"
+Jun  7 13:11:31 vlabs guacd[29728]: Starting client
+Memory | Total: 8176632 | Used: 24.36%
+CPU usage: 2.16%
+Number of active conections: 45
+----------
+Jun  7 13:11:33 vlabs guacd[29745]: Connection ID is "$1b86ef33-0665-4fc6-9821-107ffc987630"
+Jun  7 13:11:33 vlabs guacd[29745]: Starting client
+Memory | Total: 8176632 | Used: 24.47%
+CPU usage: 1.00%
+Number of active conections: 46
+----------
+Jun  7 13:11:34 vlabs guacd[29762]: Connection ID is "$a4443f72-3229-4e6d-a8c9-6ad29c8af040"
+Jun  7 13:11:34 vlabs guacd[29762]: Starting client
+Memory | Total: 8176632 | Used: 24.61%
+CPU usage: 2.67%
+Number of active conections: 47
+----------
+Jun  7 13:11:48 vlabs guacd[29784]: Connection ID is "$6dc66d35-d59f-40f7-83a6-62c20dd89328"
+Jun  7 13:11:48 vlabs guacd[29784]: Starting client
+Memory | Total: 8176632 | Used: 24.73%
+CPU usage: 4.67%
+Number of active conections: 48
+----------
+Jun  7 13:11:48 vlabs guacd[29800]: Connection ID is "$6c618923-9577-4304-a799-b7f59e56fe90"
+Jun  7 13:11:48 vlabs guacd[29800]: Starting client
+Memory | Total: 8176632 | Used: 25.02%
+CPU usage: 2.68%
+Number of active conections: 49
+----------
+Jun  7 13:11:49 vlabs guacd[29808]: Connection ID is "$86a73b9a-3ee9-4b35-9749-ef1a7639b940"
+Jun  7 13:11:49 vlabs guacd[29808]: Starting client
+Memory | Total: 8176632 | Used: 25.05%
+CPU usage: 2.68%
+Number of active conections: 50
+----------
+Jun  7 13:15:21 vlabs guacd[29844]: Connection ID is "$7fce9267-ed8f-4d46-834b-a1d941a00193"
+Jun  7 13:15:22 vlabs guacd[29844]: Starting client
+Memory | Total: 8176632 | Used: 25.09%
+CPU usage: 2.84%
+Number of active conections: 51
+----------
+Jun  7 13:15:23 vlabs guacd[29860]: Connection ID is "$9e511ee7-0811-4d06-9a96-658c9c40ae18"
+Jun  7 13:15:23 vlabs guacd[29860]: Starting client
+Memory | Total: 8176632 | Used: 25.22%
+CPU usage: 1.84%
+Number of active conections: 52
+----------
+Jun  7 13:15:24 vlabs guacd[29877]: Connection ID is "$dccc475e-02e2-4f0f-96d3-1b2b8df175a7"
+Jun  7 13:15:24 vlabs guacd[29877]: Starting client
+Memory | Total: 8176632 | Used: 25.33%
+CPU usage: 2.50%
+Number of active conections: 53
+----------
+Jun  7 13:15:26 vlabs guacd[29383]: Client disconnected
+Memory | Total: 8176632 | Used: 25.32%
+CPU usage: 1.50%
+Number of active conections: 52
+----------
+Jun  7 13:15:26 vlabs guacd[29397]: Client disconnected
+Memory | Total: 8176632 | Used: 24.98%
+CPU usage: 0.50%
+Number of active conections: 51
+----------
+Jun  7 13:15:26 vlabs guacd[29404]: Client disconnected
+Memory | Total: 8176632 | Used: 24.97%
+CPU usage: 0.33%
+Number of active conections: 50
+----------
+Jun  7 13:15:54 vlabs guacd[29919]: Connection ID is "$4739888e-a042-43e1-8e1f-e2fd2a3f1f50"
+Jun  7 13:15:54 vlabs guacd[29919]: Starting client
+Memory | Total: 8176632 | Used: 25.04%
+CPU usage: 3.51%
+Number of active conections: 51
+----------
+Jun  7 13:15:55 vlabs guacd[29933]: Connection ID is "$5bd666d9-844a-4cfe-afa3-8564108a11fe"
+Jun  7 13:15:55 vlabs guacd[29933]: Starting client
+Memory | Total: 8176632 | Used: 25.23%
+CPU usage: 6.02%
+Number of active conections: 52
+----------
+Jun  7 13:15:55 vlabs guacd[29947]: Connection ID is "$77257806-2d36-43b9-98a3-91885e5a9cd0"
+Jun  7 13:15:56 vlabs guacd[29947]: Starting client
+Memory | Total: 8176632 | Used: 25.32%
+CPU usage: 1.67%
+Number of active conections: 53
+----------
+Jun  7 13:16:51 vlabs guacd[29962]: Connection ID is "$888073ec-b6e6-4787-b034-709b3ec5488e"
+Jun  7 13:16:51 vlabs guacd[29962]: Starting client
+Memory | Total: 8176632 | Used: 25.38%
+CPU usage: 6.34%
+Number of active conections: 54
+----------
+Jun  7 13:16:52 vlabs guacd[29976]: Connection ID is "$f526424a-fc12-4f07-9a44-73e64d086228"
+Jun  7 13:16:52 vlabs guacd[29976]: Starting client
+Memory | Total: 8176632 | Used: 25.60%
+CPU usage: 1.84%
+Number of active conections: 55
+----------
+Jun  7 13:16:52 vlabs guacd[29985]: Connection ID is "$571b74ea-50e0-4596-b56f-f7924812df36"
+Jun  7 13:16:52 vlabs guacd[29985]: Starting client
+Memory | Total: 8176632 | Used: 25.72%
+CPU usage: 3.17%
+Number of active conections: 56
+----------
+Jun  7 13:17:26 vlabs guacd[30012]: Connection ID is "$862c7d01-4989-4af9-b48d-6e2b22423645"
+Jun  7 13:17:26 vlabs guacd[30012]: Starting client
+Memory | Total: 8176632 | Used: 25.76%
+CPU usage: 3.67%
+Number of active conections: 57
+----------
+Jun  7 13:17:27 vlabs guacd[30026]: Connection ID is "$6e180f5a-4d20-482f-ab9f-466f5094758a"
+Jun  7 13:17:27 vlabs guacd[30026]: Starting client
+Memory | Total: 8176632 | Used: 25.89%
+CPU usage: 5.35%
+Number of active conections: 58
+----------
+Jun  7 13:17:27 vlabs guacd[30041]: Connection ID is "$3f1bf88b-43ab-42ed-ab2c-bdb9d5cb1cd1"
+Jun  7 13:17:28 vlabs guacd[30041]: Starting client
+Memory | Total: 8176632 | Used: 26.09%
+CPU usage: 1.34%
+Number of active conections: 59
+----------
+Jun  7 13:18:02 vlabs guacd[30041]: Client disconnected
+Memory | Total: 8176632 | Used: 26.03%
+CPU usage: 0.67%
+Number of active conections: 58
+----------
+Jun  7 13:18:21 vlabs guacd[30065]: Connection ID is "$1eea77f7-86a4-4f16-9d05-c7fba228d8de"
+Jun  7 13:18:21 vlabs guacd[30065]: Starting client
+Memory | Total: 8176632 | Used: 25.99%
+CPU usage: 3.67%
+Number of active conections: 59
+----------
+Jun  7 13:18:21 vlabs guacd[30079]: Connection ID is "$98484c66-22fb-457b-872e-01eed4bc87f8"
+Jun  7 13:18:21 vlabs guacd[30079]: Starting client
+Memory | Total: 8176632 | Used: 26.16%
+CPU usage: 1.66%
+Number of active conections: 60
+----------
+Jun  7 13:18:56 vlabs guacd[30093]: Connection ID is "$158284b0-4b88-4c13-ad1a-5f5abbf84881"
+Jun  7 13:18:57 vlabs guacd[30093]: Starting client
+Memory | Total: 8176632 | Used: 26.22%
+CPU usage: 5.00%
+Number of active conections: 61
+----------
+Jun  7 13:18:57 vlabs guacd[30108]: Connection ID is "$be7b06ba-a27f-470a-9549-2d6acef539ad"
+Jun  7 13:18:57 vlabs guacd[30108]: Starting client
+Memory | Total: 8176632 | Used: 26.48%
+CPU usage: 2.84%
+Number of active conections: 62
+----------
+Jun  7 13:18:58 vlabs guacd[30116]: Connection ID is "$572068b5-7208-4799-8dbe-c0491631af2f"
+Jun  7 13:18:58 vlabs guacd[30116]: Starting client
+Memory | Total: 8176632 | Used: 26.56%
+CPU usage: 3.49%
+Number of active conections: 63
+----------
+Jun  7 13:20:10 vlabs guacd[29653]: Client disconnected
+Memory | Total: 8176632 | Used: 26.55%
+CPU usage: 0.83%
+Number of active conections: 62
+----------
+Jun  7 13:20:10 vlabs guacd[29620]: Client disconnected
+Memory | Total: 8176632 | Used: 26.23%
+CPU usage: 0.67%
+Number of active conections: 61
+----------
+Jun  7 13:20:10 vlabs guacd[29635]: Client disconnected
+Memory | Total: 8176632 | Used: 26.21%
+CPU usage: 0.50%
+Number of active conections: 60
+----------
+Jun  7 13:20:45 vlabs guacd[29728]: Client disconnected
+Memory | Total: 8176632 | Used: 26.19%
+CPU usage: 0.50%
+Number of active conections: 59
+----------
+Jun  7 13:20:46 vlabs guacd[29762]: Client disconnected
+Memory | Total: 8176632 | Used: 25.85%
+CPU usage: 0.50%
+Number of active conections: 58
+----------
+Jun  7 13:20:46 vlabs guacd[29745]: Client disconnected
+Memory | Total: 8176632 | Used: 25.85%
+CPU usage: 0.50%
+Number of active conections: 57
+----------
+Jun  7 13:23:24 vlabs guacd[30203]: Connection ID is "$080c9c1e-9003-4822-87ac-882fdfc95697"
+Jun  7 13:23:24 vlabs guacd[30203]: Starting client
+Memory | Total: 8176632 | Used: 25.97%
+CPU usage: 4.51%
+Number of active conections: 58
+----------
+Jun  7 13:23:25 vlabs guacd[30219]: Connection ID is "$726de038-2f34-4867-98ec-9e7c3ed249f4"
+Jun  7 13:23:25 vlabs guacd[30219]: Starting client
+Memory | Total: 8176632 | Used: 26.17%
+CPU usage: 4.35%
+Number of active conections: 59
+----------
+Jun  7 13:23:26 vlabs guacd[30236]: Connection ID is "$eab32a67-97e7-434c-b5d0-5e200a83e604"
+Jun  7 13:23:26 vlabs guacd[30236]: Starting client
+Memory | Total: 8176632 | Used: 26.27%
+CPU usage: 2.34%
+Number of active conections: 60
+----------
+Jun  7 13:24:58 vlabs guacd[30261]: Connection ID is "$ccc99f96-be31-4f75-b64c-ad392bc0283a"
+Jun  7 13:24:58 vlabs guacd[30261]: Starting client
+Memory | Total: 8176632 | Used: 26.35%
+CPU usage: 4.17%
+Number of active conections: 61
+----------
+Jun  7 13:24:59 vlabs guacd[30276]: Connection ID is "$f3b2c3bd-b068-4246-860b-262d1a8560ec"
+Jun  7 13:24:59 vlabs guacd[30276]: Starting client
+Memory | Total: 8176632 | Used: 26.56%
+CPU usage: 4.01%
+Number of active conections: 62
+----------
+Jun  7 13:25:00 vlabs guacd[30293]: Connection ID is "$24b6ede5-d177-4214-828d-d3f05e674a10"
+Jun  7 13:25:00 vlabs guacd[30293]: Starting client
+Memory | Total: 8176632 | Used: 26.67%
+CPU usage: 2.50%
+Number of active conections: 63
+----------
+Jun  7 13:27:50 vlabs guacd[30320]: Connection ID is "$0d405c73-9316-4f73-b422-b51c30cddb80"
+Jun  7 13:27:50 vlabs guacd[30320]: Starting client
+Memory | Total: 8176632 | Used: 26.80%
+CPU usage: 3.84%
+Number of active conections: 64
+----------
+Jun  7 13:27:50 vlabs guacd[30336]: Connection ID is "$9b427019-39ef-4ef0-a11c-24be7c5bd071"
+Jun  7 13:27:51 vlabs guacd[30336]: Starting client
+Memory | Total: 8176632 | Used: 26.99%
+CPU usage: 7.00%
+Number of active conections: 65
+----------
+Jun  7 13:27:51 vlabs guacd[30344]: Connection ID is "$6ad0b8f0-9cf0-4c52-aa6c-9abf14fee452"
+Jun  7 13:27:51 vlabs guacd[30344]: Starting client
+Memory | Total: 8176632 | Used: 27.10%
+CPU usage: 0.50%
+Number of active conections: 66
+----------
+Jun  7 13:32:20 vlabs guacd[30376]: Connection ID is "$a5a02a77-af39-404b-93ae-5271f2975404"
+Jun  7 13:32:20 vlabs guacd[30376]: Starting client
+Memory | Total: 8176632 | Used: 27.25%
+CPU usage: 3.01%
+Number of active conections: 67
+----------
+Jun  7 13:32:21 vlabs guacd[30393]: Connection ID is "$382f0a9f-3743-4b6b-8a14-0e0b5c81b23c"
+Jun  7 13:32:21 vlabs guacd[30393]: Starting client
+Memory | Total: 8176632 | Used: 27.39%
+CPU usage: 4.85%
+Number of active conections: 68
+----------
+Jun  7 13:32:22 vlabs guacd[30410]: Connection ID is "$ef8b5783-e308-4100-898e-4b9457e5dea4"
+Jun  7 13:32:23 vlabs guacd[30410]: Starting client
+Memory | Total: 8176632 | Used: 27.52%
+CPU usage: 3.18%
+Number of active conections: 69
+----------
+Jun  7 13:32:45 vlabs guacd[30425]: Connection ID is "$14fb111e-77b4-44e7-abce-657cf684c4a1"
+Jun  7 13:32:45 vlabs guacd[30425]: Starting client
+Memory | Total: 8176632 | Used: 27.68%
+CPU usage: 5.85%
+Number of active conections: 70
+----------
+Jun  7 13:32:46 vlabs guacd[30440]: Connection ID is "$13768322-a3a5-4257-9e2c-c362c0340a9c"
+Jun  7 13:32:46 vlabs guacd[30440]: Starting client
+Memory | Total: 8176632 | Used: 27.95%
+CPU usage: 2.34%
+Number of active conections: 71
+----------
+Jun  7 13:32:46 vlabs guacd[30447]: Connection ID is "$f4582800-5f02-4679-9071-0e3d168deead"
+Jun  7 13:32:46 vlabs guacd[30447]: Starting client
+Memory | Total: 8176632 | Used: 28.05%
+CPU usage: 2.83%
+Number of active conections: 72
+----------
+Jun  7 13:33:34 vlabs guacd[30471]: Connection ID is "$408e1472-da3a-41d2-bede-733657835ea6"
+Jun  7 13:33:35 vlabs guacd[30471]: Starting client
+Memory | Total: 8176632 | Used: 28.11%
+CPU usage: 5.02%
+Number of active conections: 73
+----------
+Jun  7 13:33:35 vlabs guacd[30485]: Connection ID is "$edc84d0c-d2f9-4dc9-ba5a-f78db0531458"
+Jun  7 13:33:35 vlabs guacd[30485]: Starting client
+Memory | Total: 8176632 | Used: 28.24%
+CPU usage: 2.67%
+Number of active conections: 74
+----------
+Jun  7 13:33:40 vlabs guacd[30501]: Connection ID is "$e3d2bdb4-ef59-44ca-8587-81bf8570b751"
+Jun  7 13:33:40 vlabs guacd[30501]: Starting client
+Memory | Total: 8176632 | Used: 28.35%
+CPU usage: 1.51%
+Number of active conections: 75
+----------
+Jun  7 13:34:24 vlabs guacd[30516]: Connection ID is "$a45129f4-6b28-4798-86eb-637040167354"
+Jun  7 13:34:25 vlabs guacd[30516]: Starting client
+Memory | Total: 8176632 | Used: 28.55%
+CPU usage: 1.67%
+Number of active conections: 76
+----------
+Jun  7 13:34:26 vlabs guacd[30530]: Connection ID is "$effe8d6d-f99e-4e35-9076-d6b4b208d439"
+Jun  7 13:34:27 vlabs guacd[30530]: Starting client
+Memory | Total: 8176632 | Used: 28.69%
+CPU usage: 4.51%
+Number of active conections: 77
+----------
+Jun  7 13:34:27 vlabs guacd[30546]: Connection ID is "$6973ac6e-d7f7-45e5-802b-34797b6288a4"
+Jun  7 13:34:27 vlabs guacd[30546]: Starting client
+Memory | Total: 8176632 | Used: 28.86%
+CPU usage: 2.17%
+Number of active conections: 78
+----------
+Jun  7 13:35:14 vlabs guacd[30566]: Connection ID is "$2b10783c-dc94-4656-80af-0ed712d220d1"
+Jun  7 13:35:14 vlabs guacd[30566]: Starting client
+Memory | Total: 8176632 | Used: 28.95%
+CPU usage: 3.34%
+Number of active conections: 79
+----------
+Jun  7 13:35:15 vlabs guacd[30580]: Connection ID is "$392ad3a3-f407-4176-b2b5-d53bde64add1"
+Jun  7 13:35:15 vlabs guacd[30580]: Starting client
+Memory | Total: 8176632 | Used: 29.14%
+CPU usage: 4.33%
+Number of active conections: 80
+----------
+Jun  7 13:35:16 vlabs guacd[30594]: Connection ID is "$491e33d7-325d-42d1-9e09-659f8779fb19"
+Jun  7 13:35:16 vlabs guacd[30594]: Starting client
+Memory | Total: 8176632 | Used: 29.26%
+CPU usage: 2.34%
+Number of active conections: 81
+----------
+Jun  7 13:38:54 vlabs guacd[30618]: Connection ID is "$6c5d5d5b-eb9b-418d-ae0a-bedf1bede3ff"
+Jun  7 13:38:55 vlabs guacd[30618]: Starting client
+Memory | Total: 8176632 | Used: 29.34%
+CPU usage: 2.84%
+Number of active conections: 82
+----------
+Jun  7 13:38:55 vlabs guacd[30634]: Connection ID is "$af7ed85b-28d2-494c-b130-6fda17b9a3a1"
+Jun  7 13:38:56 vlabs guacd[30634]: Starting client
+Memory | Total: 8176632 | Used: 29.48%
+CPU usage: 3.50%
+Number of active conections: 83
+----------
+Jun  7 13:38:57 vlabs guacd[30651]: Connection ID is "$15f0eadf-8ad1-4ecd-b873-11ec25bde796"
+Jun  7 13:38:57 vlabs guacd[30651]: Starting client
+Memory | Total: 8176632 | Used: 29.59%
+CPU usage: 4.52%
+Number of active conections: 84
+----------
+Jun  7 13:39:43 vlabs guacd[30678]: Connection ID is "$a26e5d61-7d06-4fea-96b4-5a08be812f94"
+Jun  7 13:39:43 vlabs guacd[30678]: Starting client
+Memory | Total: 8176632 | Used: 29.75%
+CPU usage: 5.18%
+Number of active conections: 85
+----------
+Jun  7 13:39:43 vlabs guacd[30692]: Connection ID is "$4271a323-ed9f-4242-99b8-d66a209d9c90"
+Jun  7 13:39:43 vlabs guacd[30692]: Starting client
+Memory | Total: 8176632 | Used: 30.07%
+CPU usage: 3.34%
+Number of active conections: 86
+----------
+Jun  7 13:39:44 vlabs guacd[30699]: Connection ID is "$ebc044f8-a86f-4680-801c-1b0466f47008"
+Jun  7 13:39:44 vlabs guacd[30699]: Starting client
+Memory | Total: 8176632 | Used: 29.97%
+CPU usage: 2.01%
+Number of active conections: 87
+----------
+Jun  7 13:39:44 vlabs guacd[30618]: Client disconnected
+Memory | Total: 8176632 | Used: 29.84%
+CPU usage: 2.00%
+Number of active conections: 86
+----------
+Jun  7 13:39:45 vlabs guacd[30634]: Client disconnected
+Memory | Total: 8176632 | Used: 29.71%
+CPU usage: 0.67%
+Number of active conections: 85
+----------
+Jun  7 13:39:47 vlabs guacd[30651]: Client disconnected
+Memory | Total: 8176632 | Used: 29.71%
+CPU usage: 0.83%
+Number of active conections: 84
+----------
+Jun  7 13:40:24 vlabs guacd[30750]: Connection ID is "$739887d9-ccde-40d9-bef4-992c659882b6"
+Jun  7 13:40:24 vlabs guacd[30750]: Starting client
+Memory | Total: 8176632 | Used: 29.81%
+CPU usage: 3.85%
+Number of active conections: 85
+----------
+Jun  7 13:40:25 vlabs guacd[30764]: Connection ID is "$71187b30-dbe9-446d-9902-89a3ed1cff91"
+Jun  7 13:40:25 vlabs guacd[30764]: Starting client
+Memory | Total: 8176632 | Used: 29.97%
+CPU usage: 4.18%
+Number of active conections: 86
+----------
+Jun  7 13:40:26 vlabs guacd[30778]: Connection ID is "$abc8deb0-0e5c-4dbd-b703-f398bf4771c5"
+Jun  7 13:40:26 vlabs guacd[30778]: Starting client
+Memory | Total: 8176632 | Used: 30.13%
+CPU usage: 2.35%
+Number of active conections: 87
+----------
+Jun  7 13:41:09 vlabs guacd[30792]: Connection ID is "$11f328d0-8b0e-4062-b0a3-768da6547520"
+Jun  7 13:41:09 vlabs guacd[30792]: Starting client
+Memory | Total: 8176632 | Used: 30.17%
+CPU usage: 2.84%
+Number of active conections: 88
+----------
+Jun  7 13:41:10 vlabs guacd[30806]: Connection ID is "$4994ec17-d868-42e1-9cc0-ad7b251c55c3"
+Jun  7 13:41:10 vlabs guacd[30806]: Starting client
+Memory | Total: 8176632 | Used: 30.28%
+CPU usage: 4.17%
+Number of active conections: 89
+----------
+Jun  7 13:41:11 vlabs guacd[30823]: Connection ID is "$cc354be0-0d6b-4ebe-9f4b-ab9064ec48a4"
+Jun  7 13:41:11 vlabs guacd[30823]: Starting client
+Memory | Total: 8176632 | Used: 30.43%
+CPU usage: 3.01%
+Number of active conections: 90
+----------
+Jun  7 13:41:52 vlabs guacd[30838]: Connection ID is "$96317731-dc7e-410a-9ba5-febd0797ed93"
+Jun  7 13:41:52 vlabs guacd[30838]: Starting client
+Memory | Total: 8176632 | Used: 30.50%
+CPU usage: 3.34%
+Number of active conections: 91
+----------
+Jun  7 13:41:53 vlabs guacd[30852]: Connection ID is "$dbfa38c8-73e1-4379-b9ec-5012e8033524"
+Jun  7 13:41:53 vlabs guacd[30852]: Starting client
+Memory | Total: 8176632 | Used: 30.63%
+CPU usage: 5.34%
+Number of active conections: 92
+----------
+Jun  7 13:41:54 vlabs guacd[30868]: Connection ID is "$ed00e4c6-1fec-466d-8982-35ba6c510343"
+Jun  7 13:41:54 vlabs guacd[30868]: Starting client
+Memory | Total: 8176632 | Used: 30.85%
+CPU usage: 4.00%
+Number of active conections: 93
+----------
+Jun  7 13:42:30 vlabs guacd[30883]: Connection ID is "$de824668-0bc9-4d57-ba0b-3b2286e025eb"
+Jun  7 13:42:30 vlabs guacd[30883]: Starting client
+Memory | Total: 8176632 | Used: 30.88%
+CPU usage: 5.18%
+Number of active conections: 94
+----------
+Jun  7 13:42:30 vlabs guacd[30897]: Connection ID is "$7362c9ad-7cea-423b-9203-99562748525c"
+Jun  7 13:42:31 vlabs guacd[30897]: Starting client
+Memory | Total: 8176632 | Used: 31.10%
+CPU usage: 3.83%
+Number of active conections: 95
+----------
+Jun  7 13:42:31 vlabs guacd[30904]: Connection ID is "$c960077a-205a-4f6d-833d-60664238794a"
+Jun  7 13:42:31 vlabs guacd[30904]: Starting client
+Memory | Total: 8176632 | Used: 31.23%
+CPU usage: 4.84%
+Number of active conections: 96
+----------
+Jun  7 13:45:36 vlabs guacd[30939]: Connection ID is "$ace905ea-1ce7-4ba3-a9cf-85b4a776a892"
+Jun  7 13:45:36 vlabs guacd[30939]: Starting client
+Memory | Total: 8176632 | Used: 31.29%
+CPU usage: 4.01%
+Number of active conections: 97
+----------
+Jun  7 13:45:37 vlabs guacd[30956]: Connection ID is "$b57d7bef-d318-403d-8ddf-11abf2e7db49"
+Jun  7 13:45:37 vlabs guacd[30956]: Starting client
+Memory | Total: 8176632 | Used: 31.46%
+CPU usage: 5.18%
+Number of active conections: 98
+----------
+Jun  7 13:45:37 vlabs guacd[30974]: Connection ID is "$909b079b-0f03-409d-976e-1761725bf04c"
+Jun  7 13:45:38 vlabs guacd[30974]: Starting client
+Memory | Total: 8176632 | Used: 31.63%
+CPU usage: 3.00%
+Number of active conections: 99
+----------
+Jun  7 13:46:22 vlabs guacd[30989]: Connection ID is "$76d388cd-44e9-40f1-a757-794945ec5109"
+Jun  7 13:46:22 vlabs guacd[30989]: Starting client
+Memory | Total: 8176632 | Used: 31.73%
+CPU usage: 1.67%
+Number of active conections: 100
+----------
+Jun  7 13:46:24 vlabs guacd[31003]: Connection ID is "$8ae3d18b-1268-4972-b836-63c35c270a64"
+Jun  7 13:46:24 vlabs guacd[31003]: Starting client
+Memory | Total: 8176632 | Used: 31.88%
+CPU usage: 1.84%
+Number of active conections: 101
+----------
+Jun  7 13:46:27 vlabs guacd[31018]: Connection ID is "$dd2b0b8b-b8a8-4a18-bd83-a956f9347123"
+Jun  7 13:46:28 vlabs guacd[31018]: Starting client
+Memory | Total: 8176632 | Used: 32.01%
+CPU usage: 2.00%
+Number of active conections: 102
+----------
+Jun  7 13:47:15 vlabs guacd[31033]: Connection ID is "$b05928a0-d66e-40e5-adba-f2418faf1cbe"
+Jun  7 13:47:15 vlabs guacd[31033]: Starting client
+Memory | Total: 8176632 | Used: 32.24%
+CPU usage: 4.19%
+Number of active conections: 103
+----------
+Jun  7 13:47:16 vlabs guacd[31047]: Connection ID is "$a518756b-fc47-4373-97a5-3aed18f5176c"
+Jun  7 13:47:16 vlabs guacd[31047]: Starting client
+Memory | Total: 8176632 | Used: 32.43%
+CPU usage: 4.18%
+Number of active conections: 104
+----------
+Jun  7 13:47:17 vlabs guacd[31063]: Connection ID is "$0f02407d-978c-44b2-b76d-1d68cec6754f"
+Jun  7 13:47:17 vlabs guacd[31063]: Starting client
+Memory | Total: 8176632 | Used: 32.58%
+CPU usage: 3.00%
+Number of active conections: 105
+----------
+Jun  7 13:48:08 vlabs guacd[31078]: Connection ID is "$eacff670-958a-421f-9ef8-6fcc35471ae1"
+Jun  7 13:48:09 vlabs guacd[31078]: Starting client
+Memory | Total: 8176632 | Used: 32.67%
+CPU usage: 3.02%
+Number of active conections: 106
+----------
+Jun  7 13:48:10 vlabs guacd[31092]: Connection ID is "$8e300ccb-9d7f-441f-a39c-36dd234ca482"
+Jun  7 13:48:10 vlabs guacd[31092]: Starting client
+Memory | Total: 8176632 | Used: 32.81%
+CPU usage: 4.34%
+Number of active conections: 107
+----------
+Jun  7 13:48:10 vlabs guacd[31107]: Connection ID is "$99b817e6-832a-4518-bee2-4194855b2ca5"
+Jun  7 13:48:10 vlabs guacd[31107]: Starting client
+Memory | Total: 8176632 | Used: 33.04%
+CPU usage: 1.00%
+Number of active conections: 108
+----------
+Jun  7 13:49:16 vlabs guacd[31122]: Connection ID is "$9973bb36-b4e8-4929-993e-dc40ca353b74"
+Jun  7 13:49:16 vlabs guacd[31122]: Starting client
+Memory | Total: 8176632 | Used: 33.12%
+CPU usage: 6.68%
+Number of active conections: 109
+----------
+Jun  7 13:49:17 vlabs guacd[31138]: Connection ID is "$c5bf9ae4-fc62-40f0-adaf-5ba02a39cbe7"
+Jun  7 13:49:17 vlabs guacd[31138]: Starting client
+Memory | Total: 8176632 | Used: 33.42%
+CPU usage: 2.01%
+Number of active conections: 110
+----------
+Jun  7 13:49:17 vlabs guacd[31146]: Connection ID is "$4e6d3d03-4e79-4cb8-9aaa-7a73098d23b4"
+Jun  7 13:49:17 vlabs guacd[31146]: Starting client
+Memory | Total: 8176632 | Used: 33.52%
+CPU usage: 1.17%
+Number of active conections: 111
+----------
+Jun  7 13:50:06 vlabs guacd[31170]: Connection ID is "$e7af0803-e882-4524-bb4b-58efcfbb0431"
+Jun  7 13:50:06 vlabs guacd[31170]: Starting client
+Memory | Total: 8176632 | Used: 33.72%
+CPU usage: 3.51%
+Number of active conections: 112
+----------
+Jun  7 13:50:07 vlabs guacd[31184]: Connection ID is "$f7ba6841-bc14-4aef-9a01-c4122408f779"
+Jun  7 13:50:07 vlabs guacd[31184]: Starting client
+Memory | Total: 8176632 | Used: 33.87%
+CPU usage: 2.17%
+Number of active conections: 113
+----------
+Jun  7 13:50:08 vlabs guacd[31200]: Connection ID is "$f12648fd-f9f1-4b34-b7ed-0aa465f21ae1"
+Jun  7 13:50:09 vlabs guacd[31200]: Starting client
+Memory | Total: 8176632 | Used: 34.00%
+CPU usage: 1.67%
+Number of active conections: 114
+----------
+Jun  7 13:50:11 vlabs guacd[31122]: Client disconnected
+Memory | Total: 8176632 | Used: 34.05%
+CPU usage: 2.50%
+Number of active conections: 113
+----------
+Jun  7 13:50:12 vlabs guacd[31138]: Client disconnected
+Memory | Total: 8176632 | Used: 33.68%
+CPU usage: 3.18%
+Number of active conections: 112
+----------
+Jun  7 13:50:12 vlabs guacd[31146]: Client disconnected
+Memory | Total: 8176632 | Used: 33.49%
+CPU usage: 0.84%
+Number of active conections: 111
+----------
+Jun  7 13:54:37 vlabs guacd[31251]: Connection ID is "$8d2c18e5-d376-449c-aca8-d3f6f3d7751b"
+Jun  7 13:54:37 vlabs guacd[31251]: Starting client
+Memory | Total: 8176632 | Used: 33.59%
+CPU usage: 1.83%
+Number of active conections: 112
+----------
+Jun  7 13:54:38 vlabs guacd[31268]: Connection ID is "$1bcb566d-d5de-4601-b9a6-ca7edaf3267b"
+Jun  7 13:54:38 vlabs guacd[31268]: Starting client
+Memory | Total: 8176632 | Used: 33.73%
+CPU usage: 2.34%
+Number of active conections: 113
+----------
+Jun  7 13:54:39 vlabs guacd[31285]: Connection ID is "$7ffad1e1-3a4e-4d12-a422-afb1fe9b8eef"
+Jun  7 13:54:40 vlabs guacd[31285]: Starting client
+Memory | Total: 8176632 | Used: 33.87%
+CPU usage: 2.18%
+Number of active conections: 114
+----------
+Jun  7 13:55:34 vlabs guacd[31303]: Connection ID is "$703a81e2-6bd6-4c5a-8016-57b64fea1fc8"
+Jun  7 13:55:34 vlabs guacd[31303]: Starting client
+Memory | Total: 8176632 | Used: 34.05%
+CPU usage: 5.18%
+Number of active conections: 115
+----------
+Jun  7 13:55:35 vlabs guacd[31317]: Connection ID is "$a4d204bd-890f-42b1-af94-462420fe3ded"
+Jun  7 13:55:35 vlabs guacd[31317]: Starting client
+Memory | Total: 8176632 | Used: 34.30%
+CPU usage: 4.52%
+Number of active conections: 116
+----------
+Jun  7 13:55:35 vlabs guacd[31324]: Connection ID is "$d72ff4c1-4772-4214-b702-e1ce3be1cd36"
+Jun  7 13:55:36 vlabs guacd[31324]: Starting client
+Memory | Total: 8176632 | Used: 34.41%
+CPU usage: 1.17%
+Number of active conections: 117
+----------
+Jun  7 13:56:37 vlabs guacd[31349]: Connection ID is "$4830a690-a689-496f-9e40-b2448b33f7bc"
+Jun  7 13:56:37 vlabs guacd[31349]: Starting client
+Memory | Total: 8176632 | Used: 34.59%
+CPU usage: 6.52%
+Number of active conections: 118
+----------
+Jun  7 13:56:38 vlabs guacd[31364]: Connection ID is "$deb295a8-eead-4e80-93da-1433b9d208c3"
+Jun  7 13:56:38 vlabs guacd[31364]: Starting client
+Memory | Total: 8176632 | Used: 34.81%
+CPU usage: 2.84%
+Number of active conections: 119
+----------
+Jun  7 13:56:38 vlabs guacd[31372]: Connection ID is "$578ebf9c-a281-4b2f-89bf-9ad1a5f3fb70"
+Jun  7 13:56:38 vlabs guacd[31372]: Starting client
+Memory | Total: 8176632 | Used: 34.92%
+CPU usage: 1.50%
+Number of active conections: 120
+----------
+Jun  7 13:57:27 vlabs guacd[31396]: Connection ID is "$8d32adcb-af5c-4abd-bc9f-28535941104f"
+Jun  7 13:57:28 vlabs guacd[31396]: Starting client
+Memory | Total: 8176632 | Used: 35.07%
+CPU usage: 1.67%
+Number of active conections: 121
+----------
+Jun  7 13:57:30 vlabs guacd[31410]: Connection ID is "$b6163f38-2bfe-457e-9e54-a393ac7d9270"
+Jun  7 13:57:30 vlabs guacd[31410]: Starting client
+Memory | Total: 8176632 | Used: 35.25%
+CPU usage: 4.02%
+Number of active conections: 122
+----------
+Jun  7 13:57:31 vlabs guacd[31426]: Connection ID is "$40542874-abce-46de-a122-607a6ec865b1"
+Jun  7 13:57:31 vlabs guacd[31426]: Starting client
+Memory | Total: 8176632 | Used: 35.40%
+CPU usage: 2.33%
+Number of active conections: 123
+----------
+Jun  7 13:58:40 vlabs guacd[31441]: Connection ID is "$549108ab-ff01-4045-9d19-eb3e484c26bb"
+Jun  7 13:58:41 vlabs guacd[31441]: Starting client
+Memory | Total: 8176632 | Used: 35.56%
+CPU usage: 4.68%
+Number of active conections: 124
+----------
+Jun  7 13:58:41 vlabs guacd[31456]: Connection ID is "$72f8de66-3a6a-4264-9536-a89bc76f97ca"
+Jun  7 13:58:42 vlabs guacd[31460]: Connection ID is "$677b47a3-ee38-4165-bf79-eb52e9982b9f"
+Jun  7 13:58:42 vlabs guacd[31456]: Starting client
+Memory | Total: 8176632 | Used: 35.78%
+CPU usage: 3.35%
+Number of active conections: 125
+----------
+Jun  7 13:58:42 vlabs guacd[31460]: Starting client
+Memory | Total: 8176632 | Used: 35.87%
+CPU usage: 2.01%
+Number of active conections: 126
+----------
+Jun  7 13:59:37 vlabs guacd[31488]: Connection ID is "$86e32a4d-73d0-4fc1-8c88-77719d11f3d6"
+Jun  7 13:59:38 vlabs guacd[31489]: Connection ID is "$f16f3a57-61e1-4895-bbae-166e3e898595"
+Jun  7 13:59:38 vlabs guacd[31488]: Starting client
+Memory | Total: 8176632 | Used: 36.20%
+CPU usage: 3.84%
+Number of active conections: 127
+----------
+Jun  7 13:59:38 vlabs guacd[31489]: Starting client
+Memory | Total: 8176632 | Used: 36.34%
+CPU usage: 3.51%
+Number of active conections: 128
+----------
+Jun  7 13:59:39 vlabs guacd[31516]: Connection ID is "$6405bcb3-55fe-4c30-82ea-1f9536ab6618"
+Jun  7 13:59:39 vlabs guacd[31516]: Starting client
+Memory | Total: 8176632 | Used: 36.40%
+CPU usage: 1.84%
+Number of active conections: 129
+----------
+Jun  7 14:00:07 vlabs guacd[31530]: Connection ID is "$5531dcaa-1109-4289-8e5a-74f147d1991e"
+Jun  7 14:00:08 vlabs guacd[31530]: Starting client
+Memory | Total: 8176632 | Used: 36.49%
+CPU usage: 4.84%
+Number of active conections: 130
+----------
+Jun  7 14:00:08 vlabs guacd[31544]: Connection ID is "$ea54e1e0-64b1-4c13-94b4-1169fe32401b"
+Jun  7 14:00:09 vlabs guacd[31544]: Starting client
+Memory | Total: 8176632 | Used: 36.72%
+CPU usage: 5.02%
+Number of active conections: 131
+----------
+Jun  7 14:00:09 vlabs guacd[31561]: Connection ID is "$32064179-6e4b-4b02-a18d-aaa5fafa79fc"
+Jun  7 14:00:09 vlabs guacd[31561]: Starting client
+Memory | Total: 8176632 | Used: 36.91%
+CPU usage: 2.01%
+Number of active conections: 132
+----------
+Jun  7 14:00:44 vlabs guacd[31577]: Connection ID is "$641f683c-060e-419d-86ad-f0d9415e8e77"
+Jun  7 14:00:45 vlabs guacd[31577]: Starting client
+Memory | Total: 8176632 | Used: 37.15%
+CPU usage: 4.67%
+Number of active conections: 133
+----------
+Jun  7 14:00:45 vlabs guacd[31591]: Connection ID is "$2dc4eb91-94ea-409b-a07c-51243a74470f"
+Jun  7 14:00:45 vlabs guacd[31591]: Starting client
+Memory | Total: 8176632 | Used: 37.34%
+CPU usage: 2.51%
+Number of active conections: 134
+----------
+Jun  7 14:00:47 vlabs guacd[31606]: Connection ID is "$e9985ab7-9a32-4fca-bfe1-7f2ffafddc95"
+Jun  7 14:00:47 vlabs guacd[31606]: Starting client
+Memory | Total: 8176632 | Used: 37.42%
+CPU usage: 2.34%
+Number of active conections: 135
+----------
+Jun  7 14:01:51 vlabs guacd[31621]: Connection ID is "$f5f65bbf-91e7-4ebf-8988-42e65d6b95bf"
+Jun  7 14:01:51 vlabs guacd[31621]: Starting client
+Memory | Total: 8176632 | Used: 37.61%
+CPU usage: 2.68%
+Number of active conections: 136
+----------
+Jun  7 14:01:53 vlabs guacd[31635]: Connection ID is "$eb0f04a5-672a-414c-aa52-44ae6fe2b1a7"
+Jun  7 14:01:53 vlabs guacd[31635]: Starting client
+Memory | Total: 8176632 | Used: 37.72%
+CPU usage: 3.18%
+Number of active conections: 137
+----------
+Jun  7 14:01:59 vlabs guacd[31652]: Connection ID is "$dc2c0e9a-2196-47fb-a2ee-c781215af82b"
+Jun  7 14:01:59 vlabs guacd[31652]: Starting client
+Memory | Total: 8176632 | Used: 37.83%
+CPU usage: 2.67%
+Number of active conections: 138
+----------
+Jun  7 14:02:30 vlabs guacd[31668]: Connection ID is "$1d3ccb6e-e421-433e-b465-d2938ebe237c"
+Jun  7 14:02:30 vlabs guacd[31668]: Starting client
+Memory | Total: 8176632 | Used: 37.99%
+CPU usage: 1.84%
+Number of active conections: 139
+----------
+Jun  7 14:02:35 vlabs guacd[31682]: Connection ID is "$04d087de-d528-44bc-b5f1-afd04a1a5e16"
+Jun  7 14:02:35 vlabs guacd[31682]: Starting client
+Memory | Total: 8176632 | Used: 38.14%
+CPU usage: 2.18%
+Number of active conections: 140
+----------
+Jun  7 14:02:38 vlabs guacd[31697]: Connection ID is "$3fbaddfa-f702-4871-83b8-b010031fa392"
+Jun  7 14:02:38 vlabs guacd[31697]: Starting client
+Memory | Total: 8176632 | Used: 38.31%
+CPU usage: 2.35%
+Number of active conections: 141
+----------
+Jun  7 14:03:10 vlabs guacd[31712]: Connection ID is "$bc94ff07-9618-49c9-aad2-5e9a8c570935"
+Jun  7 14:03:11 vlabs guacd[31713]: Connection ID is "$d4cf9577-fcb1-438d-9007-fa200710f533"
+Jun  7 14:03:11 vlabs guacd[31712]: Starting client
+Memory | Total: 8176632 | Used: 38.62%
+CPU usage: 4.34%
+Number of active conections: 142
+----------
+Jun  7 14:03:11 vlabs guacd[31713]: Starting client
+Memory | Total: 8176632 | Used: 38.83%
+CPU usage: 3.85%
+Number of active conections: 143
+----------
+Jun  7 14:03:12 vlabs guacd[31734]: Connection ID is "$6841c208-e03d-46ee-a115-79d616a57374"
+Jun  7 14:03:12 vlabs guacd[31734]: Starting client
+Memory | Total: 8176632 | Used: 38.98%
+CPU usage: 1.67%
+Number of active conections: 144
+----------
+Jun  7 14:05:34 vlabs guacd[31766]: Connection ID is "$e9a1ed4d-5d2f-4617-92a8-0d3500bed7c7"
+Jun  7 14:05:35 vlabs guacd[31766]: Starting client
+Memory | Total: 8176632 | Used: 39.11%
+CPU usage: 3.01%
+Number of active conections: 145
+----------
+Jun  7 14:05:36 vlabs guacd[31784]: Connection ID is "$c603b8d0-acf0-4049-b8c4-a309787cb816"
+Jun  7 14:05:36 vlabs guacd[31784]: Starting client
+Memory | Total: 8176632 | Used: 39.29%
+CPU usage: 4.01%
+Number of active conections: 146
+----------
+Jun  7 14:05:37 vlabs guacd[31800]: Connection ID is "$88d6c7b5-55f2-4147-bf8a-47db292c6b25"
+Jun  7 14:05:37 vlabs guacd[31800]: Starting client
+Memory | Total: 8176632 | Used: 39.48%
+CPU usage: 1.67%
+Number of active conections: 147
+----------
+Jun  7 14:05:40 vlabs guacd[31712]: Client disconnected
+Memory | Total: 8176632 | Used: 39.52%
+CPU usage: 4.17%
+Number of active conections: 146
+----------
+Jun  7 14:05:41 vlabs guacd[31713]: Client disconnected
+Memory | Total: 8176632 | Used: 39.15%
+CPU usage: 2.51%
+Number of active conections: 145
+----------
+Jun  7 14:05:42 vlabs guacd[31734]: Client disconnected
+Memory | Total: 8176632 | Used: 38.97%
+CPU usage: 1.51%
+Number of active conections: 144
+----------
+Jun  7 14:07:47 vlabs guacd[31844]: Connection ID is "$01c7d459-7cf8-467b-8106-2b13a35f23f0"
+Jun  7 14:07:47 vlabs guacd[31844]: Starting client
+Memory | Total: 8176632 | Used: 38.99%
+CPU usage: 2.50%
+Number of active conections: 145
+----------
+Jun  7 14:07:49 vlabs guacd[31766]: Client disconnected
+Memory | Total: 8176632 | Used: 39.08%
+CPU usage: 3.18%
+Number of active conections: 144
+----------
+Jun  7 14:07:53 vlabs guacd[31868]: Connection ID is "$de7cda0c-e8ca-4694-9e16-2af7412c8745"
+Jun  7 14:07:53 vlabs guacd[31868]: Starting client
+Memory | Total: 8176632 | Used: 39.05%
+CPU usage: 2.18%
+Number of active conections: 145
+----------
+Jun  7 14:07:56 vlabs guacd[31784]: Client disconnected
+Memory | Total: 8176632 | Used: 39.14%
+CPU usage: 2.67%
+Number of active conections: 144
+----------
+Jun  7 14:08:01 vlabs guacd[31891]: Connection ID is "$ddfa788a-8ca5-43c6-b4e4-a3a15dd0a149"
+Jun  7 14:08:01 vlabs guacd[31891]: Starting client
+Memory | Total: 8176632 | Used: 39.06%
+CPU usage: 2.34%
+Number of active conections: 145
+----------
+Jun  7 14:08:07 vlabs guacd[31800]: Client disconnected
+Memory | Total: 8176632 | Used: 39.15%
+CPU usage: 3.01%
+Number of active conections: 144
+----------
+Jun  7 14:09:58 vlabs guacd[31929]: Connection ID is "$759b428a-7de0-4037-b314-0e241ea54228"
+Jun  7 14:09:59 vlabs guacd[31929]: Starting client
+Memory | Total: 8176632 | Used: 39.14%
+CPU usage: 2.51%
+Number of active conections: 145
+----------
+Jun  7 14:10:01 vlabs guacd[31944]: Connection ID is "$a7224459-a44c-4c3c-b74e-24c53c5be7de"
+Jun  7 14:10:01 vlabs guacd[31944]: Starting client
+Memory | Total: 8176632 | Used: 39.30%
+CPU usage: 2.18%
+Number of active conections: 146
+----------
+Jun  7 14:10:03 vlabs guacd[31959]: Connection ID is "$e204df3b-aeb7-4a1d-bdb4-4a9a78499eee"
+Jun  7 14:10:04 vlabs guacd[31959]: Starting client
+Memory | Total: 8176632 | Used: 39.42%
+CPU usage: 2.34%
+Number of active conections: 147
+----------
+Jun  7 14:11:39 vlabs guacd[31978]: Connection ID is "$0436f6a6-3b61-4e5d-b4f6-048042b8b3f4"
+Jun  7 14:11:39 vlabs guacd[31978]: Starting client
+Memory | Total: 8176632 | Used: 39.67%
+CPU usage: 3.01%
+Number of active conections: 148
+----------
+Jun  7 14:14:22 vlabs guacd[31998]: Connection ID is "$8cf35fec-8250-4ca6-ae54-471b6cfc09e2"
+Jun  7 14:14:22 vlabs guacd[31998]: Starting client
+Memory | Total: 8176632 | Used: 39.80%
+CPU usage: 2.84%
+Number of active conections: 149
+----------
+Jun  7 14:28:37 vlabs guacd[32033]: Connection ID is "$18a3c8c4-4d16-4e72-ae11-e428819d6789"
+Jun  7 14:28:37 vlabs guacd[32033]: Starting client
+Memory | Total: 8176632 | Used: 39.97%
+CPU usage: 1.84%
+Number of active conections: 150
+----------
+Jun  7 14:28:40 vlabs guacd[31929]: Client disconnected
+Memory | Total: 8176632 | Used: 40.01%
+CPU usage: 2.51%
+Number of active conections: 149
+----------
+End of Guacamole testing log capture
+----------
+Initial values:
+
+Memory usage: 18.72%
+CPU usage: 0.17%
+
+Final values:
+Memory usage: 40.01%
+CPU usage: 2.51%
+----------

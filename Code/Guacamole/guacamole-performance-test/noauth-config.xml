@@ -1,0 +1,1227 @@
+<configs>
+
+<!-- Block added by Juan to be able to test the test script -->
+    <config name="__juan-desktop-SSH" protocol="ssh">
+        <param name="hostname" value="167.114.169.54" />
+        <param name="port" value="22" />
+    </config>
+
+    <config name="__juan-desktop-RDP" protocol="rdp">
+        <param name="hostname" value="167.114.169.54" />
+        <param name="port" value="3389" />
+    </config>
+
+    <config name="__juan-server-SSH" protocol="ssh">
+        <param name="hostname" value="167.114.185.87" />
+        <param name="port" value="22" />
+    </config>
+
+    <config name="__juan-server-RDP" protocol="rdp">
+        <param name="hostname" value="167.114.185.87" />
+        <param name="port" value="3389" />
+    </config>
+
+    <config name="__dc" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50491" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="icard005test" />
+        <param name="password" value="icard005test" />
+    </config>
+
+    <config name="__ws1" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50492" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="icard005test" />
+        <param name="password" value="icard005test" />
+    </config>
+
+    <config name="__ws2" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50493" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="icard005test" />
+         <param name="password" value="icard005test" />
+    </config>
+<!-- End block added by Juan for testing -->
+
+    <config name="vc9-50491-dc" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50491" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="icard005test" />
+        <param name="password" value="icard005test" />
+    </config>
+
+    <config name="vc9-50492-ws1" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50492" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="icard005test" />
+        <param name="password" value="icard005test" />
+    </config>
+
+    <config name="vc9-50493-ws2" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50493" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="icard005test" />
+         <param name="password" value="icard005test" />
+    </config>
+
+    <config name="vc9-50494-reception" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50494" />
+        <param name="username" value="icard005test" />
+        <param name="password" value="icard005test" />
+    </config>
+
+    <config name="vc9-50492-laptop-ceo" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="50495" />
+        <param name="username" value="icard005test" />
+        <param name="password" value="icard005test" />
+    </config>
+ 
+    <config name="vc11.cis.fiu.edu:51066" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51066" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00011" />
+        <param name="password" value="test00011" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51067" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51067" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00011" />
+        <param name="password" value="test00011" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51068" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51068" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00011" />
+         <param name="password" value="test00011" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51069" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51069" />
+        <param name="username" value="test00011" />
+        <param name="password" value="test00011" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51070" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51070" />
+        <param name="username" value="test00011" />
+        <param name="password" value="test00011" />
+    </config>
+ 
+    <config name="vc11.cis.fiu.edu:51071" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51071" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00012" />
+        <param name="password" value="test00012" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51072" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51072" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00012" />
+        <param name="password" value="test00012" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51073" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51073" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00012" />
+         <param name="password" value="test00012" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51074" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51074" />
+        <param name="username" value="test00012" />
+        <param name="password" value="test00012" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51075" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51075" />
+        <param name="username" value="test00012" />
+        <param name="password" value="test00012" />
+    </config>
+ 
+    <config name="vc11.cis.fiu.edu:51101" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51101" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00018" />
+        <param name="password" value="test00018" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51102" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51102" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00018" />
+        <param name="password" value="test00018" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51103" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51103" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00018" />
+         <param name="password" value="test00018" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51104" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51104" />
+        <param name="username" value="test00018" />
+        <param name="password" value="test00018" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51105" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51105" />
+        <param name="username" value="test00018" />
+        <param name="password" value="test00018" />
+    </config>
+ 
+    <config name="vc11.cis.fiu.edu:51131" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51131" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00024" />
+        <param name="password" value="test00024" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51132" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51132" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00024" />
+        <param name="password" value="test00024" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51133" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51133" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00024" />
+         <param name="password" value="test00024" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51134" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51134" />
+        <param name="username" value="test00024" />
+        <param name="password" value="test00024" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51135" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51135" />
+        <param name="username" value="test00024" />
+        <param name="password" value="test00024" />
+    </config>
+ 
+    <config name="vc11.cis.fiu.edu:51161" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51161" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0003" />
+        <param name="password" value="test0003" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51162" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51162" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0003" />
+        <param name="password" value="test0003" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51163" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51163" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0003" />
+         <param name="password" value="test0003" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51164" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51164" />
+        <param name="username" value="test0003" />
+        <param name="password" value="test0003" />
+    </config>
+
+    <config name="vc11.cis.fiu.edu:51165" protocol="rdp">
+        <param name="hostname" value="vc11.cis.fiu.edu" />
+        <param name="port" value="51165" />
+        <param name="username" value="test0003" />
+        <param name="password" value="test0003" />
+    </config>
+ 
+    <config name="vc1.cis.fiu.edu:51051" protocol="rdp">
+        <param name="hostname" value="vc1.cis.fiu.edu" />
+        <param name="port" value="51051" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0001" />
+        <param name="password" value="test0001" />
+    </config>
+
+    <config name="vc1.cis.fiu.edu:51052" protocol="rdp">
+        <param name="hostname" value="vc1.cis.fiu.edu" />
+        <param name="port" value="51052" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0001" />
+        <param name="password" value="test0001" />
+    </config>
+
+    <config name="vc1.cis.fiu.edu:51053" protocol="rdp">
+        <param name="hostname" value="vc1.cis.fiu.edu" />
+        <param name="port" value="51053" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0001" />
+         <param name="password" value="test0001" />
+    </config>
+
+    <config name="vc1.cis.fiu.edu:51054" protocol="rdp">
+        <param name="hostname" value="vc1.cis.fiu.edu" />
+        <param name="port" value="51054" />
+        <param name="username" value="test0001" />
+        <param name="password" value="test0001" />
+    </config>
+
+    <config name="vc1.cis.fiu.edu:51055" protocol="rdp">
+        <param name="hostname" value="vc1.cis.fiu.edu" />
+        <param name="port" value="51055" />
+        <param name="username" value="test0001" />
+        <param name="password" value="test0001" />
+    </config>
+ 
+    <config name="vc2.cis.fiu.edu:51056" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51056" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0002" />
+        <param name="password" value="test0002" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51057" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51057" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0002" />
+        <param name="password" value="test0002" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51058" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51058" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0002" />
+         <param name="password" value="test0002" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51059" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51059" />
+        <param name="username" value="test0002" />
+        <param name="password" value="test0002" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51060" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51060" />
+        <param name="username" value="test0002" />
+        <param name="password" value="test0002" />
+    </config>
+ 
+    <config name="vc2.cis.fiu.edu:51086" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51086" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00015" />
+        <param name="password" value="test00015" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51087" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51087" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00015" />
+        <param name="password" value="test00015" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51088" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51088" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00015" />
+         <param name="password" value="test00015" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51089" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51089" />
+        <param name="username" value="test00015" />
+        <param name="password" value="test00015" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51090" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51090" />
+        <param name="username" value="test00015" />
+        <param name="password" value="test00015" />
+    </config>
+ 
+    <config name="vc2.cis.fiu.edu:51116" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51116" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00021" />
+        <param name="password" value="test00021" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51117" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51117" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00021" />
+        <param name="password" value="test00021" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51118" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51118" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00021" />
+         <param name="password" value="test00021" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51119" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51119" />
+        <param name="username" value="test00021" />
+        <param name="password" value="test00021" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51120" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51120" />
+        <param name="username" value="test00021" />
+        <param name="password" value="test00021" />
+    </config>
+ 
+    <config name="vc2.cis.fiu.edu:51146" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51146" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00027" />
+        <param name="password" value="test00027" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51147" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51147" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00027" />
+        <param name="password" value="test00027" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51148" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51148" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00027" />
+         <param name="password" value="test00027" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51149" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51149" />
+        <param name="username" value="test00027" />
+        <param name="password" value="test00027" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51150" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51150" />
+        <param name="username" value="test00027" />
+        <param name="password" value="test00027" />
+    </config>
+ 
+    <config name="vc2.cis.fiu.edu:51186" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51186" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0007" />
+        <param name="password" value="test0007" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51187" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51187" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0007" />
+        <param name="password" value="test0007" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51188" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51188" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0007" />
+         <param name="password" value="test0007" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51189" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51189" />
+        <param name="username" value="test0007" />
+        <param name="password" value="test0007" />
+    </config>
+
+    <config name="vc2.cis.fiu.edu:51190" protocol="rdp">
+        <param name="hostname" value="vc2.cis.fiu.edu" />
+        <param name="port" value="51190" />
+        <param name="username" value="test0007" />
+        <param name="password" value="test0007" />
+    </config>
+ 
+    <config name="vc4.cis.fiu.edu:51081" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51081" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00014" />
+        <param name="password" value="test00014" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51082" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51082" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00014" />
+        <param name="password" value="test00014" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51083" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51083" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00014" />
+         <param name="password" value="test00014" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51084" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51084" />
+        <param name="username" value="test00014" />
+        <param name="password" value="test00014" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51085" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51085" />
+        <param name="username" value="test00014" />
+        <param name="password" value="test00014" />
+    </config>
+ 
+    <config name="vc4.cis.fiu.edu:51111" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51111" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00020" />
+        <param name="password" value="test00020" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51112" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51112" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00020" />
+        <param name="password" value="test00020" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51113" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51113" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00020" />
+         <param name="password" value="test00020" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51114" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51114" />
+        <param name="username" value="test00020" />
+        <param name="password" value="test00020" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51115" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51115" />
+        <param name="username" value="test00020" />
+        <param name="password" value="test00020" />
+    </config>
+ 
+    <config name="vc4.cis.fiu.edu:51141" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51141" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00026" />
+        <param name="password" value="test00026" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51142" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51142" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00026" />
+        <param name="password" value="test00026" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51143" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51143" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00026" />
+         <param name="password" value="test00026" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51144" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51144" />
+        <param name="username" value="test00026" />
+        <param name="password" value="test00026" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51145" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51145" />
+        <param name="username" value="test00026" />
+        <param name="password" value="test00026" />
+    </config>
+ 
+    <config name="vc4.cis.fiu.edu:51176" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51176" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0005" />
+        <param name="password" value="test0005" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51177" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51177" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0005" />
+        <param name="password" value="test0005" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51178" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51178" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0005" />
+         <param name="password" value="test0005" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51179" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51179" />
+        <param name="username" value="test0005" />
+        <param name="password" value="test0005" />
+    </config>
+
+    <config name="vc4.cis.fiu.edu:51180" protocol="rdp">
+        <param name="hostname" value="vc4.cis.fiu.edu" />
+        <param name="port" value="51180" />
+        <param name="username" value="test0005" />
+        <param name="password" value="test0005" />
+    </config>
+ 
+    <config name="vc5.cis.fiu.edu:51091" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51091" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00016" />
+        <param name="password" value="test00016" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51092" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51092" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00016" />
+        <param name="password" value="test00016" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51093" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51093" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00016" />
+         <param name="password" value="test00016" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51094" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51094" />
+        <param name="username" value="test00016" />
+        <param name="password" value="test00016" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51095" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51095" />
+        <param name="username" value="test00016" />
+        <param name="password" value="test00016" />
+    </config>
+ 
+    <config name="vc5.cis.fiu.edu:51121" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51121" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00022" />
+        <param name="password" value="test00022" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51122" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51122" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00022" />
+        <param name="password" value="test00022" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51123" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51123" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00022" />
+         <param name="password" value="test00022" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51124" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51124" />
+        <param name="username" value="test00022" />
+        <param name="password" value="test00022" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51125" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51125" />
+        <param name="username" value="test00022" />
+        <param name="password" value="test00022" />
+    </config>
+ 
+    <config name="vc5.cis.fiu.edu:51151" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51151" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00028" />
+        <param name="password" value="test00028" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51152" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51152" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00028" />
+        <param name="password" value="test00028" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51153" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51153" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00028" />
+         <param name="password" value="test00028" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51154" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51154" />
+        <param name="username" value="test00028" />
+        <param name="password" value="test00028" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51155" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51155" />
+        <param name="username" value="test00028" />
+        <param name="password" value="test00028" />
+    </config>
+ 
+    <config name="vc5.cis.fiu.edu:51171" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51171" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0004" />
+        <param name="password" value="test0004" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51172" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51172" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0004" />
+        <param name="password" value="test0004" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51173" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51173" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0004" />
+         <param name="password" value="test0004" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51174" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51174" />
+        <param name="username" value="test0004" />
+        <param name="password" value="test0004" />
+    </config>
+
+    <config name="vc5.cis.fiu.edu:51175" protocol="rdp">
+        <param name="hostname" value="vc5.cis.fiu.edu" />
+        <param name="port" value="51175" />
+        <param name="username" value="test0004" />
+        <param name="password" value="test0004" />
+    </config>
+ 
+    <config name="vc6.cis.fiu.edu:51061" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51061" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00010" />
+        <param name="password" value="test00010" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51062" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51062" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00010" />
+        <param name="password" value="test00010" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51063" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51063" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00010" />
+         <param name="password" value="test00010" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51064" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51064" />
+        <param name="username" value="test00010" />
+        <param name="password" value="test00010" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51065" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51065" />
+        <param name="username" value="test00010" />
+        <param name="password" value="test00010" />
+    </config>
+ 
+    <config name="vc6.cis.fiu.edu:51096" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51096" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00017" />
+        <param name="password" value="test00017" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51097" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51097" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00017" />
+        <param name="password" value="test00017" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51098" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51098" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00017" />
+         <param name="password" value="test00017" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51099" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51099" />
+        <param name="username" value="test00017" />
+        <param name="password" value="test00017" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51100" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51100" />
+        <param name="username" value="test00017" />
+        <param name="password" value="test00017" />
+    </config>
+ 
+    <config name="vc6.cis.fiu.edu:51126" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51126" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00023" />
+        <param name="password" value="test00023" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51127" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51127" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00023" />
+        <param name="password" value="test00023" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51128" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51128" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00023" />
+         <param name="password" value="test00023" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51129" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51129" />
+        <param name="username" value="test00023" />
+        <param name="password" value="test00023" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51130" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51130" />
+        <param name="username" value="test00023" />
+        <param name="password" value="test00023" />
+    </config>
+ 
+    <config name="vc6.cis.fiu.edu:51156" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51156" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00029" />
+        <param name="password" value="test00029" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51157" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51157" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00029" />
+        <param name="password" value="test00029" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51158" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51158" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00029" />
+         <param name="password" value="test00029" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51159" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51159" />
+        <param name="username" value="test00029" />
+        <param name="password" value="test00029" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51160" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51160" />
+        <param name="username" value="test00029" />
+        <param name="password" value="test00029" />
+    </config>
+ 
+    <config name="vc6.cis.fiu.edu:51181" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51181" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0006" />
+        <param name="password" value="test0006" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51182" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51182" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0006" />
+        <param name="password" value="test0006" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51183" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51183" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0006" />
+         <param name="password" value="test0006" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51184" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51184" />
+        <param name="username" value="test0006" />
+        <param name="password" value="test0006" />
+    </config>
+
+    <config name="vc6.cis.fiu.edu:51185" protocol="rdp">
+        <param name="hostname" value="vc6.cis.fiu.edu" />
+        <param name="port" value="51185" />
+        <param name="username" value="test0006" />
+        <param name="password" value="test0006" />
+    </config>
+ 
+    <config name="vc7.cis.fiu.edu:51191" protocol="rdp">
+        <param name="hostname" value="vc7.cis.fiu.edu" />
+        <param name="port" value="51191" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0008" />
+        <param name="password" value="test0008" />
+    </config>
+
+    <config name="vc7.cis.fiu.edu:51192" protocol="rdp">
+        <param name="hostname" value="vc7.cis.fiu.edu" />
+        <param name="port" value="51192" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0008" />
+        <param name="password" value="test0008" />
+    </config>
+
+    <config name="vc7.cis.fiu.edu:51193" protocol="rdp">
+        <param name="hostname" value="vc7.cis.fiu.edu" />
+        <param name="port" value="51193" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0008" />
+         <param name="password" value="test0008" />
+    </config>
+
+    <config name="vc7.cis.fiu.edu:51194" protocol="rdp">
+        <param name="hostname" value="vc7.cis.fiu.edu" />
+        <param name="port" value="51194" />
+        <param name="username" value="test0008" />
+        <param name="password" value="test0008" />
+    </config>
+
+    <config name="vc7.cis.fiu.edu:51195" protocol="rdp">
+        <param name="hostname" value="vc7.cis.fiu.edu" />
+        <param name="port" value="51195" />
+        <param name="username" value="test0008" />
+        <param name="password" value="test0008" />
+    </config>
+ 
+    <config name="vc8.cis.fiu.edu:51076" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51076" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00013" />
+        <param name="password" value="test00013" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51077" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51077" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00013" />
+        <param name="password" value="test00013" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51078" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51078" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00013" />
+         <param name="password" value="test00013" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51079" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51079" />
+        <param name="username" value="test00013" />
+        <param name="password" value="test00013" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51080" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51080" />
+        <param name="username" value="test00013" />
+        <param name="password" value="test00013" />
+    </config>
+ 
+    <config name="vc8.cis.fiu.edu:51106" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51106" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00019" />
+        <param name="password" value="test00019" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51107" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51107" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00019" />
+        <param name="password" value="test00019" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51108" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51108" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00019" />
+         <param name="password" value="test00019" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51109" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51109" />
+        <param name="username" value="test00019" />
+        <param name="password" value="test00019" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51110" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51110" />
+        <param name="username" value="test00019" />
+        <param name="password" value="test00019" />
+    </config>
+ 
+    <config name="vc8.cis.fiu.edu:51136" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51136" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00025" />
+        <param name="password" value="test00025" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51137" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51137" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00025" />
+        <param name="password" value="test00025" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51138" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51138" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00025" />
+         <param name="password" value="test00025" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51139" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51139" />
+        <param name="username" value="test00025" />
+        <param name="password" value="test00025" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51140" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51140" />
+        <param name="username" value="test00025" />
+        <param name="password" value="test00025" />
+    </config>
+ 
+    <config name="vc8.cis.fiu.edu:51166" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51166" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00030" />
+        <param name="password" value="test00030" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51167" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51167" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00030" />
+        <param name="password" value="test00030" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51168" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51168" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test00030" />
+         <param name="password" value="test00030" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51169" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51169" />
+        <param name="username" value="test00030" />
+        <param name="password" value="test00030" />
+    </config>
+
+    <config name="vc8.cis.fiu.edu:51170" protocol="rdp">
+        <param name="hostname" value="vc8.cis.fiu.edu" />
+        <param name="port" value="51170" />
+        <param name="username" value="test00030" />
+        <param name="password" value="test00030" />
+    </config>
+ 
+    <config name="vc9.cis.fiu.edu:51196" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="51196" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0009" />
+        <param name="password" value="test0009" />
+    </config>
+
+    <config name="vc9.cis.fiu.edu:51197" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="51197" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0009" />
+        <param name="password" value="test0009" />
+    </config>
+
+    <config name="vc9.cis.fiu.edu:51198" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="51198" />
+        <param name="domain" value="ITTC" />
+        <param name="username" value="test0009" />
+         <param name="password" value="test0009" />
+    </config>
+
+    <config name="vc9.cis.fiu.edu:51199" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="51199" />
+        <param name="username" value="test0009" />
+        <param name="password" value="test0009" />
+    </config>
+
+    <config name="vc9.cis.fiu.edu:51200" protocol="rdp">
+        <param name="hostname" value="vc9.cis.fiu.edu" />
+        <param name="port" value="51200" />
+        <param name="username" value="test0009" />
+        <param name="password" value="test0009" />
+    </config>
+ 
+</configs>
