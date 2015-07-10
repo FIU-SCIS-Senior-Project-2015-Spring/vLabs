@@ -149,6 +149,7 @@
 	<div id="tabs-7" class="tabwhitespace">
 	</div>
 </div>
+<div id="wait" style="display:none" align="center"><img src="wait.gif"></div>
 </body>
 <script type="text/javascript" src="scheduler/fullcalendar/fullcalendar.js"></script>
 <script type="text/javascript" src="dateFormat.js"></script>
@@ -162,6 +163,7 @@
 		$("#tabs").hide();
 
 		//load the user's instance
+		$("#wait").show();
 		reloadDevaFrontEmbedded();
 		setTimeControl();
 		//startStatusInterval();

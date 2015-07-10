@@ -218,6 +218,7 @@ function getCurDevaInsInfo() {
 													});
                             	}
                             	console.log(rdpTabInfo);
+                            	$("#wait").hide();
                             	$('#tabs').tabs("refresh");
                             	$('#tabs').show();
 						 		$('#veInsId').val(vms.vmInfo[0].veInsId);
