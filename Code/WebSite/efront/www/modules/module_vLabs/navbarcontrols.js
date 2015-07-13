@@ -288,7 +288,7 @@ function setTimeControl(){
 					}
 				},
 				error: function(){
-					alert("time sync error!");
+					console.error("time sync error!");
 				}
 			});
 		}

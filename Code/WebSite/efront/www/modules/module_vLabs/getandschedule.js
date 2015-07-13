@@ -250,10 +250,12 @@ function getCurDevaInsInfo() {
 				// } else {
 				// 	retry = false;
 					//noticeDialog("Virtual Machine Server", message, "alert");
-					alert("ts: " + textStatus + " err: " + errorThrown);
+					console.error("ts: " + textStatus + " err: " + errorThrown);
 					alert("The server may be down or too busy at this moment! " +
 						"Wait for a couple of minutes and try again! " +
 						"If the problem persist, you should contact sadjadi@cs.fiu.edu");
+
+					window.location = "KU-poweredby-ITS.html";
 					
 				//}
 			}
@@ -342,7 +344,7 @@ function getCreateNewEventObjFromInstantAppEmbedded(username, encryptedPassword,
 		actions: actions
 	};	
 	
-	console.log(newevent);
+	//console.log(newevent);
 	return newevent;
 }
 
@@ -369,7 +371,7 @@ function getUserCurrentTime(username) {
 			
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
-			alert("error:" + textStatus + "\n errorThrown: " + errorThrown);
+			console.error("error:" + textStatus + "\n errorThrown: " + errorThrown);
 		}
 	});
 
@@ -429,8 +431,7 @@ function scheduleAppointmentWithEncryptedPassword(eventWithEncryptedPassword, us
 			// var message = "We were unable to schedule you for this appointment.<br/><br/> ** please try again later.";
 			// message = textStatus + " : " +errorThrown;
 			//noticeDialog(header, message, icon);
-			console.log(errorThrown);
-			alert("ts: " + textStatus + " err: " + errorThrown);
+			console.error("ts: " + textStatus + " err: " + errorThrown);
 			alert("We were unable to schedule you for this appointment. Please try again later.");
 			window.location = "KU-poweredby-ITS-NotAvailable.html";
 			// showProgressBar(false);
@@ -484,9 +485,9 @@ function getUserCurApp(){
 			var header = "Delete Appointment";
 			var message = "We were unable to remove this appointment.<br/> **please try again later.";
 			//var icon = "alert";
-			message = textStatus + " : " +errorThrown;
+			//message = textStatus + " : " +errorThrown;
 			//noticeDialog(header, message, icon);
-			alert("message");
+			alert(message);
 		}
 	});
 	
