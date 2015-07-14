@@ -324,6 +324,38 @@ libraries/smarty/libs/plugins/shared.make_timestamp.php :: 20ac25da83a88d5f2cb4b
 libraries/smarty/libs/Smarty.class.php :: f560eed606d938f5df8c10093b979ada
 libraries/smarty/libs/Smarty_Compiler.class.php :: 4d68cf465ab5a8fe41ea369b4ed0a04f
 libraries/smarty/smarty_config.php :: 75c3e14352f4cf475f1e4ef3c5a09dd7
+<<<<<<< HEAD
+=======
+libraries/smarty/themes_cache/blue_html5/templates_c/%%04^043^04330052%%module_scheduler.tpl.php :: 9c1bde2fd9a9096439b5c7c6461a1c2e
+libraries/smarty/themes_cache/blue_html5/templates_c/%%07^075^0758999B%%links.tpl.php :: e1a46d8c2a780b2f6ea7b32bcfc4036c
+libraries/smarty/themes_cache/blue_html5/templates_c/%%18^18B^18B0972F%%closing.tpl.php :: 842d0ab9ddbc4e00a3336d0d4a48007d
+libraries/smarty/themes_cache/blue_html5/templates_c/%%2A^2AD^2AD1910D%%control_panel.tpl.php :: facdfa07054ba78a3b48a463bfb748b9
+libraries/smarty/themes_cache/blue_html5/templates_c/%%2E^2EE^2EEDAE89%%themes.tpl.php :: 088ffd79a175ff26eb50f334cc88fe84
+libraries/smarty/themes_cache/blue_html5/templates_c/%%41^41C^41C0D6F6%%studentpage.tpl.php :: dcf3394d13bad9addc1eb09803ef1898
+libraries/smarty/themes_cache/blue_html5/templates_c/%%45^45E^45E480CD%%index.tpl.php :: 602d35968c88b0cab88c7f2b32032026
+libraries/smarty/themes_cache/blue_html5/templates_c/%%48^485^48547E56%%modules.tpl.php :: 7d1291081d8c449699694325ed984feb
+libraries/smarty/themes_cache/blue_html5/templates_c/%%48^485^485E0F75%%common_layout.tpl.php :: fc22816c4a2ee09cfd7dfcfa182019be
+libraries/smarty/themes_cache/blue_html5/templates_c/%%4D^4D4^4D46877B%%administrator.tpl.php :: 24db84b49b33173a19defc8adbdf54f4
+libraries/smarty/themes_cache/blue_html5/templates_c/%%64^64E^64EBA3F1%%module_ui_page.tpl.php :: 9cd377993f22a13ad07d8a2d05466a15
+libraries/smarty/themes_cache/blue_html5/templates_c/%%6E^6E7^6E7D8964%%cart.tpl.php :: 97de079671d542f390f1cb47dadca93d
+libraries/smarty/themes_cache/blue_html5/templates_c/%%75^75C^75C76AAB%%footer_code.tpl.php :: 48d252c355c332529efbebab419c07b6
+libraries/smarty/themes_cache/blue_html5/templates_c/%%7B^7B8^7B80875E%%search.tpl.php :: 3b24f32e612a9458bc520d6105a59468
+libraries/smarty/themes_cache/blue_html5/templates_c/%%81^811^811727F7%%login.tpl.php :: 667d2c0d78b8d3aac802563957d48dc6
+libraries/smarty/themes_cache/blue_html5/templates_c/%%82^827^827C8F44%%student.tpl.php :: e768f2a4535ef16a10e326dad3e926de
+libraries/smarty/themes_cache/blue_html5/templates_c/%%89^891^8911E9AE%%professor.tpl.php :: 43293b074abf4ac95b18b5b73e0a22be
+libraries/smarty/themes_cache/blue_html5/templates_c/%%8A^8AD^8AD2394B%%online_users.tpl.php :: fe25849447b948cc2a1f324443804acc
+libraries/smarty/themes_cache/blue_html5/templates_c/%%9B^9B0^9B07747C%%checker.tpl.php :: bd33c07eaa6c7ea3d8f82d12f60673ce
+libraries/smarty/themes_cache/blue_html5/templates_c/%%9E^9ED^9EDE70C4%%module_security_cpanel.tpl.php :: 3b85ffc359c33f63032cc57b200b4b97
+libraries/smarty/themes_cache/blue_html5/templates_c/%%AB^ABF^ABFA37AA%%lessons_list.tpl.php :: fdc5f9fbbeedd5abc6defce49ac3e992
+libraries/smarty/themes_cache/blue_html5/templates_c/%%B9^B9C^B9C3D81D%%module_quotasystem_page_admin.tpl.php :: 670729478a57b8def2e4121464864872
+libraries/smarty/themes_cache/blue_html5/templates_c/%%BB^BB4^BB4A3208%%layout.tpl.php :: bf457cd3d905c75870b0359ac682ca05
+libraries/smarty/themes_cache/blue_html5/templates_c/%%BC^BC7^BC7D4909%%header_code.tpl.php :: 520cd0531a07740404b28babc36e531a
+libraries/smarty/themes_cache/blue_html5/templates_c/%%C9^C9E^C9E96EE1%%administratorpage.tpl.php :: 42c4e6ca683160dce78a8938aacef942
+libraries/smarty/themes_cache/blue_html5/templates_c/%%CB^CB6^CB6C5EDA%%module_quotasystem_page.tpl.php :: 4928d2432a043596e3f374dfaeb48ab3
+libraries/smarty/themes_cache/blue_html5/templates_c/%%CE^CE8^CE824A21%%header.tpl.php :: 98f1de92073bddec995b9864f682fdf1
+libraries/smarty/themes_cache/blue_html5/templates_c/%%E3^E3D^E3DAF505%%news.tpl.php :: 0a152f7f1de7f14ccbbcc49f596d246c
+libraries/smarty/themes_cache/blue_html5/templates_c/%%F3^F3D^F3D90C5A%%professorpage.tpl.php :: 6b3fe7afc71db0356f4eb84708a8ebb4
+>>>>>>> Story 211: First commit for scheduler module, some clean up for Quota System
 libraries/sso.class.php :: caac1ea91e95af3d867e1e792002447b
 libraries/statistics.class.php :: 360456be23cc1f92c23cc7d737223811
 libraries/system.class.php :: 0495b9ed121493795a961905d3d8f27b
@@ -1154,6 +1186,32 @@ www/modules/module_quick_mails/lang-turkish.php :: b249c36f6cbf40076ab3d588517b3
 www/modules/module_quick_mails/lang-ukrainian.php :: 7deb481ba1afbab92e18142625596206
 www/modules/module_quick_mails/lang-vietnamese.php :: f5880c05129a83e8e944f1c51240604c
 www/modules/module_quick_mails/module_quick_mails.class.php :: 21d98f85b0d65cee60473b0d4bc5f9fe
+<<<<<<< HEAD
+=======
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/editable_ajax.php :: 7ea157f789dcb128703f2a7ecf2c35c5
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/infiniteScroll.php :: 1e60208093cb4b9a56e1dbb35f3f12b5
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/server_processing.php :: a2132ad4726db74c6d97c478266d0129
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/server_processing_details_col.php :: a92beff2aeace9afdfa4ecba53b8efa2
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/server_processing_filter_col.php :: 353fa000d645a77ff2af8af6de6fe073
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/server_processing_id.php :: a19b52ee0b5a0c590e5a3d20320f6f18
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/server_processing_ordering.php :: 38239f1446714a6ca8058cd4bae58c3c
+www/modules/module_quotasystem/jquery/dataTables/examples/examples_support/server_processing_post.php :: e0caa8bea03b09da19769e7a47c7c5d7
+www/modules/module_quotasystem/jquery/dataTables/media/unit_testing/controller.php :: 4810c4f791b5a187645422a633275d26
+www/modules/module_quotasystem/jquery/dataTables/media/unit_testing/performance/large.php :: 48fff362277e9861051c44c732f40236
+www/modules/module_quotasystem/jquery/dataTables/media/unit_testing/templates/dom_data.php :: 7d0574f23856070eb52e19929477d338
+www/modules/module_quotasystem/jquery/dataTables/media/unit_testing/templates/empty_table.php :: e24c853fb8ca8ae6e4988223a3ad943c
+www/modules/module_quotasystem/jquery/dataTables/media/unit_testing/templates/js_data.php :: 2ce08908ea199075b9705eb38a14d21b
+www/modules/module_quotasystem/lang-english.php :: 3356fd615aef0147742b116fb424f893
+www/modules/module_quotasystem/module_quotasystem.class.php :: 09874cdfcaddf5f819ebf3f8b7fa7246
+www/modules/module_quotasystem/server/creditTypeManager.php :: 897690d272888f4a7af14e416786a93a
+www/modules/module_quotasystem/server/db.php :: b0319c65c531fd85e799b2ece6dc7d59
+www/modules/module_quotasystem/server/policyManager.php :: 4a2355642438a719def9e9764fca2d3f
+www/modules/module_quotasystem/server/quotaManager.php :: 3f6e8ef6071bcb2a7b0714dd4392ba85
+www/modules/module_quotasystem/server/quotaSystem.php :: 7efcab28142f3e8c0d4819bfde741e76
+www/modules/module_quotasystem/server/reportManager.php :: 154c35c67c1ec838d3adf69c22782b7f
+www/modules/module_quotasystem/server/timezoneManager.php :: eeead6f625644ce5699631f2919cd15d
+www/modules/module_quotasystem/server/webserviceconfig.php :: e57bee34815b59111106c65fc52d6ff4
+>>>>>>> Story 211: First commit for scheduler module, some clean up for Quota System
 www/modules/module_quote/lang-albanian.php :: c33d89aceb4936661e1c250345f768e0
 www/modules/module_quote/lang-arabic.php :: 324ef16b2f0c2595628f87ad9f60391f
 www/modules/module_quote/lang-brazilian.php :: 502467447257d5f4db2cac157f8a2b24
@@ -1244,6 +1302,7 @@ www/modules/module_rss/lang-ukrainian.php :: 3971289d256b28f0433789f6e94f915f
 www/modules/module_rss/lang-vietnamese.php :: 8c0593024072db1620630fa2efd775a2
 www/modules/module_rss/module_rss.class.php :: a2df2b57c8393e249d43e9d6e2cb7925
 www/modules/module_rss/rss.php :: 7208dbb1c94e6e0405cad61a8a41ec35
+<<<<<<< HEAD
 www/modules/module_security/lang-english.php :: 1f18c572787a96f574d9ce896404d277
 www/modules/module_security/lang-greek.php :: 4d117cf141fdef2cbfc15a76ee28c3a1
 www/modules/module_security/module_security.class.php :: 64780a25c122f9cdc8d4c4b9f4967ad7
@@ -1275,6 +1334,45 @@ www/modules/module_vlab/lang-english.php :: 3dcc985fdb96a1f7fcfdf73df0bc9725
 www/modules/module_vlab/module_vLab.class-backup.php :: 566c7105173a58965ee2bba376233484
 www/modules/module_vlab/module_vLab.class.php :: a162d6ff50839778c7f5ca8494229112
 www/modules/module_vlab/webRDP.php :: 6ea8970bc0ff9baaa2ad33e2cacbc4cd
+=======
+www/modules/module_scheduler/colormanager.php :: 953ac51aa83e4dc1a4f0517a3b6be4ac
+www/modules/module_scheduler/fullcalendar/calendar-backup-20141122.php :: f943dd081851d146f64c31ae0a480da4
+www/modules/module_scheduler/fullcalendar/calendar.php :: a6cf3f20c159db0b6793e29c5372517c
+www/modules/module_scheduler/fullcalendar/flexigrid.php :: ef960183508af2d88122f3cd2c26409b
+www/modules/module_scheduler/fullcalendar/parser.php :: 7f498667f6610a62fc1fb13610cd1cdb
+www/modules/module_scheduler/fullcalendar/quotasystem.php :: a48b9c888f84819f5f25f892c9528169
+www/modules/module_scheduler/fullcalendar/timezoneManager.php :: ee72b63ce6fdf42cb3e0d314eb8a1c65
+www/modules/module_scheduler/fullcalendar/usecolormanager.php :: 6f92183282fc29dfad5b9ed058cab016
+www/modules/module_scheduler/fullcalendar/vmControls.php :: 23e1320ec5f61fef5b1ddbc8146aeb0a
+www/modules/module_scheduler/fullcalendar/webserviceconfig.php :: e57bee34815b59111106c65fc52d6ff4
+www/modules/module_scheduler/fullcalendar/xmlserializer/classes.php :: 4a3d1034b567276be571424597c99513
+www/modules/module_scheduler/fullcalendar/xmlserializer/serialize.php :: 058a69b9f176cd9882a274d817f25a56
+www/modules/module_scheduler/fullcalendar/xmlserializer/xmlserialize.cls.php :: 328ee1a4d72b24da8325770a1d262af4
+www/modules/module_scheduler/index.php :: ba1edbb7efe3f6ecd53c7e1c230436cb
+www/modules/module_scheduler/lang/en_utf8/scheduler.php :: 29fb1551262e53f652f8481fb64ebac5
+www/modules/module_scheduler/lang-english.php :: 839de8948088b738d43be7f9344e42a2
+www/modules/module_scheduler/lib.php :: 95d8ae67b46e408bd1c20ba405a946b7
+www/modules/module_scheduler/module_scheduler.class.php :: a60b5a42b56b31f983e6ccb9ea630b8c
+www/modules/module_scheduler/mod_form.php :: ca28f0220e20109f5c426b7f7c40d80e
+www/modules/module_scheduler/parser.php :: 9d27de566499d9e1711b04503e99f6ba
+www/modules/module_scheduler/version.php :: 77f5b52c42b10dac5829d7ffb5cc25d7
+www/modules/module_scheduler/view.php :: 05e1ec549a2cb4d61b91c93a93186355
+www/modules/module_scheduler/vmTest.php :: 4bad9c3ae2a79212270f348e15d0a7d9
+www/modules/module_security/lang-english.php :: dcdfea4c508b989f3d275d2a5c51c2a1
+www/modules/module_security/lang-greek.php :: 4d117cf141fdef2cbfc15a76ee28c3a1
+www/modules/module_security/module_security.class.php :: 64780a25c122f9cdc8d4c4b9f4967ad7
+www/modules/module_simple/lang-english.php :: 9b3eebeab7e5fe0abb29761062f2ab1e
+www/modules/module_simple/module_simple.class.php :: 8becf95d4730f34040f139eea271e7ad
+www/modules/module_ui/lang-english.php :: e9ce533eeda89dfce020c815b9525290
+www/modules/module_ui/module_ui.class.php :: d0712b52f9f0459cd80c373be103f4f5
+www/modules/module_vLabs/landing.php :: bb0933ac5d8b5846c1015bcb10c5dc8b
+www/modules/module_vLabs/lang-english.php :: 78c5b82f06ce73fd4e35bc8e10613eab
+www/modules/module_vLabs/module_vLabs.class.php :: 036894eec18cfef93dd0a47f5fc863a5
+www/modules/module_vLabsAdmin/landing.php :: 1372a29a3c989e8d6d8104e9902454fd
+www/modules/module_vLabsAdmin/lang-english.php :: 74b2cc6f42e0d7d61098b053181b49e4
+www/modules/module_vLabsAdmin/module_vLabsAdmin.class.php :: 62256ad2f6c1004eb8f679ff888fa032
+www/modules/module_vLabsAdmin/updateUserAccess.php :: 587750ee27c153bc388c85faeb4cec45
+>>>>>>> Story 211: First commit for scheduler module, some clean up for Quota System
 www/modules/module_workbook/classes/html_to_doc.inc.php :: 940d366694942dca212fa0b85e375b32
 www/modules/module_workbook/lang-albanian.php :: 1292b09dc94b2b7624fe9a2aec1451a8
 www/modules/module_workbook/lang-arabic.php :: ca0ddfe084399bb86ad869d8c4875fbb

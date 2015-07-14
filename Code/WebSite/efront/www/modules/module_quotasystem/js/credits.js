@@ -52,7 +52,7 @@ function ct_loadTable()
 					{ "sTitle": "Active" , "fnRender": function (oObj) { return oObj.aData[5]=="true" ? "Yes" : "No"; } },
 					{ "sTitle": "Assignable" , "fnRender": function (oObj) { return oObj.aData[6]=="true" ? "Yes" : "No"; } }
 					],
-					"bJQueryUI": true,
+					"bjQueryUI": true,
 					"bAutoWidth": false,
 					"sPaginationType": "full_numbers"
 				});

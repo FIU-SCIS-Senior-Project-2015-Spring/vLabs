@@ -60,7 +60,7 @@ function pol_loadTable()
 	                { "sTitle": "Period quota" },
 	                { "bVisible": false }
 	                ],
-	                "bJQueryUI": true,
+	                "bjQueryUI": true,
 	        		"sPaginationType": "full_numbers"
 	        	});
 

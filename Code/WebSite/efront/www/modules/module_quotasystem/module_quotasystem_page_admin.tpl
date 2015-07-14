@@ -1,22 +1,28 @@
-{*Smarty Template*}
 <html>
 <head>
 <!-- CSS -->
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}jquery/css/custom-theme/jquery-ui-1.8.6.custom.css" rel="stylesheet" />
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}jquery/dataTables/media/css/demo_table_jui.css" rel="stylesheet" />
+{*<link type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/datatables/1.9.1/css/demo_table_jui.css" />*}
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}jquery/css/jquery-ui-timepicker.css" rel="stylesheet" />
+{*<link type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.1/jquery.timepicker.css" rel="stylesheet" />*}
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}css/reports.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="{$T_QS_MODULE_BASELINK}css/styles.css" />
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}css/validation.css" rel="stylesheet" />
 <link type='text/css' rel='stylesheet' href='{$T_QS_MODULE_THEME_CSS}'>
 
+
 <!-- js Libraries -->
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery-1.4.2.min.js"></script>
+{*<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js"></script>*}
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery-ui-1.8.4.custom.min.js"></script>
-<script type='text/javascript' src='{$T_QS_MODULE_BASELINK}jquery/dataTables/media/js/jquery.dataTables.min.js'></script>
+{*<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>*}
+{*<script type='text/javascript' src='{$T_QS_MODULE_BASELINK}jquery/dataTables/media/js/jquery.dataTables.min.js'></script>*}
+<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.9.2/jquery.dataTables.min.js'></script>
 <script type='text/javascript' src='{$T_QS_MODULE_BASELINK}js/DateFormat.js'></script>
 <script type='text/javascript' src='{$T_QS_MODULE_BASELINK}js/date.js'></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery.ui.timepicker.js"></script>
+{*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.1/jquery.timepicker.js"></script>*}
 
 <!-- Reports (flot) -->
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/excanvas.js"></script>
@@ -24,6 +30,11 @@
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.navigate.js"></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.selection.js"></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.stack.js"></script>
+{*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/excanvas.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.navigate.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.selection.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.stack.min.js"></script>*}
 
 <!-- LiveValidation -->
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}js/livevalidation/livevalidation.js"></script>
@@ -158,8 +169,8 @@
     </div>
 </div>
 <script type="text/javascript">
-	function loadTabs(){ldelim}
-		$("#page").css("min-width","940px");
+	$(document).ready(function() {ldelim}
+		jQuery("#page").css("min-width","940px");
 		//tz_init();
     	{php}
 			echo "\n";
@@ -172,9 +183,8 @@
 			
 			echo "\n";
 		{/php}	
-		$('#tabs').tabs();
-		{rdelim}
-		loadTabs();
+		jQuery('#tabs').tabs();
+		{rdelim});
 </script>
 </body>
 </html>
