@@ -490,16 +490,10 @@ class EfrontScorm
 	                        if ($parameters['embed_type'] == 'iframe') {
 	                            $total_fields[$key]['data'] = '<iframe '.$parameters['iframe_parameters'].' name = "scormFrameName" id = "scormFrameID" src = "'.rtrim($currentLesson -> getDirectoryUrl(), "/")."/".$scormFolderName.'/'.$primitive_hrefs[$ref]. $value['PARAMETERS']. '" onload = "if (window.eF_js_setCorrectIframeSize) {eF_js_setCorrectIframeSize();} else {setIframeSize = true;}"></iframe>';
 	                        } else {
-	                        	$parts = array();
-	                        	foreach (explode("/", $primitive_hrefs[$ref]) as $part) {
-	                        		$parts[] = rawurlencode($part);
-	                        	}
-	                        	$url = implode("/", $parts);
-	                        	
 	                            $total_fields[$key]['data'] = '
 	                            	<div style = "text-align:center;height:300px">
 		                            	<span>##CLICKTOSTARTUNIT##</span><br/>
-		                        		<input type = "button" value = "##STARTUNIT##" class = "flatButton" onclick = \'window.open("'.rtrim($currentLesson -> getDirectoryUrl(), "/")."/".rawurlencode($scormFolderName).'/'.$url. $value['PARAMETERS'].'", "scormFrameName", "'.$parameters['popup_parameters'].'")\' >
+		                        		<input type = "button" value = "##STARTUNIT##" class = "flatButton" onclick = \'window.open("'.rtrim($currentLesson -> getDirectoryUrl(), "/")."/".rawurlencode($scormFolderName).'/'.rawurlencode($primitive_hrefs[$ref]). $value['PARAMETERS'].'", "scormFrameName", "'.$parameters['popup_parameters'].'")\' >
 	                        		</div>';
 	                        }
 	                        /*
@@ -964,25 +958,11 @@ class EfrontScorm
                     if ($parameters['embed_type'] == 'iframe') {
                         //$total_fields[$key]['data'] = '<iframe height = "100%"  width = "100%" frameborder = "no" name = "scormFrameName" id = "scormFrameID" src = "'.$currentLesson -> getDirectoryUrl()."/".$scormFolderName.'/'.$primitive_hrefs[$ref].'" onload = "if (window.eF_js_setCorrectIframeSize) {eF_js_setCorrectIframeSize();} else {setIframeSize = true;}"></iframe>';
 	                    $total_fields[$key]['data'] = '<iframe '.$parameters['iframe_parameters'].' name = "scormFrameName" id = "scormFrameID" src = "'.rtrim($currentLesson -> getDirectoryUrl(), "/")."/".$scormFolderName.'/'.$primitive_hrefs[$ref]. $value['PARAMETERS']. '" onload = "if (window.eF_js_setCorrectIframeSize) {eF_js_setCorrectIframeSize();} else {setIframeSize = true;}"></iframe>';
-                    } else {                   	
-                    	$parts = array();
-
-                    	$parts = (parse_url(urldecode($primitive_hrefs[$ref])));
-                    	$path_parts = explode("/", $parts['path']);
-                    	foreach ($path_parts as $k => $part) {
-                    		$path_parts[$k] = rawurlencode($part);
-                    	}
-                    	$url = $parts['host'].implode("/", $path_parts).'?'.$parts['query'];
-
-//                     	foreach (explode("/", $primitive_hrefs[$ref]) as $part) {
-//                     		$parts[] = rawurlencode($part);
-//                     	}
-//                     	$url = implode("/", $parts);
-
+                    } else {
                         $total_fields[$key]['data'] = '
                             <div style = "text-align:center;height:300px">
                             	<span>##CLICKTOSTARTUNIT##</span><br/>
-		                    	<input type = "button" value = "##STARTUNIT##" class = "flatButton" onclick = \'window.open("'.rtrim($currentLesson -> getDirectoryUrl(), "/")."/".rawurlencode($scormFolderName).'/'.$url. $value['PARAMETERS'].'", "_blank", "'.$parameters['popup_parameters'].'")\' >
+		                    	<input type = "button" value = "##STARTUNIT##" class = "flatButton" onclick = \'window.open("'.rtrim($currentLesson -> getDirectoryUrl(), "/")."/".rawurlencode($scormFolderName).'/'.rawurlencode($primitive_hrefs[$ref]). $value['PARAMETERS'].'", "scormFrameName", "'.$parameters['popup_parameters'].'")\' >
                         	</div>';
                     }
                 }

@@ -250,7 +250,7 @@ function changeStatus() {
         $('inputStatusText').hide();
 
         if ($('inputStatusText').value != '') {
-            $('statusText').innerHTML = "<i>\"" + $('inputStatusText').value + "\"</i>";
+            $('statusText').innerHTML = "\"<i>" + $('inputStatusText').value + "</i>\"";
             if (top.sideframe && top.sideframe.$('statusText')) {   // for default theme this is called from sidebar.js
             	top.sideframe.$('statusText').innerHTML = $('inputStatusText').value;
             	top.sideframe.$('inputStatusText').value = $('inputStatusText').value;

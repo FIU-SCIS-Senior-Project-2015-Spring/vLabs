@@ -98,20 +98,7 @@ class EfrontSystem
 		file_put_contents($tempDir.'db_backup/sql.txt', implode(";\n", $definition));
 		file_put_contents($tempDir.'db_backup/version.txt', G_VERSION_NUM);
 
-	
-		if ($backupType == 3 && checkFunction('system') && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {					
-			system ( 'mkdir ' . $tempDir . 'lessons');						
-			system ( 'cp -R ' . G_LESSONSPATH . '* ' . $tempDir . 'lessons' );
-				
-			system ( 'mkdir -p ' . $tempDir . 'upload' );
-			system ( 'cp -R ' . G_UPLOADPATH . '* ' . $tempDir . 'upload' );
-				
-			system ( 'mkdir -p ' . $tempDir . 'certificate_templates' );
-			system ( 'cp -R ' . G_ROOTPATH . "www/certificate_templates/" . '* ' . $tempDir . 'certificate_templates' );
-				
-			system ( 'mkdir -p ' . $tempDir . 'editor_templates' );
-			system ( 'cp -R ' . G_ROOTPATH . "www/content/editor_templates/" . '* ' . $tempDir . 'editor_templates' );	
-		} else if ($backupType == 1 || $backupType == 3) {
+		if ($backupType == 1) {
 			$lessonsDir = new EfrontDirectory(G_LESSONSPATH);
 			$lessonsDir -> copy($tempDir.'lessons');
 			$uploadsDir = new EfrontDirectory(G_UPLOADPATH);
@@ -124,14 +111,8 @@ class EfrontSystem
 			$rootDir = new EfrontDirectory(G_ROOTPATH);
 			$rootDir -> copy($tempDir.'efront_root');
 		}
-		
-		if ($backupType == 3 && checkFunction('system') && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {	
-			$compressedFile = $directory -> compress($backupName, false, false, true);
-		} else {
-			$compressedFile = $directory -> compress($backupName, false);
-		}
-		
-		$directory -> delete();
+		$compressedFile = $directory -> compress($backupName, false);
+		//$directory -> delete();
 
 		return $compressedFile;
 	}
@@ -542,7 +523,7 @@ class EfrontSystem
 	}
 	
 	public static function setLogoFile($currentTheme) {
-		$logo = EfrontCache::getInstance()->getCache('logo');	
+		$logo = EfrontCache::getInstance()->getCache('logo');
 		if (!$logo) {
 			try {
 				if ($GLOBALS['configuration']['use_logo'] == 2 && defined('G_BRANCH_URL') && G_BRANCH_URL && is_file(G_CURRENTTHEMEPATH.'images/logo/logo.png')) {
@@ -550,7 +531,7 @@ class EfrontSystem
 				} else if ($GLOBALS['configuration']['use_logo'] == 2 && is_file(G_CURRENTTHEMEPATH.'images/logo/logo.png')) {
 					$logo = 'images/logo/logo.png';
 				} else if ($GLOBALS['configuration']['use_logo'] > 0) {		//meaning that either we have 'use site logo' (1) or 'use theme logo' (2) but that does not exist
-					$logoFile = new EfrontFile($GLOBALS['configuration']['site_logo']);			
+					$logoFile = new EfrontFile($GLOBALS['configuration']['site_logo']);
 					$logo = 'themes/default/images/logo/'.$logoFile['physical_name'];
 				} else {
 					$logo = 'images/logo.png';
@@ -699,7 +680,7 @@ class EfrontSystem
 		if (G_VERSIONTYPE != $versionData['type']) {
 			throw new EfrontSystemException(_KEYISNOTFORTHISEDITION, EfrontSystemException::INVALID_VERSION_KEY);
 		}
-		if ((!$versionData['users']  || (!eF_checkParameter($versionData['users'], 'int') && $versionData['users'] != 'unlimited')) ||
+		if ((!$versionData['users']  || !eF_checkParameter($versionData['users'], 'int')) ||
 		(!$versionData['type']   || !isset($versionData['type'])) ||
 		(!$versionData['serial'] || !eF_checkParameter($versionData['serial'], 'int'))) {
 			throw new EfrontSystemException(_INVALIDVERSIONKEY.': '.$key, EfrontSystemException::INVALID_VERSION_KEY);

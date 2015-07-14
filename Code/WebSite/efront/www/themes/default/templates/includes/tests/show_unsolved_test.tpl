@@ -115,62 +115,11 @@
        
 			{if !$T_TEST_DATA->options.redirect || ($T_TEST_STATUS.status != 'completed' && $T_TEST_STATUS.status != 'failed' && $T_TEST_STATUS.status != 'passed')}
 			{$T_TEST_FORM.javascript}
-					{if $T_TEST_STATUS.status == '' || $T_TEST_STATUS.status == 'incomplete'}
-						{if $T_TEST_DATA->options.custom_class == 'ancient_greek'}
-							<div style = "display:none" class = "ancient_greek">
-							<button class = "anc_gre_btn" onclick="testAppendChar('\u1FB7'); return false;">&#x1FB7;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FB6'); return false;">&#x1FB6;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F84'); return false;">&#x1F84;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F85'); return false;">&#x1F85;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F05'); return false;">&#x1F05;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F01'); return false;">&#x1F01;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F00'); return false;">&#x1F00;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F04'); return false;">&#x1F04;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F06'); return false;">&#x1F06;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F07'); return false;">&#x1F07;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F80'); return false;">&#x1F80;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F81'); return false;">&#x1F81;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F86'); return false;">&#x1F86;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F87'); return false;">&#x1F87;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FB3'); return false;">&#x1FB3;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F71'); return false;">&#x1F71;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FB4'); return false;">&#x1FB4;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F15'); return false;">&#x1F15;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F14'); return false;">&#x1F14;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F11'); return false;">&#x1F11;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F10'); return false;">&#x1F10;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F73'); return false;">&#x1F73;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F94'); return false;">&#x1F94;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F95'); return false;">&#x1F95;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FC7'); return false;">&#x1FC7;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FC6'); return false;">&#x1FC6;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F24'); return false;">&#x1F24;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F25'); return false;">&#x1F25;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F20'); return false;">&#x1F20;</button> 
-							<img src = "images/16x16/minus.png" onClick = "jQuery('.ancient_greek').removeClass('alwaysonscreen');"><br /><button class = "anc_gre_btn" onclick="testAppendChar('\u1F21'); return false;">&#x1F21;</button> 
-<button class = "anc_gre_btn" onclick="testAppendChar('\u1F21'); return false;">&#x1F21;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F26'); return false;">&#x1F26;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F27'); return false;">&#x1F27;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F90'); return false;">&#x1F90;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F91'); return false;">&#x1F91;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F96'); return false;">&#x1F96;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F97'); return false;">&#x1F97;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F75'); return false;">&#x1F75;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FC3'); return false;">&#x1FC3;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FC4'); return false;">&#x1FC4;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FD6'); return false;">&#x1FD6;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F35'); return false;">&#x1F35;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F34'); return false;">&#x1F34;</button>
- <button class = "anc_gre_btn" onclick="testAppendChar('\u1F31'); return false;">&#x1F31;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F30'); return false;">&#x1F30;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F36'); return false;">&#x1F36;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F37'); return false;">&#x1F37;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F77'); return false;">&#x1F77;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F78'); return false;">&#x1F78;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F79'); return false;">&#x1F79;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F44'); return false;">&#x1F44;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F45'); return false;">&#x1F45;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F40'); return false;">&#x1F40;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F41'); return false;">&#x1F41;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FF7'); return false;">&#x1FF7;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FA4'); return false;">&#x1FA4;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FA5'); return false;">&#x1FA5;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FA1'); return false;">&#x1FA1;</button> <br /><button class = "anc_gre_btn" onclick="testAppendChar('\u1FF6'); return false;">&#x1FF6;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F64'); return false;">&#x1F64;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F65'); return false;">&#x1F65;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F61'); return false;">&#x1F61;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F60'); return false;">&#x1F60;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F66'); return false;">&#x1F66;</button> 
- <button class = "anc_gre_btn" onclick="testAppendChar('\u1F67'); return false;">&#x1F67;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FF4'); return false;">&#x1FF4;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FA0'); return false;">&#x1FA0;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FA6'); return false;">&#x1FA6;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FA7'); return false;">&#x1FA7;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F7D'); return false;">&#x1F7D;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FF3'); return false;">&#x1FF3;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FE6'); return false;">&#x1FE6;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F56'); return false;">&#x1F56;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F57'); return false;">&#x1F57;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F55'); return false;">&#x1F55;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F54'); return false;">&#x1F54;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F51'); return false;">&#x1F51;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F50'); return false;">&#x1F50;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FE6'); return false;">&#x1FE6;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1F7B'); return false;">&#x1F7B;</button> <button class = "anc_gre_btn" onclick="testAppendChar('\u1FE5'); return false;">&#x1FE5;</button>
-							</div>
-						{/if}
-					{/if}
 				<form {$T_TEST_FORM.attributes}>
 					{$T_TEST_FORM.hidden}
 					{$T_TEST}
 					{$smarty.capture.test_footer}
 				</form>
-
-
-					{if $T_TEST_DATA->options.custom_class != ''}
-						<script>
-						{literal}
-							jQuery(".{/literal}{$T_TEST_DATA->options.custom_class}{literal}").css('display','block');
-						{/literal}
-						</script>
-					{/if}
-
-					{if $T_TEST_DATA->options.custom_class == 'ancient_greek'}
-						<script>
-						{literal}
-								jQuery(window).scroll(function () {
-    								if (jQuery(window).scrollTop() > 100) {
-       									jQuery('.ancient_greek').addClass('alwaysonscreen');
-    								} else {
-	        							jQuery('.ancient_greek').removeClass('alwaysonscreen');
-    								}
-								});
-						{/literal}
-						</script>					
-					{/if}
-
-					{if $T_TEST_DATA->options.custom_class == 'ancient_greek'}
-						{literal}
-						<script>
-						if(jQuery('.ancient_greek').is(':visible')) {
-							var last_focused_input_element;
-							function testAppendChar(character){
-								var currentValue = jQuery('input[name="'+last_focused_input_element+'"]').val();
-								jQuery('input[name="'+last_focused_input_element+'"]').val(currentValue + character);
-							}
-							jQuery('input').click(function () {
-							last_focused_input_element = jQuery(':focus').attr('name');
-							})
-						}
-						</script>
-						{/literal}
-					{/if}		
 			{else}
 				<table class = "doneTestInfo">
                     <tr><td>
@@ -187,7 +136,7 @@
 							{/if}
 									
 						{else}
-							<div class = "mediumHeader">{'%x'|str_replace:$T_TEST_DATA->lesson:$smarty.const._THANKYOUFORCOMPLETING} "{$T_TEST_DATA->test.name}"</div>
+							<div class = "mediumHeader">{$smarty.const._THANKYOUFORCOMPLETING} "{$T_TEST_DATA->test.name}"</div>
 						{/if}
 					</td></tr>
 					 <tr><td>

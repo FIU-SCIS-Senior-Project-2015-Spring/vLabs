@@ -86,11 +86,11 @@
 									<td class = "elementCell">{$T_ENTITY_FORM.ctg_type.html}</td></tr>
 								{if $T_ENTITY_FORM.ctg_type.error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.ctg_type.error}</td></tr>{/if}
 							{/if}
-							<tr style="display:none;" id = "object_ids"><td class = "labelCell">{$T_ENTITY_FORM.object_ids.label}:&nbsp;</td>
-								<td class = "elementCell">{$T_ENTITY_FORM.object_ids.html}&nbsp;<span class = "infoCell">{$smarty.const._COMMASEPARATEDLIST}</span></td></tr>
 							<tr style="display:none;" id = "maximize_viewport"><td class = "labelCell">{$T_ENTITY_FORM.maximize_viewport.label}:&nbsp;</td>
 								<td class = "elementCell">{$T_ENTITY_FORM.maximize_viewport.html}</td></tr>
-								<tr style="display:none;" id = "indexed"><td class = "labelCell">{$T_ENTITY_FORM.indexed.label}:&nbsp;</td>
+							<tr style="display:none;" id = "object_ids"><td class = "labelCell">{$T_ENTITY_FORM.object_ids.label}:&nbsp;</td>
+								<td class = "elementCell">{$T_ENTITY_FORM.object_ids.html}&nbsp;<span class = "infoCell">{$smarty.const._COMMASEPARATEDLIST}</span></td></tr>
+							<tr style="display:none;" id = "indexed"><td class = "labelCell">{$T_ENTITY_FORM.indexed.label}:&nbsp;</td>
 								<td class = "elementCell">{$T_ENTITY_FORM.indexed.html}&nbsp;</td></tr>
 							<tr style="display:none;" id = "accessible_explanation"><td></td><td class = "infoCell">{$smarty.const._DIRECTLACCESSIBLEEXPLANATION}<br/>{$smarty.const.G_SERVERNAME}view_resource.php?type=content&id={if $smarty.get.edit}{$smarty.get.edit}{else}&lt;unit_id&gt;{/if}</td></tr>
 
@@ -98,12 +98,8 @@
 							<tr style="display:none;" id = "scorm_asynchronous"><td class = "labelCell">{$T_ENTITY_FORM.scorm_asynchronous.label}:&nbsp;</td>
 								<td class = "elementCell">{$T_ENTITY_FORM.scorm_asynchronous.html}</td></tr>
 							<tr style="display:none;" id = "scorm_asynchronous_explanation"><td></td><td class = "infoCell">{$smarty.const._SCORMASYNCHRONOUSEXPLANATION}</td></tr>
-							<tr style="display:none;" id = "scorm_logging"><td class = "labelCell">{$T_ENTITY_FORM.scorm_logging.label}:&nbsp;</td>
-								<td class = "elementCell">{$T_ENTITY_FORM.scorm_logging.html}</td></tr>
-							<tr style="display:none;" id = "no_before_unload"><td class = "labelCell">{$T_ENTITY_FORM.no_before_unload.label}:&nbsp;</td>
+							<tr tyle="display:none;" id = "no_before_unload"><td class = "labelCell">{$T_ENTITY_FORM.no_before_unload.label}:&nbsp;</td>
 								<td class = "elementCell">{$T_ENTITY_FORM.no_before_unload.html}</td></tr>
-							<tr style="display:none;" id = "scorm_times"><td class = "labelCell">{$T_ENTITY_FORM.scorm_times.label}:&nbsp;</td>
-								<td class = "elementCell">{$T_ENTITY_FORM.scorm_times.html}</td></tr>
 							<tr><td class = "labelCell">{$T_ENTITY_FORM.scorm_size.label}:&nbsp;</td>
 								<td class = "elementCell">{$T_ENTITY_FORM.scorm_size.html} px</td></tr>
 							{if $T_ENTITY_FORM.scorm_size.error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.scorm_size.error}</td></tr>{/if}
@@ -174,10 +170,6 @@
 						<fieldset class = "fieldsetSeparator">
 						<legend>{$smarty.const._SCORMSPECIFICPROPERTIES}</legend>
 						<table class = "formElements" width="100%">
-							<tr><td class = "labelCell">{$T_ENTITY_FORM.scorm_times.label}:&nbsp;</td>
-								<td class = "elementCell">{$T_ENTITY_FORM.scorm_times.html} <img src = "images/16x16/success.png" alt = "{$smarty.const._SUBMIT}" title = "{$smarty.const._SUBMIT}" class = "ajaxHandle" onclick = "setAllUnitsProperties(this, true)"/></td></tr>
-							<tr><td class = "labelCell">{$T_ENTITY_FORM.scorm_logging.label}:&nbsp;</td>
-								<td class = "elementCell">{$T_ENTITY_FORM.scorm_logging.html} <img src = "images/16x16/success.png" alt = "{$smarty.const._SUBMIT}" title = "{$smarty.const._SUBMIT}" class = "ajaxHandle" onclick = "setAllUnitsProperties(this, true)"/></td></tr>
 							<tr><td class = "labelCell">{$T_ENTITY_FORM.scorm_asynchronous.label}:&nbsp;</td>
 								<td class = "elementCell">{$T_ENTITY_FORM.scorm_asynchronous.html} <img src = "images/16x16/success.png" alt = "{$smarty.const._SUBMIT}" title = "{$smarty.const._SUBMIT}" class = "ajaxHandle" onclick = "setAllUnitsProperties(this, true)"/></td></tr>
 							<tr><td class = "labelCell">{$T_ENTITY_FORM.scorm_size.label}:&nbsp;</td>
@@ -278,28 +270,6 @@
 												<img class = "ajaxHandle" style = "display:none" id = "wrong_answer" src = "images/32x32/error_delete.png" alt = "{$smarty.const._WRONGANSWER}" title = "{$smarty.const._WRONGANSWER}">
 											</span>
 										</div>
-					{elseif $T_ACCEPT_TERM_COMPLETION_MESSAGE || $T_ACCEPT_TERM_COMPLETION_CHECKED}	
-						{assign var = "show_content_footer" value = 1}
-										<div class = "unitQuestionArea">
-											<form id = "accept_form" method = "post" action = "{$smarty.server.PHP_SELF}?view_unit={$smarty.get.view_unit}">
-											
-										{if isset($T_ACCEPT_TERM_COMPLETION_CHECKED)}
-											<span style="font-weight:bold">{if $T_ACCEPT_TERM_COMPLETION_CHECKED == 'accepted'}{$smarty.const._ACCEPTED}{else if $T_ACCEPT_TERM_COMPLETION_CHECKED == 'rejected'}{$smarty.const._NOTACCEPTED}{/if}</span>:												  
-												<span>{$T_ACCEPT_TERM_COMPLETION_MESSAGE}</span><br/>
-										{else}
-											<span>{$T_ACCEPT_TERM_COMPLETION_MESSAGE}</span><br/>
-											<select name = "accept_terms">
-  												<option value="true">{$smarty.const._ACCEPT}</option>
-  												<option value="false">{$smarty.const._DONOTACCEPT}</option>
-  											</select>
-											</form>
-											<span id = "contentQuestionAnswer">
-												<input class = "flatButton" type = "button" value = "{$smarty.const._SUBMIT}" onclick = "submitCompletionTerm(this)">
-												<img class = "ajaxHandle" style = "display:none" id = "accept_option" src = "images/32x32/success.png" alt = "{$smarty.const._ACCEPT}" title = "{$smarty.const._ACCEPT}">
-												<img class = "ajaxHandle" style = "display:none" id = "reject_option" src = "images/32x32/error_delete.png" alt = "{$smarty.const._DONOTACCEPT}" title = "{$smarty.const._DONOTACCEPT}">
-											</span>
-										{/if}	
-										</div>						
 					{elseif $_change_ && $_student_}
 										<a {if !$hideStyle}id = "seenLink"{/if} href = "javascript:void(0)" onclick = "setSeenUnit();" {$hideStyle}>
 											 {if $T_SEEN_UNIT}
@@ -377,103 +347,12 @@
 				{/if}
 					<table id = "unitContent">
 			{if !$_student_ || !$T_RULE_CHECK_FAILED}
-			
 						<tr><td class = "unitContent">
 								{if $T_UNIT.ctg_type == 'tests' || $T_UNIT.ctg_type == 'feedback'}
 									{include file = "includes/tests/show_unsolved_test.tpl"}
 								{else}
 									{if $T_UNIT.data}
-										{if $T_SCORM && isset($T_SCORM_TIMES_REMAINING) && $T_SCORM_TIMES_REMAINING}
-											<div style = "text-align:center">
-											<p><h3 style = "text-align:center">{$smarty.const._YOUHAVETIMESREMAINING|replace:'%d':$T_SCORM_TIMES_REMAINING}</h3></p>
-											</div>
-											<div id = "ef-scorm-running">
-											{$T_UNIT.data}
-											</div>
-										{elseif $T_SCORM && isset($T_SCORM_TIMES_REMAINING) && $T_SCORM_TIMES_REMAINING == 0}
-											<div style = "text-align:center">
-											<p><h3 style = "text-align:center">{$smarty.const._YOUCANNOTACCESSTHISCONTENTANYMORE}</h3></p>
-											</div>
-										{else}
-											
-											{$T_UNIT.data}
-											
-											
-										{/if}									
-										
-
-										{if $T_SCORM}											
-											<div id = "ef-scorm-running-message" style = "display:none;text-align:center">
-											<p><h3 style = "text-align:center">{$smarty.const._DONTCLOSEORNAVIGATEAWAY}</h3></p>
-											</div>
-											
-											<script>
-											{literal}
-											jQuery(document).ready(function($) {
-												var button_div = $('#ef-scorm-running-message').parent().find('input[type="button"]').parent();	//IE doesn't like .prev(), so that's why we make it complicated here
-												var button = button_div.children('input');	
-												var onclick = button.attr('onclick');
-
-											 	if (button_div.length && button.length && onclick.length) {												 	
-
-													matches = onclick.match(/window.open\("(.*)", "scormFrameName", (".*")\)/);
-													if (!matches) {
-														matches = onclick.match(/window.open\("(.*)", "_blank", (".*")\)/);
-													}
-													
-													var url = matches[1];
-													var parameters = eval(matches[2]);
-													button.attr('onclick', '');
-												
-													button.on('click', function(event) {
-													var popup = window.open(url, "scormFrameName", parameters);
-													$(popup.document).ready(function() {
-														button_div.hide();
-														$('#ef-scorm-running-message').fadeIn();
-
-
-														setTimeout(function() { 
-															$(popup).on('unload', function() {															
-															button_div.show();
-															$('#ef-scorm-running-message').hide();
-															$.ajax(window.location+'&scorm_status=1').success(function(response) {
-																if ($.parseJSON(response).remaining_times == 0) {
-																	button_div.hide();
-																	$('#scorm_times').parent().text(translations['_YOUCANNOTACCESSTHISCONTENTANYMORE']);
-																} else {
-																	$('#scorm_times').text($.parseJSON(response).remaining_times);
-																}
-															});
-															
-															$(popup).on('load', function() {
-																button_div.hide();
-																$('#ef-scorm-running-message').fadeIn();
-															});
-															$(popup).on('unload', function() {
-																button_div.show();
-																$('#ef-scorm-running-message').hide();
-																$.ajax(window.location+'&scorm_status=1').success(function(response) {
-																	
-																	if ($.parseJSON(response).remaining_times == 0) {
-																		button_div.hide();																		
-																		$('#scorm_times').parent().text(translations['_YOUCANNOTACCESSTHISCONTENTANYMORE']);
-																	} else {
-																		$('#scorm_times').text($.parseJSON(response).remaining_times);
-																	}
-																});
-																
-															});
-														});}, 1000);
-														
-	
-													});
-													$(window).on('unload', function(){popup.close();});
-													});
-											 	}
-											});
-											{/literal}
-											</script>
-										{/if}
+										{$T_UNIT.data}
 									{elseif $T_NO_START}
 										{$smarty.const._CHOOSEUNIT}: {$T_SUBTREE}
 									{else}
@@ -554,8 +433,6 @@
 				{else}
 					<div>{counter name = "unit_operations"}. <a href = "{$smarty.server.PHP_SELF}?ctg=tests&show_test={$T_UNIT_TEST_ID}&popup=1&print=1{if $smarty.get.show_all}&show_all=1{/if}{if $smarty.get.preview_correct}&preview_correct=1{/if}", onclick = "eF_js_showDivPopup(event, '{$smarty.const._PRINTERFRIENDLY}', 2)" target = "POPUP_FRAME">{$smarty.const._PRINTERFRIENDLY}</a></div>
 				{/if}
-				
-				<div>{counter name = "unit_operations"}. <a href = "{$smarty.server.PHP_SELF}?ctg=content&view_unit={$T_UNIT.id}&popup=1&print_all=1", onclick = "eF_js_showDivPopup(event, '{$smarty.const._PRINTERFRIENDLYALL}', 2)" target = "POPUP_FRAME">{$smarty.const._PRINTERFRIENDLYALL}</a></div>
 			{/if}
 			{if 'comments'|eF_template_isOptionVisible && $_change_ && !$T_RULE_CHECK_FAILED}
 				<div>{counter name = "unit_operations"}. <a href = "{$smarty.server.PHP_SELF}?ctg=comments&view_unit={$T_UNIT.id}&add=1&popup=1", onclick = "eF_js_showDivPopup(event, '{$smarty.const._ADDCOMMENT}', 1)" target = "POPUP_FRAME">{$smarty.const._ADDCOMMENT}</a></div>
@@ -617,8 +494,6 @@
 			<script>
 				var nextUnit = '{$T_NEXT_UNIT.id}';var previousUnit = '{$T_PREVIOUS_UNIT.id}';{if $T_UNIT.options.no_before_unload}var noBeforeUnload = true;{else}var noBeforeUnload = false;{/if}
 				translations['_YOUAREATTHELASTLESSONYOUMAYVISIT'] = '{$smarty.const._YOUAREATTHELASTLESSONYOUMAYVISIT}';
-				translations['_YOUCANNOTACCESSTHISCONTENTANYMORE'] = '{$smarty.const._YOUCANNOTACCESSTHISCONTENTANYMORE}';
-				
 				var _information_json = '{$T_INFORMATION_JSON}';
 				</script>{*The first 2 are needed for nextUnit()/previousUnit() js functions and the last for scorm function*}
 			<table class = "contentArea">
@@ -633,14 +508,6 @@
 						{else}
 						{eF_template_printBlock title = $T_UNIT.name data = $T_UNIT.data image = '32x32/printer.png'}
 						{/if}
-				   	{elseif $smarty.get.print_all}	
-				   		{capture name = 't_print_all_units'}
-							<p style = "text-align:center"><input id = "print_button" class = "flatButton" type = "submit" onClick = "$('print_button').hide();window.print()" value = "{$smarty.const._PRINTIT}"/></p>
-							{foreach name = 'print_all_units' key = "key" item = "unit" from = $T_PRINT_ALL}	
-								{eF_template_printBlock title = $unit.name data = $unit.data image = '32x32/printer.png'}
-							{/foreach}
-						{/capture}							
-						{eF_template_printBlock title = $T_CURRENT_LESSON->lesson.name data = $smarty.capture.t_print_all_units image = '32x32/printer.png'}
 				   	{else}
 				   		<span id = "completed_block" {if !$T_USER_PROGRESS.lesson_passed && !$T_USER_PROGRESS.completed}style = "display:none"{/if}>
 						{assign var = "cookie_value" value = "hide_complete_lesson_`$T_CURRENT_LESSON->lesson.id`"}

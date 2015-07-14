@@ -77,7 +77,7 @@ $smarty -> assign("T_TABLE_OPTIONS", $options);
                 //pr($imsFiles);exit;
                 foreach ($imsFiles as $imsFile) {
                     /* Imports ims package to database */
-                    $imsFolderName = EfrontFile :: encode(eFront_basename($imsFile['name'], '.zip'));
+                    $imsFolderName = EfrontFile :: encode(basename($imsFile['name'], '.zip'));
                     $imsPath       = $currentLesson -> getDirectory().$imsFolderName.'/';
                     is_dir($imsPath) OR mkdir($imsPath, 0755);
                     //pr($imsPath.$imsFile['name']);

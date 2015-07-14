@@ -818,7 +818,7 @@ class EfrontDirectionsTree extends EfrontTree
 		}
 		if (!isset($treeCourse -> course['from_timestamp']) || $treeCourse -> course['from_timestamp']) {	//from_timestamp in user status means that the user's status in the course is not 'pending'
 			$classNames = array();
-			if ($options['tooltip'] && (!isset($_SESSION['s_login']) || EfrontUser::isOptionVisible('tooltip'))) {
+			if ($options['tooltip'] && EfrontUser::isOptionVisible('tooltip')) {
 				$treeString .= '<a href = "'.($courseLink ? $href : 'javascript:void(0)').'" class = "'.$hasInstancesClass.' info '.implode(" ", $classNames).'" url = "ask_information.php?courses_ID='.$treeCourse -> course['id'].'">'.$treeCourse -> course['name'].'</a>';
 			} else {
 				$courseLink ? $treeString .= '<a href = "'.str_replace("#user_type#", $roleBasicType, $courseLink).$treeCourse -> course['id'].'" class = "'.$hasInstancesClass.'">'.$treeCourse -> course['name'].'</a>' : $treeString .= $treeCourse -> course['name'];
@@ -840,10 +840,10 @@ class EfrontDirectionsTree extends EfrontTree
 				$classNames[] = 'inactiveLink';
 			}
 
-			if ($options['tooltip'] && (!isset($_SESSION['s_login']) || EfrontUser::isOptionVisible('tooltip'))) {
+			if ($options['tooltip'] && EfrontUser::isOptionVisible('tooltip')) {
 				$treeString .= '<a href = "'.($lessonLink ? str_replace("#user_type#", $roleBasicType, $lessonLink).$treeLesson -> lesson['id'] : 'javascript:void(0)').'" class = "info '.implode(" ", $classNames).'" url = "ask_information.php?lessons_ID='.$treeLesson -> lesson['id'].'">'.$treeLesson -> lesson['name'].'</a>';
-			} else {			
-				$lessonLink ? $treeString .= '<a href = "'.str_replace("#user_type#", $roleBasicType, $lessonLink).$treeLesson -> lesson['id'].'">'.$treeLesson -> lesson['name'].'</a>' : $treeString .= '<a href = "javascript:void(0)'.'" class = "info '.implode(" ", $classNames).'">'.$treeLesson -> lesson['name'].'</a>';
+			} else {
+				$lessonLink ? $treeString .= '<a href = "'.str_replace("#user_type#", $roleBasicType, $lessonLink).$treeLesson -> lesson['id'].'">'.$treeLesson -> lesson['name'].'</a>' : $treeString .= $treeLesson -> lesson['name'];
 			}
 		} else {
 			$treeString .= '<a href = "javascript:void(0)" class = "inactiveLink" title = "'._CONFIRMATIONPEDINGFROMADMIN.'">'.$treeLesson -> lesson['name'].'</a>';

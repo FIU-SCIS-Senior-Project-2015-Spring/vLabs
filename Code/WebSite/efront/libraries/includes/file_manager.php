@@ -27,16 +27,16 @@ try {
         }
         if (isset($_POST['postAjaxRequest'])) {
             if (in_array($_POST['dc'], array_keys($metadata -> metadataAttributes))) {
-            	$_POST['value'] = htmlspecialchars(urldecode($_POST['value']));
+            	$_POST['value'] = urldecode($_POST['value']);
                 if ($_POST['value']) {
-                    $fileMetadata[$_POST['dc']] =  $_POST['value'];
+                    $fileMetadata[$_POST['dc']] = $_POST['value'];
                 } else {
                     unset($fileMetadata[$_POST['dc']]);
                 }
                 $file['metadata'] = serialize($fileMetadata);
-                $file -> persist();                
-                echo $_POST['value'];
+                $file -> persist();
             }
+            echo $_POST['value'];
             exit;
         }
     } else if (isset($_GET['insert_editor_file'])) {
@@ -150,14 +150,13 @@ try {
         		}
         		isset($_GET['filter']) ? $filter = $_GET['filter'] : $filter = false;
         		isset($_GET['other'])  ? $other  = $_GET['other']  : $other  = '';
-
-        		if (!empty($_GET['other'])) {
-	        		if (mb_strpos(realpath($_GET['other']), realpath($basedir) ) !== false) {
-	        			isset($_GET['other'])  ? $other  = $_GET['other']  : $other  = '';
-	        		} else {
-	        			throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
-	        		}
+/*        		    		
+        		if (mb_strpos(realpath($_GET['other']), realpath($basedir) ) !== false) {
+        			isset($_GET['other'])  ? $other  = $_GET['other']  : $other  = '';
+        		} else {
+        			throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
         		}
+*/        		
 
         		$ajaxOptions = array('sort' => $sort, 'order' => $order, 'limit' => $limit, 'offset' => $offset, 'filter' => $filter);
         		//$extraFileTools = array(array('image' => 'images/16x16/arrow_right.png', 'title' => _INSERTEDITOR, 'action' => 'insert_editor'));

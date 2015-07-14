@@ -6,7 +6,6 @@
     <meta http-equiv = "keywords"         content = "education">
     <meta http-equiv = "description"      content = "Collaborative Elearning Platform">
     <meta http-equiv = "Content-Type"     content = "text/html; charset = utf-8">
-    <!--  <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>  -->
     <link rel="shortcut icon" href="{if $T_FAVICON}{$T_FAVICON}{else}themes/default/images/favicon.png{/if}">
     <link rel = "stylesheet" type = "text/css" href = "{$smarty.const.G_CURRENTTHEMECSS}">
     {foreach name = 'module_css_list' item = item key = key from = $T_MODULE_CSS}
@@ -19,11 +18,9 @@
     {/if}
 -->
     <link rel = "stylesheet" type = "text/css" href = "js/bootstrap/css/bootstrap.css" />
-    <link rel = "stylesheet" type = "text/css" href = "js/includes/imgareaselect/css/imgareaselect-default.css" />
     <script src = "js/bootstrap/jquery.js"></script>
     <script src = "js/bootstrap/js/bootstrap.js"></script>
     <script src = "js/scripts.js"></script>
-    <script src = "js/includes/imgareaselect/scripts/jquery.imgareaselect.pack.js"></script>
     <script type = "text/javascript">
         var ajaxObjects    = new Array();
         {assign var='sitename' 	value=$T_CONFIGURATION.site_name|replace:'"':'\"'}

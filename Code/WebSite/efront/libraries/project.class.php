@@ -107,19 +107,7 @@ class EfrontProject {
      */
     public function getUsers() {
         if ($this -> users === false) {
-            $results = eF_getTableData("users_to_projects up, users", "up.*, users.name, users.surname, users.active", "users.login=up.users_LOGIN and projects_ID=".$this -> project['id']);
-            foreach($results as $res) {
-            	$result[$res['users_LOGIN']] = $res;
-            }
-
-            $currentLesson = new EfrontLesson($GLOBALS['currentLesson'] -> lesson['id']);
-            $lessonUsers = $currentLesson -> getUsers('student');
-            foreach ($result as $key => $value) {
-            	if (!in_array($key, array_keys($lessonUsers))) {
-            		unset($result[$key]);
-            	}
-            }            
-            
+            $result = eF_getTableData("users_to_projects up, users", "up.*, users.name, users.surname, users.active", "users.login=up.users_LOGIN and projects_ID=".$this -> project['id']);
             foreach ($result as $value) {
                 $projectUsers[$value['users_LOGIN']] = $value;
                 $value['filename'] ? $this -> doneUsers++ : $this -> pendingUsers++;
@@ -270,16 +258,6 @@ class EfrontProject {
      */
     public function getFiles() {
         $files = eF_getTableData("files f, users u, users_to_projects up", "f.*, u.name, u.surname, u.login, up.upload_timestamp", "up.filename = f.id and up.users_LOGIN = u.login and up.projects_ID=".$this -> project['id']);
-        
-        	
-       	$currentLesson = new EfrontLesson($GLOBALS['currentLesson'] -> lesson['id']);
-       	$lessonUsers = $currentLesson -> getUsers('student');
-       	foreach($files as $key => $file) {
-       		if (!in_array($file['login'], array_keys($lessonUsers))) {
-       			unset($files[$key]);
-       		}
-       	}
-
         return $files;
     }
 

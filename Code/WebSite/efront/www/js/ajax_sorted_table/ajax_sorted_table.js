@@ -572,6 +572,7 @@ function eF_js_sortTable(el, other) {
 */
 
     function eF_js_pageTable(tableIndex) {
+
         var table = sortedTables[tableIndex];                                 //Get the table to perform paging on
 
         var checkboxesPositions = new Array();                              //This array will hold the columns containing checkboxes, to later implement \"check all\" function
@@ -622,7 +623,6 @@ function eF_js_sortTable(el, other) {
 //											.observe('onclick', function () {if (!useAjax[tableIndex] || confirm('<?php echo _OPERATIONWILLAFFECTMANYAREYOUSURE?>')) eF_js_selectAll(this, tableIndex)});
 
         var div   = document.createElement('div');
- 
         var input = document.createElement('input');                        //Create a text box that will be used for the filtering function
         input.setAttribute('type', 'text');
         input.setAttribute('id', tableIndex+'_sortedTable_filter');           //Set its id to retrieve it easily
@@ -730,7 +730,7 @@ function eF_js_sortTable(el, other) {
                 }
                 
                 if (currentJobFilter[tableIndex] && temp[i] == currentJobFilter[tableIndex]) {
-                	selectedValueIndex = i;
+                	elOptNew.setAttribute('selected', 'selected');
                 }                
 
             }
@@ -767,17 +767,15 @@ function eF_js_sortTable(el, other) {
             textBranch.style.width='300px';
             textBranch.style.color='gray';
             textBranch.value = sorted_translations['_ALLBRANCHES'];
-	        textBranch.setAttribute('id', 'autocomplete_sortedTable');     //Set its id so we can retrieve its data easily
+	        textBranch.setAttribute('id', 'autocomplete');     //Set its id so we can retrieve its data easily
 	        //textBranch.setAttribute('onfocus', 'this.value="";if ($(\''+tableIndex+'_sortedTable_filter\').value.match("'+sorted_translations["filter"]+'...'+'")) $(\''+tableIndex+'_sortedTable_filter\').value = "";');
 	        textBranch.onfocus = function() {
 	        	this.value="";
-	        	$(tableIndex+'_sortedTable_filter').value = "";
             }
 	        
 	        if (currentBranchFilter[tableIndex]) {
 	        	div.innerHTML += '<span style = "display:none" id = "'+table.id+'_currentBranchFilter">'+currentBranchFilter[tableIndex]+'</span>';	        	
 	        }
-     
 	        div.appendChild(textBranch);
 	        
 	        var hidden_value = document.createElement('input');
@@ -790,7 +788,6 @@ function eF_js_sortTable(el, other) {
 	        div_inner.style.textAlign='left';
 	        div_inner.setAttribute('id', 'autocomplete_branches_table');
 	        div.appendChild(div_inner);
-        
 		}
 		        
         
@@ -969,10 +966,10 @@ function eF_js_sortTable(el, other) {
             }	
         }
 
-        table.toolsCell = td;                                               //Assign the current cell to a global variable   
+        table.toolsCell = td;                                               //Assign the current cell to a global variable
+
         if (branchFilter[tableIndex]) {
-        	//Changed because of #5138, id autocomplete was twice on page
-	        new Ajax.Autocompleter('autocomplete_sortedTable', 
+	        new Ajax.Autocompleter('autocomplete', 
 		      		   "autocomplete_branches_table", 
 		      		   "ask.php?ask_type=branches", {paramName: "preffix", 
 		      									afterUpdateElement : function (t, li) {$(tableIndex+'_sortedTable_branchFilter').value=li.id;eF_js_filterData(tableIndex); return false;}}); 

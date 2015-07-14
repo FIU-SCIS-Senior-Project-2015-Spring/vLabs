@@ -179,7 +179,7 @@ class eF_PersonalMessage
 			$recipientsList = implode(",", $recipientsMail);
 			$this -> body = _THISISAPMFROMSITE." <a href=".G_SERVERNAME.">".G_SERVERNAME."</a><br />".$this -> body;
 			$emailBody = str_replace('##EFRONTINNERLINK##', 'student' ,$this -> body);
-		
+
 			if (($result = eF_mail($this -> userData[$this -> sender]['email'], $recipientsList, $this -> subject, $emailBody, $this -> attachments, false, $this -> bcc)) !== true) {
                     $this -> errorMessage .= _THEMESSAGEWASNOTSENTASEMAIL.'<br/>';
             }

@@ -64,22 +64,7 @@ try {
 			$result = eF_getTableDataFlat("lessons l, users_to_lessons ul", "id, share_folder", "l.archive=0 and l.id=ul.lessons_ID and ul.archive=0 and ul.users_LOGIN='".$currentUser->user['login']."'");
 			$legalFolders = array_unique(array_merge($result['id'], $result['share_folder']));
 			if ($currentUser->user['user_type'] != 'administrator' && $matches[1] && !in_array($matches[1], $legalFolders)) {
-				
-				// fix due to ticket #5594
-				$results = eF_getTableData("content", "linked_to", "lessons_ID=".$_SESSION['s_lessons_ID']);
-				foreach ($results as $result) {
-					$linked_content[] = $result['linked_to'];
-				}
-				$results = eF_getTableData("content", "lessons_ID", "id in (".implode(",",$linked_content).") OR linked_to in (".implode(",",$linked_content).")");
-				foreach ($results as $result) {
-					$lessons_with_linked_content[] = $result['lessons_ID'];
-				}
-				$userLessons = array_keys($currentUser->getLessons(false, 'student'));
-				if (!count(array_intersect($lessons_with_linked_content, $userLessons))) {
-					throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
-				}
-				
-				//throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
+				throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
 			}
 		} else if (preg_match("#content/lessons/scorm_uploaded_files/#", $file['path'], $matches)) {		//the file is a temporary scorm exported file
 			//proceed
@@ -97,9 +82,9 @@ try {
 					throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
 				}
 			}
-		} else if (preg_match("#".G_UPLOADPATH."(.*)/avatars/#", $file['path'], $matches) || mb_strpos($file['path'], G_SYSTEMAVATARSPATH) !== false || (mb_strpos($file['path'], G_UPLOADPATH) !== false && mb_strpos($file['path'], 'forum') !== false)) { 
-			//proceed
-		}  else if ( mb_strpos($file['path'], G_UPLOADPATH) !== false  && mb_strpos($file['path'], G_UPLOADPATH.$currentUser->user['login']) === false && $file['access'] != 777) {
+		} else if (preg_match("#".G_UPLOADPATH."(.*)/avatars/#", $file['path'], $matches) || mb_strpos($file['path'], G_SYSTEMAVATARSPATH) !== false ) {
+				 //proceed
+		}  else if ( mb_strpos($file['path'], G_UPLOADPATH) !== false  && mb_strpos($file['path'], G_UPLOADPATH.$currentUser->user['login']) === false) {
 			throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
 		}
 	}	

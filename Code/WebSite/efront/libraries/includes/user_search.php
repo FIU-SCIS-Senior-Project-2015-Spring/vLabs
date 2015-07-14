@@ -779,10 +779,8 @@ $renderer -> setRequiredTemplate(
 
 // Management of the 'send email to all found' link icon on the top right of the table
 // During page load create the item
-$mass_operations = array(
-	array('id' => 'groupUsersId', 'text' => _SETFOUNDEMPLOYEESINTOGROUP, 	  'image' => "16x16/users.png", 'href' => "javascript:void(0);", "onclick" => "eF_js_showDivPopup(event, '"._SETFOUNDEMPLOYEESINTOGROUP."', 0, 'insert_into_group')", 'target' => 'POPUP_FRAME'),
-	array('id' => 'sendToAllId',  'text' => _SENDMESSAGETOALLFOUNDEMPLOYEES,  'image' => "16x16/mail.png", 	'href' => "javascript:void(0);", "onclick" => "var recipient = '&recipient='+document.getElementById('usersFound').value;this.href='".$currentUser->getType().".php?ctg=messages&add=1&popup=1'+recipient;eF_js_showDivPopup(event, '"._SENDMESSAGE."', 2)", 'target' => 'POPUP_FRAME')
-);
+$mass_operations = array(array('id' => 'groupUsersId', 'text' => _SETFOUNDEMPLOYEESINTOGROUP, 	  'image' => "16x16/users.png", 'href' => "javascript:void(0);", "onclick" => "eF_js_showDivPopup(event, '"._SETFOUNDEMPLOYEESINTOGROUP."', 0, 'insert_into_group')", 'target' => 'POPUP_FRAME'),
+						  array('id' => 'sendToAllId', 'text' => _SENDMESSAGETOALLFOUNDEMPLOYEES, 'image' => "16x16/mail.png", 	'href' => "javascript:void(0);", "onclick" => "this.href='".$currentUser->getType().".php?ctg=messages&add=1&popup=1&recipient='+document.getElementById('usersFound').value;eF_js_showDivPopup(event, '"._SENDMESSAGE."', 2)", 'target' => 'POPUP_FRAME'));
 $smarty -> assign("T_SENDALLMAIL_LINK", $mass_operations);
 $form -> setJsWarnings(_BEFOREJAVASCRIPTERROR, _AFTERJAVASCRIPTERROR);
 $form -> setRequiredNote(_REQUIREDNOTE);

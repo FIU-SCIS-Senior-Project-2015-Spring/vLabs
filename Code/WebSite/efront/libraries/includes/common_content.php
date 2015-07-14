@@ -33,7 +33,6 @@ if (!isset($currentContent)) {
         $_SESSION['s_lessons_ID'] = $currentLesson -> lesson['id'];
     }
     $currentContent = new EfrontContentTree($currentLesson);
- 
     if ($_student_) {
         $currentContent -> markSeenNodes($currentUser);
     }
@@ -92,8 +91,7 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 
 	    $completeUnitSelect = array(EfrontUnit::COMPLETION_OPTIONS_DEFAULT => _DEFAULT, 
 	    							EfrontUnit::COMPLETION_OPTIONS_AUTOCOMPLETE => _AUTOCOMPLETE, 
-	    							EfrontUnit::COMPLETION_OPTIONS_HIDECOMPLETEUNITICON => _HIDECOMPLETEUNITICON,
-	    							EfrontUnit::COMPLETION_OPTIONS_ACCEPTTERMSCOMPLETION => _ACCEPTTERMSCOMPLETION);
+	    							EfrontUnit::COMPLETION_OPTIONS_HIDECOMPLETEUNITICON => _HIDECOMPLETEUNITICON);
 	    
 		$form = new HTML_QuickForm("create_form", "post", basename($_SERVER['PHP_SELF'])."?ctg=content".(isset($_GET['add']) ? '&add=1' : '&edit='.$_GET['edit']), "", null, true);
 	    $form -> addElement('text', 'name', _UNITNAME, 'class = "inputText"');
@@ -109,8 +107,6 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 	    $form -> addElement('advcheckbox', 'indexed', _DIRECTLYACCESSIBLE, null, 'class = "inputCheckbox"', array(0, 1));
 	    $form -> addElement('advcheckbox', 'maximize_viewport', _MAXIMIZEVIEWABLEAREA, null, 'class = "inputCheckbox"', array(0, 1));
 	    $form -> addElement('advcheckbox', 'scorm_asynchronous', _SCORMASYNCHROUNOUS, null, 'class = "inputCheckbox"', array(0, 1));
-	    $form -> addElement('text', 'scorm_times', _SCORMTIMES, 'class = "inputText" style = "width:50px"');
-	    $form -> addElement('advcheckbox', 'scorm_logging', _SCORMLOGGING, null, 'class = "inputCheckbox"', array(0, 1));
 	    $form -> addElement('text', 'object_ids', _SPECIFYIDFORSREENMATCHING, 'class = "inputText"');
 	    $form -> addElement('advcheckbox', 'no_before_unload', _NOBEFOREUPLOAD, null, 'class = "inputCheckbox"', array(0, 1));
 	    $form -> addElement('advcheckbox', 'pdf_check', _UPLOADPDFFORCONTENT, null, 'class = "inputCheckbox" onclick="checkToggle=true;togglePdf()"', array(0, 1));
@@ -156,7 +152,7 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 			}
 
 			$form -> addRule('scorm_size', _INVALIDFIELDDATA, 'checkParameter', 'id');
-	        $smarty -> assign("T_SCORM", true);	        
+	        $smarty -> assign("T_SCORM", true);
 	    }
 	    
 	    //Set elements rules
@@ -235,7 +231,7 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 
 			}
 	        $form -> setDefaults(array('pdf_check'     => 1));
-			
+
 	        $smarty -> assign("T_EDITPDFCONTENT", true);
 	    }
 
@@ -269,8 +265,6 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 		                                   'indexed'            => $values['indexed'],
 										   'maximize_viewport'  => $values['maximize_viewport'],
 										   'scorm_asynchronous' => $values['scorm_asynchronous'],
-		        							'scorm_times'		=> $values['scorm_times'],
-		        							'scorm_logging'		=> $values['scorm_logging'],
 		        						   'object_ids' 		=> $values['object_ids'],
 		                                   'no_before_unload'	=> $values['no_before_unload'],
 		                        		   'reentry_action'	    => isset($values['reentry_action']) ? $values['reentry_action'] : false,
@@ -381,8 +375,6 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 	$form -> addElement('text', 'object_ids', _SPECIFYIDFORSREENMATCHING, 'class = "inputText"');
 	$form -> addElement('advcheckbox', 'no_before_unload', _NOBEFOREUPLOAD, null, 'class = "inputCheckbox"', array(0, 1));
 	$form -> addElement('advcheckbox', 'scorm_asynchronous', _SCORMASYNCHROUNOUS, null, 'class = "inputCheckbox"', array(0, 1));		
-	$form -> addElement('text', 'scorm_times', _SCORMTIMES, 'class = "inputText" style = "width:50px"');
-	$form -> addElement('advcheckbox', 'scorm_logging', _SCORMLOGGING, null, 'class = "inputText"');
 	$form -> addElement('text', 'scorm_size', _EXPLICITIFRAMESIZE, 'class = "inputText" style = "width:50px"');                      //Set an explicit size for the SCORM content
 	$form -> addElement('select', 'reentry_action', _ACTIONONRENTRYCOMPLETED, array(0 => _LETCONTENTDECIDE, 1 => _DONTCHANGE), 'class = "inputText"');                      //Set what action should be performed when a user re-enters a visited content
 	$form -> addElement('select', 'embed_type', _EMBEDTYPE, array('iframe' => _INLINEIFRAME, 'popup'=> _NEWWINDOWPOPUP), 'class = "inputSelect"');
@@ -443,9 +435,6 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
     					preg_match("/\"scormFrameName\".*\"\)'/U", $currentUnit['data'], $matches);
     					$currentUnit['data'] = preg_replace("/\"scormFrameName\".*\"\)'/U", '"scormFrameName", "'.$_GET['value'].'")\'' , $currentUnit['data']);
     					$currentUnit->persist();
-    				} else if ($_GET['option'] == 'reentry_action'){
-    					$value['options'][$_GET['option']] = $_GET['value'];
-    					$value->persist();
     				} else if (isset($value['options'][$_GET['option']])) {
     					$value['options'][$_GET['option']] = $_GET['value'];
     					$value->persist();
@@ -634,7 +623,7 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 		$log_comments = $currentUnit['id']; //in order to store unit into logs
         //This is the basic content iterator, including even inactive, unpublished or empty units
 		if (EfrontUser::isOptionVisible('tests')) {
-			$visitableIterator         = new EfrontVisitableAndEmptyFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST)));
+			$visitableIterator         = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST));
 		} else {
 			$visitableIterator         = new EfrontNoTestsFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST)));
 		}
@@ -700,8 +689,7 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 					$treeOptions['hideFeedback'] = true;
 				}
 			}		*/
-            //This is an iterator with only valid units plus empty units, and is used for the navigation tree      
-
+            //This is an iterator with only valid units plus empty units, and is used for the navigation tree
             $smarty  -> assign("T_CONTENT_TREE", $currentContent -> toHTML(new EfrontVisitableAndEmptyFilterIterator($visitableIterator), 'dhtmlContentTree', $treeOptions, $scormState));
             
             //This is an iterator with only valid units, and is used for students to navigate back and forth
@@ -710,37 +698,11 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 			if ($_change_){
 				$treeOptions['edit'] = 1;
 			}		
-
             $smarty  -> assign("T_CONTENT_TREE", $currentContent -> toHTML($visitableIterator, 'dhtmlContentTree', $treeOptions, $scormState));
         }
-        
-        if ($_GET['print_all']) {
-        	$units_to_print = array();
-        	
-        	$iterator_all = new EfrontNodeFilterIterator(new RecursiveIteratorIterator($currentContent -> tree, RecursiveIteratorIterator :: SELF_FIRST));
-        	
-        	foreach ($iterator_all as $key => $value) {
-        			$ruleCheck = true;
-        			if ($currentLesson -> options['rules']) {
-        				$ruleCheck = $currentContent -> checkRules($key, $seenContent);
-        			}
-        			if ($ruleCheck === true || $_professor_) {
-        				$unitData    = new EfrontUnit($key);
-        				$value['data'] = preg_replace("#<script.*?>.*?</script>#", "&lt;script removed&gt;", $unitData['data']);
-        				$value['data'] = strip_tags($value['data'],'<img><applet><iframe><div><br><p><ul><li><ol><span><sub><sup><hr><h1><h2><h3><h4><h5><h6><table><tbody><tr><th><td><font><em><i><strong><u><b><blockquote><big><center><code>');
-        
-        				$units_to_print[$key] = array(	'name'	=> $value['name'],
-        						'data'	=> $value['data']);
-        				$smarty  -> assign("T_PRINT_ALL", $units_to_print);
-        
-        			}
-        		
-        	}
-        }
 
-        //if ($_professor_ && !$currentUnit && $currentContent -> getFirstNode()) { //If a unit is not specified, then consider the first content unit by default
-        if ($_professor_ && !$currentUnit && $currentContent -> getFirstVisitableNode()) { //If a unit is not specified, then consider the first content unit by default
-        	$currentUnit = new EfrontUnit($currentContent -> getFirstNode() -> offsetGet('id'));
+        if ($_professor_ && !$currentUnit && $currentContent -> getFirstNode()) { //If a unit is not specified, then consider the first content unit by default
+			$currentUnit = new EfrontUnit($currentContent -> getFirstNode() -> offsetGet('id'));
 			$smarty -> assign("T_CURRENTUNITID", $currentUnit['id']);
 		}
 
@@ -872,29 +834,7 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
         }
 
 
-        if (!empty($_GET['scorm_status'])) {
-        	$result = eF_getTableData("users_to_content", "visits", "content_ID={$unit['id']} AND lessons_ID={$currentLesson->lesson['id']} AND users_LOGIN='{$currentUser->user['login']}'");
-        	if ($currentUnit['options']['scorm_times']) {
-        		$remaining_times = $currentUnit['options']['scorm_times'] - $result[0]['visits'];
-        		$remaining_times > 0 OR $remaining_times = 0;
-        	} else {
-        		$remaining_times = -1;
-        	} 
-        	echo json_encode(array('remaining_times'=>$remaining_times));
-        	exit;        	 
-        }
         if ($_student_ && $_change_ && $currentLesson -> options['tracking']) {
-        	if (strpos($currentUnit['ctg_type'], 'scorm') !== false && $currentUnit['options']['scorm_logging']) {
-        		if (!is_dir("scorm_logs")) {
-        			mkdir("scorm_logs", 0755);
-        		}
-        		if (is_dir("scorm_logs")) {
-        			file_put_contents("scorm_logs/".date("Y_m_d").".scorm.log", formatTimestamp(time(), 'time').", {$currentUser->user['login']}, Entered unit {$currentUnit['name']} ({$currentUnit['id']}) in lesson {$currentLesson->lesson['name']} ({$currentLesson->lesson['id']})\n", FILE_APPEND);
-        		}
-        	}
-        	if (strpos($currentUnit['ctg_type'], 'scorm') !== false) {
-        		$_SESSION['attempt_identifier'] = md5(time());	//A random identifier which we use to distinct different scorm executions
-        	}
         	//if ( $userProgress['lesson_passed'] && $userProgress['completed']) {        	 
         		$nextLesson = $currentUser -> getNextLesson($currentLesson, $_SESSION['s_courses_ID'], true);
         		$smarty -> assign("T_NEXTLESSON", $nextLesson);
@@ -929,35 +869,7 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
                     }
                 }
             }
-			
-            if ($currentUnit['options']['complete_unit_setting'] == EfrontUnit::COMPLETION_OPTIONS_ACCEPTTERMSCOMPLETION) {
-            	$accept_term_message = _ACCEPTTERMCOMPLETIONMESSAGE;
-            	if ($accept_term_message) {
-            		$smarty -> assign("T_ACCEPT_TERM_COMPLETION_MESSAGE", $accept_term_message);
-            		$res = eF_getTableData("users_to_content", "pending", "users_LOGIN='".$currentUser->user['login']."' and content_ID=".$currentUnit['id']);
-            		if (sizeof($_POST) > 0) {
-            			try {            				
-            				if ($_POST['accept_terms'] === 'true') {
-            					$currentUser -> setSeenUnit($currentUnit, $currentLesson, true);
-            					echo 'accept';
-            				} elseif ($_POST['accept_terms'] === 'false') {
-            					if (sizeof($res) > 0) {
-            						eF_updateTableData("users_to_content", array('pending' => 1), "users_LOGIN='".$currentUser->user['login']."' and content_ID=".$currentUnit['id']);
-            					} else {
-            						eF_insertTableData("users_to_content", array("pending" => 1, "users_LOGIN" => $currentUser->user['login'], "content_ID" =>$currentUnit['id'], "lessons_ID" => $currentLesson -> lesson['id']));
-            					}
-            				}
-            			} catch (Exception $e) {
-            				//handleAjaxExceptions($e);
-            			}
-            			exit;
-            		} elseif(in_array($currentUnit['id'], array_keys($seenContent))) {
-            			$smarty -> assign("T_ACCEPT_TERM_COMPLETION_CHECKED", 'accepted');
-            		} elseif($res[0]['pending']) {
-            			$smarty -> assign("T_ACCEPT_TERM_COMPLETION_CHECKED", 'rejected');
-            		}
-            	}
-            }
+
             if (isset($_GET['set_seen']) && $ruleCheck) {
                 try {
                     $currentUser -> setSeenUnit($currentUnit, $currentLesson, $_GET['set_seen']);
@@ -1017,18 +929,8 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
             }
         }
 
+
         $options = array();
-        if (mb_strpos($currentUnit['data'], "<iframe") !== false && (mb_strpos($currentUnit['data'], "pdfaccept") !== false || mb_strpos($currentUnit['data'], "pdfFrame") !== false) && mb_strpos($currentUnit['data'], "google.com/viewer") === false) {
-        	preg_match("/view_file.php\?file=\d+/", $currentUnit['data'], $matches);
-        	$pdfId = explode("=", $matches[0]);
-        	if (isset($pdfId[1])) {
-        		$options[] = array('text' => _VIEWPDFINIOS, 'image' => "others/ios.png", 'href' => "javascript:void(0)", 'onclick' => "window.open('view_file.php?file=".$pdfId[1]."')");
-        	} else {
-        		preg_match("#content/lessons/.*\.pdf#", $currentUnit['data'], $matches);
-        		$options[] = array('text' => _VIEWPDFINIOS, 'image' => "others/ios.png", 'href' => "javascript:void(0)", 'onclick' => "window.open('view_file.php?file=".$matches[0]."')");
-        		//pr($matches);
-        	}
-        }
         if ($_student_ && $currentLesson -> options['content_report'] && $ruleCheck) {
             $options[] = array('text' => _CONTENTREPORT, 'image' => "16x16/warning.png", 'href' => "content_report.php?".http_build_query($_GET), 'onclick' => "eF_js_showDivPopup(event, '"._CONTENTREPORT."', 1)", "target" => "POPUP_FRAME");
         }
@@ -1038,11 +940,6 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
         if (EfrontUser::isOptionVisible('comments') && $ruleCheck) {
             $options[] = array('text' => _ADDCOMMENT, 'image' => "16x16/comment_add.png", 'href' => basename($_SERVER['PHP_SELF'])."?ctg=comments&view_unit=".$_GET['view_unit']."&add=1&popup=1", 'onclick' => "eF_js_showDivPopup(event, '"._ADDCOMMENT."', 1)", "target" => "POPUP_FRAME");
         }
-        
-        
-
-
-        
         //$options[] = array('text' => "open window", 'image' => "16x16/add.png", 'href' => basename($_SERVER['PHP_SELF'])."?ctg=content&view_unit=".$_GET['view_unit']."&bare=1&popup=1", 'onclick' => "window.open('about:blank', 'testme', 'width=800, height=600')", "target" => "testme");
 
 		if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
@@ -1162,12 +1059,6 @@ if (isset($_GET['add']) || (isset($_GET['edit']) && in_array($_GET['edit'], $leg
 
         if (isset($currentUnit['options']['maximize_viewport']) && $currentUnit['options']['maximize_viewport'] && $currentUser -> getType($currentLesson) == "student") {
             $smarty -> assign("T_MAXIMIZE_VIEWPORT", 1);
-        }
-        if (isset($currentUnit['options']['scorm_times']) && $currentUnit['options']['scorm_times']) {
-        	$result = eF_getTableData("users_to_content", "visits", "content_ID={$unit['id']} AND lessons_ID={$currentLesson->lesson['id']} AND users_LOGIN='{$currentUser->user['login']}'");
-        	$remaining_times = $currentUnit['options']['scorm_times'] - $result[0]['visits'];
-        	$remaining_times > 0 OR $remaining_times = 0;
-        	$smarty -> assign("T_SCORM_TIMES_REMAINING", $remaining_times);        	
         }
         if (isset($currentUnit['options']['scorm_asynchronous']) && $currentUnit['options']['scorm_asynchronous']) {
             $smarty -> assign("T_SCORM_ASYNCHRONOUS", 1);

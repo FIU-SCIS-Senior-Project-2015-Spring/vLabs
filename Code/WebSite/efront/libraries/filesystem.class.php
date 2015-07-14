@@ -275,7 +275,7 @@ class EfrontFile extends ArrayObject
             	$file = EfrontDirectory :: normalize($file);
                 $result = eF_getTableData("files", "*", "path='".str_replace(G_ROOTPATH, '', eF_addSlashes(EfrontDirectory :: normalize($file)))."'", "id");  //eF_addSlashes for files containing '
             } else {
-                throw new EfrontFileException(_ILLEGALPATH.': '.eFront_basename($file), EfrontFileException :: ILLEGAL_PATH);
+                throw new EfrontFileException(_ILLEGALPATH.': '.basename($file), EfrontFileException :: ILLEGAL_PATH);
             }
 
             if (sizeof($result) > 0) {
@@ -295,21 +295,21 @@ class EfrontFile extends ArrayObject
                     $fileArray = array('id'            => -1,                        //Set 'id' to -1, meaning this file has not a database representation
                                        'path'          => $file);
                 } else if (strpos($file, G_ROOTPATH) === false) {
-                    throw new EfrontFileException(_ILLEGALPATH.': '.eFront_basename($file), EfrontFileException :: ILLEGAL_PATH);
+                    throw new EfrontFileException(_ILLEGALPATH.': '.basename($file), EfrontFileException :: ILLEGAL_PATH);
                 } else {
-                    throw new EfrontFileException(_FILEDOESNOTEXIST.': '.eFront_basename($file), EfrontFileException :: FILE_NOT_EXIST);
+                    throw new EfrontFileException(_FILEDOESNOTEXIST.': '.basename($file), EfrontFileException :: FILE_NOT_EXIST);
                 }
             }
         }
         //Append extra useful (derived) information to the array: name, extension, size, mime type
         
-        $fileArray['name']       = EfrontFile :: decode(eFront_basename($fileArray['path']));
+        $fileArray['name']       = EfrontFile :: decode(basename($fileArray['path']));
         $fileArray['directory']  = dirname($fileArray['path']);
         $fileArray['extension']  = pathinfo($fileArray['path'], PATHINFO_EXTENSION);
         $fileArray['size']       = round(filesize($fileArray['path'])/1024, 2);
         $fileArray['timestamp']  = filemtime($fileArray['path']);
         $fileArray['type']       = 'file';
-        $fileArray['physical_name'] = eFront_basename($fileArray['path']);
+        $fileArray['physical_name'] = basename($fileArray['path']);
         foreach ($pathParts = explode("/", $fileArray['path']) as $key => $value) {
             $pathParts[$key] = urlencode($value);
         }
@@ -324,9 +324,9 @@ class EfrontFile extends ArrayObject
                 eF_deleteTableData("files", "id=".$this['id']);
                 EfrontSearch :: removeText('files', $this['id'], 'data');
             }
-            throw new EfrontFileException(_FILEDOESNOTEXIST.': '.eFront_basename($file), EfrontFileException :: FILE_DELETED);
+            throw new EfrontFileException(_FILEDOESNOTEXIST.': '.basename($file), EfrontFileException :: FILE_DELETED);
         } elseif ( strpos($this['path'], G_ROOTPATH) === false ) {
-            throw new EfrontFileException(_ILLEGALPATH.': '.eFront_basename($file), EfrontFileException :: ILLEGAL_PATH);    //The file must be inside root path, otherwise it is illegal
+            throw new EfrontFileException(_ILLEGALPATH.': '.basename($file), EfrontFileException :: ILLEGAL_PATH);    //The file must be inside root path, otherwise it is illegal
         }
     }
 
@@ -403,23 +403,12 @@ class EfrontFile extends ArrayObject
                 $fileId	= eF_insertTableData("files", $fields);
                 if ($fileId && $insert_search) {
                     $fileMetadataArray 	= unserialize($this['metadata']);
-                    /*
                     foreach ($fileMetadataArray as $key => $value) {
                         EfrontSearch :: insertText($value, $fileId, "files", "data");
-                    }*/
-                    
-                    $terms = '';
-                    foreach ($fileMetadataArray as $key => $value) {
-                    	$terms .= $value.' ';
                     }
-                    EfrontSearch :: insertText($terms, $fileId, "files", "data");
                 }
             }
-            if ($fileId) {
-            	$file = new EfrontFile($fileId); //performance fix
-            } else {
-            	$file = new EfrontFile($destinationPath); 
-            }
+            $file = new EfrontFile($destinationPath);
 
             return $file;
         } else {
@@ -500,16 +489,9 @@ class EfrontFile extends ArrayObject
         $ok = eF_updateTableData("files", $fields, "id=".$this['id']);
         EfrontSearch :: removeText('files', $this['id'], 'data');
         $fileMetadataArray 	= unserialize($this['metadata']);
-        /*
         foreach ($fileMetadataArray as $key => $value) {
             EfrontSearch :: insertText($value, $this['id'], "files", "data");
         }
-        */
-        $terms = '';
-        foreach ($fileMetadataArray as $key => $value) {
-        	$terms .= $value.' ';
-        }
-        EfrontSearch :: insertText($terms, $this['id'], "files", "data");
         return $ok;
     }
 
@@ -540,13 +522,13 @@ class EfrontFile extends ArrayObject
             $this['shared']        = $result[0]['shared'];
             $this['metadata']      = $result[0]['metadata'];
         }
-        $this['name']       = EfrontFile :: decode(eFront_basename($this['path']));
+        $this['name']       = EfrontFile :: decode(basename($this['path']));
         $this['directory']  = dirname($this['path']);
         $this['extension']  = pathinfo($this['path'], PATHINFO_EXTENSION);
         $this['size']       = round(filesize($this['path'])/1024, 2);
         $this['timestamp']  = filemtime($this['path']);
         $this['type']       = 'file';
-        $this['physical_name'] = eFront_basename($this['path']);
+        $this['physical_name'] = basename($this['path']);
         foreach ($pathParts = explode("/", $this['path']) as $key => $value) {
             $pathParts[$key] = urlencode($value);
         }
@@ -562,18 +544,18 @@ class EfrontFile extends ArrayObject
      * @since 3.6.1
      * @access public
 	 */
-    public function compress($zipName = false, $decode = false, $use_system_zip = false) {
+    public function compress($zipName = false, $decode = false) {
     	if (!$zipName) {
             $zipName = $this['path'].'.zip';
         } else {
-            $zipName = $this['directory'].'/'.(EfrontFile :: encode(eFront_basename($zipName)));
+            $zipName = $this['directory'].'/'.(EfrontFile :: encode(basename($zipName)));
         }
         try {                                                            //This way we delete the file, if it already exists
             $file = new EfrontFile($zipName);
             $file -> delete();
         } catch (Exception $e) {}
 
-        if ($GLOBALS['configuration']['zip_method'] == 'system' || $use_system_zip) {
+        if ($GLOBALS['configuration']['zip_method'] == 'system') {
             $dir = getcwd();
             chdir($this['directory']);
             $response = exec('zip -r "'.$zipName.'" '.$this['name'].' 2>&1', $output, $code);
@@ -639,7 +621,8 @@ class EfrontFile extends ArrayObject
                     throw new EfrontFileException(_COMMANDFAILEDWITHOUTPUT.': '.$response.". "._PERHAPSDONTSUPPORTZIP, EfrontFileException :: ERROR_ZIP_PROCESSING);
                 }
             } else {
-                $zip = new ZipArchive;          
+                $zip = new ZipArchive;
+
                 if ($zip -> open($this['path']) === true && $zip -> extractTo($this['directory'])) {
                     for ($i = 0; $i < $zip -> numFiles; $i++) {
                         $file = $this['directory'].'/'.$zip -> getNameIndex($i);
@@ -730,7 +713,6 @@ class EfrontFile extends ArrayObject
      * @access public
      */
     public function getTypeImage() {
-    	$this['extension'] = strtolower ($this['extension']);
         if (is_file(G_DEFAULTIMAGESPATH.'file_types/'.$this['extension'].'.png') || is_file(G_IMAGESPATH.'file_types/'.$this['extension'].'.png')) {
             $image = 'images/file_types/'.$this['extension'].'.png';
         } else {
@@ -827,7 +809,7 @@ class EfrontFile extends ArrayObject
         foreach ($this as $key => $value) {
             if ($value) {
                 switch ($key) {
-                    //case 'path'        : $tooltipString .= '<div style = "white-space:nowrap"><strong>'._PHYSICALNAME."</strong>: ".eFront_basename($value)."<br/></div>";  break;
+                    //case 'path'        : $tooltipString .= '<div style = "white-space:nowrap"><strong>'._PHYSICALNAME."</strong>: ".basename($value)."<br/></div>";  break;
                     case 'users_LOGIN' : $tooltipString .= '<strong>'._USER."</strong>: $value<br/>";      break;
                     case 'timestamp'   : $tooltipString .= '<strong>'._LASTMODIFIED."</strong>: ".formatTimestamp($value, 'time_nosec')."<br/>"; break;
                     //case 'shared'      : $tooltipString .= '<strong>'._SHARED."</strong>: $value<br/>";    break;
@@ -925,12 +907,8 @@ class EfrontFile extends ArrayObject
      * @since 3.6.3
      * @access public
      */
-    public function sendFile($attachment = false, $user = false) {    	
+    public function sendFile($attachment = false) {
 		session_write_close();	//to allow the browser proceeding to other pages as well
-		
-		if ($user) {
-			$this -> updateUsersToFiles($user);
-		}
     	if ($attachment) {
 			$browser = detectBrowser();
 			//because of #834
@@ -963,24 +941,10 @@ class EfrontFile extends ArrayObject
 			header('Pragma: public');
     	}
     	
-    	
 //    	readfile($this['path']);
     	$this -> readfileChunked($this['path']);
     	exit;
     }
-    
-    private function updateUsersToFiles($user) {
-    	if ($this['id'] > 0) {
-	    	$result = eF_getTableData("users_to_files", "*", "users_LOGIN='".$user."' and files_ID=".$this['id']);
-	    	if(empty($result)) {
-	    		eF_insertTableData('users_to_files', array('files_ID' => $this['id'], "users_LOGIN" => $user, 'counter' => 1));
-	    	} else {
-	    		eF_updateTableData('users_to_files', array('counter' => $result[0]['counter']+1), "files_ID=".$this['id']." and users_LOGIN='".$user."'");
-	    	}
-    	}
-    }
-    
-    
     
     /**
      * http://www.php.net/manual/en/function.readfile.php
@@ -1050,11 +1014,11 @@ class EfrontDirectory extends ArrayObject
 
         if (is_dir($directory) && strpos($directory, rtrim(G_ROOTPATH, "/")) !== false) {                            //Create object without database information
             $directoryArray = array('path'      => $directory,
-                                    'name'      => EfrontFile :: decode(eFront_basename($directory)),
+                                    'name'      => EfrontFile :: decode(basename($directory)),
                                     'directory' => dirname($directory),
                                     'timestamp' => filemtime($directory),
                                     'type'      => 'directory',
-                                    'physical_name' => eFront_basename($directory));
+                                    'physical_name' => basename($directory));
             foreach ($pathParts = explode("/", $directoryArray['path']) as $key => $value) {
                 $pathParts[$key] = urlencode($value);
             }
@@ -1170,13 +1134,13 @@ class EfrontDirectory extends ArrayObject
      * @since 3.5.0
      * @access public
      */
-    public function copy($destinationPath, $overwrite = false, $overwrite_folder = false) {
+    public function copy($destinationPath, $overwrite = false) {
         $destinationPath = EfrontDirectory :: normalize($destinationPath);
         $parentDirectory = new EfrontDirectory(dirname($destinationPath));        //This way we check integrity of destination
 
         if (!is_dir($destinationPath)) {
             mkdir($destinationPath, 0755);
-        } elseif (!$overwrite_folder) {
+        } elseif (!$overwrite) {
             throw new EfrontFileException(_CANNOTCOPYDIRECTORY.': '.$destinationPath.', '._FILEALREADYEXISTS, EfrontFileException :: DIRECTORY_ALREADY_EXISTS);
         }
 
@@ -1288,18 +1252,18 @@ class EfrontDirectory extends ArrayObject
      * @since 3.5.0
      * @access public
      */
-    public function compress($zipName = false, $includeSelf = true, $decode = false, $use_system_zip = false) {
+    public function compress($zipName = false, $includeSelf = true, $decode = false) {
         if (!$zipName) {
             $zipName = $this['path'].'.zip';
         } else {
-            $zipName = $this['directory'].'/'.(EfrontFile :: encode(eFront_basename($zipName)));
+            $zipName = $this['directory'].'/'.(EfrontFile :: encode(basename($zipName)));
         }
         try {                                                            //This way we delete the file, if it already exists
             $file = new EfrontFile($zipName);
             $file -> delete();
         } catch (Exception $e) {}
 
-        if ($GLOBALS['configuration']['zip_method'] == 'system' || $use_system_zip) {
+        if ($GLOBALS['configuration']['zip_method'] == 'system') {
             $dir = getcwd();
             chdir($this['path']);
             $response = exec('zip -r "'.$zipName.'" ./* 2>&1', $output, $code);
@@ -1314,9 +1278,9 @@ class EfrontDirectory extends ArrayObject
 
             if ($zip -> open($zipName, ZIPARCHIVE::CREATE ) === true) {
                 $count      = 0;
-                $it = new EfrontREFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this['path']), RecursiveIteratorIterator :: SELF_FIRST), array('#\.svn#', '#\\\.$#', '#\\\.\.$#', '#/\.$#', '#/\.\.$#'), false);
-                foreach ($it as $node => $value) {     	
-                    //if ($value -> isFile()) {                  	
+                $it = new EfrontREFilterIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this['path']), RecursiveIteratorIterator :: SELF_FIRST), array('/.svn/'), false);
+                foreach ($it as $node => $value) {
+                    if ($value -> isFile()) {
                         $current   = str_replace("\\", "/", $node);
                         if ($includeSelf) {
                             $nameInZip = ltrim(str_replace(dirname($this['path']), '', $current), '/');
@@ -1324,27 +1288,19 @@ class EfrontDirectory extends ArrayObject
                             $nameInZip = ltrim(str_replace($this['path'], '', $current), '/');
                         }
                         //pr($current);pr($nameInZip);
-                        if ($value -> isFile()) {
-	                        if ($decode) {
-	                            $zip -> addFile($node, EfrontFile :: decode($nameInZip));
-	                        } else {
-	                            $zip -> addFile($node, $nameInZip);
-	                        }
-                        } else {	        	                   
-                        	if ($decode) {
-                        		$zip -> addEmptyDir(EfrontFile :: decode($nameInZip));
-                        	} else {
-                        		$zip -> addEmptyDir($nameInZip);
-                        	}
+                        if ($decode) {
+                            $zip -> addFile($node, EfrontFile :: decode($nameInZip));
+                        } else {
+                            $zip -> addFile($node, $nameInZip);
                         }
                         if ($count++ > 500) {                                                //See bug http://pecl.php.net/bugs/bug.php?id=8714
                             $zip -> close();
                             $zip -> open($zipName, ZIPARCHIVE::CREATE);
                             $count = 0;
                         }
-                   // }
+                    }
                 }
-                
+
                 $zip -> close();
                 return new EfrontFile($zipName);
             } else {
@@ -1667,13 +1623,6 @@ class FileSystemTree extends EfrontTree
         $form -> addElement('file', 'file_upload[4]', null, 'class = "inputText"');
         $form -> addElement('file', 'file_upload[5]', null, 'class = "inputText"');
         $form -> addElement('file', 'file_upload[6]', null, 'class = "inputText"');
-
-        $form -> addElement('advcheckbox', 'overwrite', _OVERWRITE, null, 'class = "inputCheckbox"'.$readonly);
-        if ($_SESSION['s_type'] == 'student') {
-        	$form -> freeze('overwrite');
-        } else {
-        	 $form -> setDefaults(array('overwrite' => '0'));
-        }
         $form -> addElement('text', 'url_upload', null, 'id = "url_upload" class = "inputText"');
         $form -> addElement('hidden', 'upload_current_directory', null, 'id = "upload_current_directory" class = "inputText"');
         $form -> addElement('submit', 'submit_upload_file', _UPLOAD, 'class = "flatButton" onclick = "$(\'uploading_image\').show()"');
@@ -1682,6 +1631,7 @@ class FileSystemTree extends EfrontTree
         $renderer = new HTML_QuickForm_Renderer_ArraySmarty($smarty);
         $form -> accept($renderer);
         $formArray = $renderer -> toArray();
+
         $formString = '
 	    			'.$formArray['javascript'].'
 	    			<form '.$formArray['attributes'].'>
@@ -1701,7 +1651,6 @@ class FileSystemTree extends EfrontTree
 		            		<td class = "elementCell">'.$formArray['file_upload'][5]['html'].'</td></tr>
 		            	<tr style = "display:none"><td class = "labelCell">'._UPLOADFILE.':&nbsp;</td>
 		            		<td class = "elementCell">'.$formArray['file_upload'][6]['html'].'</td></tr>
-		            	<tr style = "display:none"><td class = "labelCell">'._UPLOADFILE.':&nbsp;</td>	
 		            	<tr><td></td>
 		            		<td class = "elementCell">
 		            			<img src = "images/16x16/add.png" alt = "'._ADDFILE.'" title = "'._ADDFILE.'" onclick = "addUploadBox(this)"/></td></tr>
@@ -1711,8 +1660,6 @@ class FileSystemTree extends EfrontTree
 		            		<td class = "infoCell">'._MAXIMUMUPLOADSIZE.': '.($this -> getUploadMaxSize()).' '._KB.'</td></tr>
 		            	<tr><td class = "labelCell">'._UPLOADFILEFROMURL.':&nbsp;</td>
 		            		<td class = "elementCell">'.$formArray['url_upload']['html'].'</td></tr>
-		            	<tr><td class = "labelCell">'.$formArray['overwrite']['label'].':&nbsp;</td>
-		            		<td class = "elementCell">'.$formArray['overwrite']['html'].'</td></tr>	
 		            	<tr><td></td>
 		            		<td class = "submitCell">
 	            				'.$formArray['submit_upload_file']['html'].'
@@ -1752,27 +1699,24 @@ class FileSystemTree extends EfrontTree
         }
         if (strpos($curDir, $this -> dir['path']) !== false) {
             foreach ($_FILES['file_upload']['error'] as $key => $value) {
-                if ($value != UPLOAD_ERR_NO_FILE) {               	
-                    $uploadedFile = $this -> uploadFile('file_upload', $curDir, $key, $form -> exportValue('overwrite'));
+                if ($value != UPLOAD_ERR_NO_FILE) {
+                    $uploadedFile = $this -> uploadFile('file_upload', $curDir, $key);
                 }
             }
             $this -> reset();
         }
-        $urlUpload = $form -> exportValue('url_upload');      
+        $urlUpload = $form -> exportValue('url_upload');
         if ($urlUpload != "" ) {
-                    
+            $this -> checkFile($urlUpload);
             //$urlArray	 = explode("/", $urlUpload);
             //$urlFile	 = urldecode($urlArray[sizeof($urlArray) - 1]);
-            $urlArray	 = parse_url($urlUpload);   
-            $urlFile	 = eFront_basename($urlArray['path']);
-            $this -> checkFile($urlFile);
-			if (in_array($urlArray['scheme'], array('ftp', 'http', 'https')) === false) {
-				throw new Exception(_SORRYYOUDONOTHAVEPERMISSIONTOPERFORMTHISACTION);
-			} else if (is_file($curDir."/".$urlFile) &&  !$form -> exportValue('overwrite')) {     
-	       		throw new EfrontFileException(_FILEALREADYEXISTS, EfrontFileException :: FILE_ALREADY_EXISTS);
-			} else if (!copy(dirname($urlUpload).'/'.rawurlencode($urlFile).($urlArray['query'] ? '?'.$urlArray['query'] : ''), $curDir."/".$urlFile)) { //copy() does not like names with spaces, so we split the $urlUpload to dirname() and basename() and we urlencode() the latter
+            $urlArray	 = parse_url($urlUpload);
+            $urlFile	 = basename($urlArray['path']);
+            
+            //copy() does not like names with spaces, so we split the $urlUpload to dirname() and basename() and we urlencode() the latter
+            if (!copy(dirname($urlUpload).'/'.rawurlencode($urlFile).($urlArray['query'] ? '?'.$urlArray['query'] : ''), $curDir."/".$urlFile)) {
                 throw new Exception(_PROBLEMUPLOADINGFILE);
-            } else {  	       	
+            } else {
                 $uploadedFile = new EfrontFile($curDir."/".$urlFile);
             }
         }
@@ -1837,13 +1781,13 @@ class FileSystemTree extends EfrontTree
      * @access public
      */
     protected function handleCreateDirectoryForm(& $form) {
-        $newDir = eFront_basename(EfrontDirectory :: normalize($form -> exportValue('create_directory')));      
+        $newDir = basename(EfrontDirectory :: normalize($form -> exportValue('create_directory')));
         if ($form -> exportValue('current_directory')) {
             $curDir = EfrontDirectory :: normalize($form -> exportValue('current_directory'));
         } else {
             $curDir = $this -> dir['path'];
-        }   
-        if (strpos($curDir, $this -> dir['path']) !== false) {    	
+        }
+        if (strpos($curDir, $this -> dir['path']) !== false) {
             $createdDirectory = EfrontDirectory :: createDirectory($curDir.'/'.$newDir);
             $this -> reset();
         }
@@ -1988,13 +1932,11 @@ class FileSystemTree extends EfrontTree
     public function toHTML($url, $currentDirectory = '', $ajaxOptions = array(), $options, $extraFileTools = array(), $extraDirectoryTools = array(), $extraHeaderOptions = array(), $defaultIterator = false, $show_tooltip = true, $extraColumns = array()) {
         //Set default options
         !isset($options['show_type'])     ? $options['show_type']     = true  : null;
-        !isset($options['show_owner'])    ? $options['show_owner']    = false : null;
         !isset($options['show_date'])     ? $options['show_date']     = true  : null;
         !isset($options['show_name'])     ? $options['show_name']     = true  : null;
         !isset($options['show_size'])     ? $options['show_size']     = true  : null;
         !isset($options['show_tools'])    ? $options['show_tools']    = true  : null;
         !isset($options['delete'])        ? $options['delete']        = true  : null;
-        !isset($options['delete_folder']) ? $options['delete_folder'] = false  : null;
         !isset($options['download'])      ? $options['download']      = true  : null;
         !isset($options['zip'])           ? $options['zip']           = true  : null;
         !isset($options['share'])         ? $options['share']         = true  : null;
@@ -2029,13 +1971,8 @@ class FileSystemTree extends EfrontTree
             //Build a new (shallow) file system tree on the current directory
             $innerFileSystem = new FileSystemTree($currentDir, false);
             //Assign each node as a child to the currentDir, thus creating a new tree with currentDir as parent
-
-       		try {
-            	$subtree = $this->seekNode($currentDir['path']);	//If the folder is leaf and empty, this will throw an exception
-            } catch (Exception $e) {}
             foreach ($innerFileSystem -> tree as $key => $value) {
-            	!empty($subtree[$key]) OR $subtree[$key] = $value;
-                $currentDir[$key] = $subtree[$key];
+                $currentDir[$key] = $value;
             }
             //$currentDir = $this -> seekNode($currentDirectory);
             //$parentDir  = new EfrontDirectory($currentDir['directory']);
@@ -2055,7 +1992,7 @@ class FileSystemTree extends EfrontTree
             }
 
             $createFolderForm   = new HTML_QuickForm("create_folder_form", "post", $url, "", "target = 'POPUP_FRAME'", true);
-            $createFolderString = $this -> getCreateDirectoryForm($createFolderForm);          
+            $createFolderString = $this -> getCreateDirectoryForm($createFolderForm);
             if ($createFolderForm -> isSubmitted() && $createFolderForm -> validate()) {
                 $this -> handleCreateDirectoryForm($createFolderForm);
                 $createFolderString .= '
@@ -2079,11 +2016,11 @@ class FileSystemTree extends EfrontTree
                 $copyFiles = explode(",", $_POST["copy_files"]);
                 foreach ($copyFiles as $file) {
                     $file = new EfrontFile($file);
-                    //pr('copying to '.$currentDirectory.'/'.eFront_basename($file['path']));
-                    $file -> copy($currentDirectory.'/'.eFront_basename($file['path']), false);
+                    //pr('copying to '.$currentDirectory.'/'.basename($file['path']));
+                    $file -> copy($currentDirectory.'/'.basename($file['path']));
                 }
             }
-        } catch (Exception $e) {      	
+        } catch (Exception $e) {
             echo "<script>if (top && top.mainframe) {w=top.mainframe} else {w=parent;}w.document.getElementById('messageError').innerHTML = '".$e -> getMessage()."';parent.$('uploading_image').hide();</script>";
             //Don't halt for uploading and create directory errors
             $GLOBALS['smarty'] -> assign("T_EXCEPTION_TRACE", $e -> getTraceAsString());
@@ -2094,27 +2031,10 @@ class FileSystemTree extends EfrontTree
         $fileArrays 	= array();
         $foldersArray 	= array();
         $filesArray 	= array();
-             
         if ($options['folders']) {
             $iterator  = new EfrontDirectoryOnlyFilterIterator((new ArrayIterator($currentDir)));    //Plain ArrayIterator so that it iterates only on the current's folder files
             if ($options['db_files_only']) {                                    //Filter out directories without database representation
                 $iterator = new EfrontDBOnlyFilterIterator($iterator);
-            }
-            if ($options['extra_filter']) {
-            	$filt = array_keys($options['extra_filter']);
-            	$filt = $filt[0];
-            	$arg0 = $options['extra_filter'][$filt][0];
-            	$arg1 = $options['extra_filter'][$filt][1];
-            	$code = ' $iterator = new $filt($iterator, $arg0, $arg1);';
-            	eval($code);
-            }
-            if ($options['extra_filter']) {
-            	$filt = array_keys($options['extra_filter']);
-            	$filt = $filt[0];
-            	$arg0 = $options['extra_filter'][$filt][0];
-            	$arg1 = $options['extra_filter'][$filt][1];
-            	$code = ' $iterator = new $filt($iterator, $arg0, $arg1);';
-            	eval($code);
             }
             foreach ($iterator as $key => $value) {                    //We convert iterator to a complete array of files, so we can apply sorting, filtering etc more easily
                 $current = (array)$iterator -> current();
@@ -2133,21 +2053,11 @@ class FileSystemTree extends EfrontTree
 
         if ($defaultIterator) {
             $iterator = $defaultIterator;
-        } else {      	
+        } else {
             $iterator  = new EfrontFileOnlyFilterIterator(new EfrontNodeFilterIterator(new ArrayIterator($currentDir)));    //Plain ArrayIterator so that it iterates only on the current folder's files
             if ($options['db_files_only']) {                                    //Filter out directories without database representation
                 $iterator = new EfrontDBOnlyFilterIterator($iterator);
             }
-
-			if ($options['extra_filter']) {
-				$filt = array_keys($options['extra_filter']);
-				$filt = $filt[0];
-				$arg0 = $options['extra_filter'][$filt][0];
-				$arg1 = $options['extra_filter'][$filt][1];
-				$code = ' $iterator = new $filt($iterator, $arg0, $arg1);';
-				eval($code);				
-			}
-            
         }
         foreach ($iterator as $key => $value) {                    //We convert iterator to a complete array of files, so we can apply sorting, filtering etc more easily
             $current = (array)$iterator -> current();
@@ -2183,13 +2093,12 @@ class FileSystemTree extends EfrontTree
                         <table class = "sortedTable" style = "width:100%" size = "'.$size.'" id = "'.$tableId.'" useAjax = "1" rowsPerPage = "20" other = "'.urlencode($currentDirectory).'" url = "'.$url.'&" nomass = "1" currentDir = "'.(isset($currentDir['path']) ? $currentDir['path'] : '').'">
                     		<tr>'.($options['show_type'] ? '<td class = "topTitle centerAlign" name = "extension">'._TYPE.'</td>' : '').'
                     			'.($options['show_name'] ? '<td class = "topTitle" name = "name" id = "filename_'.$tableId.'">'._NAME.'</td>' : '').'
-                    			'.($options['show_owner']? '<td class = "topTitle centerAlign" name = "extension">'._USER.'</td>' : '').'             
                     			'.($options['show_size'] ? '<td class = "topTitle" name = "size">'._SIZE.'</td>' : '').'
                     			'.($options['show_date'] ? '<td class = "topTitle" name = "timestamp">'._MODIFIED.'</td>' : '').'
 								'.$extraColumnsString.'
                     			'.($_SESSION['s_lessons_ID'] && $options['share'] ? '<td class = "topTitle centerAlign" name = "shared">'._SHARE.'</td>' : '').'
                     			'.($options['show_tools'] ? '<td class = "topTitle centerAlign noSort">'._OPERATIONS.'</td>' : '').'
-                    			'.($options['delete'] || $options['copy'] || ($_SESSION['s_lessons_ID'] && $options['share']) ? '<td class = "topTitle centerAlign">'._SELECT.'</td>' : '').'
+                    			'.($options['delete'] || ($_SESSION['s_lessons_ID'] && $options['share']) ? '<td class = "topTitle centerAlign">'._SELECT.'</td>' : '').'
                     		</tr>';
 
         if (isset($parentDir)) {
@@ -2197,19 +2106,8 @@ class FileSystemTree extends EfrontTree
                 $parentDir['path'] = '';
             }
 
-            //Create links for currently browsing folder section
-			$path_parts = explode('/', str_replace($this -> dir['path'].'/', '', $currentDir['path']));
-			$path_string = '<a class="editLink" href = "javascript:void(0)" onclick = "eF_js_rebuildTable($(\'filename_'.$tableId.'\').down().getAttribute(\'tableIndex\'), 0, \'\', \'desc\', \''.urlencode($this -> dir['path']).'\');">../</a>';
-			$concat_part = '';
-			
-			//pr($this -> dir['path']);
-			foreach ($path_parts as $path_part) {
-				$concat_part = $concat_part.'/'.$path_part;
-				$path_string .= '<a class="editLink" href = "javascript:void(0)" onclick = "eF_js_rebuildTable($(\'filename_'.$tableId.'\').down().getAttribute(\'tableIndex\'), 0, \'\', \'desc\', \''.urlencode($this -> dir['path'].$concat_part).'\');">'.EfrontFile :: decode($path_part).'/</a>';
-			} 
-			//vd($concat_part);
             $filesCode .= '
-            			<tr class = "defaultRowHeight eventRowColor"><td class = "centerAlign" colspan = "100%">'._CURRENTLYBROWSINGFOLDER.': '.$path_string.'</td></tr>
+            			<tr class = "defaultRowHeight eventRowColor"><td class = "centerAlign" colspan = "100%">'._CURRENTLYBROWSINGFOLDER.': '.EfrontFile :: decode(str_replace($this -> dir['path'], '', $currentDir['path'])).'</td></tr>
                     	<tr class = "defaultRowHeight oddRowColor">
                     		<td class = "centerAlign"><span style = "display:none"></span><img src = "images/16x16/folder_up.png" alt = "'._UPONELEVEL.'" title = "'._UPONELEVEL.'"/></td>
                     		<td><a class="editLink" href = "javascript:void(0)" onclick = "eF_js_rebuildTable($(\'filename_'.$tableId.'\').down().getAttribute(\'tableIndex\'), 0, \'\', \'desc\', \''.urlencode($parentDir['path']).'\');">.. ('._UPONELEVEL.')</a></td>
@@ -2232,21 +2130,14 @@ class FileSystemTree extends EfrontTree
         foreach ($fileArrays as $key => $value) {
             $toolsString  = '';
             $sharedString = '';
-            if (is_file($value['path'])) {           	
+            if (is_file($value['path'])) {
                 $value['id'] == -1 ? $identifier = $value['path'] : $identifier = $value['id'];        //The file/directory identifier will be the id, if the entity has a database representation, or the file path otherwise
 
 				$value = new EfrontFile($value);                         //Restore file/directory representation, so we can use its methods
                 $link  = $url.'&view='.urlencode($identifier);
                 foreach ($extraFileTools as $tool) {
                     //$toolsString .= '<a href = "javascript:void(0)"><img src = "'.$tool['image'].'" alt = "'.$tool['title'].'" title = "'.$tool['title'].'" border = "0" onclick = "'.$tool['action'].'(this, \''.urlencode($identifier).'\')"  /></a>&nbsp;';
-
-                    if ($tool['mode'] == 'custom' && (!isset($tool['hide']) || !$value['hide_'.$tool['hide']])) {
-                    	$toolsString .= '<span>                   					
-                    					<a href = "'.(isset($tool['href']) ? $tool['href'].'&file_identifier='.$identifier : 'javascript:void(0)').'" '.(isset($tool['popup']) ? ' target = "POPUP_FRAME" ' : null) .'onclick = "'.$tool['action'].'"><img src = "'.$tool['image'].'" alt = "'.$tool['title'].'" title = "'.$tool['title'].'"></a>&nbsp;
-                    					</span>';
-                    } else if (!isset($tool['hide']) || !$value['hide_'.$tool['hide']]) {
-                		$toolsString .= '<a href = "javascript:void(0)"><img src = "'.$tool['image'].'" alt = "'.$tool['title'].'" title = "'.$tool['title'].'" border = "0" onclick = "'.$tool['action'].'(this, $(\'span_'.urlencode($identifier).'\').innerHTML)" /></a>&nbsp;';                						                		
-                    }
+                    $toolsString .= '<a href = "javascript:void(0)"><img src = "'.$tool['image'].'" alt = "'.$tool['title'].'" title = "'.$tool['title'].'" border = "0" onclick = "'.$tool['action'].'(this, $(\'span_'.urlencode($identifier).'\').innerHTML)" /></a>&nbsp;';
                 }
                 if (($value['extension'] == 'zip' || $value['extension'] == 'gz') && $options['zip']) {
                     $toolsString .= '<a href = "javascript:void(0)"><img src = "images/16x16/uncompress.png" alt = "'._UNCOMPRESS.'" title = "'._UNCOMPRESS.'" border = "0" onclick = "uncompressFile(this, $(\'span_'.urlencode($identifier).'\').innerHTML)"  /></a>&nbsp;';
@@ -2265,32 +2156,22 @@ class FileSystemTree extends EfrontTree
 
 
                 if ($options['edit'] && ($_SESSION['s_type'] == 'administrator' || (($value['users_LOGIN'] == $_SESSION['s_login'] || in_array($value['users_LOGIN'], $supervisedLogins)) && isset($value['users_LOGIN'])) || (EfrontUser::isOptionVisible('allow_users_to_delete_supervisor_files')))) {
-                    $toolsString .= '<img class = "ajaxHandle edit" src = "images/16x16/edit.png" alt = "'._RENAME.'" title = "'._RENAME.'" onclick = "toggleEditBox(this, \''.urlencode($identifier).'\')"/>&nbsp;';
+                    $toolsString .= '<img class = "ajaxHandle edit" src = "images/16x16/edit.png" alt = "'._EDIT.'" title = "'._EDIT.'" onclick = "toggleEditBox(this, \''.urlencode($identifier).'\')"/>&nbsp;';
                 }
-           
                 if ($options['delete'] 	&& ($_SESSION['s_type'] == 'administrator' || (($value['users_LOGIN'] == $_SESSION['s_login'] ||in_array($value['users_LOGIN'], $supervisedLogins)) || $value['users_LOGIN'] == "") || (EfrontUser::isOptionVisible('allow_users_to_delete_supervisor_files')))) {
                     $toolsString .= '<img class = "ajaxHandle" src = "images/16x16/error_delete.png" alt = "'._DELETE.'" title = "'._DELETE.'" onclick = "if (confirm(\''._IRREVERSIBLEACTIONAREYOUSURE.'\')) {deleteFile(this, $(\'span_'.urlencode($identifier).'\').innerHTML)}"/></a>&nbsp;';
                 }
-            } else if (is_dir($value['path'])) {          	
-				$filterValue = $value;
-
+            } else if (is_dir($value['path'])) {
                 $identifier = $value['path'];
                 $value      = new EfrontDirectory($value['path']);
                 $link       = $url.'&view_dir='.urlencode($identifier);
-                foreach ($extraDirectoryTools as $tool) {  							
-                    if ($tool['mode'] == 'custom' && (!isset($tool['hide']) || !$filterValue['hide_'.$tool['hide']])) {
-
-                    	$toolsString .= '<span>
-                    	<a href = "'.(isset($tool['href']) ? $tool['href'].'&file_identifier='.urlencode($identifier) : 'javascript:void(0)').'" '.(isset($tool['popup']) ? ' target = "POPUP_FRAME" ' : null) .'onclick = "'.$tool['action'].'"><img src = "'.$tool['image'].'" alt = "'.$tool['title'].'" title = "'.$tool['title'].'"></a>&nbsp;
-                    	</span>';
-                    } else if (!isset($tool['hide']) || !$filterValue['hide_'.$tool['hide']]) {
-                    	$toolsString .= '<a href = "javascript:void(0)"><img src = "'.$tool['image'].'" alt = "'.$tool['title'].'" title = "'.$tool['title'].'" border = "0" onclick = "'.$tool['action'].'(this, $(\'span_'.urlencode($identifier).'\').innerHTML)" /></a>&nbsp;';
-                    }
+                foreach ($extraDirectoryTools as $tool) {
+                    $toolsString .= '<a href = "javascript:void(0)"><img src = "'.$tool['image'].'" alt = "'.$tool['title'].'" title = "'.$tool['title'].'" border = "0" onclick = "'.$tool['action'].'(this, $(\'span_'.urlencode($identifier).'\').innerHTML)"  /></a>&nbsp;';
                 }
                 if ($options['edit']) {
-                    $toolsString .= '<img class = "ajaxHandle edit" src = "images/16x16/edit.png" alt = "'._RENAME.'" title = "'._RENAME.'" onclick = "toggleEditBox(this, \''.urlencode($identifier).'\')"/>&nbsp;';
+                    $toolsString .= '<img class = "ajaxHandle edit" src = "images/16x16/edit.png" alt = "'._EDIT.'" title = "'._EDIT.'" onclick = "toggleEditBox(this, \''.urlencode($identifier).'\')"/>&nbsp;';
                 }
-                if ($options['delete'] || $options['delete_folder']) {
+                if ($options['delete']) {
                     $toolsString .= '<img class = "ajaxHandle" src = "images/16x16/error_delete.png" alt = "'._DELETE.'" title = "'._DELETE.'" onclick = "if (confirm(\''._IRREVERSIBLEACTIONAREYOUSURE.'\')) {deleteFolder(this, $(\'span_'.urlencode($identifier).'\').innerHTML)}" />&nbsp;';
                 }
             }
@@ -2322,7 +2203,7 @@ class FileSystemTree extends EfrontTree
                         $filesCode .= $value -> toHTMLTooltipLink($link, true, $tableId);
                     } else {
                         if (strpos($value['mime_type'], "image") !== false || strpos($value['mime_type'], "text") !== false || strpos($value['mime_type'], "pdf") !== false || strpos($value['mime_type'], "flash") !== false || strpos($value['mime_type'], "video")  !== false ) {
-                            $filesCode .= '<a href = "javascript:void(0);" onclick = "eF_js_showDivPopup(event, \''._PREVIEW.'\', 2, \'preview_table_'.$tableId.'\');$(\'preview_frame\').src = \''.$link.'\';" >'.$value['name'].'</a>';
+                            $filesCode .= '<a href = "'.$link.'" target = "PREVIEW_FRAME" onclick = "eF_js_showDivPopup(event, \''._PREVIEW.'\', 2, \'preview_table_'.$tableId.'\');">'.$value['name'].'</a>';
                         } else {
                             $filesCode .= '<a target = "PREVIEW_FRAME" href = "'.$url.'&download='.urlencode($identifier).'">'.$value['name'].'</a>';
                         }
@@ -2332,9 +2213,6 @@ class FileSystemTree extends EfrontTree
                 }
 
                 $filesCode .= '<span id = "edit_'.urlencode($identifier).'" style = "display:none"><input type = "text" value = "'.$value['name'].'" onkeypress = "if (event.which == 13 || event.keyCode == 13) {Element.extend(this).next().down().onclick(); return false;}"/>&nbsp;<a href = "javascript:void(0)"><img id = "editImage_'.urlencode($identifier).'"src = "images/16x16/success.png" style = "vertical-align:middle" onclick = "editFile(this, $(\'span_'.urlencode($identifier).'\').innerHTML, Element.extend(this).up().previous().value, \''.$value['type'].'\',\''.eF_addslashes($value['name']).'\')" border = "0"></a></span></td>';
-            }
-            if ($options['show_owner']) {
-            	$filesCode .= '<td class = "centerAlign"><span>'.(isset($value['users_LOGIN']) ? formatLogin($value['users_LOGIN']) : '').'</span></td>';
             }
             $extraColumnsString = '';
             foreach ($extraColumns as $column) {
@@ -2347,7 +2225,7 @@ class FileSystemTree extends EfrontTree
                         		'.$extraColumnsString.'
                         		'.($_SESSION['s_lessons_ID'] && $options['share'] ? '<td class = "centerAlign">'.$sharedString.'</td>' : '').'
                         		'.($options['show_tools'] ? '<td class = "centerAlign">'.$toolsString.'</td>' : '').'
-	                        		'.($options['delete'] || $options['copy'] || ($_SESSION['s_lessons_ID'] && $options['share']) ? '<td class = "centerAlign">'.($value['type'] == 'file' ? '<input type = "checkbox" id = "'.$identifier.'" value = "'.$identifier.'" />' : '').'</td>' : '').'
+	                        		'.($options['delete'] || ($_SESSION['s_lessons_ID'] && $options['share']) ? '<td class = "centerAlign">'.($value['type'] == 'file' ? '<input type = "checkbox" id = "'.$identifier.'" value = "'.$identifier.'" />' : '').'</td>' : '').'
                         	</tr>';
         }
 
@@ -2355,7 +2233,7 @@ class FileSystemTree extends EfrontTree
         if ($size) {
             $filesCode .= '
         				</table>';
-            if ($options['delete'] || $options['copy'] || ($_SESSION['s_lessons_ID'] && $options['share'])) {
+            if ($options['delete'] || ($_SESSION['s_lessons_ID'] && $options['share'])) {
                 $massOperationsCode = '
             			<div class = "horizontalSeparatorAbove">
             				<span style = "vertical-align:middle">'._WITHSELECTEDFILES.':</span>
@@ -2395,7 +2273,7 @@ class FileSystemTree extends EfrontTree
             $str .= '
             	<span>
 	        		<img src = "'.$option['image'].'" alt = "'.$option['title'].'" title = "'.$option['title'].'">
-    	    		<a href = "'.(isset($option['href']) ? $option['href'] : 'javascript:void(0)').'" '.(isset($option['popup']) ? ' target = "POPUP_FRAME" ' : null) .'onclick = "'.$option['action'].'">'.$option['title'].'</a>&nbsp;
+    	    		<a href = "'.(isset($option['href']) ? $option['href'] : 'javascript:void(0)').'" onclick = "'.$option['action'].'">'.$option['title'].'</a>&nbsp;
     	    	</span>';
         }
         $str .= '
@@ -2512,7 +2390,7 @@ class FileSystemTree extends EfrontTree
                 if (strpos($file['path'], $this->dir['path']) === false) {
                 	throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
                 } 
-                $file -> sendFile(true, $currentUser -> user['login']);
+                $file -> sendFile(true);
             } catch (Exception $e) {
             	handleAjaxExceptions($e);
             }
@@ -2523,7 +2401,7 @@ class FileSystemTree extends EfrontTree
                 if (strpos($file['path'], $this->dir['path']) === false) {
                 	throw new EfrontFileException(_YOUCANNOTACCESSTHEREQUESTEDRESOURCE, EfrontFileException::UNAUTHORIZED_ACTION);
                 } 
-                $file -> sendFile(false, $currentUser -> user['login']);
+                $file -> sendFile(false);
             } catch (Exception $e) {
             	handleAjaxExceptions($e);
             }
@@ -2572,9 +2450,9 @@ class FileSystemTree extends EfrontTree
      * @since 3.0
      * @static
      */
-    public function uploadFile($fieldName, $destinationDirectory = false, $offset = false, $overwrite = true) {
-        $fieldName = strtolower($fieldName); 
-    	if (!$destinationDirectory) {
+    public function uploadFile($fieldName, $destinationDirectory = false, $offset = false) {
+
+        if (!$destinationDirectory) {
             $destinationDirectory = $this -> dir;
         }
         if (!($destinationDirectory instanceof EfrontDirectory)) {
@@ -2630,10 +2508,7 @@ class FileSystemTree extends EfrontTree
             } else {
             	$this -> checkFile($name);
             	
-                $newName = EfrontFile :: encode($name);     
-                if (is_file($destinationDirectory['path'].'/'.$newName) && !$overwrite) {
-                	throw new EfrontFileException(_FILEALREADYEXISTS, EfrontFileException :: FILE_ALREADY_EXISTS);                	
-                }    
+                $newName = EfrontFile :: encode($name);         
                 $ok = move_uploaded_file($tmp_name, $destinationDirectory['path'].'/'.$newName);           
                 if ($ok !== false) {
 	                chmod($destinationDirectory['path'].'/'.$newName, 0644);  //because of this http://bugs.php.net/bug.php?id=42291
@@ -2650,15 +2525,9 @@ class FileSystemTree extends EfrontTree
 	                                'metadata'      => serialize($fileMetadata));
 	                $id = eF_insertTableData("files", $fields);
 	                if ($id) {
-	                	/*
 	                    foreach ($fileMetadata as $key => $value) {
 	                        EfrontSearch :: insertText($value, $id, "files", "data");
-	                    }*/
-	                    $terms = '';	                    
-	                    foreach ($fileMetadata as $key => $value) {
-	                    	$terms .= $value.' ';
 	                    }
-	                    EfrontSearch :: insertText($terms, $id, "files", "data");
 	                }
 	
 	                return new EfrontFile($id);
@@ -2834,7 +2703,7 @@ class FileSystemTree extends EfrontTree
         for ($i = 0; $i < sizeof($list); $i++) {
             $list[$i] = EfrontFile :: encode($list[$i]);
             if (!in_array($list[$i], $allFiles['path']) && strpos(dirname($list[$i]), rtrim(G_ROOTPATH, "/")) !== false) {
-                $fileMetadata = array('title'       => eFront_basename($list[$i]),
+                $fileMetadata = array('title'       => basename($list[$i]),
                                       'creator'     => $GLOBALS['currentUser'] -> user['name'].' '.$GLOBALS['currentUser'] -> user['surname'],
                                       'publisher'   => $GLOBALS['currentUser'] -> user['name'].' '.$GLOBALS['currentUser'] -> user['surname'],
                                       'contributor' => $GLOBALS['currentUser'] -> user['name'].' '.$GLOBALS['currentUser'] -> user['surname'],
@@ -2849,16 +2718,9 @@ class FileSystemTree extends EfrontTree
                 $fileId = eF_insertTableData("files", $fields);
                 if ($fileId) {
                     $newList[$fileId] = $list[$i];
-                    /*
                     foreach ($fileMetadata as $key => $value) {
                         EfrontSearch :: insertText($value, $fileId, "files", "data");
                     }
-                    */
-                    $terms = '';
-                    foreach ($fileMetadata as $key => $value) {
-                    	$terms .= $value.' ';
-                    }
-                    EfrontSearch :: insertText($terms, $fileId, "files", "data");
                 }
             }
         }
@@ -2990,13 +2852,11 @@ class EfrontREFilterIterator extends FilterIterator
      */
     function accept() {
         $result = array();
-        foreach ($this -> re as $regExp) {       	
+        foreach ($this -> re as $regExp) {
             $this -> mode ? $result[] = preg_match($regExp, $this -> key()) : $result[] = !preg_match($regExp, $this -> key());
         }
-
         return array_product($result);
     }
- 
 }
 
 /**
@@ -3062,75 +2922,3 @@ class EfrontFileTypeFilterIterator extends FilterIterator
     }
 }
 
-class EfrontPathFilterIterator extends FilterIterator
-{
-	/**
-	 * The file types to include
-	 *
-	 * @var string
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public $filePaths;
-
-	/**
-	 * Whether to include the filtered files (true) or exclude them (false)
-	 *
-	 * @var boolean
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public $mode;
-
-	/**
-	 * Class constructor
-	 *
-	 * The class constructor calls the FilterItearator constructor and assigns
-	 * the $filePaths and $mode parameters
-	 *
-	 * @param ArrayIterator $it The iterator
-	 * @param string $filePaths The file types to examine
-	 * @param boolean $mode Whether to include or exclude the filtered files from the data set
-	 */
-	function __construct($it, $filePaths, $mode = true) {
-
-		parent :: __construct($it);	
-		is_array($filePaths) ? $this -> filePaths = $filePaths : $this -> filePaths = array($filePaths);
-		$this -> mode = $mode;
-	}
-
-	/**
-	 * Accept method
-	 *
-	 * The accept method filters in or out (based on $mode value) the files
-	 * from the data set
-	 *
-	 * @return boolean True if the current element matches the criteria
-	 * @since 3.5.0
-	 * @access public
-	 */
-	function accept() {
-		$result = array();
-		$found = false;
-		foreach ($this -> filePaths as $filepath) {
-			if (!is_dir($this -> current() -> offsetGet('path'))) {
-				if (stripos($this -> current() -> offsetGet('directory'), $filepath) !== FALSE) {
-					$found = true;
-				}
-			} else {
-				if (stripos($this -> current() -> offsetGet('path'), $filepath) !== FALSE) {
-					$found = true;
-				}
-			}
-		}
-		
-		
-		if ($found) {
-			$this -> mode ? $return = true : $return = false;
-		} else {
-			$this -> mode ? $return = false : $return = true;
-		}	
-
-		return $return;
-	}
-}

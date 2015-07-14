@@ -31,7 +31,6 @@ if (isset($_GET['delete_language']) && eF_checkParameter($_GET['delete_language'
     //Although db operations do not support exceptions (yet), we leave this here for future support
     try {
         eF_updateTableData("languages", array("active" => 0), "name='".$_GET['deactivate_language']."'");
-        EfrontCache::getInstance()->deleteCache('languages');
         echo "0";
     } catch (Exception $e) {
         header("HTTP/1.0 500 ");
@@ -46,7 +45,6 @@ if (isset($_GET['delete_language']) && eF_checkParameter($_GET['delete_language'
     //Although db operations do not support exceptions (yet), we leave this here for future support
     try {
         eF_updateTableData("languages", array("active" => 1), "name='".$_GET['activate_language']."'");
-        EfrontCache::getInstance()->deleteCache('languages');
         echo "1";
     } catch (Exception $e) {
         header("HTTP/1.0 500 ");
@@ -60,7 +58,6 @@ if (!isset($currentUser -> coreAccess['languages']) || $currentUser -> coreAcces
     $createForm -> addElement('text', 'english_name', _ENGLISHNAME, 'class = "inputText" id = "language_name"');
     $createForm -> addElement('text', 'translation', _TRANSLATION, 'class = "inputText" id = "language_translation"');
     $createForm -> addElement("advcheckbox", "rtl", _RTLLANGUAGE, null, 'class = "inputCheckBox" id = "language_rtl"', array(0, 1));
-    $createForm -> addElement("advcheckbox", "custom", _CUSTOMLANGUAGEFILE, null, 'class = "inputCheckBox" id = "custom_language"', array(0, 1));
     $createForm -> addElement('file', 'language_upload', _FILENAME, 'class = "inputText"');
 
     $createForm -> addElement('hidden', 'selected_language', null, 'id = "selected_language"');
@@ -72,23 +69,18 @@ if (!isset($currentUser -> coreAccess['languages']) || $currentUser -> coreAcces
     //$createForm -> addRule('language_upload', _THEFIELD.' "'._FILENAME.'" '._ISMANDATORY, 'required', null, 'client');
 
     if ($createForm -> isSubmitted() && $createForm -> validate()) {
-        $values = $createForm -> exportValues();    
+        $values = $createForm -> exportValues();
         try {
             if ($values['selected_language']) {
                 if ($_FILES['language_upload']['error'] == 0) {
                     $filesystem   =  new FileSystemTree(G_ROOTPATH.'libraries/language');
                     $uploadedFile = $filesystem -> uploadFile('language_upload', G_ROOTPATH.'libraries/language');
-                    if ($values['custom']) {
-                    	$uploadedFile -> rename(dirname($uploadedFile['path']).'/custom-'.$values['english_name'].'.php.inc', true);
-                    } else {
-                    	$uploadedFile -> rename(dirname($uploadedFile['path']).'/lang-'.$values['english_name'].'.php.inc', true);
-                    }
+                    $uploadedFile -> rename(dirname($uploadedFile['path']).'/lang-'.$values['english_name'].'.php.inc', true);
                 }
                 $fields = array("name"        => $values['english_name'],
                                         "translation" => $values['translation'],
                                         "rtl"         => $values['rtl']);
                 eF_updateTableData("languages", $fields, "name='".$values['selected_language']."'");
-                EfrontCache::getInstance()->deleteCache('languages');
                 //include "editor/tiny_mce/langs/language.php";
                 //$RetValues = file(G_SERVERNAME."/editor/tiny_mce/langs/language.php?langname=".$values['english_name']);
                 eF_redirect("".basename($_SERVER['PHP_SELF'])."?ctg=languages&message=".urlencode(_SUCCESSFULLYUPDATEDLANGUAGE)."&message_type=success");
@@ -100,17 +92,9 @@ if (!isset($currentUser -> coreAccess['languages']) || $currentUser -> coreAcces
                         $lang_zip_file_temp = new EfrontFile($uploadedFile['path']);
                         $lang_zip_file      = $lang_zip_file_temp -> uncompress(false);
                         $lang_file_rename   = new EfrontFile($lang_zip_file[0]);
-                        if ($values['custom']) {
-                        	$lang_file_rename -> rename(dirname($uploadedFile['path']).'/custom-'.$values['english_name'].'.php.inc', true);
-                        } else {
-                        	$lang_file_rename -> rename(dirname($uploadedFile['path']).'/lang-'.$values['english_name'].'.php.inc', true);
-                        }
+                        $lang_file_rename -> rename(dirname($uploadedFile['path']).'/lang-'.$values['english_name'].'.php.inc', true);
                     } else {
-                    	if ($values['custom']) { 
-                    		$uploadedFile -> rename(dirname($uploadedFile['path']).'/custom-'.$values['english_name'].'.php.inc', true);
-                    	} else {
-                        	$uploadedFile -> rename(dirname($uploadedFile['path']).'/lang-'.$values['english_name'].'.php.inc', true);
-                    	}
+                        $uploadedFile -> rename(dirname($uploadedFile['path']).'/lang-'.$values['english_name'].'.php.inc', true);
                     }
                 } else {
                     $file = new EfrontFile(G_ROOTPATH.'libraries/language/lang-english.php.inc');
@@ -120,10 +104,7 @@ if (!isset($currentUser -> coreAccess['languages']) || $currentUser -> coreAcces
                                         "translation" => $values['translation'],
                                         "active"      => 1,
                                         "rtl"         => $values['rtl']);
-                if (!$values['custom']) {
-                	eF_insertTableData("languages", $fields);
-                }
-                EfrontCache::getInstance()->deleteCache('languages');
+                eF_insertTableData("languages", $fields);
                 //$RetValues = file(G_SERVERNAME."/editor/tiny_mce/langs/language.php?langname=".$values['english_name']);
                 eF_redirect("".basename($_SERVER['PHP_SELF'])."?ctg=languages&message=".urlencode(_SUCCESSFULLYADDEDLANGUAGE)."&message_type=success");
             }

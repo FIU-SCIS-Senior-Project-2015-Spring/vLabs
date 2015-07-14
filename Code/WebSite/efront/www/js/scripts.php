@@ -38,14 +38,12 @@ header("Content-type: text/javascript; charset: UTF-8");
 ob_start ("ob_gzhandler");
 
 foreach (explode(",", $_GET['load']) as $value) {
-	if (preg_match('#\w+://#',$value) === 0) { // exclude remote files
-		if (is_file("$value.js")) {		
-			$real_path = mb_strtolower(realpath("$value.js"));
-			if (strpos($real_path, mb_strtolower(dirname(__FILE__))) !== false || strpos($real_path, mb_strtolower(dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'modules'.DIRECTORY_SEPARATOR)) !== false) {
-				lastModificationTime(filemtime("$value.js"));
-				include("$value.js");echo "\n";
-			} 
-		}
+	if (is_file("$value.js")) {
+		$real_path = mb_strtolower(realpath("$value.js"));
+		if (strpos($real_path, mb_strtolower(dirname(__FILE__))) !== false || strpos($real_path, mb_strtolower(dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR.'modules'.DIRECTORY_SEPARATOR)) !== false) {
+			lastModificationTime(filemtime("$value.js"));
+			include("$value.js");echo "\n";
+		} 
 	}
 }
 ?>

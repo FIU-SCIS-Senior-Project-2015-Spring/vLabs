@@ -32,20 +32,6 @@ try {
             foreach ($_POST['delete_nodes'] as $value) {
                 try {
                     if (in_array($value, $legalValues) && eF_checkParameter($value, 'id')) {
-
-                    	// Delete also linked units
-                    	$linked_units = eF_getTableData('content', 'id', 'linked_to='.$value);
-                    	foreach($linked_units as $unit) {
-                    		$lessons_IDs = eF_getTableData('content', 'lessons_ID', 'id='.$unit['id']);
-                    		foreach($lessons_IDs as $lessons_ID) {
-                    			$lessonsContent = new EfrontContentTree($lessons_ID['lessons_ID']);
-                    			$lessonsContent -> removeNode($unit['id']);
-                    		}
-                    	}
-                    	
-                    	
-                    	
-                    	//exit;
                         $currentContent -> removeNode($value);
                         if (($pos = array_search($value, $legalValues)) !== false) {
                             unset($legalValues[$pos]);
@@ -62,18 +48,6 @@ try {
             foreach ($_POST['activate_nodes'] as $value) {
                 if (in_array($value, $legalValues) && eF_checkParameter($value, 'id')) {
                     try {
-                    	
-                    	// Activate also linked units
-                    	$linked_units = eF_getTableData('content', 'id', 'linked_to='.$value);
-                    	foreach($linked_units as $unit) {
-                    		$lessons_IDs = eF_getTableData('content', 'lessons_ID', 'id='.$unit['id']);
-                    		foreach($lessons_IDs as $lessons_ID) {
-                    			$lessonsContent = new EfrontContentTree($lessons_ID['lessons_ID']);
-                    			$lessonsContent -> seekNode($unit['id']) -> activate();
-                    		}
-                    	}                    	
-                    	
-                    	
                         $currentContent -> seekNode($value) -> activate();
                     } catch (Exception $e) {
                         $errorMessages[] = $e -> getMessage().' '.$e -> getCode();
@@ -85,17 +59,6 @@ try {
             foreach ($_POST['deactivate_nodes'] as $value) {
                 if (in_array($value, $legalValues) && eF_checkParameter($value, 'id')) {
                     try {
-                    	
-                    	// Deactivate also linked units
-                    	$linked_units = eF_getTableData('content', 'id', 'linked_to='.$value);
-                    	foreach($linked_units as $unit) {
-                    		$lessons_IDs = eF_getTableData('content', 'lessons_ID', 'id='.$unit['id']);
-                    		foreach($lessons_IDs as $lessons_ID) {
-                    			$lessonsContent = new EfrontContentTree($lessons_ID['lessons_ID']);
-                    			$lessonsContent -> seekNode($unit['id']) -> deactivate();
-                    		}
-                    	}                    	
-                    	
                         $currentContent -> seekNode($value) -> deactivate();
                     } catch (Exception $e) {
                         $errorMessages[] = $e -> getMessage().' '.$e -> getCode();
@@ -114,9 +77,7 @@ try {
 						$unit = $currentContent -> seekNode($id);
                         $unit -> offsetSet('previous_content_ID', $previousContentId);
                         $unit -> offsetSet('parent_content_ID', $parentContentId);
-                        //$unit -> offsetSet('data', $unit['data']); // vprountzos: I changed this because is was related to #5228 and used to empty the content
-                        $normalUnit = new EfrontUnit($unit['id']);
-                        $unit -> offsetSet('data', $normalUnit['data']);
+                        $unit -> offsetSet('data', $unit['data']);
                         $unit -> persist();
                         $previousContentId = $id;
                     } catch (Exception $e) {

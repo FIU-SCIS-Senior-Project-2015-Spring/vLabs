@@ -216,48 +216,4 @@ if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 	} #cpp#endif
 } #cpp#endif
 
-if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
-	if (G_VERSIONTYPE != 'standard') { #cpp#ifndef STANDARD
-		$externalSAMLForm = new Html_QuickForm("external_saml_form", "post", basename($_SERVER['PHP_SELF'])."?ctg=system_config&op=external&tab=saml", "", null, true);
-		$externalSAMLForm -> registerRule('checkParameter', 'callback', 'eF_checkParameter');
-		$externalSAMLForm -> addElement("advcheckbox", "saml_enabled",	 _ACTIVATESAML, null, 'class = "inputCheckBox"', array(0, 1));
-		$externalSAMLForm -> addElement("text", "saml_provider", _IDENTITYPROVIDER,   'class = "inputText"');
-		$externalSAMLForm -> addElement("text", "saml_sign_in", _SIGNINURL,   'class = "inputText"');
-		$externalSAMLForm -> addElement("text", "saml_sign_out", _SIGNOUTURL,   'class = "inputText"');
-		$externalSAMLForm -> addElement("text", "saml_fingerprint", _CERTIFICATEFINGERPRINT,   'class = "inputText"');
-		$externalSAMLForm -> addElement("text", "saml_targeted_id", "Targeted id",   'class = "inputText"');
-		$externalSAMLForm -> addElement("text", "saml_first_name", _FIRSTNAME,   'class = "inputText"');
-		$externalSAMLForm -> addElement("text", "saml_last_name", _LASTNAME,   'class = "inputText"');
-		$externalSAMLForm -> addElement("text", "saml_email", _EMAIL,   'class = "inputText"');
-		$externalSAMLForm -> addElement("advcheckbox", "saml_bool_redirect_sign", null, _SIGNSAMLREQUESTS, 'class = "inputCheckBox"', array(0, 1));
-		$externalSAMLForm -> addElement("advcheckbox", "saml_bool_redirect_validate", null, _VALIDATESAMLREQUESTS, 'class = "inputCheckBox"', array(0, 1));
-		
-		$externalSAMLForm -> addElement("text", "saml_foo1", "Assertion Consumer Service (ACS) URL",   'class = "inputText inactiveElement" disabled');
-		$externalSAMLForm -> addElement("text", "saml_foo2", "Single Logout Service URL",   'class = "inputText inactiveElement" disabled');
-		$externalSAMLForm -> addElement("text", "saml_foo3", "SP Metadata XML",   'class = "inputText inactiveElement" disabled');
-		$externalSAMLForm -> setDefaults($GLOBALS['configuration']);
-		
-		$externalSAMLForm -> setDefaults(array('saml_foo1' => G_SERVERNAME."saml/module.php/saml/sp/saml2-acs.php/efront-sp"));
-		$externalSAMLForm -> setDefaults(array('saml_foo2' => G_SERVERNAME."saml/module.php/saml/sp/saml2-logout.php/efront-sp"));
-		$externalSAMLForm -> setDefaults(array('saml_foo3' => G_SERVERNAME."saml/module.php/saml/sp/metadata.php/efront-sp"));
-		$externalSAMLForm -> freeze(array('saml_foo1','saml_foo2','saml_foo3'));
-		
-		if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAccess['configuration'] != 'change') {
-			$externalSAMLForm -> freeze();
-		} else {
-			$externalSAMLForm -> addElement("submit", "submit", _SAVE, 'class = "flatButton"');
-		
-			if ($externalSAMLForm -> isSubmitted() && $externalSAMLForm -> validate()) {															  //If the form is submitted and validated
-				$values = $externalSAMLForm -> exportValues();
-			
-				unset($values['submit']);
-				foreach ($values as $key => $value) {
-					EfrontConfiguration :: setValue($key, $value);
-				}
-				eF_redirect(basename($_SERVER['PHP_SELF'])."?ctg=system_config&op=external&tab=saml&message=".urlencode(_SUCCESFULLYUPDATECONFIGURATION)."&message_type=success");
-			}
-		}
-		$smarty -> assign("T_EXTERNAL_SAML_FORM", $externalSAMLForm -> toArray());
-	} #cpp#endif
-} #cpp#endif
-	
+

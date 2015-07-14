@@ -10,28 +10,6 @@ function findFrame(win, frame_name) {
 	return null;
 }
 
-function getPHPSessionID() {
-	//var phpSessionId = document.cookie.match(/PHPSESSID=[A-Za-z0-9]+\;{0,1}/i);
-    var phpSessionId = document.cookie.match(/parent_sid=[A-Za-z0-9]+\;{0,1}/i);
-    //console.log(document.cookie);
-    //console.log(document.cookie.match(/PHPSESSID=[A-Za-z0-9]+\;{0,1}/i));
-        
-    if (typeof(phpSessionId) === 'undefined' || phpSessionId === null || phpSessionId.length <= 0) {
-    	var phpSessionId = document.cookie.match(/PHPSESSID=[A-Za-z0-9]+\;{0,1}/i);
-        if (typeof(phpSessionId) === 'undefined' || phpSessionId === null || phpSessionId.length <= 0) {
-            return '';
-        }
-    }
-
-
-    phpSessionId = phpSessionId[0];
-
-    var end = phpSessionId.lastIndexOf(';');
-    if(end == -1) end = phpSessionId.length;
-    //return phpSessionId.substring(10, end);
-    return phpSessionId.substring(11, end);
-}
-
 function eF_js_showDivPopup(e, popup_title, size, popup_data_id) {
 	if (popup_title) {
 		var sizes = [new Array('600px', '400px'), new Array('680px', '450px'), new Array('760px', '580px'), new Array('800px', '630px'), new Array('940px', '650px')];
@@ -532,6 +510,7 @@ var targetWin = window.open (pageURL, title, 'scrollbars=yes, width='+w+', heigh
 
 
 function periodicUpdater(asynchronous) {
+	
 	if ($('user_total_time_in_unit')) {
 		var parameters = {method:'post', user_total_time_in_unit:$('user_total_time_in_unit').innerHTML};
 	} else {
@@ -541,8 +520,9 @@ function periodicUpdater(asynchronous) {
 	ajaxRequest(document.body, 'periodic_updater.php?HTTP_REFERER='+encodeURIComponent(location.toString()), parameters, onPeriodicUpdater, onPeriodicUpdater, asynchronous);
 }
 
-function onPeriodicUpdater(el, response) {	
-	if (response.evalJSON(true).status) {	
+function onPeriodicUpdater(el, response) {
+
+	if (response.evalJSON(true).status) {
 		var entity = response.evalJSON(true).entity;
 		if (entity) {
 			var entity_id = response.evalJSON(true).entity_id;
@@ -564,10 +544,10 @@ function onPeriodicUpdater(el, response) {
 				//$('user_time_in_lesson').update(time_in_lesson.total_seconds);
 			}
 		}
-		
-		// messages    = response.evalJSON(true).messages;
-		onlineUsers = response.evalJSON(true).online;	
-/*		if ($('header_total_messages')) {
+/*		
+		messages    = response.evalJSON(true).messages;
+		onlineUsers = response.evalJSON(true).online;//alert(onlineUsers);
+		if ($('header_total_messages')) {
 			if (messages > 0) {
 				$('header_total_messages').update(messages);
 			} else {
@@ -589,11 +569,10 @@ function onPeriodicUpdater(el, response) {
 				$('header_connected_users').update('');
 			}
 		}	
-*/	
-		if (parent.sideframe) {		
+*/		
+		if (parent.sideframe) {
 			try {
 				var sideframe = parent.sideframe;
-				/*					
 				if (messages > 0) {
 					if (sideframe.$('unread_img')) {
 						sideframe.$('unread_img').update('<img class = "sprite16 sprite16-mail" src = "themes/default/images/others/transparent.gif" style = "vertical-align:middle" onLoad="javascript:if (document.getElementById(\'hasLoaded\') && !usingHorizontalInterface){fixUpperMenu();fixCurtains();}"/>');
@@ -602,8 +581,8 @@ function onPeriodicUpdater(el, response) {
 						sideframe.$('recent_unread_left').down().update(messages);
 					}
 				}
-*/
-				var str = '';				
+
+				var str = '';
 				onlineUsers.each(function (s) {
 					if (s.time.hours !=0 && s.time.minutes != 0) {
 						var time = translations['userisonline'] + ': ' + s.time.hours + ' ' + translations['hours'] + ' ' + translations['and'] + ' ' + s.time.minutes + ' ' + translations['minutes'];
@@ -614,7 +593,7 @@ function onPeriodicUpdater(el, response) {
 					} else {
 						var time = translations['userjustloggedin'];
 					}
-				
+					
 					//str += '<a href = "javascript:void(0)" onclick = "eF_js_showDivPopup(event, \'\', 0, \'user_table\');';
 					//str += 'show_user_box(\'' + translations['user'] + ' '+s.login+'\', \''+s.login+'\', \'' + translations['sendmessage'] + '\', \'' + translations['web'] + '\', \''+s.user_type+'\', \''+time+'\', \''+translations['user_stats']+'\',\''+translations['user_settings']+'\',\''+translations['logout_user']+'\');">';
 					//Changed because of this http://forum.efrontlearning.net/viewtopic.php?f=1&p=13756#p13756
@@ -630,7 +609,6 @@ function onPeriodicUpdater(el, response) {
 					}
 					str += '</a>, ';
 				});
-		
 				sideframe.$('users_online').update(str.substr(0, str.length-2));
 	
 				var tabmenu = sideframe.$('online_users_text').className;

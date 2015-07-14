@@ -23,10 +23,6 @@ function ajaxRequest(el, url, parameters, callbackSuccess, callbackFailure, asyn
 	if (typeof(parameters.ajax) == 'undefined') {
 		Object.extend(parameters, {ajax:'ajax'});
 	}
-	var session_id = getPHPSessionID();
-	if (typeof(session_id) != 'undefined') {
-		Object.extend(parameters, {csrf_id:session_id});
-	}
 	this.showProgress = function (el) {
 		var progressImage = new Element('span').addClassName('progress').setStyle({background:'url("themes/default/images/others/progress1.gif")'});
 		el.writeAttribute({progressImage: progressImage.identify()});

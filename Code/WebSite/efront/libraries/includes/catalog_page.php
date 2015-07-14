@@ -60,7 +60,7 @@ if (!isset($_GET['checkout'])) {
 		}
 	} else if ($_GET['info_course']) {
 		$course     = new EfrontCourse($_GET['info_course']);
-		$course -> course['num_students']    = sizeof($course -> getStudentUsers(false, array(), true));
+		$course -> course['num_students']    = sizeof($course -> getStudentUsers());
 		$course -> course['seats_remaining'] = $course -> course['max_users'] - $course -> course['num_students'];
 		$course -> course['seats_remaining'] >= 0 OR $course -> course['seats_remaining'] = 0;
 		$smarty -> assign("T_COURSE", $course);
@@ -130,30 +130,14 @@ if (!isset($_GET['checkout'])) {
 		$smarty -> assign("T_LAYOUT_CLASS", $currentTheme -> options['toolbar_position'] == "left" ? "hideRight" : "hideLeft");    //Whether to show the sidemenu on the left or on the right
 	}
 
-	
-	if (strpos($_SERVER['PHP_SELF'],'index.php') !== false) {
-		$options = array(
-			'lessons_link' => basename($_SERVER['PHP_SELF']).'?ctg=lesson_info&lessons_ID=',
-			'courses_link' => basename($_SERVER['PHP_SELF']).'?ctg=lesson_info&courses_ID=',
-			'search'	   => true,
-			'catalog'	   => true,
-			'url'		   => $_SERVER['PHP_SELF'],
-			'collapse'	   => $GLOBALS['configuration']['collapse_catalog'],
-			'buy_link'	   => true,
-			'course_lessons' => false);
-		
-	} else {
-		$options = array(
-			'lessons_link' => basename($_SERVER['PHP_SELF']).'?ctg=lessons&catalog=1&info_lesson=',
-			'courses_link' => basename($_SERVER['PHP_SELF']).'?ctg=lessons&catalog=1&info_course=',
-			'search'       => true,
-			'catalog'      => true,
-			'url'          => $_SERVER['PHP_SELF'].'?ctg=lessons&catalog=1',
-			'collapse'	   => $GLOBALS['configuration']['collapse_catalog'],
-			'buy_link'	   => true,
-			'course_lessons' => false);
-	}
-	
+	$options = array('lessons_link' => basename($_SERVER['PHP_SELF']).'?ctg=lessons&catalog=1&info_lesson=',
+	                             'courses_link' => basename($_SERVER['PHP_SELF']).'?ctg=lessons&catalog=1&info_course=',
+			                     'search'       => true,
+	                             'catalog'      => true,
+			                     'url'          => $_SERVER['PHP_SELF'].'?ctg=lessons&catalog=1',
+								 'collapse'	   => $GLOBALS['configuration']['collapse_catalog'],
+								 'buy_link'	   => true,
+	            				 'course_lessons' => false);
 	//if (!empty($courses) || !empty($lessons)) {		//wtf
 		include("directions_tree.php");
 	//}

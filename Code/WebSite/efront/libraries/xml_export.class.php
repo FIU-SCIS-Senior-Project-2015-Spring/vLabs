@@ -191,16 +191,9 @@ class XMLExport{
 	public function showOrganization($pdf){
 
 		$org = $this->active_certificate->organization;
-		if($org){
-			if(!$org['text']) {
-				if(isset($_SESSION['s_current_branch'])) {
-					$branch = new EfrontBranch($_SESSION['s_current_branch']);
-					$org['text'] = $branch->branch['name'];
-			
-				}
-			}
+
+		if($org)
 			$this->showLabel($pdf, $org['text'], $org['font'], $org['weight'], $org['size'], $org['color'], $org['x'], $org['y']);
-		}
 	}
 
 	public function showDate($pdf, $date){

@@ -183,9 +183,6 @@
 			<tr><td class = "labelCell">{$T_QUESTION_FORM.answers_logic.label}:&nbsp;</td>
 	            <td class = "elementCell">{$T_QUESTION_FORM.answers_logic.html}</td></tr>
 			{if $T_QUESTION_FORM.answers_logic.error}<tr><td colspan = "2" class = "formError">{$T_QUESTION_FORM.answers_logic.error}</td></tr>{/if}
-			<tr><td class = "labelCell">{$T_QUESTION_FORM.limit_answers.label}:&nbsp;</td>
-	            <td class = "elementCell">{$T_QUESTION_FORM.limit_answers.html}</td></tr>
-			{if $T_QUESTION_FORM.limit_answers.error}<tr><td colspan = "2" class = "formError">{$T_QUESTION_FORM.limit_answers.error}</td></tr>{/if}
 	{elseif $smarty.get.question_type == 'match'}
 	        <tr><td class = "labelCell questionLabel">{$smarty.const._INSERTMATCHCOUPLES}:</td>
 	            <td><table>
@@ -203,8 +200,7 @@
                         </td></tr>
 			{if $T_QUESTION_FORM.match[match_list].error || $T_QUESTION_FORM.correct_match[match_list].error }<tr><td class = "formError">{$T_QUESTION_FORM.match[match_list].error}</td><td>{$T_QUESTION_FORM.correct_match[match_list].error}</td></tr>{/if}
 		{/section}
-	
-           <tr id = "match_last_node"></tr>
+                    <tr id = "match_last_node"></tr>
                 </table>
 	            </td></tr>
 	            <tr><td class = "labelCell">
@@ -212,86 +208,6 @@
 	            </td><td>
 	                <a href = "javascript:void(0)" onclick = "eF_js_addAdditionalChoice('match')">{$smarty.const._ADDOPTION}</a>
 	            </td></tr>
-	      <tr><td class = "labelCell">{$T_QUESTION_FORM.exclude_shuffle.label}:&nbsp;</td>
-	            <td class = "elementCell">{$T_QUESTION_FORM.exclude_shuffle.html}<span class = "infoCell">{$smarty.const._EXCLUDESHUFFLEFROMQUESTIONEXAPLANATION}</span></td></tr>
-			{if $T_QUESTION_FORM.exclude_shuffle.error}<tr><td colspan = "2" class = "formError">{$T_QUESTION_FORM.exclude_shuffle.error}</td></tr>{/if}
-	{elseif $smarty.get.question_type == 'grid'}
-	        <tr><td class = "labelCell questionLabel">{$smarty.const._INSERTGRIDVALUES}:</td>
-	            <td><table>
-	            <tr>
-                    	<td colspan="100%">&nbsp;</td></tr>
-	            	<tr>
-                    	<td>{$smarty.const._ROWS}</td>                       
-                        <td>{$smarty.const._COLUMNS}</td>
-                        <td></td>
-                        <td></td>
-        			</tr>  
-        {section name = 'grid_list' loop = $T_QUESTION_FORM.grid}
-                    
-                    <tr>
-                    	<td style = "width:1%;white-space:nowrap">{$T_QUESTION_FORM.grid[grid_list].html}</td>                       
-                        <td style = "width:1%;white-space:nowrap">{$T_QUESTION_FORM.grid_column[grid_list].html}</td>
-                        <td style = "width:1%;white-space:nowrap">
-        	{if $smarty.section.grid_list.iteration > 2}                   {*The if smarty.iteration is put here, so that the user cannot remove that last 2 rows*}
-                            <a href = "javascript:void(0)" onclick = "eF_js_removeImgNode(this, 'grid')">
-                                <img src = "images/16x16/error_delete.png" border = "no" alt = "{$smarty.const._REMOVECHOICE}" title = "{$smarty.const._REMOVECHOICE}" /></a>
-            {/if}
-                        </td></tr>
-			{if $T_QUESTION_FORM.grid[grid_list].error || $T_QUESTION_FORM.grid_column[grid_list].error }<tr><td class = "formError">{$T_QUESTION_FORM.grid[grid_list].error}</td><td>{$T_QUESTION_FORM.gid_column[grid_list].error}</td></tr>{/if}
-		{/section}
-		<tr id = "grid_last_node"><td colspan = "2" ></td></tr>
-		 		</table></td></tr>
-		 		
-               
-	            </td></tr>
-	            <tr><td class = "labelCell">
-	                <a href = "javascript:void(0)" onclick = "eF_js_addAdditionalChoice('grid')"><img src = "images/16x16/add.png" alt = "{$smarty.const._ADDQUESTION}" title = "{$smarty.const._ADDQUESTION}" border = "0"/></a>
-	            </td><td>
-	                <a href = "javascript:void(0)" onclick = "eF_js_addAdditionalChoice('grid')">{$smarty.const._ADDOPTION}</a>
-	            </td></tr>
-	     <tr id = "grid_node"><td colspan = "2" ></td></tr>       
-		 <tr id = "gridSpace"><td></td><td>
-				{if $T_CURRENT_GRID}{$T_CURRENT_GRID}{/if}
-                </td></tr>
-                    
-	            <tr><td class = "labelCell"></td>
-                <td class = "elementCell">{$T_QUESTION_FORM.generate_grid.html}</td></tr>
-		 <tr><td class = "labelCell">{$T_QUESTION_FORM.answers_logic.label}:&nbsp;</td>
-	            <td class = "elementCell">{$T_QUESTION_FORM.answers_logic.html}</td></tr>
-			{if $T_QUESTION_FORM.answers_logic.error}<tr><td colspan = "2" class = "formError">{$T_QUESTION_FORM.answers_logic.error}</td></tr>{/if}
-			                
-	{elseif $smarty.get.question_type == 'hotspot'}
-	        <tr><td class = "labelCell questionLabel">{$smarty.const._SELECTIMAGE}:</td>
-	            <td>{$T_QUESTION_FORM.options.html}
-	            &nbsp;&nbsp; <a href = "{$smarty.server.REQUEST_URI}">{$smarty.const._REFRESHPAGE}</a> ({$smarty.const._INCASEYOUUPLOADEDIMAGE})
-	            </td></tr>
-		 		
-                <tr><td></td><td>
-                {if $T_CURRENT_HOTSPOT_IMAGE}
-                 	<img  id = "hotspotSpace" src="{$T_CURRENT_HOTSPOT_IMAGE}">
-                {else}
-                	<img  id = "hotspotSpace" src="" style="display:none">
-                {/if}
-                <script>
-                {literal}         
-		jQuery(document).ready(function () {
-			jQuery('#hotspotSpace').imgAreaSelect({
-				 handles: true,
-				 show: true,
-				onSelectEnd: function (img, selection) {
-					jQuery('#hotspot_answer').val(jQuery('#hotspot_answer').val()+'('+selection.x1+','+selection.y1+')'+'('+selection.x2+','+selection.y2+')||');
-				}
-			});
-		});
-		{/literal}  
-		</script>
-                
-                </td></tr>      
-               	<tr><td class = "labelCell"></td>
-                <td class = "elementCell">{$T_QUESTION_FORM.answer.html}</td></tr>     
-	            <tr><td class = "labelCell"></td>
-                <td class = "elementCell">{$T_QUESTION_FORM.generate_area.html}</td></tr>
-	
 	{elseif $smarty.get.question_type == 'drag_drop'}
 	        <tr><td class = "labelCell questionLabel">{$smarty.const._INSERTDRAGDROPCOUPLES}:</td>
 	            <td><table>

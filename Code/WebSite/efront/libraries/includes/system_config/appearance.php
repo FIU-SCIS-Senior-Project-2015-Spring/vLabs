@@ -33,8 +33,6 @@ $appearanceMainForm -> addElement("select", "lessons_directory", _VIEWDIRECTORY,
 $appearanceMainForm -> addElement("select", "login_redirect_page",  _LOGINREDIRECTPAGE, $loginRedirectArray, 'class = "inputCheckBox"');
 $appearanceMainForm -> addElement("text", "logout_redirect", _LOGOUTREDIRECT, 'class = "inputText"');
 $appearanceMainForm -> addElement("advcheckbox", "load_videojs",  _LOADVIDEOJS, null, 'class = "inputCheckBox"', array(0,1));
-$appearanceMainForm -> addElement("advcheckbox", "reports_inactive",  _SHOWINACTIVECOURSESINREPORTS, null, 'class = "inputCheckBox"', array(0,1));
-$appearanceMainForm -> addElement("textarea", "content_completion_terms", _ACCEPTUNITCOMPLETIONTERMS, 'style = "height:100px;width:500px;"');
 
 $appearanceMainForm -> setDefaults($GLOBALS['configuration']);
 if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAccess['configuration'] != 'change') {
@@ -88,11 +86,10 @@ if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAc
 	$appearanceLogoForm -> addElement("submit", "submit", _SAVE, 'class = "flatButton"');
 	if ($appearanceLogoForm -> isSubmitted() && $appearanceLogoForm -> validate()) {
 		try {
-			$values = $appearanceLogoForm -> exportValues();	
+			$values = $appearanceLogoForm -> exportValues();
 			unset($values['MAX_FILE_SIZE']);
 			unset($values['submit']);
 			unset($values['logo']); //This is set separately, otherwise settings replace its value
-			
 			foreach ($values as $key => $value) {
 				$result = EfrontConfiguration :: setValue($key, $value);
 			}
@@ -101,10 +98,7 @@ if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAc
 				EfrontConfiguration :: setValue('logo', '');
 			} elseif ($values['use_logo'] == 1) {
 				EfrontConfiguration :: setValue('logo', $GLOBALS['configuration']['site_logo']);
-			} elseif ($values['use_logo'] == 2) {
-				EfrontConfiguration :: setValue('logo', 'images/logo/logo.png');
 			}
-		
 			$logoDirectory = new EfrontDirectory(G_LOGOPATH);
 			$filesystem	   = new FileSystemTree(G_LOGOPATH);
 			try {
@@ -113,13 +107,8 @@ if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAc
 					throw new EfrontFileException(_NOTANIMAGEFILE, EfrontFileException::NOT_APPROPRIATE_TYPE);
 				}
 				EfrontConfiguration :: setValue('site_logo', $logoFile['id']);
-				
 			} catch (EfrontFileException $e) {
 				if ($e -> getCode() != UPLOAD_ERR_NO_FILE) {throw $e;}	//Don't halt if no file was uploaded (errcode = 4). Otherwise, throw the exception
-			}
-
-			if (empty($logoFile)) {
-				$logoFile =	new EfrontFile(EfrontSystem::setLogoFile($currentTheme));
 			}
 			// Normalize avatar picture to the dimensions set in the System Configuration menu. NOTE: the picture will be modified to match existing settings. Future higher settings will be disregarded, while lower ones might affect the quality of the displayed image
 			if ($values["normalize_dimensions"] == 1) {
@@ -128,8 +117,7 @@ if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAc
 				list($width, $height) = getimagesize(G_LOGOPATH . $logoFile['name']);
 				eF_createImage(G_LOGOPATH . $logoFile['name'], $logoFile['extension'], $width, $height, $values["logo_max_width"], $values["logo_max_height"]);
 			}
-			EfrontConfiguration :: setValue('logo_timestamp', time()); // to avoid browser caching when changing logo dimensions
-			EfrontCache::getInstance()->deleteCache('logo');
+
 			eF_redirect(basename($_SERVER['PHP_SELF'])."?ctg=system_config&op=appearance&tab=logo&message=".urlencode(_SUCCESFULLYUPDATECONFIGURATION)."&message_type=success");
 		} catch (Exception $e) {
 			handleNormalFlowExceptions($e);

@@ -266,12 +266,6 @@ font-weight:bold;
 background: #daf5e2;
 border:1px solid #AFCFB8;
 }
-.anc_gre_btn {	
-width: 1.5em;  
-font-size: 17px;
-display: inline-block;
-padding: 1px!important;
-}
 table.formElements{margin-left:0px;margin-right:0px;}
 table.formElements a{vertical-align:middle;}
 table.formElements a img{vertical-align:middle;border-width:0px;}

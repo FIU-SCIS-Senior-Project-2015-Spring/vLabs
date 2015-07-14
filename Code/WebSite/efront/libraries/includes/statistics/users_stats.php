@@ -10,15 +10,6 @@ if (!eF_local_shouldDisplaySelectBox()) {
 }
 
 if (isset($_GET['sel_user'])) {
-	
-	if ($_GET['user_form']) {
-		$loadScripts[] = 'includes/personal';
-		$editedUser 	= EfrontUserFactory :: factory($_GET['sel_user']);
-		$editedEmployee = $editedUser -> aspects['hcd'];
-		include('personal/user_form.php');
-		//exit;
-	}
-	
 	if ($currentUser -> user['user_type'] != 'administrator' && $isSupervisor) {
 		if ($currentUser -> aspects['hcd'] -> supervisesEmployee($_GET['sel_user'])) {
 			$validUsers[] = $_GET['sel_user'];
@@ -73,8 +64,6 @@ if (isset($_GET['sel_user'])) {
 			$rolesBasic = EfrontLessonUser :: getLessonsRoles();
 			$smarty -> assign("T_BASIC_ROLES_ARRAY", $rolesBasic);
 
-			$GLOBALS['configuration']['reports_inactive'] ? $show_inactive = true : null;
-			
 			if (isset($_GET['ajax']) && $_GET['ajax'] == 'lessonsTable') {
 				$tableName   = $_GET['ajax'];			
 				$smarty -> assign("T_DATASOURCE_COLUMNS", array('name', 'location', 'user_type', 'num_lessons', 'status', 'active_in_lesson', 'completed', 'score', 'operations', 'sort_by_column' => 4));
@@ -103,7 +92,7 @@ if (isset($_GET['sel_user'])) {
 					$_GET['sort'] = 'eliminate';		//Assign a default sort that does not exist, thus eliminating default sorting by name. This happens because $dataSource here is alread pre-sorted by course succession
 				}
 			}
-				
+			
 			if ($_GET['ajax'] == 'coursesTable' || $_GET['ajax'] == 'instancesTable') {
 				$smarty -> assign("T_DATASOURCE_COLUMNS", array('name', 'location', 'user_type', 'num_lessons', 'active_in_course', 'status', 'completed', 'score', 'operations', 'sort_by_column' => 4));
 				$smarty -> assign("T_DATASOURCE_OPERATIONS", array('progress'));
@@ -111,11 +100,8 @@ if (isset($_GET['sel_user'])) {
 				$tableName   = $_GET['ajax'];
 				if (isset($_GET['ajax']) && $_GET['ajax'] == 'coursesTable') {
 					//$constraints = array('archive' => false, 'active' => true, 'instance' => false) + createConstraintsFromSortedTable();
-					$constraints = array('archive' => false, 'instance' => false);
-					if(!$show_inactive) {
-						$constraints['active'] = true;
-					}
-					
+					$constraints = array('archive' => false, 'active' => true, 'instance' => false);
+
 					$constraints['required_fields'] = array('has_instances', 'location', 'user_type', 'active_in_course', 'completed', 'score', 'has_course', 'num_lessons');
 					$constraints['return_objects']  = false;
 					$courses	 = $infoUser -> getUserCoursesAggregatingResults($constraints);
@@ -128,10 +114,8 @@ if (isset($_GET['sel_user'])) {
 				}
 				if (isset($_GET['ajax']) && $_GET['ajax'] == 'instancesTable' && eF_checkParameter($_GET['instancesTable_source'], 'id')) {
 					//$constraints = array('archive' => false, 'active' => true, 'instance' => $_GET['instancesTable_source']) + createConstraintsFromSortedTable();
-					$constraints = array('archive' => false, 'instance' => $_GET['instancesTable_source']);
-					if(!$show_inactive) {
-						$constraints['active'] = true;
-					}
+					$constraints = array('archive' => false, 'active' => true, 'instance' => $_GET['instancesTable_source']);
+
 					$constraints['required_fields'] = array('num_lessons', 'location');
 					$constraints['return_objects']  = false;
 					$courses	 = $infoUser -> getUserCourses($constraints);
@@ -362,7 +346,7 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'user') {
 	$roles = EfrontUser :: getRoles(true);
 	$row = 2;
 	$workSheet -> write($row, 1, _LOGIN, $fieldLeftFormat);
-	$workSheet -> writeString($row++, 2, $userInfo['general']['login'], $fieldRightFormat);
+	$workSheet -> write($row++, 2, $userInfo['general']['login'], $fieldRightFormat);
 	$workSheet -> write($row, 1, _USERNAME, $fieldLeftFormat);
 	$workSheet -> write($row++, 2, $userInfo['general']['fullname'], $fieldRightFormat);
 	$workSheet -> write($row, 1, _USERTYPE, $fieldLeftFormat);
@@ -440,10 +424,7 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'user') {
 	$row = 1;
 	if ($infoUser -> user['user_type'] != 'administrator') {
 		//course users info
-		$constraints = array('instance' => false, 'archive' => false);
-		if(!$show_inactive) {
-			$constraints['active'] = true;
-		}
+		$constraints = array('instance' => false, 'archive' => false, 'active' => true);
 		$constraints['required_fields'] = array('has_instances', 'location', 'user_type', 'completed', 'score', 'has_course', 'num_lessons', 'to_timestamp', 'active_in_course');
 		$constraints['return_objects']  = false;
 		$userCourses = $infoUser -> getUserCoursesAggregatingResults($constraints);
@@ -608,12 +589,8 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'user') {
 
 		//add a separate sheet for each distinct course of that user
 		$count = 1;
-		$constraints = array('archive' => false);
 		foreach ($userCourses as $id => $course) {
-			$constraints = array('instance' => $id, 'archive' => false);
-			if(!$show_inactive) {
-				$constraints['active'] = true;
-			}
+			$constraints = array('instance' => $id, 'archive' => false, 'active' => true);
 			$constraints['required_fields'] = array('has_instances', 'location', 'user_type', 'completed', 'score', 'has_course', 'num_lessons', 'to_timestamp');
 			//$constraints['return_objects']  = false;
 			$instances   = $infoUser -> getUserCourses($constraints);
@@ -882,10 +859,7 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'user') {
 
 	$coursesAvgScore = $lessonsAvgScore = $projectsAvgScore = $testsAvgScore = 0;
 	$data = array();
-	$constraints = array('archive' => false);
-	if(!$show_inactive) {
-		$constraints['active'] = true;
-	}
+	$constraints = array('archive' => false, 'active' => true);
 	$constraints['required_fields'] = array('has_instances', 'location', 'user_type', 'completed', 'score', 'has_course', 'num_lessons', 'to_timestamp');
 	$constraints['return_objects']  = false;
 	$userCourses = $infoUser -> getUserCourses($constraints);
@@ -927,7 +901,7 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'user') {
 									_SCORE			  => formatScore($value['score']).'%',
 									'active'		  => $value['active']);
 
-			$courseLessons = $infoUser -> getUserStatusInCourseLessons(new EfrontCourse($value));
+			$courseLessons = $infoUser -> getUserStatusInCourseLessons(new EfrontCourse($value), true);
 
 			if (!empty($courseLessons)) {
 				$subsectionFormatting = array(_NAME			    => array('width' => '68%', 'fill' => true),

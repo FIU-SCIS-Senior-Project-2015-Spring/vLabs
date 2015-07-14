@@ -10,9 +10,6 @@ if ((!EfrontUser::isOptionVisible('tests') && $_GET['ctg'] == 'tests' && $_SESSI
 !isset($currentUser -> coreAccess['content']) || $currentUser -> coreAccess['content'] == 'change' ? $_change_ = 1 : $_change_ = 0;
 $smarty -> assign("_change_", $_change_);
 
-!isset($currentUser -> coreAccess['questions']) || $currentUser -> coreAccess['questions'] == 'change' ? $_change_questions = 1 : $_change_questions = 0;
-$smarty -> assign("_change_questions", $_change_questions);
-
 $loadScripts[] = 'scriptaculous/controls';
 $loadScripts[] = 'scriptaculous/dragdrop';
 $loadScripts[] = 'includes/tests';
@@ -119,69 +116,6 @@ try {
             echo $e -> getMessage().' ('.$e -> getCode().')';
         }
         exit;
-    } elseif (isset($_GET['delete_test_executions']) && in_array($_GET['delete_test_executions'], $legalValues) && eF_checkParameter($_GET['delete_test_executions'], 'id')) {
-        try {
-            if (!$_change_) {
-                throw new EfrontUserException(_UNAUTHORIZEDACCESS, EfrontUserException::RESTRICTED_USER_TYPE);
-            }
-
-			$compl_tests = eF_getTableDataFlat("completed_tests", "id", "tests_ID=".$_GET['delete_test_executions']);		
-			if (!empty($compl_tests['id'])) {
-				eF_deleteTableData("completed_tests_blob", "completed_tests_ID IN (".implode(',', $compl_tests['id']).")");		
-				eF_deleteTableData("completed_tests", "tests_ID=".$_GET['delete_test_executions']);
-			}
-			$res = eF_getTableData("tests", "content_ID,lessons_ID", "id=".$_GET['delete_test_executions']);
-			$content_ID = $res[0]['content_ID'];
-			
-			$result = eF_getTableData("users_to_lessons", "users_LOGIN,done_content", "lessons_ID=". $res[0]['lessons_ID']);
-			foreach ($result as $value) {
-				$done_content = unserialize($value['done_content']);
-				unset($done_content[$content_ID]);
-				$new_done_content = serialize($done_content);
-				eF_updateTableData("users_to_lessons", array('done_content' => $new_done_content), "lessons_ID=".$res[0]['lessons_ID']. " and users_LOGIN='".$value['users_LOGIN']."'");
-			}
-			
-			
-			echo $_GET['delete_test_executions'];
-        } catch (Exception $e) {
-            header("HTTP/1.0 500 ");
-            echo $e -> getMessage().' ('.$e -> getCode().')';
-        }
-        exit;
-    }  elseif (isset($_GET['delete_lesson_tests_executions']) && eF_checkParameter($_GET['delete_lesson_tests_executions'], 'id')) {
-
-    	try {
-            if (!$_change_) {
-                throw new EfrontUserException(_UNAUTHORIZEDACCESS, EfrontUserException::RESTRICTED_USER_TYPE);
-            }         
-            if ($_GET['delete_lesson_tests_executions'] == $_SESSION['s_lessons_ID']) {		   		
-				$lesson_tests = eF_getTableDataFlat("tests", "id", "lessons_ID=".$_SESSION['s_lessons_ID']);	
-				if (!empty($lesson_tests['id'])) {
-					$compl_tests = eF_getTableDataFlat("completed_tests", "id", "tests_ID IN (".implode(',', $lesson_tests['id']).")");
-					if (!empty($compl_tests['id'])) {
-						eF_deleteTableData("completed_tests_blob", "completed_tests_ID IN (".implode(',', $compl_tests['id']).")");
-						eF_deleteTableData("completed_tests", "tests_ID IN (".implode(',', $lesson_tests['id']).")");
-					}	
-				}
-				$res = eF_getTableDataFlat("tests", "content_ID", "lessons_ID=".$_GET['delete_lesson_tests_executions']);
-				$content_IDs = $res['content_ID'];
-				
-				$result = eF_getTableData("users_to_lessons", "users_LOGIN,done_content", "lessons_ID=".$_GET['delete_lesson_tests_executions']);
-				foreach ($result as $value) {
-					$done_content = unserialize($value['done_content']);
-					foreach ($content_IDs as $content_ID) {
-						unset($done_content[$content_ID]);
-					}
-					$new_done_content = serialize($done_content);
-					eF_updateTableData("users_to_lessons", array('done_content' => $new_done_content), "lessons_ID=".$_GET['delete_lesson_tests_executions']. " and users_LOGIN='".$value['users_LOGIN']."'");
-				}
-				
-            }
-        } catch (Exception $e) {
-            header("HTTP/1.0 500 ");
-            echo $e -> getMessage().' ('.$e -> getCode().')';
-        }
-       exit;
     } elseif (isset($_GET['publish_test']) && in_array($_GET['publish_test'], $legalValues) && eF_checkParameter($_GET['publish_test'], 'id')) {
         try {
             if (!$_change_) {
@@ -353,11 +287,7 @@ try {
         require_once("tests/add_test.php");
     } elseif (isset($_GET['add_question']) || (isset($_GET['edit_question']) && in_array($_GET['edit_question'], $legalQuestions))) {
         /***/
-    	if (!$_change_questions) {
-    		eF_redirect("".basename($_SERVER['PHP_SELF'])."?ctg=tests&tab=questions&message="._UNPRIVILEGEDATTEMPT);
-    	} else {
-        	require_once("tests/add_question.php");
-    	}
+        require_once("tests/add_question.php");
     } elseif (isset($_GET['solved_tests'])) {
 /*
         // Get skillgap test related information
@@ -380,7 +310,8 @@ try {
         $smarty -> assign("T_RECENT_TESTS" , $recentTests);
 */
     } else {
-        if (!$skillgap_tests) {	
+
+        if (!$skillgap_tests) {
             //Get the available questions (only questions from the selected unit, if there is one)
             try {
                 isset($_GET['from_unit']) && eF_checkParameter($_GET['from_unit'], 'id') ? $selectedUnit = $_GET['from_unit'] : $selectedUnit = 0;
@@ -388,17 +319,17 @@ try {
                 $children[] = $siblings['id'];
                 foreach (new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($siblings), RecursiveIteratorIterator :: SELF_FIRST)) as $key => $value) {
                     $children[] = $key;
-                }       
+                }
+
                 if (sizeof($children) > 0) {
                 	if ($_GET['showall'] && EfrontUser::isOptionVisible('questions_pool')) {
                 		if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 							if (G_VERSIONTYPE != 'standard') { #cpp#ifndef STANDARD
-                    			//@todo         		
-                				$questions = eF_getTableData("questions,lessons", "questions.*", "content_ID in (".implode(",", $children).") and lessons_ID!=0 and lessons.id=questions.lessons_ID and lessons.active=1 and linked_to IS NULL", "content_ID ASC");     //Retrieve all questions that belong to this unit or its subunits
+                    			$questions = eF_getTableData("questions,lessons", "questions.*", "content_ID in (".implode(",", $children).") and lessons_ID!=0 and lessons.id=questions.lessons_ID and lessons.active=1", "content_ID ASC");     //Retrieve all questions that belong to this unit or its subunits
 							} #cpp#endif
 						} #cpp#endif          	
 					} else {
-                		$questions = eF_getTableData("questions", "*", "content_ID in (".implode(",", $children).") and linked_to IS NULL and lessons_ID=".$currentLesson -> lesson['id'], "content_ID ASC");     //Retrieve all questions that belong to this unit or its subunits
+                		$questions = eF_getTableData("questions", "*", "content_ID in (".implode(",", $children).") and lessons_ID=".$currentLesson -> lesson['id'], "content_ID ASC");     //Retrieve all questions that belong to this unit or its subunits
                 	}
                 } else {
                     throw new Exception();//This jumps to the catch block right below
@@ -407,14 +338,11 @@ try {
             	if ($_GET['showall'] && EfrontUser::isOptionVisible('questions_pool')) {
             		if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 						if (G_VERSIONTYPE != 'standard') { #cpp#ifndef STANDARD
-          					$userLessons = $currentUser -> getLessons(false, 'professor');  
-            				if (!empty($userLessons)) { 			
-            					$questions = eF_getTableData("questions,lessons", "questions.*", "lessons_ID in (".implode(",",array_keys($userLessons)).") and lessons_ID !=0 and lessons.id=questions.lessons_ID and lessons.active=1 and linked_to IS NULL", "lessons_ID ASC");
-            				}
+            				$questions = eF_getTableData("questions,lessons", "questions.*", "lessons_ID !=0 and lessons.id=questions.lessons_ID and lessons.active=1", "lessons_ID ASC");     //Retrieve all questions that belong to this lesson
             			} #cpp#endif
 					} #cpp#endif  
 				} else {
-                	$questions = eF_getTableData("questions", "*", "linked_to IS NULL and lessons_ID = ".$currentLesson -> lesson['id'], "content_ID ASC");     //Retrieve all questions that belong to this lesson
+                	$questions = eF_getTableData("questions", "*", "lessons_ID = ".$currentLesson -> lesson['id'], "content_ID ASC");     //Retrieve all questions that belong to this lesson
             	}
             }
             if ($_GET['showall'] && EfrontUser::isOptionVisible('questions_pool')) {           
@@ -429,14 +357,13 @@ try {
 			//Assign the content units so that we can build the units select box for the "from_unit" option
             $iterator = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST));    //Default iterator excludes non-active units
             $contentUnits = $currentContent -> toHTMLSelectOptions($iterator);
-            
-            $smarty -> assign("T_UNITS", $contentUnits);           
+            $smarty -> assign("T_UNITS", $contentUnits);
             //Fix questions if their corresponding content is missing
             $contentUnits = array_keys($contentUnits);
             if (!$_GET['showall']) {
 	            foreach ($questions as $key => $value) {
-	                $names = array();                
-	                if (!in_array($value['content_ID'], $contentUnits) && $value['content_ID'] != 0) {
+	                $names = array();
+	                if (!in_array($value['content_ID'], $contentUnits)) {
 	                    $question = QuestionFactory :: factory($value);
 	                    $question -> question['content_ID'] = 0;
 	                    $question -> persist();
@@ -484,12 +411,6 @@ try {
         $testIds = array();
         foreach ($tests as $key => $test) {
             $testIds[] = $test['id'];
-            if (!$skillgap_tests) {
-            	$currentUnit = new EfrontUnit($test['content_ID']);
-            	$tests[$key]['linked_to'] = ($currentUnit['linked_to']) ? true : false;
-            }
-            
-            
 //@todo: change this call
             $doneTests = EfrontStats :: getDoneTestsPerTest(false, $test['id']);
             $tests[$key]['average_score'] = $doneTests[$test['id']]['average_score'];
@@ -498,11 +419,6 @@ try {
                 if ($tests[$key]['questions_num'] > $tests[$key]['options']['random_pool']) {
                     $tests[$key]['questions_num'] = $tests[$key]['options']['random_pool'];
                 }
-            }
-            if (!empty($tests[$key]['options']['random_test'])) {
-            	$testObj   = new EfrontTest($test['id']);
-            	$tests[$key]['questions_num'] = $testObj -> getNumQuestionsForRandomTests();
-            	
             }
 
             // If somehow the general threshold value is not set
@@ -515,7 +431,8 @@ try {
 
         $smarty -> assign("T_QUESTIONTYPESTRANSLATIONS", Question :: $questionTypes);
         $smarty -> assign("T_TESTS", $tests);
-//pr($questions);       exit; 
+        
+
         if (isset($_GET['ajax']) && $_GET['ajax'] == 'questionsTable') {
         	isset($_GET['limit']) && eF_checkParameter($_GET['limit'], 'uint') ? $limit = $_GET['limit'] : $limit = G_DEFAULT_TABLE_SIZE;
 
@@ -525,19 +442,19 @@ try {
             } else {
                 $sort = 'text';
             }
-//@todo check  
-			$contentTrees = array();
-            foreach ($questions as $key => $question) {   
-            	if (!$skillgap_tests) {    		
-	            	if (!isset($contentTrees[$question['lessons_ID']])) {
-	            		if ($question['lessons_ID']) {
-	            			$temp = new EfrontContentTree($question['lessons_ID']);                                 
-	            			$contentTrees[$question['lessons_ID']] = $temp -> toPathStrings();
-	            		}
-	            	}
-	            	$questions[$key]['parent_unit'] = $contentTrees[$question['lessons_ID']][$question['content_ID']];
-            	}    
-                
+
+            foreach ($questions as $key => $question) {
+                $names = array();
+                if ($question['content_ID'] && isset($currentContent)) {
+                    if (!isset($names[$question['content_ID']])) {
+                        foreach ($iterator = new EfrontAttributeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> getNodeAncestors($question['content_ID']))), array('name')) as $k => $v) {
+                            $names[$question['content_ID']][] = $v;
+                        }
+                    }
+                    $questions[$key]['parent_unit'] = implode("&nbsp;&raquo;&nbsp;", array_reverse($names[$question['content_ID']]));
+                } else {
+                    $questions[$key]['parent_unit'] = "";
+                }
                 $questions[$key]['text']        = strip_tags($question['text']);                            //Strip tags from the question text, so they do not display in the list
                 $questions[$key]['estimate_interval'] = eF_convertIntervalToTime($questions[$key]['estimate']);
             	
@@ -546,6 +463,7 @@ try {
                 	unset($questions[$key]);
                 }
             }
+
 			//remove questions from inactive and archived lessons
 			if ($skillgap_tests) {
 					$questionsTemp = array();
@@ -572,7 +490,7 @@ try {
                 isset($_GET['offset']) && eF_checkParameter($_GET['offset'], 'int') ? $offset = $_GET['offset'] : $offset = 0;
                 $questions = array_slice($questions, $offset, $limit, true);
             }
-//pr($questions);
+
             $smarty -> assign('T_QUESTIONS', $questions);
             !$skillgap_tests ? $smarty -> display('professor.tpl') : $smarty -> display('administrator.tpl');
             exit;
@@ -821,23 +739,20 @@ try {
                 $smarty -> assign('T_TEST_FORM', $renderer -> toArray());
             }
 
-        } else {
-        	if(!$_GET['print']) {
-	        	//The user sees the list of tests
-	            $visitableIterator = new EfrontTestsFilterIterator(new EfrontVisitableFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST))));
-	
-	            $smarty -> assign("T_CONTENT_TREE",  $currentContent -> toHTML($iterator, 'dhtmlContentTree', array('truncateNames' => 25, 'selectedNode' => $currentUnit['id'])));
-	            $smarty -> assign("T_UNIT",          $currentUnit);
-	            $smarty -> assign("T_NEXT_UNIT",     $currentContent -> getNextNode($currentUnit, $visitableIterator));
-	            $smarty -> assign("T_PREVIOUS_UNIT", $currentContent -> getPreviousNode($currentUnit, $visitableIterator));        //Next and previous units are needed for navigation buttons
-	            $smarty -> assign("T_PARENT_LIST",   $currentContent -> getNodeAncestors($currentUnit));       //Parents are needed for printing the titles
-	            $smarty -> assign("T_NO_TEST", true);
-	            if ($ruleCheck !== true) {
-	                $message      = $ruleCheck;
-	                $message_type = false;
-	                $smarty -> assign("T_RULE_CHECK_FAILED", true);
-	            }
-        	}
+        } else {                                                                            //The user sees the list of tests
+            $visitableIterator = new EfrontTestsFilterIterator(new EfrontVisitableFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST))));
+
+            $smarty -> assign("T_CONTENT_TREE",  $currentContent -> toHTML($iterator, 'dhtmlContentTree', array('truncateNames' => 25, 'selectedNode' => $currentUnit['id'])));
+            $smarty -> assign("T_UNIT",          $currentUnit);
+            $smarty -> assign("T_NEXT_UNIT",     $currentContent -> getNextNode($currentUnit, $visitableIterator));
+            $smarty -> assign("T_PREVIOUS_UNIT", $currentContent -> getPreviousNode($currentUnit, $visitableIterator));        //Next and previous units are needed for navigation buttons
+            $smarty -> assign("T_PARENT_LIST",   $currentContent -> getNodeAncestors($currentUnit));       //Parents are needed for printing the titles
+            $smarty -> assign("T_NO_TEST", true);
+            if ($ruleCheck !== true) {
+                $message      = $ruleCheck;
+                $message_type = false;
+                $smarty -> assign("T_RULE_CHECK_FAILED", true);
+            }
         }
     } else {
 

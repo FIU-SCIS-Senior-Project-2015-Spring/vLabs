@@ -35,8 +35,6 @@
                                                 <tr><td></td><td class = "infoCell">{$smarty.const._EACHFILESIZEMUSTBESMALLERTHAN} <b>{$T_MAX_FILESIZE}</b> {$smarty.const._KB}</td></tr>
                                                 <tr><td class = "labelCell">{$smarty.const._UPLOADFILEFROMURL}:&nbsp;</td>
                                                     <td>{$T_IMPORT_LESSON_FORM.url_upload.html}</td></tr>
-                                                <tr><td class = "labelCell">{$T_IMPORT_LESSON_FORM.exclude_search.label}:&nbsp;</td>
-                                                    <td>{$T_IMPORT_LESSON_FORM.exclude_search.html}</td></tr>
                                                 <tr><td colspan = "2">&nbsp;</td></tr>
                                                 <tr><td></td><td>{$T_IMPORT_LESSON_FORM.submit_import_lesson.html}</td></tr>
                                             </table>
@@ -260,8 +258,8 @@
                             </table>
                         </li>
                     {/capture}
-                    {if ($smarty.const.G_VERSIONTYPE != 'community')} 	{* #cpp#ifndef COMMUNITY *}				
-					 {if $T_CONFIGURATION.mode_func_people}
+                    {if ($smarty.const.G_VERSIONTYPE != 'community')} 	{* #cpp#ifndef COMMUNITY *}
+						{if $T_CONFIGURATION.social_modules_activated == 1}
 	                    {capture name = "layout_moduleTimeline"}
 	                        <li id = "layoutsecondlist_moduleTimeline">
 	                            <table class = "innerTable" style = "width:300px">

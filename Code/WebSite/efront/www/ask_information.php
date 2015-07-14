@@ -40,23 +40,16 @@ try {
 			if ($_GET['from_course'] && eF_checkParameter($_GET['from_course'], 'id')) {
 				$course   = new EfrontCourse($_GET['from_course']);
 				$schedule = $course -> getLessonScheduleInCourse($lesson);
-				if ($schedule['start_date'] || $schedule['end_date']) {
-					$lessonInformation['from_timestamp'] = $schedule['start_date'];
-					$lessonInformation['to_timestamp']   = $schedule['end_date'];
-				} else {
-					$lessonInformation['from_timestamp'] = $schedule['active_in_lesson'] + 24 * 60 * 60 * $schedule['start_period'];
-					$lessonInformation['to_timestamp'] 	= $lessonInformation['from_timestamp'] + 24 * 60 * 60 * $schedule['end_period'];
-				}
+				$lessonInformation['from_timestamp'] = $schedule['start_date'];
+				$lessonInformation['to_timestamp']   = $schedule['end_date'];
 			}
 		} catch (Exception $e) {};
 
 		if ($lesson -> lesson['course_only']) {
 			$lessonCourses = $lesson -> getCourses();
 			if (!empty($lessonCourses)) {
-				foreach ($lessonCourses as $value) {		
-					if ($value['instance_source'] == 0)	{	
-						$lessonInformation['lesson_courses'][] = $value['name'];
-					}
+				foreach ($lessonCourses as $value) {
+					$lessonInformation['lesson_courses'][] = $value['name'];
 				}
 				$lessonInformation['lesson_courses'] = implode(", ", $lessonInformation['lesson_courses']);
 			}

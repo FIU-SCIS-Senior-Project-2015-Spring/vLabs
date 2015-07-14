@@ -230,19 +230,18 @@ class module_journal extends EfrontModule{
 
 		if(isset($_REQUEST['autosave']) && $_REQUEST['autosave'] == "1" && isset($_REQUEST['entry_body']) && isset($_REQUEST['edit_entry'])){
 
-			if($_REQUEST['edit_entry'] != "-1") {
-				if (eF_checkParameter($_GET['edit_entry'], 'id')) {
-					$object = eF_getTableData("module_journal_entries", "lessons_ID", "id=".$_GET['edit_entry']);
-	
-					$fields = array(
-						"entry_body" => $_REQUEST['entry_body'],
-						"entry_date" => date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'),
-						"lessons_ID" => $object[0]['lessons_ID'],
-						"users_LOGIN" => $currentUser->user['login'],
-					);
-	
-					eF_updateTableData("module_journal_entries", $fields, "id=".$_REQUEST['edit_entry']);
-				}
+			if($_REQUEST['edit_entry'] != "-1"){
+
+				$object = eF_getTableData("module_journal_entries", "lessons_ID", "id=".$_GET['edit_entry']);
+
+				$fields = array(
+					"entry_body" => $_REQUEST['entry_body'],
+					"entry_date" => date('Y').'-'.date('m').'-'.date('d').' '.date('H').':'.date('i').':'.date('s'),
+					"lessons_ID" => $object[0]['lessons_ID'],
+					"users_LOGIN" => $currentUser->user['login'],
+				);
+
+				eF_updateTableData("module_journal_entries", $fields, "id=".$_REQUEST['edit_entry']);
 			}
 			else{
 				$fields = array(

@@ -18,7 +18,7 @@ try {
 
 	} elseif (isset($_GET['course'])) {		
 		$currentCourse = new EfrontCourse($_GET['course']);
-		$result 	   = eF_getTableData("users_to_courses", "user_type", "users_LOGIN='".$currentUser -> user['login']."' and archive=0 and courses_ID=".$currentCourse -> course['id']);
+		$result 	   = eF_getTableData("users_to_courses", "user_type", "users_LOGIN='".$currentUser -> user['login']."' and courses_ID=".$currentCourse -> course['id']);
 		
 		if (empty($result) || $roles[$result[0]['user_type']] != 'professor') {
 			throw new Exception(_UNAUTHORIZEDACCESS);
@@ -76,18 +76,10 @@ try {
 					}
 				} elseif (isset($_GET['ajax']) && $_GET['ajax'] == 'cancel') {
 					try {
-						if (eF_checkParameter($_GET['course_id'], 'id')) {
-							$course = new EfrontCourse($_GET['course_id']);
-							$course -> removeUsers($_GET['users_login']);
-							
-							$event = array("type" 		  => EfrontEvent::COURSE_USER_REFUSAL,
-									"users_LOGIN"  => $_GET['users_login'],
-									"lessons_ID"   => $course -> course['id'],
-									"lessons_name" => $course -> course['name']);
-							EfrontEvent::triggerEvent($event);
-							echo json_encode(array('status' => 1));
-							exit;
-						}
+						$course = new EfrontCourse($_GET['course_id']);
+						$course -> removeUsers($_GET['users_login']);
+						echo json_encode(array('status' => 1));
+						exit;
 					} catch (Exception $e) {
 						handleAjaxExceptions($e);
 					}
@@ -242,11 +234,10 @@ try {
 		if (EfrontUser::isOptionVisible('calendar')) {
         	$myCoursesOptions[] = array('text' => _CALENDAR, 'image' => "32x32/calendar.png", 'href' => basename($_SERVER['PHP_SELF'])."?ctg=calendar");
 		}
-	
-		if (EfrontUser::isOptionVisible('professor_courses') && ($_SESSION['s_type'] == 'professor' || $currentUser -> user['user_type'] == 'professor')) {
+		if (EfrontUser::isOptionVisible('professor_courses') && $_SESSION['s_type'] == 'professor') {
 			if ($currentUser -> coreAccess['professor_courses'] != 'hidden') {	
-				$myCoursesOptions[] = array('text' => _COURSES, 'image' => "32x32/courses.png", 'href' => "professor.php?ctg=courses");
-				$myCoursesOptions[] = array('text' => _LESSONS, 'image' => "32x32/lessons.png", 'href' => "professor.php?ctg=professor_lessons");
+				$myCoursesOptions[] = array('text' => _COURSES, 'image' => "32x32/courses.png", 'href' => basename($_SERVER['PHP_SELF'])."?ctg=courses");
+				$myCoursesOptions[] = array('text' => _LESSONS, 'image' => "32x32/lessons.png", 'href' => basename($_SERVER['PHP_SELF'])."?ctg=professor_lessons");
 			}
 		}
 		

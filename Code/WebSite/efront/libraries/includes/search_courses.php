@@ -100,10 +100,10 @@ if (isset($_GET['ajax'])) {
                         } else {
                             $search_string .= " AND users_to_courses".$id.".from_timestamp >= " . $from_timestamp . " ";
                         }
+
+
                     }
                 }
-                // do take into account users that don't have this course now...
-                $search_string .= " AND users_to_courses".$id.".archive='0'";
             }
 
         }

@@ -24,7 +24,7 @@ class EfrontConfiguration
 	const MODE_INVISIBLE = 0;
 	const MODE_VISIBLE = 1;
 	const MODE_VISIBLE_COMPLETE = 2;
-	const CACHE_ENABLED	= 1;
+	
     /**
      * Array containing the default configuration options
      * @since 3.0
@@ -38,10 +38,10 @@ class EfrontConfiguration
     	'debug_mode'			 => '',
     	'updater_period'		 => 100000,
     	'last_reset_certificate' => '',
-    	//'cache_enabled'			 => '1',		
+    	'cache_enabled'			 => '1',		
 
         //System settings - security
-    	'file_black_list'        => 'php,php3,jsp,asp,cgi,pl,exe,com,bat,sh,ph3,php4,ph4,php5,ph5,phtm,phtml,ini',
+    	'file_black_list'        => 'php,php3,jsp,asp,cgi,pl,exe,com,bat,sh,ph3,php4,ph4,php5,ph5,phtm,phtml',
         'file_white_list'        => '',
         'ip_black_list'          => '',
         'ip_white_list'          => '*.*.*.*',
@@ -97,7 +97,6 @@ class EfrontConfiguration
         'logo_max_width'		 => '200',
         'logo_max_height'		 => '150',
         'normalize_dimensions'	 => '1',
-        'logo_timestamp'         => '',
         'favicon'                => '',
         'username_format'		 => '#surname# #n#. (#login#)',    //Possible values: #name#, #n#, #surname#, #login#
         'username_format_resolve'=> '1',		//If 2 formatted usernames are the same, include the login too
@@ -107,9 +106,7 @@ class EfrontConfiguration
 		'show_footer'			 => '1',
     	'load_videojs'		 	 => '0',
     	'time_reports'			 => '0',		//0 means 'count total time', 1 means 'count active time'
-    	'reports_inactive'		 => '0',
-    	'content_completion_terms' => 'Do you accept the content above?',
-    	
+
         //LDAP
         'activate_ldap'          => '0',
         'only_ldap'              => '0',
@@ -127,20 +124,6 @@ class EfrontConfiguration
         'ldap_telephonenumber'   => 'telephonenumber',
         'ldap_uid'               => 'uid',
 
-        //Saml
-        'saml_enabled' => '0',
-        'saml_integration_type' => 2,	//saml
-        'saml_provider' => '',
-        'saml_fingerprint' => '',
-        'saml_sign_in' => '',
-        'saml_sign_out' => '',
-        'saml_targeted_id' => 'urn:oid:1.3.6.1.4.1.5923.1.1.1.10',
-        'saml_first_name' => 'urn:oid:2.5.4.42',
-        'saml_last_name' => 'urn:oid:2.5.4.4',
-        'saml_email' => 'urn:oid:0.9.2342.19200300.100.1.3',
-        'saml_bool_redirect_validate' => false,
-        'saml_bool_redirect_sign' => false,
-        
         //SMTP
         'smtp_host'              => 'localhost',
         'smtp_user'              => '',

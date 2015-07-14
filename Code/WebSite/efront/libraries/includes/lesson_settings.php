@@ -94,8 +94,6 @@ if ($_GET['op'] == 'reset_lesson') {
     if (isset($currentUser -> coreAccess['content']) && $currentUser -> coreAccess['content'] != 'change') {
         eF_redirect(basename($_SERVER['PHP_SELF'])."?ctg=control_panel&message=".urlencode(_UNAUTHORIZEDACCESS)."&message_type=failure");
     }
-    
-    
     /* Import part */
     $form = new HTML_QuickForm("import_lesson_form", "post", basename($_SERVER['PHP_SELF']).'?'.$baseUrl.'&op=import_lesson', "", null, true);
 
@@ -136,16 +134,13 @@ if ($_GET['op'] == 'reset_lesson') {
     $form -> setMaxFileSize(FileSystemTree :: getUploadMaxSize() * 1024);            //getUploadMaxSize returns size in KB
     
     $form -> addElement('text', 'url_upload', _UPLOADFILEFROMURL, 'class = "inputText"');
-
-    $form -> addElement('checkbox', 'exclude_search',_EXCLUDESEARCH, null, 'class = "inputCheckbox"');
-    
     $form -> addElement('submit', 'submit_import_lesson', _SUBMIT, 'class = "flatButton"');
 
     $smarty -> assign("T_MAX_FILESIZE", FileSystemTree :: getUploadMaxSize());
 
     if ($form -> isSubmitted() && $form -> validate()) {
         try {
-            $values         = $form -> exportValues();             
+            $values         = $form -> exportValues();
             $currentLesson -> initialize(array_keys($values['options']));
 
             $filesystem     = new FileSystemTree($currentLesson -> getDirectory());
@@ -159,11 +154,11 @@ if ($_GET['op'] == 'reset_lesson') {
                     throw new Exception(_PROBLEMUPLOADINGFILE.': '.$error['message']);
                 } else {
                 	$uploadedFile = new EfrontFile($currentLesson -> getDirectory().$urlFile);
-                    $currentLesson -> import($uploadedFile, $values['options'], false, false, $values['exclude_search']);
+                    $currentLesson -> import($uploadedFile);
                 }
             } else {
             	$uploadedFile   = $filesystem -> uploadFile('file_upload', $currentLesson -> getDirectory());
-            	$currentLesson -> import($uploadedFile, $values['options'], false, false, $values['exclude_search']);
+            	$currentLesson -> import($uploadedFile);
             }
             $smarty -> assign("T_REFRESH_SIDE", 1);
 
@@ -196,7 +191,7 @@ if ($_GET['op'] == 'reset_lesson') {
 
     if ($form -> isSubmitted() && $form -> validate()) {
         try {
-            $file   = $currentLesson -> export(false, true, $form -> exportValue('export_files'));
+            $file   = $currentLesson -> export('all', true, $form -> exportValue('export_files'));
             $smarty -> assign("T_NEW_EXPORTED_FILE", $file);
 
             $message      = _LESSONEXPORTEDSUCCESFULLY;
@@ -219,7 +214,7 @@ if ($_GET['op'] == 'reset_lesson') {
     } else {
         $smarty -> assign("T_BASE_URL", 'ctg=settings');
     }
-    try {   	
+    try {
         $lessonUsers    = $currentLesson -> getUsers();                    //Get all users that have this lesson
         unset($lessonUsers[$currentUser -> login]);                        //Remove the current user from the list, he can't set parameters for his self!
         //COMMENTED OUT BECAUSE WE DON'T WANT TO SET USERS FROM THIS LIST
@@ -344,7 +339,6 @@ if ($_GET['op'] == 'reset_lesson') {
     }
 
 	$lessonSettings['rules']               = array('text' => _ACCESSRULES,       	'image' => "32x32/rules.png",       'onClick' => 'activate(this, \'rules\')',           'title' => _CLICKTOTOGGLE, 'group' => 2, 'class' => isset($currentLesson -> options['rules']) && $currentLesson -> options['rules'] ? null : 'inactiveImage');
-	$lessonSettings['progress']            = array('text' => _USERSPROGRESS,       	'image' => "32x32/status.png",       'onClick' => 'activate(this, \'progress\')',       'title' => _CLICKTOTOGGLE, 'group' => 2, 'class' => isset($currentLesson -> options['progress']) && $currentLesson -> options['progress'] ? null : 'inactiveImage');
     if (EfrontUser::isOptionVisible('forum', false)) {
         $lessonSettings['forum']           = array('text' => _FORUM,             	'image' => "32x32/forum.png",      'onClick' => 'activate(this, \'forum\')',           'title' => _CLICKTOTOGGLE, 'group' => 2, 'class' => isset($currentLesson -> options['forum']) && $currentLesson -> options['forum'] ? null : 'inactiveImage');
     }

@@ -97,7 +97,7 @@
 				</tr>
 			{foreach name = 'lessons_list2' key = 'key' item = 'lesson' from = $T_DATA_SOURCE}
 				<tr class = "defaultRowHeight {cycle values = "oddRowColor, evenRowColor"} {if !$lesson.active}deactivatedTableElement{/if}">
-					<td><a href = "{$smarty.server.PHP_SELF}?ctg=professor_lessons&edit_lesson={$lesson.id}" class = "editLink">{$lesson.name}</a></td>
+					<td><a href = "{$smarty.server.PHP_SELF}?ctg=lessons&edit_lesson={$lesson.id}" class = "editLink">{$lesson.name}</a></td>
 					<td>{$lesson.directionsPath}</td>
 					<td>#filter:timestamp-{$lesson.created}#</td>
 {if ($smarty.const.G_VERSIONTYPE != 'community')} {* #cpp#ifndef COMMUNITY *}
@@ -330,9 +330,7 @@
 				{eF_template_printBlock tabber = "users" title ="`$users_block_title`" data = $smarty.capture.t_users_to_courses_code image = '32x32/users.png'}
 				{if ($smarty.const.G_VERSIONTYPE != 'community')} {* #cpp#ifndef COMMUNITY *}
 					{if ($smarty.const.G_VERSIONTYPE != 'standard')} {* #cpp#ifndef STANDARD *}
-						{if 'course_instances'|eF_template_isOptionVisible}	
 						{eF_template_printBlock tabber = "instances" title ="`$smarty.const._COURSEINSTANCES`" data = $smarty.capture.t_course_instances_code image = '32x32/schedule.png'}
-						{/if}
 					{/if} {* #cpp#endif *}
 				{/if} {* #cpp#endif *}
 

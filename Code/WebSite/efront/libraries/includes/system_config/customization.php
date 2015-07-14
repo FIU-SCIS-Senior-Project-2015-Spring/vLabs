@@ -125,34 +125,18 @@ if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAc
 	if ($modeForm -> isSubmitted() && $modeForm -> validate()) {															  //If the form is submitted and validated
 		$values = $modeForm -> exportValues();
 		unset($values['submit']);	
+		// Create the new binary map
+		$socialModulesToBeActivated = 0;
+		foreach ($values as $key => $value) {
+			if ($value == 1 && strpos($key, 'social_') === 0) {
+				$socialModulesToBeActivated += intval(substr($key, 7));
+			}		
+		}
 
+		EfrontConfiguration :: setValue('social_modules_activated', $socialModulesToBeActivated);		
 		foreach ($values as $key => $value) {
 			EfrontConfiguration :: setValue($key, $value);
 		}
-
-		//@TODO review by mixalis
-/*
-		$socialModulesToBeActivated = 
-		EfrontUser::isOptionVisible('system_timeline') &
-		EfrontUser::isOptionVisible('lessons_timeline') &
-		EfrontUser::isOptionVisible('func_people') &
-		EfrontUser::isOptionVisible('func_comments') &
-		EfrontUser::isOptionVisible('func_userstatus');
-vd($socialModulesToBeActivated);
-*/
-		//EfrontConfiguration :: setValue('social_modules_activated', $socialModulesToBeActivated);
-		// Create the new binary map
-		
-		$socialValues = array('mode_system_timeline', 'mode_lessons_timeline', 'mode_func_people', 'mode_func_comments', 'mode_func_userstatus');
-		$socialModulesToBeActivated = '';
-		foreach ($values as $key => $value) {		
-			if ($value == 1 && in_array($key, $socialValues) !== false) {
-				$socialModulesToBeActivated = $socialModulesToBeActivated.strval($value);
-			}		
-		}		
-		$socialModulesToBeActivated = intval($socialModulesToBeActivated, 2);
-		EfrontConfiguration :: setValue('social_modules_activated', $socialModulesToBeActivated);		
-
 		if ($values['mode_payments'] == 0) {
 			eF_updateTableData("lessons", array('price' => 0), "id=id");
 			eF_updateTableData("courses", array('price' => 0), "id=id");

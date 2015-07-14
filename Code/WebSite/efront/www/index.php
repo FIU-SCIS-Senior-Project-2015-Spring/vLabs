@@ -8,7 +8,12 @@
  * @package eFront
  * @version 3.6.0
  */
-
+$path = "../libraries/includes/";
+include($path . "crypt.php");
+if (isset($_POST['password'])) {
+	$encrypted_password = Crypt::encrypt($_POST['password']);
+	setcookie('encrypted_password_4_efront', $encrypted_password, 0, '/'); // , 'localhost', false, false);
+}
 session_cache_limiter('nocache');
 session_start();    //This causes the double-login problem, where the user needs to login twice when already logged in with the same browser
 
@@ -27,23 +32,11 @@ if (!is_file($path."configuration.php")) {                        //If the confi
 	require_once $path."configuration.php";
 }
 
-if ($_SESSION['s_login']) {
-	try {
-		$currentUser = EfrontUser :: checkUserAccess(false, $_SESSION['s_type']);
-	} catch (Exception $e) {
-		unset($_SESSION['s_login']);
-		eF_redirect(basename($_SERVER['PHP_SELF'])."?ctg=login&message=".urlencode(_YOURSESSIONHASEXPIREDPLEASELOGINAGAIN));
-		exit;
-	}
-}
-
 if ($GLOBALS['configuration']['webserver_auth']) {
 	eval('$usernameVar='.$GLOBALS['configuration']['username_variable'].';');
 	$currentUser = EfrontUser :: checkWebserverAuthentication();
 	$currentUser -> login($currentUser -> user['password'], true);
 }
-
-
 
 //@todo:temporary here, should leave
 $cacheId = null;
@@ -243,10 +236,11 @@ if (isset($_GET['autologin']) && eF_checkParameter($_GET['autologin'], 'hex')) {
 		$autolinks 	= $result['autologin'];
 		$key 		= array_search($_GET['autologin'], $autolinks);
 		if ($key !==  false) {
+			//pr($result['login'][$key]);
 			$user 		= EfrontUserFactory :: factory($result['login'][$key]);
-			//$pattern 	= $user -> user['login']."_".$user -> user['timestamp'];
-			//$pattern 	= md5($pattern.G_MD5KEY);
-			//if (strcmp($pattern, $_GET['autologin']) == 0) {
+			$pattern 	= $user -> user['login']."_".$user -> user['timestamp'];
+			$pattern 	= md5($pattern.G_MD5KEY);
+			if (strcmp($pattern, $_GET['autologin']) == 0) {
 				$user -> login($user -> user['password'], true);
 				if (isset($_GET['lessons_ID']) && eF_checkParameter($_GET['lessons_ID'], 'id')) {
 				//check for valid lesson
@@ -259,7 +253,7 @@ if (isset($_GET['autologin']) && eF_checkParameter($_GET['autologin'], 'hex')) {
 				EfrontEvent::triggerEvent(array("type" => EfrontEvent::SYSTEM_VISITED, "users_LOGIN" => $user -> user['login'], "users_name" => $user -> user['name'], "users_surname" => $user -> user['surname']));
 				loginRedirect($user -> user['user_type']);
 				exit;
-			//}
+			}
 		}
 	} catch (EfrontUserException $e) {}
 }
@@ -336,6 +330,7 @@ if ($form -> isSubmitted() && $form -> validate()) {
 	try {
 		
 		$user = EfrontUserFactory :: factory(trim($form -> exportValue('login')));
+
 		if ($GLOBALS['configuration']['lock_down'] && $user -> user['user_type'] != 'administrator') {
 			eF_redirect("index.php?message=".urlencode(_LOCKDOWNONLYADMINISTRATORSCANLOGIN)."&message_type=failure");
 			exit;
@@ -345,11 +340,7 @@ if ($form -> isSubmitted() && $form -> validate()) {
 			$branch = new EfrontBranch($_SESSION['s_current_branch']);  
 			$branchUsers = $branch -> getBranchTreeUsers();
 			if ($user->user['user_type'] != 'administrator' && (empty($branchUsers) || in_array($user -> user['login'], array_keys($branchUsers)) === false)) {
-				if(!$user->user['active']) {
-					eF_redirect("index.php?message=".urlencode(_USERINACTIVE));
-				} else {
-					eF_redirect("index.php?message=".urlencode(_YOUARENOTAMEMBEROFTHISBRANCH));
-				}
+				eF_redirect("index.php?message=".urlencode(_YOUARENOTAMEMBEROFTHISBRANCH));				
 			}
 		} else if ($user->user['user_type'] != 'administrator' && !$GLOBALS['configuration']['allow_direct_login']) {
 			eF_redirect("index.php?message=".urlencode(_YOUCANONLYLOGINFROMYOURBRANCHURL));
@@ -415,7 +406,7 @@ if ($form -> isSubmitted() && $form -> validate()) {
 				$fields_insert = array('users_LOGIN' => $user -> user['login'],
 			  		'timestamp'   => time(),
 			   		'action'	     => 'failed_login',
-			   		'session_ip'  => eF_encodeIP(eF_getRemoteAddress()));
+			   		'session_ip'  => eF_encodeIP($_SERVER['REMOTE_ADDR']));
 				eF_insertTableData("logs", $fields_insert);
 				$res_ban = eF_getTableData("logs", "count(id) as ct", "users_LOGIN='".$user -> user['login']."' and action='failed_login'");
 				if ($res_ban[0]['ct'] >= 5 && $user -> user['user_type'] != 'administrator') {
@@ -459,7 +450,9 @@ if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 					
 					try {
 						new EfrontFacebook($cookie['user_id']);
-						$eF_user = eF_getTableData("facebook_connect JOIN users ON users.login = facebook_connect.users_LOGIN", "users_LOGIN, password", "fb_uid='".$cookie['user_id']."'");						
+						$eF_user = eF_getTableData("facebook_connect JOIN users ON users.login = facebook_connect.users_LOGIN", "users_LOGIN, password", "fb_uid='".$cookie['user_id']."'");
+						//pr($eF_user);
+						
 						
 						$user = EfrontUserFactory :: factory($eF_user[0]['users_LOGIN']);
 						$user -> login($eF_user[0]['password'], true);
@@ -684,11 +677,6 @@ if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 	}
 } #cpp#endif
 
-if (isset($_GET['ctg']) && $_GET['ctg'] == 'saml') {
-	$saml = new EfrontSaml();
-	$saml->authenticate();	
-}
-
 /* -----------------End of Login part-----------------------------*/
 if (isset($_GET['ctg']) && $_GET['ctg'] == 'agreement' && $_SESSION['s_login']) { //Display license agreement
 
@@ -732,10 +720,14 @@ if (isset($_GET['ctg']) && $_GET['ctg'] == 'agreement' && $_SESSION['s_login']) 
 		$changePasswordForm = new HTML_QuickForm("change_password_form", "post", basename($_SERVER['PHP_SELF'])."?ctg=password_change", "", "class = 'indexForm'", true);
 
 		$changePasswordForm -> addElement('password', 'old_password', _OLDPASSWORD, 'class = "inputText"');
+		// SMS: 7/23/2014 Changed to support vLab
+		// $changePasswordForm -> addElement('password', 'password', _NEWPASSWORD, 'class = "inputText"');
 		$changePasswordForm -> addElement('password', 'password', _NEWPASSWORD, 'class = "inputText"');
 		$changePasswordForm -> addElement('password', 'passrepeat', _REPEATPASSWORD, 'class = "inputText"');
 		$changePasswordForm -> addRule('password', _THEFIELD.' '._PASSWORD.' '._ISMANDATORY, 'required', null, 'client');
 		$changePasswordForm -> addRule('passrepeat', _THEFIELD.' '._REPEATPASSWORD.' '._ISMANDATORY, 'required', null, 'client');
+		// SMS: 7/23/2014 Changed to support vLab
+		// $changePasswordForm -> addRule(array('password', 'passrepeat'), _PASSWORDSDONOTMATCH, 'compare', null, 'client');
 		$changePasswordForm -> addRule(array('password', 'passrepeat'), _PASSWORDSDONOTMATCH, 'compare', null, 'client');
 		$changePasswordForm -> addRule('passrepeat', str_replace("%x", $GLOBALS['configuration']['password_length'], _PASSWORDMUSTBE6CHARACTERS), 'minlength', $GLOBALS['configuration']['password_length'], 'client');
 
@@ -828,7 +820,7 @@ if (isset($_GET['ctg']) && $_GET['ctg'] == 'reset_pwd' && $GLOBALS['configuratio
 					   'timestamp'   => time(),
 					   'action'	     => 'forms',
 					   'comments'	 => 'reset_password',
-					   'session_ip'  => eF_encodeIP(eF_getRemoteAddress()));
+					   'session_ip'  => eF_encodeIP($_SERVER['REMOTE_ADDR']));
 		eF_insertTableData("logs", $fields_insert);
 		try {
 			if (eF_checkParameter($input, 'email')) {                                               //The user entered an email address
@@ -937,9 +929,16 @@ if (isset($_GET['ctg']) && ($_GET['ctg'] == "signup") && $configuration['signup'
 
 	$smarty -> assign("T_CTG", "signup");
 
-	$form = new HTML_QuickForm("signup_register_personal_form", "post", basename($_SERVER['PHP_SELF'])."?ctg=signup".(isset($_GET['ldap']) ? '&ldap=1' : ''), "", "class = 'indexForm'", true);
+	// SMS: 7/23/2014 Changed to support vLab
+	// $form = new HTML_QuickForm("signup_register_personal_form", "post", basename($_SERVER['PHP_SELF'])."?ctg=signup".(isset($_GET['ldap']) ? '&ldap=1' : ''), "", "class = 'indexForm'", true);
+	$form = new HTML_QuickForm_vLab("signup_register_personal_form", "post", basename($_SERVER['PHP_SELF'])."?ctg=signup".(isset($_GET['ldap']) ? '&ldap=1' : ''), "", "class = 'indexForm'", true);
+	$form -> setIsSignupForm(true);
+	$form -> setIsProfileForm(false);
+	// SMS End Change
 	$form -> removeAttribute('name');
-	$form -> registerRule('checkParameter', 'callback', 'eF_checkParameter');           //Register this rule for checking user input with our function, eF_checkParameter
+	// SMS: 7/23/2014 Changed to support vLab
+	// $form -> registerRule('checkParameter', 'callback', 'eF_checkParameter');           //Register this rule for checking user input with our function, eF_checkParameter
+	$form -> registerRule('checkParameter', 'callback', 'eF_checkParameter_vLab');           //Register this rule for checking user input with our function, eF_checkParameter_vLab
 	$form -> registerRule('checkNotExist', 'callback', 'eF_checkNotExist');             //This rule is using our function, eF_checkNotExist, to ensure that no duplicate values are inserted in unique fields, such as login and email
 	$form -> registerRule('checkRule', 'callback', 'eF_checkRule');           //Register this rule for checking user input with our function, eF_checkParameter
 	
@@ -949,15 +948,23 @@ if (isset($_GET['ctg']) && ($_GET['ctg'] == "signup") && $configuration['signup'
     $form -> addRule('login', _THEFIELD.' '._LOGIN.' '._HASINVALIDCHARACTERS.'. '._ONLYALLOWEDCHARACTERSLOGIN, 'checkParameter', 'login');
     $form -> addRule('login', _THELOGIN.' &quot;'.($form -> exportValue('login')).'&quot; '._ALREADYEXISTS, 'checkNotExist', 'login');
 
+	// SMS: 7/23/2014 Changed to support vLab
+	// $form -> addElement(isset($_GET['ldap']) ? 'text' : 'password', 'password', _PASSWORD, 'class = "inputText"');
 	$form -> addElement(isset($_GET['ldap']) ? 'text' : 'password', 'password', _PASSWORD, 'class = "inputText"');
 	$form -> addElement(isset($_GET['ldap']) ? 'text' : 'password', 'passrepeat', _REPEATPASSWORD, 'class = "inputText"');
+	// SMS: 7/23/2014 Changed to support vLab
+	// $form -> addRule('password', _THEFIELD.' '._PASSWORD.' '._ISMANDATORY, 'required', null, 'client');
 	$form -> addRule('password', _THEFIELD.' '._PASSWORD.' '._ISMANDATORY, 'required', null, 'client');
 	$form -> addRule('passrepeat', _THEFIELD.' '._REPEATPASSWORD.' '._ISMANDATORY, 'required', null, 'client');
+	// SMS: 7/23/2014 Changed to support vLab
+	// $form -> addRule(array('password', 'passrepeat'), _PASSWORDSDONOTMATCH, 'compare', null, 'client');
+	$form -> addRule('password', str_replace("%x", $GLOBALS['configuration']['password_length'], _PASSWORDMUSTBE6CHARACTERS), 'minlength', $GLOBALS['configuration']['password_length'], 'client');
 	$form -> addRule(array('password', 'passrepeat'), _PASSWORDSDONOTMATCH, 'compare', null, 'client');
+	// End SMS Change
 	if (!$_GET['ldap']) {		//For LDAP registrations, this rule does not hold true
 		$form -> addRule('passrepeat', str_replace("%x", $GLOBALS['configuration']['password_length'], _PASSWORDMUSTBE6CHARACTERS), 'minlength', $GLOBALS['configuration']['password_length'], 'client');
 	}
-    $form -> addElement('text', 'firstName', _FIRSTNAME, 'class = "inputText"');
+	$form -> addElement('text', 'firstName', _FIRSTNAME, 'class = "inputText"');
     $form -> addRule('firstName', _THEFIELD.' '._FIRSTNAME.' '._ISMANDATORY, 'required', null, 'client');
     $form -> addRule('firstName', _THEFIELD.' "'._FIRSTNAME.'" '._MUSTBESMALLERTHAN.' 50 '.mb_strtolower(_CHARACTERS), 'maxlength', 50, 'client');
     $form -> addRule('firstName', _THEFIELD.' '._FIRSTNAME.' '._HASINVALIDCHARACTERS.'. '._ONLYALLOWEDCHARACTERSTEXT, 'checkParameter', 'text');
@@ -1119,22 +1126,24 @@ if (isset($_GET['ctg']) && ($_GET['ctg'] == "signup") && $configuration['signup'
 	    $smarty -> assign("T_USER_PROFILE_FIELDS", $userProfileFields);
 	} #cpp#endif
 
-	$element = $form -> addElement('textarea', 'comments', _COMMENTS, 'class = "inputText" id = "comments"');
-	$element -> setCols(40);
-	$element -> setRows(2);
+	// Added by Masoud Sadjadi on July 23, 2014 to allow a timezone field with just one line input
+	$form -> addElement("select", "timezone", _TIMEZONE, eF_getTimezones(), 'class = "inputText"');
+	$form -> setDefaults(array('active' 		=> 1,
+	 						   'timezone' 		=> $GLOBALS['configuration']['time_zone'],
+	 						   'languages_NAME' => $GLOBALS['configuration']['default_language']));
+	// End modification by Masoud Sadjadi
+	
+	// Modified by Masoud Sadjadi on July 23, 2014 to allow a Company field with just one line input
+	// $element = $form -> addElement('textarea', 'comments', _COMMENTS, 'class = "inputText" id = "comments"');
+	// $element -> setCols(40);
+	// $element -> setRows(2);
+	$element = $form -> addElement('text', 'comments', _COMMENTS, 'class = "inputText"');
+	$form -> addRule('comments', _THEFIELD.' '._COMMENTS.' '._ISMANDATORY, 'required', null, 'client');
+	// End modification by Masoud Sadjadi
+	
 	$form -> addElement('submit', 'submit_register', _REGISTER, 'class = "flatButton"');
 
 	if (isset($_GET['ldap'])) {
-/*	Check #4931 and #5271	
-		if ($_GET['login'] && eF_checkParameter($_GET['login'], 'login')) {
-			$res = eF_getTableData("users", "*", "login='".$_GET['login']."'");
-			if (!empty($res)) {
-				eF_redirect(basename($_SERVER['PHP_SELF']));
-			}
-		} else {
-			eF_redirect(basename($_SERVER['PHP_SELF']));
-		}
-*/		
 		$result = eF_getLdapValues($GLOBALS['configuration']['ldap_uid'].'='.$_GET['login'], array($GLOBALS['configuration']['ldap_preferredlanguage'],
 		$GLOBALS['configuration']['ldap_mail'],
 		$GLOBALS['configuration']['ldap_cn'],
@@ -1165,7 +1174,7 @@ if (isset($_GET['ctg']) && ($_GET['ctg'] == "signup") && $configuration['signup'
 					   'timestamp'   => time(),
 					   'action'	     => 'forms',
 					   'comments'	 => 'signup',
-					   'session_ip'  => eF_encodeIP(eF_getRemoteAddress()));
+					   'session_ip'  => eF_encodeIP($_SERVER['REMOTE_ADDR']));
 		eF_insertTableData("logs", $fields_insert);
 		if ($form -> validate()) {
             try {
@@ -1201,6 +1210,8 @@ if (isset($_GET['ctg']) && ($_GET['ctg'] == "signup") && $configuration['signup'
 	                               "pending"		=> ($configuration['activation']) ? 0 : 1,
 	                               "active"			=> $configuration['activation'],
 	                               "languages_NAME" => $values['languages_NAME'],
+								   // SMS: 7/23/2014 Added to support vLab
+								   "timezone"	   	=> $values['timezone'],
 								   "user_type"      => $values['user_type'],
 								   "user_types_ID" => $values['user_types_ID']);
 	
@@ -1222,12 +1233,59 @@ if (isset($_GET['ctg']) && ($_GET['ctg'] == "signup") && $configuration['signup'
 	            	}
 	            }
 
+				// Added by Masoud Sadjadi on July 23, 2014 to support vLab in eFront
+				// Beging addition
+				$userProperties 	= $user_data;
+				
+				$vLab_username 		= $userProperties['login'];
+				$vLab_password 		= $userProperties['password'];
+				// $vLab_password 		= "";
+				$vLab_email 		= $userProperties['email'];
+				$vLab_firstname 	= $userProperties['name'];
+				$vLab_lastname 		= $userProperties['surname'];
+				$vLab_timezone 		= $userProperties['timezone'];
+				$vLab_companyname 	= $userProperties['comments'];
+				
+				// echo "<br/>\$vLab_password: $vLab_password";
+				$vLab_encrypted_password = Crypt::encrypt($vLab_password);;
+				// echo "<br/>\$vLab_encrypted_password: $vLab_encrypted_password";
+
+				$vLab_username_urlEncoded 			= rawurlencode($vLab_username);
+				// $vLab_password_urlEncoded 		= rawurlencode($vLab_password);
+				$vLab_encrypted_password_urlEncoded = rawurlencode($vLab_encrypted_password);
+				// echo "<br/>\$vLab_encrypted_password_urlEncoded: $vLab_encrypted_password_urlEncoded";
+				$vLab_email_urlEncoded 				= rawurlencode($vLab_email);
+				$vLab_firstname_urlEncoded 			= rawurlencode($vLab_firstname);
+				$vLab_lastname_urlEncoded 			= rawurlencode($vLab_lastname);
+				$vLab_timezone_urlEncoded 			= rawurlencode($vLab_timezone);
+				$vLab_companyname_urlEncoded 		= rawurlencode($vLab_companyname);
+			
+				$vLab_courseid 		= 123; // Kaseya 7.0 Fundamentals Workshop
+				$vLab_course 		= "Kaseya 7.0 Fundamentals Workshop";
+				$vLab_resourceType 	= "VIRTUAL LAB";
+				
+				$vLab_courseid_urlEncoded 		= rawurlencode($vLab_courseid);
+				$vLab_course_urlEncoded 		= rawurlencode($vLab_course);
+				$vLab_resourceType_urlEncoded 	= rawurlencode($vLab_resourceType);
+		
+				$vLab_moodleURL = VLAB_LMS_ROOT;
+				// $vLab_moodleURL = "http://localhost/moodle/";
+				// $vLab_moodleURL = "http://ita-portal.cis.fiu.edu/";
+		
+				// auto register	
+				$str = $vLab_moodleURL . "mod/deva/embedded/auto-register-with-encrypted-password.php?efront=1&username=$vLab_username_urlEncoded&encrypted_password=$vLab_encrypted_password_urlEncoded&email=$vLab_email_urlEncoded&firstname=$vLab_firstname_urlEncoded&lastname=$vLab_lastname_urlEncoded&timezone=$vLab_timezone_urlEncoded&companyname=$vLab_companyname_urlEncoded";	
+				// echo $str . '<br>';
+				$payload = file_get_contents($str);
+				// echo $payload;
+				// End addition by Masoud Sadjadi
+		
 	        	$newUser = EfrontUser :: createUser($user_data);
 	        	$encrypted = true;	//needed for autologin
 	        	EfrontEvent::triggerEvent(array("type" => EfrontEvent::SYSTEM_REGISTER, "users_LOGIN" => $user_data['login'], "users_name" => $user_data['name'], "users_surname" => $user_data['surname'], "entity_name" => $user_data['password']));
 	        	
 	        	// send not-visited notifications for the newly registered user
 	        	//EfrontEvent::triggerEvent(array("type" => (-1) * EfrontEvent::SYSTEM_VISITED, "users_LOGIN" => $user_data['login'], "users_name" => $user_data['name'], "users_surname" => $user_data['surname']));
+	        	//pr($self_registered_jobs);
 
                 if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
 
@@ -1343,72 +1401,6 @@ if (isset($_GET['ctg']) && ($_GET['ctg'] == "signup") && $configuration['signup'
 /* --------------------------------------------------- End of Sign up part--------------------------------------------------- */
 
 /* -------------------------------------------------------Contact part--------------------------------------------------------- */
-if (isset($_GET['ctg']) && $_GET['ctg'] == 'contact') {                                                         //The user asked to display the contact form
-	if (eF_checkSpam() == true) {
-		$message      = _SPAMDETECTION;
-		$message_type = 'failure';
-		eF_redirect(basename($_SERVER['PHP_SELF']).'?message='.urlencode($message).'&message_type='.$message_type);	
-	}	
-	$smarty -> assign('T_CTG', 'contact');
-
-	$form = new HTML_QuickForm("contact_form", "post", basename($_SERVER['PHP_SELF'])."?ctg=contact", "", "class = 'indexForm'", true);
-	$form -> registerRule('checkParameter', 'callback', 'eF_checkParameter');           //Register this rule for checking user input with our function, eF_checkParameter
-
-	$form -> addElement('text', 'email', _YOUREMAIL, 'class = "inputText"');
-	$form -> addRule('email', _THEFIELD.' "'._EMAIL.'" '._ISMANDATORY, 'required');
-	$form -> addRule('email', _INVALIDFIELDDATA, 'checkParameter', 'email');
-
-	$form -> addElement('text', 'message_subject', _MESSAGESUBJECT, 'class = "inputText"');
-	//$form -> addRule('message_subject', _INVALIDFIELDDATA, 'checkParameter', 'text');
-
-	$form -> addElement('textarea', 'message_body', _TEXT, 'class = "inputText" id = "contact"');
-	$form -> addElement('submit', 'submit_contact', _SUBMIT, 'class = "flatButton"');
-
-	if ($_GET['limit_reached']) {
-		$form->setDefaults(array('message_subject' => _IWANTTOSIGNUPBUTMAXIMUMUSERSLIMITREACHED, 'message_body' => _IWANTTOSIGNUPBUTMAXIMUMUSERSLIMITREACHEDBODY));
-	}
-	if ($_SESSION['s_login']) {
-		$form->setDefaults(array('email' => $currentUser->user['email']));
-	}
-	
-	if ($form -> isSubmitted()) {
-		$fields_insert = array('users_LOGIN' => 'visitor',
-					   'timestamp'   => time(),
-					   'action'	     => 'forms',
-					   'comments'	 => 'contact',
-					   'session_ip'  => eF_encodeIP(eF_getRemoteAddress()));
-		eF_insertTableData("logs", $fields_insert);
-		if ($form -> validate()) {
-			$to      = $form -> exportValue("email");
-			$subject = $form -> exportValue("message_subject");
-			$body    = $form -> exportValue("message_body")."\r\n\r\n(".$subject." ["._FROM.": ".$to."])";		
-			if (eF_mail($to, $GLOBALS['configuration']['system_email'], $subject." ["._FROM.": ".$to."]", $body, false, true)) {
-				$copied_body = _THANKYOUFORCONTACTINGUSBODY."<br/><hr/><br/>".$form -> exportValue("message_body");
-				eF_mail($GLOBALS['configuration']['system_email'], $to, _THANKYOUFORCONTACTINGUS, $copied_body, false, false);
-				$message      = _SENDSUCCESS;
-				$message_type = 'success';
-				eF_redirect(basename($_SERVER['PHP_SELF']).'?message='.urlencode($message).'&message_type='.$message_type);
-				
-			} else {
-				$message      = _SENDFAILURE;
-				$message_type = 'failure';
-			}
-		}
-	}
-
-	$renderer = new HTML_QuickForm_Renderer_ArraySmarty($smarty);
-
-	$renderer -> setRequiredTemplate(
-       '{$html}{if $required}
-            &nbsp;<span class = "formRequired">*</span>
-        {/if}');
-
-	$form -> setJsWarnings(_BEFOREJAVASCRIPTERROR, _AFTERJAVASCRIPTERROR);
-	$form -> setRequiredNote(_REQUIREDNOTE);
-	$form -> accept($renderer);
-
-	$smarty -> assign('T_CONTACT_FORM', $renderer -> toArray());
-}
 
 /* -------------------------------------------------------End of Contact part--------------------------------------------------------- */
 /* -------------------------------------------------------Lesson information part--------------------------------------------------------- */

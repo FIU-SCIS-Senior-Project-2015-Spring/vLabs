@@ -83,8 +83,8 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 
 	$smarty -> assign("T_COURSES_LIST_OPTIONS", $myCoursesOptions);
 	
-	if (EfrontUser::isOptionVisible('func_userstatus')) {
-		$smarty -> assign("T_SOCIAL_USERSTATUS", 1);
+	if ($GLOBALS['configuration']['social_modules_activated'] > 0) {
+		$smarty -> assign("T_SOCIAL_INTERFACE", 1);
 	}
 	if ($_GET['op'] == "dashboard") {	
 		if (isset($_GET['ajax']) && isset($_GET['postAjaxRequest']) && isset($_GET['setStatus'])) {
@@ -127,7 +127,7 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 		if (EfrontUser::isOptionVisible('projects') && !empty($lessons_list)) {
 			if ($currentUser -> getType() == "student") {
 				// See projects assigned to you
-				$not_expired_projects = eF_getTableData("projects p, users_to_projects up, lessons", "p.*, up.grade, up.comments, up.filename, lessons.name as show_lessons_name, lessons.id as show_lessons_id", "up.users_LOGIN = '".$currentUser->user['login']."' AND up.projects_ID = p.id AND p.lessons_ID = lessons.id AND lessons.id IN ('" . implode("','", $lessons_list). "') AND p.deadline > ".time()." AND up.filename IS NULL ORDER BY p.deadline ASC LIMIT 5");
+				$not_expired_projects = eF_getTableData("projects p, users_to_projects up, lessons", "p.*, up.grade, up.comments, up.filename, lessons.name as show_lessons_name, lessons.id as show_lessons_id", "up.users_LOGIN = '".$currentUser->user['login']."' AND up.projects_ID = p.id AND p.lessons_ID = lessons.id AND lessons.id IN ('" . implode("','", $lessons_list). "') AND p.deadline > ".time()." ORDER BY p.deadline ASC LIMIT 5");
 			} else {
 				// See projects related to your lessons
 				$not_expired_projects = eF_getTableData("projects p, lessons", "p.*, lessons.name as show_lessons_name, lessons.id as show_lessons_id", "p.lessons_ID = lessons.id AND lessons.id IN ('" . implode("','", $lessons_list). "') AND p.deadline > ".time()." ORDER BY p.deadline ASC LIMIT 5");
@@ -224,8 +224,7 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 				$currentBranch = new EfrontBranch($_SESSION['s_current_branch']);
 				$branchTreeUsers = array_keys($currentBranch->getBranchTreeUsers());			
 				foreach ($events as $key => $value) {
-					$in_branches = eF_getTableData('module_hcd_employee_works_at_branch', "*", "users_login='".$value['users_LOGIN']."'");
-					if ($value['type'] != 'global' && !in_array($value['users_LOGIN'], $branchTreeUsers) && !empty($in_branches)) {				
+					if ($value['type'] != 'global' && !in_array($value['users_LOGIN'], $branchTreeUsers)) {				
 						unset($events[$key]);
 					}
 				}
@@ -365,15 +364,16 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 					}
 				}
 			}
-			
+				
 				
 			$events = array();
-			$myEvents = EfrontEvent::getEvents($all_related_users, true, 25);
+			$myEvents = EfrontEvent::getEvents($all_related_users, true, 5);
 			$allModules = eF_loadAllModules();
 			$eventMessages = array();
+
 			foreach ($myEvents as $key => $event) {
 
-				if ($myEvents[$key] -> createMessage($allModules)) {					
+				if ($myEvents[$key] -> createMessage($allModules)) {
 					if (strpos($myEvents[$key] ->event['time'], "-") === false) {   // Added this to prevent events that changed time in the future as project expiration
 
 						$new_event = array("time" => $myEvents[$key] -> event['time'], "message" => $myEvents[$key] ->event['message']);
@@ -389,7 +389,6 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 				}
 			}
 
-			$events = array_slice($events, 0, 5);
 			$my_timeline_options = array(array('text' => _GOTOCOMPLETESYSTEMTIMELINE, 'image' => "16x16/go_into.png", 'href' => $_SESSION['s_type']. ".php?ctg=social&op=timeline"));
 
 			$smarty -> assign("T_MY_TIMELINE_OPTIONS", $my_timeline_options );
@@ -433,10 +432,6 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 		}
 	/********************* PROFILE COMMENTS POPUP ******************/
 	} else if ($_GET['op'] == "comments") {
-		
-		if (EfrontUser::isOptionVisible('func_comments') === false) {
-			eF_redirect(basename($_SERVER['PHP_SELF'])."?ctg=personal&user=".$_SESSION['s_login']."&op=dashboard&message=".urlencode(_UNPRIVILEGEDATTEMPT)."&message_type=failure");
-		}
 
 	  	if (isset($_GET['action']) && $_GET['action'] == "delete" && eF_checkParameter($_GET['id'], 'id')) {
 			// Only allowed to delete comments referring to you
@@ -530,10 +525,6 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 		}
 	/********************* PEOPLE PAGE ******************/
 	} else if ($_GET['op'] == "people") {
-		
-		if (EfrontUser::isOptionVisible('func_people') === false) {
-			eF_redirect(basename($_SERVER['PHP_SELF'])."?ctg=personal&user=".$_SESSION['s_login']."&op=dashboard&message=".urlencode(_UNPRIVILEGEDATTEMPT)."&message_type=failure");
-		}
 
 		if (isset($_GET['ajax'])) {
 			isset($_GET['limit']) && eF_checkParameter($_GET['limit'], 'uint') ? $limit = $_GET['limit'] : $limit = 10;

@@ -457,45 +457,41 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'lesson') {
     $workSheet -> setColumn(4, 12, 20);
 
     $workSheet -> write(2, 4, _LOGIN, $titleLeftFormat);
-    $workSheet -> write(2, 5, _SURNAME, $titleLeftFormat);
-    $workSheet -> write(2, 6, _NAME, $titleLeftFormat);
-    $workSheet -> write(2, 7, _LESSONROLE, $titleLeftFormat);
-    $workSheet -> write(2, 8, _REGISTRATIONDATE, $titleCenterFormat);
+    $workSheet -> write(2, 5, _LESSONROLE, $titleLeftFormat);
+    $workSheet -> write(2, 6, _REGISTRATIONDATE, $titleCenterFormat);
     if ($GLOBALS['configuration']['time_reports']) {
-    	$workSheet -> write(2, 9, _ACTIVETIMEINLESSON, $titleCenterFormat);
+    	$workSheet -> write(2, 7, _ACTIVETIMEINLESSON, $titleCenterFormat);
     } else {
-    	$workSheet -> write(2, 9, _TIMEINLESSON, $titleCenterFormat);
+    	$workSheet -> write(2, 7, _TIMEINLESSON, $titleCenterFormat);
     }
-    $workSheet -> write(2, 10, _CONTENT, $titleCenterFormat);
+    $workSheet -> write(2, 8, _CONTENT, $titleCenterFormat);
     if (EfrontUser::isOptionVisible('tests')) {
-        $workSheet -> write(2, 11, _TESTS, $titleCenterFormat);
+        $workSheet -> write(2, 9, _TESTS, $titleCenterFormat);
     }
     if (EfrontUser::isOptionVisible('projects')) {
-        $workSheet -> write(2, 12, _PROJECTS, $titleCenterFormat);
+        $workSheet -> write(2, 10, _PROJECTS, $titleCenterFormat);
     }
-    $workSheet -> write(2, 13, _COMPLETED, $titleCenterFormat);
-    $workSheet -> write(2, 14, _GRADE, $titleCenterFormat);
-    $workSheet -> write(2, 15, _LASTLOGIN, $titleCenterFormat);
+    $workSheet -> write(2, 11, _COMPLETED, $titleCenterFormat);
+    $workSheet -> write(2, 12, _GRADE, $titleCenterFormat);
+    $workSheet -> write(2, 13, _LASTLOGIN, $titleCenterFormat);
     $roles = EfrontLessonUser :: getLessonsRoles(true);
 
     $row = 3;
     foreach ($students as $user) {
-        $workSheet -> writeString($row, 4, $user['login'], $fieldLeftFormat);
-        $workSheet -> write($row, 5, $user['surname'], $fieldLeftFormat);
-        $workSheet -> write($row, 6, $user['name'], $fieldLeftFormat);
-        $workSheet -> write($row, 7, $roles[$user['role']], $fieldLeftFormat);
-        $workSheet -> write($row, 8, formatTimestamp($user['timestamp']), $fieldCenterFormat);
+        $workSheet -> write($row, 4, formatLogin($user['login']), $fieldLeftFormat);
+        $workSheet -> write($row, 5, $roles[$user['role']], $fieldLeftFormat);
+        $workSheet -> write($row, 6, formatTimestamp($user['timestamp']), $fieldCenterFormat);
         if ($GLOBALS['configuration']['time_reports']) {
-        	$workSheet -> write($row, 9, $user['active_time_in_lesson']['time_string'], $fieldCenterFormat);
+        	$workSheet -> write($row, 7, $user['active_time_in_lesson']['time_string'], $fieldCenterFormat);
         } else {
-        	$workSheet -> write($row, 9, $user['time_in_lesson']['time_string'], $fieldCenterFormat);
+        	$workSheet -> write($row, 7, $user['time_in_lesson']['time_string'], $fieldCenterFormat);
         }
-        $workSheet -> write($row, 10, formatScore($user['overall_progress']['percentage'])."%", $fieldCenterFormat);
+        $workSheet -> write($row, 8, formatScore($user['overall_progress']['percentage'])."%", $fieldCenterFormat);
         if (EfrontUser::isOptionVisible('tests')) {
-            $workSheet -> write($row, 11, formatScore($user['test_status']['mean_score'])."%", $fieldCenterFormat);
+            $workSheet -> write($row, 9, formatScore($user['test_status']['mean_score'])."%", $fieldCenterFormat);
         }
         if (EfrontUser::isOptionVisible('projects')) {
-            $workSheet -> write($row, 12, formatScore($user['project_status']['mean_score'])."%", $fieldCenterFormat);
+            $workSheet -> write($row, 10, formatScore($user['project_status']['mean_score'])."%", $fieldCenterFormat);
         }
     	if ($user['completed'] && $user['timestamp_completed']) {
 			$completedString = _YES.', '._ON.' '.formatTimestamp($user['timestamp_completed']);
@@ -504,9 +500,9 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'lesson') {
 		} else {
 			$completedString = _NO;
 		}
-        $workSheet -> write($row, 13, $completedString, $fieldCenterFormat);
-        $workSheet -> write($row, 14, formatScore($user['score'])."%", $fieldCenterFormat);
-        $workSheet -> write($row, 15, formatTimestamp($user['last_login'], true), $fieldCenterFormat);
+        $workSheet -> write($row, 11, $completedString, $fieldCenterFormat);
+        $workSheet -> write($row, 12, formatScore($user['score'])."%", $fieldCenterFormat);
+        $workSheet -> write($row, 13, formatTimestamp($user['last_login'], true), $fieldCenterFormat);
         $row++;
     }
     $row += 2;
@@ -515,19 +511,15 @@ if (isset($_GET['excel']) && $_GET['excel'] == 'lesson') {
     $workSheet -> write($row, 4, _PROFESSORSINFO, $headerFormat);
     $workSheet -> mergeCells($row, 4, $row++, 6);
     $workSheet -> write($row, 4, _LOGIN, $titleLeftFormat);
-    $workSheet -> write($row, 5, _SURNAME, $titleLeftFormat);
-    $workSheet -> write($row, 6, _NAME, $titleLeftFormat);
-    $workSheet -> write($row, 7, _LESSONROLE, $titleLeftFormat);
+    $workSheet -> write($row, 5, _LESSONROLE, $titleLeftFormat);
     //$workSheet -> write($row, 6, _ACTIVETIMEINLESSON, $titleCenterFormat);
-	$workSheet -> write($row++, 8, _REGISTRATIONDATE, $titleCenterFormat);
+	$workSheet -> write($row++, 6, _REGISTRATIONDATE, $titleCenterFormat);
 
     foreach ($professors as $user) {
-        $workSheet -> writeString($row, 4, $user['login'], $fieldLeftFormat);
-        $workSheet -> write($row, 5, $user['surname'], $fieldLeftFormat);
-        $workSheet -> write($row, 6, $user['name'], $fieldLeftFormat);
-        $workSheet -> write($row, 7, $roles[$user['role']], $fieldLeftFormat);
+        $workSheet -> write($row, 4, formatLogin($user['login']), $fieldLeftFormat);
+        $workSheet -> write($row, 5, $roles[$user['role']], $fieldLeftFormat);
         //$workSheet -> write($row, 6, $user['active_time_in_lesson']['time_string'], $fieldCenterFormat);
-		$workSheet -> write($row, 8, formatTimestamp($user['timestamp']), $fieldCenterFormat);
+		$workSheet -> write($row, 6, formatTimestamp($user['timestamp']), $fieldCenterFormat);
         $row++;
     }
 

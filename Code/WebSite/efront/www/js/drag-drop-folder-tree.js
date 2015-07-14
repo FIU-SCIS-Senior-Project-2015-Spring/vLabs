@@ -316,7 +316,6 @@
             } else {
                 thisNode.className = thisNode.className.replace(JSTreeObj.minusImage,JSTreeObj.plusImage);
                 parentNode.getElementsByTagName('UL')[0].style.display='none';
-                if(!initExpandedNodes)initExpandedNodes = ',';
                 initExpandedNodes = initExpandedNodes.replace(',' + inputId,'');
             }
 

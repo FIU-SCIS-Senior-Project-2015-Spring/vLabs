@@ -915,10 +915,6 @@ abstract class EfrontModule
         return false;
     }    
 
-    public function getOrganizationLinkInfo() {
-    	return false;
-    }
-    
     /****
      * Reports Module Link
      * Get information in an array with fields:
@@ -1002,17 +998,6 @@ abstract class EfrontModule
         return false;
     }
 
-    /**
-     * Code to execute when a user is logging in
-     *
-     * @param string $login The login of the user
-     * @since 3.5.0
-     * @access public
-     */
-    public function onUserLogin($type, $message, $message_type) {
-    	return false;
-    }
-    
     /**
      * Code to execute when a new user is created
      *

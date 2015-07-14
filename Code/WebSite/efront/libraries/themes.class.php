@@ -354,7 +354,7 @@ class themes extends EfrontEntity
         foreach (new RecursiveIteratorIterator($xml, RecursiveIteratorIterator :: SELF_FIRST) as $key => $value) {
             unset($value->comment);
         }
-        $fields = array('name'    => (string)$xml -> name ? (string)$xml -> name: eFront_basename($file),
+        $fields = array('name'    => (string)$xml -> name ? (string)$xml -> name: basename($file),
                 		'title'   => (string)$xml -> title,
         				'version' => (string)$xml -> version,
 	            		'author'  => (string)$xml -> author,

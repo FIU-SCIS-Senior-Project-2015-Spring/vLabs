@@ -73,7 +73,7 @@ if (isset($_GET['delete_user']) && eF_checkParameter($_GET['delete_user'], 'logi
     }
     exit;
 } else {                                                //The admin just asked to view the users
-	if (G_VERSIONTYPE != 'enterprise' || (G_VERSIONTYPE == 'enterprise' && $currentUser -> coreAccess['organization'] == 'hidden' && $currentUser -> coreAccess['users'] != 'hidden')) {    #cpp#ifndef ENTERPRISE
+    if (G_VERSIONTYPE != 'enterprise') {    #cpp#ifndef ENTERPRISE
         if (isset($_GET['ajax'])) {
             isset($_GET['limit']) && eF_checkParameter($_GET['limit'], 'uint') ? $limit = $_GET['limit'] : $limit = G_DEFAULT_TABLE_SIZE;
 

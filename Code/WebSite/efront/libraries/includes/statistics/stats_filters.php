@@ -10,10 +10,7 @@ if (isset($_GET['group_filter']) && eF_checkParameter($_GET['group_filter'], 'id
 
 if (!empty($_GET['user_filter'])) {
 	if ($_GET['user_filter'] != 3) {
-		$stats_filters[] = array("condition" 	=> ($_GET['user_filter'] == 1)?"u.active = 1":"u.active = 0 and u.archive=0");
-	} else {
-		//For all users value, do not return archived ones
-		$stats_filters[] = array("condition" 	=> "u.archive = 0");
+		$stats_filters[] = array("condition" 	=> ($_GET['user_filter'] == 1)?"u.active = 1":"u.active = 0");
 	}
 } else {
 	$stats_filters[] = array("condition" 	=> "u.active = 1");
@@ -23,20 +20,14 @@ if (!empty($_GET['user_filter'])) {
 if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
 	$currentEmployee = $currentUser -> aspects['hcd'];
 
-	if ($_SESSION['s_type'] != 'administrator') {	//this applies to supervisors only
-		if ($_SESSION['s_current_branch']) {
-			$allowedBranches	  = array($_SESSION['s_current_branch']);
-			$branchesTree = new EfrontBranchesTree();
-			$iterator	  = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($branchesTree -> getNodeChildren($_SESSION['s_current_branch'])), RecursiveIteratorIterator :: SELF_FIRST));
-			foreach($iterator as $key => $value) {
-				$allowedBranches[] = $key;
-			}
-		} elseif ($currentEmployee -> isSupervisor()) {			
-			foreach ($currentEmployee->getSupervisedBranches() as $value) {
-				$allowedBranches[] = $value['branch_ID'];
-			}
+	if ($_SESSION['s_type'] != 'administrator' && $_SESSION['s_current_branch']) {	//this applies to supervisors only
+		$allowedBranches	  = array($_SESSION['s_current_branch']);
+		$branchesTree = new EfrontBranchesTree();
+		$iterator	  = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($branchesTree -> getNodeChildren($_SESSION['s_current_branch'])), RecursiveIteratorIterator :: SELF_FIRST));
+		foreach($iterator as $key => $value) {
+			$allowedBranches[] = $key;
 		}
-		
+	
 		if (!isset($_GET['branch_filter']) || !in_array($_GET['branch_filter'], $allowedBranches)) {
 			$_GET['branch_filter'] = $_SESSION['s_current_branch'];
 			$_GET['subbranches'] = 1;
@@ -149,19 +140,15 @@ if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
 } #cpp#endif
 
 if (!isset($_GET['ajax'])) {
-	if ($_SESSION['s_type'] == 'administrator') {	//supervisors don't see groups
-		$groups     = EfrontGroup :: getGroups();
-		$smarty -> assign("T_GROUPS", $groups);
-	} else {
-		$groups     = $currentUser -> getGroups(); // Changed for 3.6.15 to show only professor's groups
-		$smarty -> assign("T_GROUPS", $groups);		
-	}
+	$groups     = EfrontGroup :: getGroups();
+	$smarty -> assign("T_GROUPS", $groups);
+
 	if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
 		// Create the branches select
 		require_once $path."module_hcd_tools.php";
 		eF_getRights();
 		$company_branches = eF_getTableData("module_hcd_branch", "branch_ID, name, father_branch_ID","", "father_branch_ID ASC,branch_ID ASC");
-		if ($_SESSION['s_type'] != 'administrator' && $currentEmployee -> isSupervisor()) {	//this applies to supervisors only
+		if ($_SESSION['s_type'] != 'administrator' && $_SESSION['s_current_branch']) {	//this applies to supervisors only
 			foreach ($company_branches as $key => $value) {
 				if (!in_array($value['branch_ID'], $allowedBranches)) {
 					unset($company_branches[$key]);
@@ -169,13 +156,13 @@ if (!isset($_GET['ajax'])) {
 			}
 			$company_branches = array_values($company_branches);
 		}
-
+		
 		$filter_branches = eF_createBranchesTreeSelect($company_branches,4);
 		$smarty -> assign("T_BRANCHES", $filter_branches);
 		
 	    $job_descriptions = eF_getTableData("module_hcd_job_description", "description,job_description_ID,branch_ID","","description ASC");
 	    
-	    if ($_SESSION['s_type'] != 'administrator' && $currentEmployee -> isSupervisor()) {	//this applies to supervisors only
+	    if ($_SESSION['s_type'] != 'administrator' && $_SESSION['s_current_branch']) {	//this applies to supervisors only
 	    	foreach ($job_descriptions as $key => $value) {
 	    		if (!in_array($value['branch_ID'], $allowedBranches)) {
 	    			unset($job_descriptions[$key]);

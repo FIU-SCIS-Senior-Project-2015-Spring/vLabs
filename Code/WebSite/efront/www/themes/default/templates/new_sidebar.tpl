@@ -92,7 +92,7 @@
                 {if isset($T_SHOW_USER_STATUS)}
                 <tr><td>
                     <span id="statusText" onClick="javascript:showStatusChange()">{if $T_RESULT.status != ''}{$T_RESULT.status}{elseif $T_FB_STATUS}{$T_FB_STATUS}{else}[{$smarty.const._CLICKTOCHANGESTATUS}]{/if}</span>
-                    <input id="inputStatusText" style="display:none;width:98%" align="center" value="{if $T_RESULT.status != ''}{$T_RESULT.status}{elseif $T_FB_STATUS}{$T_FB_STATUS}{/if}" onBlur="changeStatus('{$smarty.session.s_login}')" onKeypress="checkIfEnter(event)"/>
+                    <input id="inputStatusText" style="display:none;width:98%" align="center" value="{if $T_RESULT.status != ''}{$T_RESULT.status}{elseif $T_FB_STATUS}{$T_FB_STATUS}{/if}" onBlur="changeStatus()" onKeypress="checkIfEnter(event)"/>
                     <img id="statusTextProgressImg" src="images/others/progress1.gif" style="display:none;vertical-align:middle;" border="0" align="center"/>
                     </td>
                     <td height="16px">&nbsp;</td>  {*to keep the display from moving when changing style.displays*}

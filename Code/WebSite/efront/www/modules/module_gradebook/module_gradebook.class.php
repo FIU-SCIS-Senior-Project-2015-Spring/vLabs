@@ -418,7 +418,7 @@ class module_gradebook extends EfrontModule{
 				foreach($result as $user)
 					array_push($allLogins, $user['users_LOGIN']);
 
-				if(!$this->checkUsers($result, $lessonUsers)) {
+				if(sizeof($result) != sizeof($lessonUsers)){	// FIXME
 
 					$lessonColumns = $this->getLessonColumns($currentLessonID);
 
@@ -665,30 +665,6 @@ class module_gradebook extends EfrontModule{
 
 	// Inner Functions
 
-	private function checkUsers($result, $lessonUsers) {
-		if(sizeof($result) == sizeof($lessonUsers)) {
-			$logins1 = array();
-			foreach ($result as $key => $value) {
-				$logins1[] = $value['users_LOGIN'];
-			}
-			$logins2 = array();
-			foreach ($lessonUsers as $key => $value) {
-				$logins2[] = $value['login'];
-			}
-	
-			sort($logins1);
-			sort($logins2);
-	
-			if(serialize($logins1) == serialize($logins2)) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}	
-	
 	private function getRanges(){
 
 		$result = eF_getTableData("module_gradebook_ranges", "*", "", "range_from");

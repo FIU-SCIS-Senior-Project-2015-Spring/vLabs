@@ -1,4 +1,3 @@
-
 {if $smarty.get.add_lesson || $smarty.get.edit_lesson}
 {*moduleNewLessonDirection: Create a new direction or lesson forms*}
 	{capture name = "moduleNewLessonDirection"}
@@ -369,7 +368,7 @@
 										{*<td class = "centerAlign">{if $lesson.skills_offered == 0}-{else}{$lesson.skills_offered}{/if}</td>*}
 									{/if} {* #cpp#endif *}
 									{if 'payments'|eF_template_isOptionVisible}
-										<td class = "centerAlign">{if !$lesson.course_only}{if $lesson.price == 0}-{else}{$lesson.price|formatPrice}{/if}{else}-{/if}</td>
+										<td class = "centerAlign">{if !$lesson.course_only}{if $lesson.price == 0}-{else}{$lesson.price_string}{/if}{else}-{/if}</td>
 									{/if}
 										<td>#filter:timestamp-{$lesson.created}#</td>
 										<td class = "centerAlign">

@@ -375,7 +375,7 @@ class module_administrator_tools extends EfrontModule {
 					'timestamp'   => time(),
 					'action'	 	 => 'login',
 					'comments'	 => session_id(),
-					'session_ip'  => eF_encodeIP(eF_getRemoteAddress()));
+					'session_ip'  => eF_encodeIP($_SERVER['REMOTE_ADDR']));
 			eF_insertTableData("logs", $fields_insert);
 			if ($GLOBALS['configuration']['ban_failed_logins']) {
 				eF_deleteTableData("logs","users_LOGIN='".$user -> user['login']."' and action='failed_login'");
@@ -1125,8 +1125,6 @@ class module_administrator_tools extends EfrontModule {
 		}
 
 		$lessonSettings['rules']               = array('text' => _ACCESSRULES,       	'image' => "32x32/rules.png",       'onClick' => 'activate(this, \'rules\')',           'title' => _CLICKTOTOGGLE, 'group' => 2, 'class' =>  'inactiveImage');
-		$lessonSettings['progress']            = array('text' => _USERSPROGRESS,       	'image' => "32x32/status.png",       'onClick' => 'activate(this, \'progress\')',       'title' => _CLICKTOTOGGLE, 'group' => 2, 'class' => 'inactiveImage');
-		
 		if (EfrontUser::isOptionVisible('forum')) {
 			$lessonSettings['forum']           = array('text' => _FORUM,             	'image' => "32x32/forum.png",      'onClick' => 'activate(this, \'forum\')',           'title' => _CLICKTOTOGGLE, 'group' => 2, 'class' =>  'inactiveImage');
 		}

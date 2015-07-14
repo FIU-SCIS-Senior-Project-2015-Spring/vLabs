@@ -304,12 +304,6 @@ border-radius: 4px;
 box-shadow: 1px 1px 1px 1px #bbb;
 text-shadow: 1px 1px 1px #000;
 }
-.anc_gre_btn {	
-width: 1.5em;  
-font-size: 17px;
-display: inline-block;
-padding: 1px!important;
-}
 
 input.flatButton:hover,button.flatButton:hover{
 box-shadow: 2px 2px 2px 2px #bbb;

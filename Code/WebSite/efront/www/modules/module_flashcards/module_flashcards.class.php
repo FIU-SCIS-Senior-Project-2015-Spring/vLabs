@@ -356,13 +356,13 @@ class module_flashcards extends EfrontModule {
 		$smarty = $this -> getSmartyVar();
         $currentUser 	= $this -> getCurrentUser();
 		$currentLesson 	= $this -> getCurrentLesson();
-		if (isset($_GET['view_deck']) && eF_checkParameter($_GET['view_deck'],'id')) {
+		if (isset($_GET['view_deck'])){
 			$res = eF_getTableData("content","name","id=".$_GET['view_deck']);
             return array (	array ('title' => _HOME, 'link'  => $smarty->get_template_vars('T_HOME_LINK')),
 							array ('title' => $currentLesson -> lesson['name'], 'link'  => $currentUser -> getRole($this -> getCurrentLesson()) . ".php?ctg=control_panel"),
 							array ('title' => _FLASHCARDS_FLASHCARDS, 'link'  => $this -> moduleBaseUrl),
 							array ('title' => $res[0]['name'], 'link'  => $this -> moduleBaseUrl."&view_deck=".$_GET['view_deck']));    
-        } else {
+        } else{
 			return array (	array ('title' => _HOME, 'link'  => $smarty->get_template_vars('T_HOME_LINK')),
 							array ('title' => $currentLesson -> lesson['name'], 'link'  => $currentUser -> getRole($currentLesson).".php?ctg=control_panel"),
 							array ('title' => _FLASHCARDS_FLASHCARDS, 'link'  => $this -> moduleBaseUrl));   

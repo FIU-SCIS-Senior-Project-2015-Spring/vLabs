@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://university.kaseya.com/" />
+<title>New Test</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">New Test</td></tr>
+</thead><tbody>
+<tr>
+	<td>store</td>
+	<td>http://university.kaseya.com/efront-dev/www</td>
+	<td>site</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>sadjadi</td>
+	<td>adminLogin</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Research123</td>
+	<td>adminPassword</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>KCT</td>
+	<td>vLabEligibleUserType</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>nptptest${counter}</td>
+	<td>login</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>itscholars${counter}</td>
+	<td>password</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>nptptest${counter}@itscholars.com</td>
+	<td>email</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>John${counter}</td>
+	<td>firstName</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>Doe${counter}</td>
+	<td>lastName</td>
+</tr>
+<tr>
+	<td>store</td>
+	<td>John Doe ${counter} Corporation</td>
+	<td>comments</td>
+</tr>
+</tbody></table>
+</body>
+</html>

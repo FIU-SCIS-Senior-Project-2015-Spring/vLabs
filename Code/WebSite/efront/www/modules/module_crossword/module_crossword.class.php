@@ -428,7 +428,7 @@ class module_crossword extends EfrontModule {
 		$smarty = $this -> getSmartyVar();
 		$currentUser = $this -> getCurrentUser();
 		$currentLesson = $this -> getCurrentLesson();
-		if (isset($_GET['view_list']) && eF_checkParameter($_GET['view_list'], 'id')) {
+		if (isset($_GET['view_list'])){
 			$res = eF_getTableData("content","name","id=".$_GET['view_list']);
 			return array ( array ('title' => _HOME, 'link'  => $smarty->get_template_vars('T_HOME_LINK')),
 			array ('title' => $currentLesson -> lesson['name'], 'link' => $currentUser -> getRole($this -> getCurrentLesson()) . ".php?ctg=control_panel"),

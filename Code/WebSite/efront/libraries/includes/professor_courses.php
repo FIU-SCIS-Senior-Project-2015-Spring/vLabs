@@ -277,12 +277,7 @@ else if (isset($_GET['ajax']) && isset($_GET['edit_course']) && $_change_) {
 			// Show only existing branches
 			$only_existing = 1;
 		} else {
-			if ($_SESSION['s_current_branch']) {
-				$branches[] = $_SESSION['s_current_branch'];
-				$branches = eF_getTableData("module_hcd_branch", "branch_ID, name, father_branch_ID","branch_ID IN (" . implode(",",$branches). ")","father_branch_ID ASC,branch_ID ASC");
-			} else {
-				$branches = eF_getTableData("module_hcd_branch", "branch_ID, name, father_branch_ID","","father_branch_ID ASC,branch_ID ASC");
-			}
+			$branches = eF_getTableData("module_hcd_branch", "branch_ID, name, father_branch_ID","","father_branch_ID ASC,branch_ID ASC");
 			// Show all branches
 			$only_existing = 0;
 		}
@@ -291,23 +286,12 @@ else if (isset($_GET['ajax']) && isset($_GET['edit_course']) && $_change_) {
 		if (isset($_GET['edit_course'])) {
 			$editCourse = new EfrontCourse($_GET['edit_course']);
 			$result = eF_getTableDataFlat("module_hcd_course_to_branch mb, module_hcd_branch b", "mb.branches_ID, b.name", "b.branch_ID=mb.branches_ID and mb.courses_ID=".$editCourse -> course['id']);
-
 			if (sizeof($result['branches_ID']) > 0) {
 				$form -> setDefaults(array("branches_ID" => $result['branches_ID'][0]));
 				if (sizeof($result['branches_ID']) > 1) {
 					$smarty -> assign("T_MORE_LOCATIONS", implode(", ", $result['name']));
 					$branchSelect = HTML_QuickForm :: createElement('select', 'branches_ID', _LOCATIONBRANCH, eF_createBranchesTreeSelect($branches,$only_existing), 'class = "inputText" disabled = "true"');
 				}
-				
-				
-				if(!in_array($result['branches_ID'], $branches)) {
-					$branches = eF_getTableData("module_hcd_branch", "branch_ID, name, father_branch_ID","","father_branch_ID ASC,branch_ID ASC");
-					$only_existing = 0;
-					$branchSelect = HTML_QuickForm :: createElement('select', 'branches_ID', _LOCATIONBRANCH, eF_createBranchesTreeSelect($branches,$only_existing), 'class = "inputText" disabled = "true"');
-
-				}
-				
-				
 			}
 		}
 		$form -> addElement($branchSelect);
@@ -515,17 +499,12 @@ else if (isset($_GET['ajax']) && isset($_GET['edit_course']) && $_change_) {
 			}
 
 			$constraints['required_fields'] = array('has_instances', 'location', 'num_students', 'num_lessons', 'num_skills');
-
-			
-			// professor in tools > courses must always see courses that he has created ONLY (extra filter in branches) 
+						
 			if (G_VERSIONTYPE == 'enterprise' && $_SESSION['s_current_branch'] && $currentEmployee -> isSupervisor()) {
-				$constraints['branch_url'] = $_SESSION['s_current_branch'];
-				$constraints['condition']= 'c.creator_LOGIN="'.$_SESSION['s_login'].'"';
+				$constraints['branch_url'] = true;
 			} else {
 				$constraints['condition']= 'c.creator_LOGIN="'.$_SESSION['s_login'].'"';
 			}
-			
-			$constraints['condition']= 'c.creator_LOGIN="'.$_SESSION['s_login'].'"';
 			
 			//pr($constraints);
 			$courses 	  = EfrontCourse :: getAllCourses($constraints);

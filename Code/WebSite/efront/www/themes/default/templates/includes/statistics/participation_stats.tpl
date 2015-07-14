@@ -71,7 +71,6 @@
 						<table style = "width:100%" size = "{$T_TABLE_SIZE}" sortBy = "0" order = "{$T_DATASOURCE_SORT_ORDER}"  id = "participationTable" class = "sortedTable" useAjax = "1" url = "{$smarty.server.PHP_SELF}?ctg=statistics&option=participation&report_type={$T_REPORT_TYPE}&report_entity_id={$T_REPORT_ENTITY_ID}&from={$T_FROM_TIMESTAMP}&to={$T_TO_TIMESTAMP}&">
 							<tr class = "topTitle">
 	                            <td class = "topTitle" name = "login" >{$smarty.const._USER}</td>
-	                            <td class = "topTitle" name = "course_name">{$smarty.const._COURSE}</td>
 								<td class = "topTitle" name = "lesson_name">{$smarty.const._LESSON}</td>
 								<td class = "topTitle centerAlign" name = "content">{$smarty.const._CONTENT}</td>
 								<td class = "topTitle centerAlign" name = "test">{$smarty.const._TEST}</td>
@@ -81,7 +80,6 @@
 							{foreach name = 'participation_list' key = 'key' item = 'item' from = $T_DATA_SOURCE}
 							<tr class = "defaultRowHeight {cycle values = "oddRowColor, evenRowColor"}">
 								<td>#filter:login-{$item.login}#</td>
-								<td>{$item.course_name}</td>
 								<td>{$item.lesson_name}</td>
 								<td class = "centerAlign">{$item.content}</td>
 								<td class = "centerAlign">{$item.test}</td>

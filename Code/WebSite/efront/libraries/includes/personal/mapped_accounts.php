@@ -30,7 +30,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 'additional_accounts') {
 				try {
 					$newAccount = EfrontUserFactory::factory($_GET['login'], EfrontUser::createPassword($_GET['pwd']));
 				} catch (Exception $e){
-					if ($e -> getCode() ==EfrontUserException :: INVALID_PASSWORD || $e -> getCode() ==EfrontUserException :: USER_NOT_EXISTS){
+					if ($e -> getCode() ==EfrontUserException :: INVALID_PASSWORD){
 						$newAccount = EfrontUserFactory::factory($_GET['login']);
 						if ($newAccount -> user['password'] != 'ldap' || $_GET['pwd'] != 'ldap') {
 							handleAjaxExceptions($e);

@@ -67,26 +67,6 @@
 	            <tr><td class = "labelCell">{$smarty.const._MESSAGE}:&nbsp;</td>
 	                <td class = "elementCell">{$T_ENTITY_FORM.message.html}</td></tr>
 	                {if $T_ENTITY_FORM.message.error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.message.error}</td></tr>{/if}
-				<tr><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[0].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[0].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[0].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[0].error}</td></tr>{/if}  
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[1].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[1].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[1].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[1].error}</td></tr>{/if}    
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[2].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[2].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[2].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[2].error}</td></tr>{/if} 
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[2].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[3].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[3].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[3].error}</td></tr>{/if}  
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[3].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[4].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[4].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[4].error}</td></tr>{/if}           
-	                
-	                <tr><td></td>
-		            		<td class = "elementCell">
-		            			<img src = "images/16x16/add.png" alt = "'._ADDFILE.'" title = "'._ADDFILE.'" onclick = "addUploadBoxForum(this)"/></td></tr>
-		            	    
 	{/if}
 	            <tr><td></td><td class = "submitCell">{$T_ENTITY_FORM.submit_add_topic.html}</td></tr>
 	        </table>
@@ -170,27 +150,6 @@
 	            <tr><td class = "labelCell">{$smarty.const._BODY}:&nbsp;</td>
 	                <td class = "elementCell">{$T_ENTITY_FORM.body.html}</td></tr>
 	                {if $T_ENTITY_FORM.body.error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.body.error}</td></tr>{/if}
-	            <tr><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[0].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[0].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[0].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[0].error}</td></tr>{/if}  
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[1].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[1].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[1].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[1].error}</td></tr>{/if}    
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[2].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[2].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[2].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[2].error}</td></tr>{/if}    
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[3].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[3].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[3].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[3].error}</td></tr>{/if}    
-	            <tr style = "display:none"><td class = "labelCell">{$T_ENTITY_FORM.attachment_upload[4].label}:&nbsp;</td>
-	                <td class = "elementCell">{$T_ENTITY_FORM.attachment_upload[4].html}</td></tr>
-	                {if $T_ENTITY_FORM.attachment_upload[4].error}<tr><td></td><td class = "formError">{$T_ENTITY_FORM.attachment_upload[4].error}</td></tr>{/if}    
-	             
-	             
-	             <tr><td></td>
-		            		<td class = "elementCell">
-		            			<img src = "images/16x16/add.png" alt = "'._ADDFILE.'" title = "'._ADDFILE.'" onclick = "addUploadBoxForum(this)"/></td></tr>
-		  
 	            <tr><td colspan = "2">&nbsp;</td></tr>
 	            <tr><td></td><td class = "submitCell">{$T_ENTITY_FORM.submit_add_message.html}</td></tr>
 	        </table>
@@ -266,7 +225,7 @@
 	                    	    <a href = "{$smarty.server.PHP_SELF}?ctg=forum&add=1&type=message&topic_id={$smarty.get.topic}&replyto={$T_POSTS[messages_list].id}&popup=1" target = "POPUP_FRAME" onclick = "eF_js_showDivPopup(event, '{$smarty.const._REPLY}', 2)"><img class = "handle" src = "images/16x16/message.png" title = "{$smarty.const._REPLY}" alt = "{$smarty.const._REPLY}"/></a>
 	                        	<a href = "{$smarty.server.PHP_SELF}?ctg=forum&add=1&type=message&topic_id={$smarty.get.topic}&replyto={$T_POSTS[messages_list].id}&quote=1&popup=1"  target = "POPUP_FRAME" onclick = "eF_js_showDivPopup(event, '{$smarty.const._REPLYWITHQUOTE}', 2)"><img class = "handle" src = "images/16x16/forums.png" title = "{$smarty.const._REPLYWITHQUOTE}" alt = "{$smarty.const._REPLYWITHQUOTE}"/></a>
 		    	            {/if}
-		        	        {if $smarty.session.s_type == 'administrator' || ($smarty.session.s_type == 'professor' && $T_POSTS[messages_list].user_type == 'student') || ($smarty.session.s_login == $T_POSTS[messages_list].users_LOGIN && ($T_POSTS[messages_list].user_type != 'student' || $smarty.section.messages_list.last))}
+		        	        {if $smarty.session.s_type == 'administrator' || ($smarty.session.s_type == 'professor' && $T_POSTS[messages_list].user_type == 'student') || $smarty.session.s_login == $T_POSTS[messages_list].users_LOGIN}
 	                        	<a href = "{$smarty.server.PHP_SELF}?ctg=forum&edit={$T_POSTS[messages_list].id}&type=message&topic_id={$smarty.get.topic}&popup=1" target = "POPUP_FRAME" onclick = "eF_js_showDivPopup(event, '{$smarty.const._EDIT}', 2)" class = "editLink"><img class = "handle" src = "images/16x16/edit.png" title = "{$smarty.const._EDIT}" /></a>
 	                        	<img class = "ajaxHandle" src = "images/16x16/error_delete.png" title = "{$smarty.const._DELETE}" onclick = "if (confirm('{$smarty.const._AREYOUSUREYOUWNATTODELETEMESSAGE} {$T_POSTS[messages_list].title|addslashes}')) deleteForumMessage(this, '{$T_POSTS[messages_list].id}', 'message')"/>
 		            	    {/if}

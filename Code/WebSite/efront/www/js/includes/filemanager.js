@@ -65,17 +65,13 @@ function editFile(el, id, name, type, previousName) {
 function onUpdateFile(el, response) {	
 	previousName = response.evalJSON(true).previousName;
 	name = response.evalJSON(true).name;
-//alert(previousName);	
-//alert(name);	
 	el.up().up().previous().update(name);
 	el.up().up().hide();
 	el.up().up().previous().show();
 	id = (el.id.replace('editImage_', ''));
 	setImageSrc(el, 16, 'success.png');
-//alert($('span_'+id).innerHTML);	
 	$('span_'+id).innerHTML = $('span_'+id).innerHTML.replace(previousName, name);
-	$('span_'+id).id = $('span_'+id).id.replace(previousName, name);
-	el.up().up().up().up().select("a").each(function (s) {s.href = s.href.replace(previousName, name); s.writeAttribute('onclick', s.readAttribute('onclick').replace(previousName, name))});
+	el.up().up().up().up().select("a").each(function (s) {s.href = s.href.replace(previousName, name);});
 	el.up().up().up().up().select("img").each(function (s) {if (s.hasClassName("sprite16-close")) {setImageSrc(s, 16, 'edit');}});
 }
 

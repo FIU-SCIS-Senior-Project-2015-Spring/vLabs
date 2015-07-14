@@ -66,14 +66,7 @@ try {
 
 	    //Handle creation, deletion etc uniquely
 		include("entity.php");
-	} elseif (isset($_GET['download_attachement']) && in_array($_GET['download_attachement'], $legalValues) && eF_checkParameter($_GET['download_attachement'], 'id')) {
-		$result = eF_getTableData("f_personal_messages", "users_LOGIN, attachments, f_folders_ID", "id=".$_GET['download_attachement']);
-			
-		if ($result[0]['attachments'] != '') {
-			$attached_file = new EfrontFile($result[0]['attachments']);
-			echo json_encode(array('file' => $attached_file['id']));			
-		}
-		exit;	
+
 	} elseif (isset($_GET['delete']) && in_array($_GET['delete'], $legalValues) && eF_checkParameter($_GET['delete'], 'id')) {
 	    try {
 	        $result = eF_getTableData("f_personal_messages", "users_LOGIN, attachments, f_folders_ID", "id=".$_GET['delete']);
@@ -89,9 +82,9 @@ try {
             echo rawurlencode($e -> getMessage()).' ('.$e -> getCode().')';
 	    }
         exit;
-	} elseif (isset($_POST['ajax']) && isset($_POST['delete_messages'])) {
+	} elseif (isset($_GET['ajax']) && isset($_GET['delete_messages'])) {
 		try {
-			$messages = json_decode($_POST['delete_messages']);
+			$messages = json_decode($_GET['delete_messages']);
 
 			foreach ($messages as $message) {
 				$result = eF_getTableData("f_personal_messages", "users_LOGIN, attachments, f_folders_ID", "id=".$message);
@@ -185,25 +178,6 @@ try {
         	}
         }
 
-        // If in a branch url, remove unrelated lessons
-        if (G_VERSIONTYPE == 'enterprise' && defined("G_BRANCH_URL") && G_BRANCH_URL) {
-        	$branch = new EfrontBranch($_SESSION['s_current_branch']);
-        	$jobs_of_branch = $branch->getJobDescriptions();
-        	foreach($jobs_of_branch as $value) {
-        		$job_ids[] = $value['job_description_ID'];
-        	}
-			if(!empty($job_ids)) {
-	        	$result = eF_getTableDataFlat("module_hcd_lesson_to_job_description", "lessons_ID", "job_description_ID in (".implode(",", $job_ids).")");
-	        	foreach ($lessons['id'] as $key => $value) {
-	        		if (!in_array($value, $result['lessons_ID'])) {
-	        			unset($lessons['id'][$key]);
-	        			unset($lessons['name'][$key]);
-	        		}
-	        	}
-			}
-        }        
-        
-        
         //This code is for excluding lessons that belong to inactive courses and they do not belong to any other active course
         $lessons_excluded   = eF_getTableData("courses c,lessons l, lessons_to_courses lc", "l.id,l.name,SUM(c.active) as active", "l.id=lc.lessons_ID and c.id=lc.courses_ID  AND l.course_only=1", "", "l.id");
         foreach ($lessons_excluded as $key => $value) {
@@ -410,20 +384,7 @@ try {
             //$form -> setDefaults(array('recipient' => $recipient[0]['sender']));
             $form -> setDefaults(array('subject' => "Fwd: " . $recipient[0]['title']));
 
-            $forwardedMessage = $messages[$_GET['forward']];        
             $previous_text = "\n\n\n------------------ " . _ORIGINALMESSAGE. " ------------------\n" . $recipient[0]['body'];
-            if ($forwardedMessage['attachments']) {
-            	try {
-            		$attachment = new EfrontFile($forwardedMessage['attachments']);
-            		$attachment['access'] = 777;
-            		$attachment -> persist();
-            	} catch (Exception $e) {
-            		$message      = _ERROROPENINGATTACHMENT;
-            		$message_type = 'failure';
-            	}
-            
-            	 $previous_text .= "\n<span style=\"font-weight: bold;\">"._ATTACHMENTS.":</span> <a href = \"view_file.php?file=".$attachment['id']."&action=download\">".$attachment['name']."</a>";
-            }
             $form -> setDefaults(array('body' => $previous_text));
         }
         if ($form -> isSubmitted() && $form -> validate()) {
@@ -478,6 +439,7 @@ try {
                 $recipients = array_combine(array_values($recipients),array_values($recipients));
             }
 
+            //pr($recipients);
             switch ($form -> exportValue('recipients')) {
                 // case 'all_users':
                 //     $result = eF_getTableDataFlat("users", "login");
@@ -542,19 +504,20 @@ try {
                     break;
 
                 case 'specific_branch_job_description':
-                	$branches = eF_getTableData("module_hcd_branch", "branch_ID, name, father_branch_ID","","father_branch_ID ASC,branch_ID ASC");
                     $branches_list = $form -> exportValue('branch_recipients');
+
                     if ($_POST['include_subbranches']) {
                         // Find all subbranches - the $branches array has been defined during the creation of the list
-                    	$subbranches = eF_subBranches($form -> exportValue('branch_recipients'),$branches);
+                        $subbranches = eF_subBranches($form -> exportValue('branch_recipients'),$branches);
                         $subbranches[] = $form -> exportValue('branch_recipients');
-                        $branches_list = implode(",",$subbranches);
+                        $branches_list .= "','" . implode(",",$subbranches);
                     }
 
+
                     if ($form -> exportValue('job_description_recipients') != "" && $form -> exportValue('job_description_recipients') != "0") {
-                    	$result = eF_getTableDataFlat("users JOIN module_hcd_employee_has_job_description ON users.login = module_hcd_employee_has_job_description.users_login JOIN module_hcd_job_description ON module_hcd_job_description.job_description_ID = module_hcd_employee_has_job_description.job_description_ID","distinct login", "users.active = 1 AND module_hcd_job_description.description = '".$form -> exportValue('job_description_recipients') ."' AND module_hcd_job_description.branch_ID IN (".$branches_list.") ");
+                        $result = eF_getTableDataFlat("users JOIN module_hcd_employee_has_job_description ON users.login = module_hcd_employee_has_job_description.users_login JOIN module_hcd_job_description ON module_hcd_job_description.job_description_ID = module_hcd_employee_has_job_description.job_description_ID","distinct login", "users.active = 1 AND module_hcd_job_description.description = '".$form -> exportValue('job_description_recipients') ."' AND module_hcd_job_description.branch_ID IN ('".$branches_list."') ");
                     } else {
-                        $result = eF_getTableDataFlat("users JOIN module_hcd_employee_works_at_branch ON users.login = module_hcd_employee_works_at_branch.users_login","distinct login", "users.active = 1 AND module_hcd_employee_works_at_branch.branch_ID IN (".$branches_list.") AND module_hcd_employee_works_at_branch.assigned = '1'");
+                        $result = eF_getTableDataFlat("users JOIN module_hcd_employee_works_at_branch ON users.login = module_hcd_employee_works_at_branch.users_login","distinct login", "users.active = 1 AND module_hcd_employee_works_at_branch.branch_ID IN ('".$branches_list."') AND module_hcd_employee_works_at_branch.assigned = '1'");
                     }
                     break;
                 case 'specific_job_description':

@@ -43,12 +43,6 @@ function clearCache(el, cache) {
     ajaxRequest(el, url, parameters);
 }
 
-function clearFiles(el, type) {
-	var parameters = {ajax:1, type:type, method:'get'};
-    var url    = location.toString();
-    ajaxRequest(el, url, parameters);
-}
-
 function ajaxPost(login, el, table_id) {
 	var url = location.toString();
 	var parameters = {postAjaxRequest:1, method: 'get',autologin: 1};

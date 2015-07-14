@@ -1,6 +1,12 @@
         {$T_PERSONAL_INFO_FORM.javascript}
         <form {$T_PERSONAL_INFO_FORM.attributes}>
     		{$T_PERSONAL_INFO_FORM.hidden}    		
+            <!-- Added by Masoud Sadjadi on Jul 26, 2014 to show important instructions on the signup form -->
+            <!-- Kaseya University Team: You may insert any valid html code in this part -->
+            <!-- Begin -->
+<center><font color="#FF0000" size=3><b>IMPORTANT:</b></font><font size=2> If you have previously participated in training with Kaseya University through IT Scholars,<br> <a href="http://university.kaseya.com/KaseyaUniversity/AccountSync.htm" target=_blank>CLICK HERE</a> to learn how to create and synchronize your accounts between the learning systems.</font></center>
+            <!-- End -->
+            <!-- End Addition by Masoud Sadjadi -->
     		<div class = "formRow">
         		<div class = "formLabel">			
                     <div class = "header">{$T_PERSONAL_INFO_FORM.login.label}</div>
@@ -34,7 +40,7 @@
     		<div class = "formRow">	    	    
         		<div class = "formLabel">			
                     <div class = "header">{$T_PERSONAL_INFO_FORM.email.label}</div>
-                    <div class = "explanation"></div>
+                    <div class = "explanation"  {if $T_LDAP_USER}style = "display:none"{/if}>{$smarty.const._ONLYUSEBUSINESSEMAIL}</div>
             	</div>
         		<div class = "formElement">
                 	<div class = "field">{$T_PERSONAL_INFO_FORM.email.html}</div>
@@ -73,6 +79,18 @@
         	    </div>
         	</div>
         {/foreach}  
+            <!-- Added by Masoud Sadjadi on Jul 26, 2014 to include timezone filed on the signup form -->
+    		<div class = "formRow">	    
+            	<div class = "formLabel">			
+                    <div class = "header">{$T_PERSONAL_INFO_FORM.timezone.label}</div>
+                    <div class = "explanation"></div>
+            	</div>
+        		<div class = "formElement">
+                	<div class = "field">{$T_PERSONAL_INFO_FORM.timezone.html}</div>
+            		{if $T_PERSONAL_INFO_FORM.timezone.error}<div class = "error">{$T_PERSONAL_INFO_FORM.timezone.error}</div>{/if}
+        	    </div>      		
+        	</div>
+            <!-- End Addition by Masoud Sadjadi -->
     		<div class = "formRow">	    
             	<div class = "formLabel">			
                     <div class = "header">{$T_PERSONAL_INFO_FORM.comments.label}</div>

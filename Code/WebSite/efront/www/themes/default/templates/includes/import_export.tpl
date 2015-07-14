@@ -1,65 +1,43 @@
     {*moduleImportUsers: The page to import user data*}
     {capture name = "moduleImportExportUsers"}
-        <tr>
-        	<td class="moduleCell">
-				{capture name = "t_import_export_users_code"}
+        <tr><td class="moduleCell">
 
-				<script>
-					var version = "{$smarty.const.G_VERSIONTYPE}";
-				</script>
+                {capture name = "t_import_export_users_code"}
 
-				<div class = "tabber">
-                
-					{if !isset($T_CURRENT_USER->coreAccess.users) || $T_CURRENT_USER->coreAccess.users == 'change'}
+                <script>
+                var version = "{$smarty.const.G_VERSIONTYPE}";
+                </script>
+
+                <div class = "tabber">
+                {if !isset($T_CURRENT_USER->coreAccess.users) || $T_CURRENT_USER->coreAccess.users == 'change'}
 					{capture name = "t_import_code"}
 						{$T_IMPORT_FORM.javascript}
                         <form {$T_IMPORT_FORM.attributes}>
                         {$T_IMPORT_FORM.hidden}
                         <table class = "formElements">
-                            <tr>
-                            	<td class = "labelCell">{$smarty.const._DATAFILE}:</td>
-                            	<td class = "elementCell">{$T_IMPORT_FORM.import_file.html}</td>
-                            </tr>
-							<tr>
-								<td></td>
-								<td class = "infoCell">{$smarty.const._FILESIZEMUSTBESMALLERTHAN} <b>{$T_MAX_FILE_SIZE}</b> {$smarty.const._KB}</td>
-							</tr>
-                            <tr>
-                            	<td class = "labelCell">{$smarty.const._DATATOIMPORT}:</td>
-                            	<td class = "elementCell">{$T_IMPORT_FORM.import_type.html}</td>
-                            </tr>
-                            <tr>
-                            	<td class = "labelCell">{$smarty.const._KEEPEXISTINGUSERS}:</td>
-                            	<td class = "elementCell">{$T_IMPORT_FORM.import_keep.html}</td>
-                            </tr>
-                            <tr {if $smarty.post.import_type!='users_to_jobs'}style = "display:none"{/if} id = "replace_assignments_row" >
-                            	<td class = "labelCell">{$smarty.const._REPLACEASSIGNMENTS}:</td>
-                            	<td class = "elementCell">{$T_IMPORT_FORM.replace_assignments.html} <span class = "infoCell">{$smarty.const._REPLACEASSIGNMENTSEXPLANATION}</span></td>
-                            </tr>
-							<tr>
-								<td class = "labelCell">{$smarty.const._DATEFORMAT}:</td>
-                            	<td class = "elementCell">{$T_IMPORT_FORM.date_format.html}</td>
-                            </tr>
-                            <tr>
-                            	<td></td>
+                            <tr><td class = "labelCell">{$smarty.const._DATAFILE}:</td>
+                            	<td class = "elementCell">{$T_IMPORT_FORM.import_file.html}</td></tr>
+							<tr><td></td>
+								<td class = "infoCell">{$smarty.const._FILESIZEMUSTBESMALLERTHAN} <b>{$T_MAX_FILE_SIZE}</b> {$smarty.const._KB}</td></tr>
+                            <tr><td class = "labelCell">{$smarty.const._DATATOIMPORT}:</td>
+                            	<td class = "elementCell">{$T_IMPORT_FORM.import_type.html}</td></tr>
+                            <tr><td class = "labelCell">{$smarty.const._KEEPEXISTINGUSERS}:</td>
+                            	<td class = "elementCell">{$T_IMPORT_FORM.import_keep.html}</td></tr>
+                            <tr {if $smarty.post.import_type!='users_to_jobs'}style = "display:none"{/if} id = "replace_assignments_row" ><td class = "labelCell">{$smarty.const._REPLACEASSIGNMENTS}:</td>
+                            	<td class = "elementCell">{$T_IMPORT_FORM.replace_assignments.html} <span class = "infoCell">{$smarty.const._REPLACEASSIGNMENTSEXPLANATION}</span></td></tr>
+							<tr><td class = "labelCell">{$smarty.const._DATEFORMAT}:</td>
+                            	<td class = "elementCell">{$T_IMPORT_FORM.date_format.html}</td></tr>
+                            <tr><td></td>
                             	<td class = "submitCell">{$T_IMPORT_FORM.submit_import.html}</td>
                             </tr>
                         </table>
                         </form>
                         <table width="100%">
-                            <tr>
-                            	<td class = "horizontalSeparator"></td>
-                            </tr>
-                            <tr>
-                            	<td>{$smarty.const._CSVIMPORTEXPLAINATION}</td>
-                            </tr>
-                            <tr>
-                            	<td></td>
-                            </tr>
-                            
+                            <tr><td class = "horizontalSeparator"></td></tr>
+                            <tr><td>{$smarty.const._CSVIMPORTEXPLAINATION}</td></tr>
+                            <tr><td></td></tr>
                             {foreach name = 'help_list' key = "type" item = "fields" from = $T_HELP_IMPORT_INFO}
-                            <tr>
-                            	<td id = "{$type}_help" style="display:none">
+                            <tr><td id = "{$type}_help" style="display:none">
                             		<span style = "color:red">{$fields.mandatory}</span>{if $fields.optional != ""}, {$fields.optional}{/if} <br>(<a href="{$smarty.server.PHP_SELF}?ctg=import_export&csv_sample=1&sample_type={$fields.sample_type}">{$smarty.const._DOWNLOADEXAMPLE}</a>)
 
                             		{*

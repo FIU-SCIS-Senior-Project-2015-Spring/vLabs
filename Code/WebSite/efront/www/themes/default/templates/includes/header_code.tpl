@@ -1,6 +1,6 @@
 	<div id = "logo">
 		<a href = "{if $smarty.session.s_login}{$smarty.server.PHP_SELF|basename}{else}index.php{/if}">
-			<img class = "handle" src = "{$T_LOGO}?{$T_CONFIGURATION.logo_timestamp}" title = "{$T_CONFIGURATION.site_name}" alt = "{$T_CONFIGURATION.site_name}" />
+			<img class = "handle" src = "{$T_LOGO}" title = "{$T_CONFIGURATION.site_name}" alt = "{$T_CONFIGURATION.site_name}" />
 		</a>
 	</div>
 	
@@ -70,23 +70,17 @@
 						{if $T_CURRENT_USER->coreAccess.organization != 'hidden'}
 						<li><a href = "userpage.php?ctg=personal&user={$T_CURRENT_USER->user.login}&op=org_form">{$smarty.const._ORGANIZATION}</a></li>
 						{/if}
-						<li><a href = "userpage.php?ctg=personal&user={$T_CURRENT_USER->user.login}&op=files">{$smarty.const._FILES}</a></li>
+						<li><a href = "userpage.php?ctg=personal&user={$T_CURRENT_USER->user.login}&op=files'">{$smarty.const._FILES}</a></li>
 	              	{/if} {* #cpp#endif *}
 	                </ul>
 	            </span>				
 			{if $T_CURRENT_USER->coreAccess.personal_messages != 'hidden' && 'messages'|eF_template_isOptionVisible}
 	            <span class="headerText dropdown">
 	                <a class="dropdown-toggle" data-toggle="dropdown" href="#">{$smarty.const._MESSAGES} <b class="caret"></b></a> {if $T_NUM_MESSAGES}<span id = "header_total_messages" class = "badge badge-info" style = "cursor:pointer" onclick = "window.location='{$smarty.server.PHP_SELF}?ctg=messages'">{$T_NUM_MESSAGES}</span>{/if}
-	                {if $T_CURRENT_USER->coreAccess.personal_messages == 'change' || !isset($T_CURRENT_USER->coreAccess.personal_messages)}
 	                <ul class="dropdown-menu">
 	                	<li><a href="userpage.php?ctg=messages">{$smarty.const._INCOMING}</a></li>
 	                	<li><a href="userpage.php?ctg=messages&add=1">{$smarty.const._CREATE}</a></li>
 	                </ul>
-	                {elseif $T_CURRENT_USER->coreAccess.personal_messages == 'view'}
-	                <ul class="dropdown-menu">
-	                	<li><a href="userpage.php?ctg=messages">{$smarty.const._INCOMING}</a></li>
-	                </ul>	                
-	                {/if}
 	            </span>
 			{/if}
 			{if $smarty.server.PHP_SELF|basename != 'index.php' && $T_THEME_SETTINGS->options.sidebar_interface != 0 && $smarty.session.s_login}

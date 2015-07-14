@@ -51,14 +51,12 @@ try {
 	        $folder -> delete();
 	        eF_deleteTableData("modules", "className='".$className."'");
 		}
-		EfrontCache::getInstance()->deleteCache('modules');
         exit;
     } elseif(isset($_GET['activate_module']) && eF_checkParameter($_GET['activate_module'], 'filename')) {
         if (isset($currentUser -> coreAccess['modules']) && $currentUser -> coreAccess['modules'] != 'change') {
             throw new EfrontSystemException(_UNAUTHORIZEDACCESS, EfrontSystemException::UNAUTHORIZED_ACCESS);
         }
         eF_updateTableData("modules", array("active" => 1), "className = '".$_GET['activate_module']."'");
-        EfrontCache::getInstance()->deleteCache('modules');
         echo "1";
         exit;
     } elseif(isset($_GET['deactivate_module']) && eF_checkParameter($_GET['deactivate_module'], 'filename')) {
@@ -66,7 +64,6 @@ try {
             throw new EfrontSystemException(_UNAUTHORIZEDACCESS, EfrontSystemException::UNAUTHORIZED_ACCESS);
         }
         eF_updateTableData("modules", array("active" => 0), "className = '".$_GET['deactivate_module']."'");
-        EfrontCache::getInstance()->deleteCache('modules');
         echo "0";
         exit;
     } elseif(isset($_GET['install_module']) && eF_checkParameter($_GET['install_module'], 'filename')) {

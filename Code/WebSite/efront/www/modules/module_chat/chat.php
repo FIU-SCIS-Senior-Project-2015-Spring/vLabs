@@ -40,9 +40,10 @@ if ($_GET['action'] == "logoutfromchat") { logoutFromChat(); }
 if ($_GET['action'] == "logintochat") { loginToChat(); }
 if ($_GET['action'] == "getchatheartbeat") { getChatHeartbeat(); }
 if ($_GET['action'] == "getrefreshrate") { getRefresh_rate(); }
-if ($_GET['action'] == "getchathistory") { getChatHistory(); }
+
 
 function getChatHeartbeat(){
+	
 	$rate = eF_getTableData("module_chat_config", "chatHeartbeatTime", "1");
 	foreach( $rate as $r ){
 		echo($r['chatHeartbeatTime']);
@@ -50,6 +51,7 @@ function getChatHeartbeat(){
 }
 
 function getRefresh_rate(){
+
 	$rate = eF_getTableData("module_chat_config", "refresh_rate", "1");
 	foreach( $rate as $r ){
 		echo $r['refresh_rate'];
@@ -66,13 +68,15 @@ function loginToChat(){
 }
 
 function chatHeartbeat() {
-	if (!$_SESSION['last_msg']) {
+
+
+	if (!$_SESSION['last_msg']){
 		//$my_t=getdate();
 		//$_SESSION['last_msg'] = $my_t[year].'-'.$my_t[mon].'-'.$my_t[mday].' '.$my_t[hours].':'.$my_t[minutes].':'.$my_t[seconds];
 		$_SESSION['last_msg'] = date("Y-m-d H:i:s", time()-date("Z"));  //fix for timezone differences
 	}
 
-	if (!$_SESSION['last_lesson_msg']) {
+	if (!$_SESSION['last_lesson_msg']){
 		//$my_t=getdate();
 		//$_SESSION['last_lesson_msg'] = $my_t[year].'-'.$my_t[mon].'-'.$my_t[mday].' '.$my_t[hours].':'.$my_t[minutes].':'.$my_t[seconds];
 		$_SESSION['last_lesson_msg'] = date("Y-m-d H:i:s", time()-date("Z"));  //fix for timezone differences
@@ -80,29 +84,38 @@ function chatHeartbeat() {
 
 	$lesson_rooms = join("','",$_SESSION['lesson_rooms']);
 
-	if (!$_SESSION['s_lessons_ID']) {
-		$results = eF_getTableData('module_chat', '*', "(module_chat.to_user = '".$_SESSION['chatter']."' AND sent>'".$_SESSION['last_msg']."')", 'id ASC');	
-	} else {
-		$results = eF_getTableData('module_chat', '*', "(module_chat.to_user = '".mysql_real_escape_string($_SESSION['chatter'])."' AND sent>'".$_SESSION['last_msg']."') OR (module_chat.to_user IN ('$lesson_rooms') AND module_chat.from_user != '".$_SESSION['chatter']."' AND sent>'".$_SESSION['last_lesson_msg']."')", 'id ASC');
+	if (!$_SESSION['s_lessons_ID']){
+		$sql = "select * from module_chat where (module_chat.to_user = '".mysql_real_escape_string($_SESSION['chatter'])."' AND sent>'".$_SESSION['last_msg']."') order by id ASC";
 	}
-
+	else{
+		$sql = "select * from module_chat where (module_chat.to_user = '".mysql_real_escape_string($_SESSION['chatter'])."' AND sent>'".$_SESSION['last_msg']."') OR (module_chat.to_user IN ('$lesson_rooms') AND module_chat.from_user != '".$_SESSION['chatter']."' AND sent>'".$_SESSION['last_lesson_msg']."') order by id ASC";
+	}
+	$query = mysql_query($sql);
 	$items = '';
+
 	$chatBoxes = array();
-	foreach ($results as $chat) {
+
+	while ($chat = mysql_fetch_array($query)) {
+
 		if (in_array($chat['to_user'],$_SESSION['lesson_rooms'])) {
 			$title = $chat['to_user'];
 			$chatboxname = $_SESSION["room_".$title];
-		} else {
+		}
+		else {
 			$title = $chat['from_user'];
 			$chatboxname = $title;
 		}
-		
+
 		$_SESSION['last_msg'] = $chat['sent'];
 		$_SESSION['last_lesson_msg'] = $chat['sent'];
 		if (!isset($_SESSION['openChatBoxes'][$title]) && isset($_SESSION['chatHistory'][$title])) {
 			$items = $_SESSION['chatHistory'][$title];
 		}
-		
+
+		$chat['message'] = sanitize($chat['message']);
+
+
+
 		$items .= <<<EOD
 					   {
 			"s": "0",
@@ -112,12 +125,15 @@ function chatHeartbeat() {
 			"n": "{$chatboxname}"
 	   },
 EOD;
-		
-		if (!isset($_SESSION['chatHistory'][$title])) {
-			$_SESSION['chatHistory'][$title] = '';
-		}
-		
-		$_SESSION['chatHistory'][$title] .= <<<EOD
+
+	if (!isset($_SESSION['chatHistory'][$title])) {
+		$_SESSION['chatHistory'][$title] = '';
+	}
+
+
+	//if ($title == $chat['from_user']){ // Maybe add else with "t": {$title} -> "t": {$chat[from_user]}
+
+			$_SESSION['chatHistory'][$title] .= <<<EOD
 						   {
 			"s": "0",
 			"t": "{$title}",
@@ -126,14 +142,52 @@ EOD;
 			"n": "{$chatboxname}"
 	   },
 EOD;
-		//}
-		
+	//}
+
 		//unset($_SESSION['tsChatBoxes'][$chat['from_user']]);
 		if (!isset( $_SESSION['openChatBoxes'][$title] )){
 			$_SESSION['openChatBoxes'][$title] = $_SESSION['chatboxesnum'];
 			$_SESSION['chatboxesnum'] = $_SESSION['chatboxesnum'] + 10;
-		}		
+		}
 	}
+
+	/*if (!empty($_SESSION['openChatBoxes'])) {
+	foreach ($_SESSION['openChatBoxes'] as $chatbox => $time) {
+		if (!isset($_SESSION['tsChatBoxes'][$chatbox])) {
+			$now = time()-strtotime($time);
+			$time = date('g:iA M dS', strtotime($time));
+
+			$message = "Sent at $time";
+			if ($now > 5) {
+				$items .= <<<EOD
+{
+"s": "2",
+"t": "{$title}",
+"f": "$chatbox",
+"m": "{$message}"
+},
+EOD;
+
+	if (!isset($_SESSION['chatHistory'][$chatbox])) {
+		$_SESSION['chatHistory'][$chatbox] = '';
+	}
+
+	$_SESSION['chatHistory'][$chatbox] .= <<<EOD
+		{
+"s": "2",
+"t": "{$title}",
+"f": "$chatbox",
+"m": "{$message}"
+},
+EOD;
+			$_SESSION['tsChatBoxes'][$chatbox] = 1;
+		}
+		}
+	}
+}
+*/
+	//$sql = "update module_chat set recd = 1 where module_chat.to_user = '".mysql_real_escape_string($_SESSION['chatter'])."' and recd = 0";
+	//$query = mysql_query($sql);
 
 	if ($items != '') {
 		$items = substr($items, 0, -1);
@@ -150,35 +204,12 @@ header('Content-type: application/json');
 			exit(0);
 }
 
-function getChatHistory() {
 
-	if (eF_checkParameter($_POST['chat_with'], 'login')) {
-	
-		if($_POST['type'] == 'user') {
-			$results = eF_getTableData("module_chat", "*", "from_user='".$_SESSION['chatter']."' AND to_user='".$_POST['chat_with']."' OR from_user='".$_POST['chat_with']."' AND to_user='".$_SESSION['chatter']."'", "id ASC");
-		}
-	
-		if($_POST['type'] == 'lesson') {
-			$results = eF_getTableData('module_chat', "*", "to_user='".$_POST['chat_with']."'", "id ASC");
-		}
-		$items = array();
-		foreach($results as $chat) {
-			$items[] = array(
-				"s" => "0",
-				"t" => "",
-				"f" => $chat['from_user'],
-				"m" => $chat['message'],
-				"n" => ""
-			);
-		}
-	}
-
-	echo json_encode($items);
-
-}
 
 function chatBoxSession($chatbox) {
+
 	$items = '';
+
 	if (isset($_SESSION['chatHistory'][$chatbox])) {
 		$items = $_SESSION['chatHistory'][$chatbox];
 	}
@@ -188,7 +219,9 @@ function chatBoxSession($chatbox) {
 
 function startChatSession() {
 	$items = '';
+
 	asort($_SESSION['openChatBoxes']);
+
 	if (!empty($_SESSION['openChatBoxes'])) {
 		foreach ($_SESSION['openChatBoxes'] as $chatbox => $void) {
 			$items .= chatBoxSession($chatbox);
@@ -247,28 +280,12 @@ EOD;
 	//unset($_SESSION['tsChatBoxes'][$_POST['to']]);
 
 	if ($to != $_SESSION['lessonid']){
-		ef_insertTableData('module_chat', array(
-			'from_user' => $from,
-			'to_user' => $to,
-			'message' => $message,
-			'sent' => date("Y-m-d H:i:s", time()-date("Z")),
-			'isLesson' => 0
-			
-		));
-		//$sql = "insert into module_chat (module_chat.from_user,module_chat.to_user,message,sent,module_chat.isLesson) values ('".mysql_real_escape_string($from)."', '".mysql_real_escape_string($to)."','".mysql_real_escape_string($message)."','".date("Y-m-d H:i:s", time()-date("Z"))."', '0')";
+		$sql = "insert into module_chat (module_chat.from_user,module_chat.to_user,message,sent,module_chat.isLesson) values ('".mysql_real_escape_string($from)."', '".mysql_real_escape_string($to)."','".mysql_real_escape_string($message)."','".date("Y-m-d H:i:s", time()-date("Z"))."', '0')";
 	}
 	else{
-		ef_insertTableData('module_chat', array(
-			'from_user' => $from,
-			'to_user' => $to,
-			'message' => $message,
-			'sent' => date("Y-m-d H:i:s", time()-date("Z")),
-			'isLesson' => 1
-	
-		));
-		//$sql = "insert into module_chat (module_chat.from_user,module_chat.to_user,message,sent,module_chat.isLesson) values ('".mysql_real_escape_string($from)."', '".mysql_real_escape_string($to)."','".mysql_real_escape_string($message)."','".date("Y-m-d H:i:s", time()-date("Z"))."', '1')";
+		$sql = "insert into module_chat (module_chat.from_user,module_chat.to_user,message,sent,module_chat.isLesson) values ('".mysql_real_escape_string($from)."', '".mysql_real_escape_string($to)."','".mysql_real_escape_string($message)."','".date("Y-m-d H:i:s", time()-date("Z"))."', '1')";
 	}
-	//$query = mysql_query($sql);
+	$query = mysql_query($sql);
 	echo $_SESSION['chatboxesnum'];
 	exit(0);
 }

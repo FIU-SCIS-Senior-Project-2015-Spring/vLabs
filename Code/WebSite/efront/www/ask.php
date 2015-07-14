@@ -37,7 +37,6 @@ switch ($_GET['ask_type']) {
 	case 'course': case 'courses': 	askCourses();	  break;
 	case 'branch': case 'branches': askBranches(); 	  break;
 	case 'skill':  case 'skills':   askSkills(); 	  break;
-	case 'job':    case 'jobs':   	askJobs();	 	  break;
 	default: break;
 }
 
@@ -661,25 +660,15 @@ function askCourses() {
 		$result = eF_getTableData("courses c, users_to_courses uc", "c.id, c.name, c.directions_ID", "(uc.user_type = 'professor' or uc.user_type in (select id from user_types where basic_user_type = 'professor')) AND c.active=1 AND c.id = uc.courses_ID AND uc.archive=0 and c.archive=0 AND uc.users_LOGIN='".$_SESSION['s_login']."' AND c.name like '%$preffix%'");
 
 		if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
-			$result = eF_getTableData("courses c, users_to_courses uc", "c.id, c.name, c.directions_ID", "(uc.user_type = 'professor' or uc.user_type in (select id from user_types where basic_user_type = 'professor')) AND c.active=1 AND c.id = uc.courses_ID AND uc.archive=0 and c.archive=0 AND uc.users_LOGIN='".$_SESSION['s_login']."' AND c.name like '%$preffix%'");
-		
-		    // Add courses from supervised branches
+			$result = eF_getTableData("courses c, users_to_courses uc", "c.id, c.name, c.directions_ID", "c.active=1 AND c.id = uc.courses_ID AND uc.archive=0 and c.archive=0 AND uc.users_LOGIN='".$_SESSION['s_login']."' AND c.name like '%$preffix%'");
+			// Add courses from supervised branches
 			$user     = EfrontUserFactory :: factory($_SESSION['s_login']);
 			if (isset($user ->aspects['hcd']) && $user ->aspects['hcd']->isSupervisor()) {
 				$employee = $user ->aspects['hcd'];
 				//Get the courses assigned to the branches supervised by this user
 				$supervised_courses = $employee -> supervisesCourses();
-				
-				if(isset($_SESSION['s_current_branch'])) {
-					foreach ($supervised_courses as $key => $value){
-						if($value['branches_ID'] != $_SESSION['s_current_branch']) {
-							unset($supervised_courses[$key]);
-						}
-					}
-				}				
 				//pr($result);
 				$existing_course_ids = array_keys($supervised_courses);
-			
 				foreach ($result as $course) {
 					if (!in_array($course['id'], $existing_course_ids)) {
 						$supervised_courses[$course['id']] = $course;
@@ -818,52 +807,7 @@ function askSkills() {
 		handleAjaxExceptions($e);
 	}
 }
-
-function askJobs() {
-	try {
-
-		eF_checkParameter($_POST['preffix'], 'text') ? $preffix = $_POST['preffix'] : $preffix = '%';
-
-		$jobs = array();
-
-		$job_descriptions_without_skills = eF_getTableData("module_hcd_job_description LEFT OUTER JOIN module_hcd_employee_has_job_description ON module_hcd_employee_has_job_description.job_description_ID = module_hcd_job_description.job_description_ID LEFT OUTER JOIN module_hcd_branch ON module_hcd_branch.branch_ID = module_hcd_job_description.branch_ID","module_hcd_job_description.job_description_ID, description, module_hcd_job_description.branch_ID, module_hcd_branch.name, count(users_login) as Employees, employees_needed","","module_hcd_job_description.description","module_hcd_job_description.job_description_ID");
-		$job_descriptions_with_skills    = eF_getTableData("module_hcd_job_description LEFT OUTER JOIN module_hcd_job_description_requires_skill ON module_hcd_job_description.job_description_ID = module_hcd_job_description_requires_skill.job_description_ID", "count(skill_ID) as skill_req","","module_hcd_job_description.description","module_hcd_job_description.job_description_ID");
-
-		$size = sizeof($job_descriptions_without_skills);
-		for ($k = 0; $k < $size ; $k++) {
-			$job_descriptions[$k] = array_merge($job_descriptions_without_skills[$k], $job_descriptions_with_skills[$k]);
-		}
-
-		foreach ($job_descriptions as $key => $job_description) {
-			$diff = $job_description["employees_needed"] - $job_description["Employees"];
-			$job_descriptions[$key]['more_needed']  = ($diff > 0) ? $diff:0;
-		}
-
-		for ($i = 0 ; $i < sizeof($job_descriptions) ; $i ++) {
-			if ($preffix == '%' || stripos($job_descriptions[$i]['description'], $preffix) !== false) {
-				$hiname = highlightSearch($job_descriptions[$i]['description'], $preffix);
-
-				$jobs[$i] = array(
-						'id'          => $job_descriptions[$i]['job_description_ID'],
-						'description' => $job_descriptions[$i]['description'] . ' (' . $job_descriptions[$i]['name'] . ')');
-
-			}
-		}
-
-		$jobs = array_values(eF_multisort($jobs, 'description', 'asc'));
-
-		$str = '<ul>';
-		for ($k = 0; $k < sizeof($jobs); $k++){
-			$str = $str.'<li id="'.$jobs[$k]['id'].'">'.$jobs[$k]['description'].'</li>';
-		}
-		$str .= '</ul>';
-		echo $str;
-	} catch (Exception $e) {
-		handleAjaxExceptions($e);
-	}
-}
-
-function askInformation() {	
+function askInformation() {
 	try {
 		if (isset($_GET['lessons_ID']) && eF_checkParameter($_GET['lessons_ID'], 'id')) {
 			$lesson            = new EfrontLesson($_GET['lessons_ID']);
@@ -888,13 +832,8 @@ function askInformation() {
 				if ($_GET['from_course']) {
 					$course   = new EfrontCourse($_GET['from_course']);
 					$schedule = $course -> getLessonScheduleInCourse($lesson);
-					if ($schedule['start_date'] || $schedule['end_date']) {
-						$lessonInformation['from_timestamp'] = $schedule['start_date'];
-						$lessonInformation['to_timestamp']   = $schedule['end_date'];
-					} else {
-						$lessonInformation['from_timestamp'] = $schedule['active_in_lesson'] + 24 * 60 * 60 * $schedule['start_period'];
-						$lessonInformation['to_timestamp'] 	= $lessonInformation['from_timestamp'] + 24 * 60 * 60 * $schedule['end_period'];
-					}
+					$lessonInformation['from_timestamp'] = $schedule['start_date'];
+					$lessonInformation['to_timestamp']   = $schedule['end_date'];
 				}
 			} catch (Exception $e) {};
 

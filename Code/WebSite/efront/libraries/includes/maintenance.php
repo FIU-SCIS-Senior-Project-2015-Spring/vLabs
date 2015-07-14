@@ -64,7 +64,7 @@ if (!isset($currentUser -> coreAccess['maintenance']) || $currentUser -> coreAcc
 
     $smarty -> assign('T_LOCKDOWN_FORM', $renderer -> toArray());                     //Assign the form to the template
 
-    if ($_GET['check_cleanup'] || isset($_GET['cleanup'])) {
+    if ($_GET['check_cleanup']) {
     	//User check
     	$users     = eF_getTableDataFlat("users", "login");
     	//$users_dir = eF_getDirContents(G_ROOTPATH.'upload/', '', false, false);
@@ -99,7 +99,7 @@ if (!isset($currentUser -> coreAccess['maintenance']) || $currentUser -> coreAcc
     	$orphanLessonFoldersStr = implode(", ", $orphan_lesson_folders);
     	$smarty -> assign("T_ORPHAN_LESSON_FOLDERS", mb_strlen($orphanLessonFoldersStr) > 200 ? mb_substr($orphanLessonFoldersStr, 0, 200).'...' : $orphanLessonFoldersStr);
     }
-
+    
     if (isset($_GET['cleanup']) && ($_GET['cleanup'] == 'orphan_user_folders' || $_GET['cleanup'] == 'all')) {
         foreach ($orphan_user_folders as $folder) {
             try {
@@ -135,7 +135,7 @@ if (!isset($currentUser -> coreAccess['maintenance']) || $currentUser -> coreAcc
         }
     }
     if (isset($_GET['cleanup']) && ($_GET['cleanup'] == 'orphan_lesson_folders' || $_GET['cleanup'] == 'all')) {
-        foreach ($orphan_lesson_folders as $folder) {   	
+        foreach ($orphan_lesson_folders as $folder) {
             try {
                 $dir = new EfrontDirectory(G_ROOTPATH.'www/content/lessons/'.$folder.'/');
                 $dir -> delete();
@@ -356,8 +356,6 @@ if (!isset($currentUser -> coreAccess['maintenance']) || $currentUser -> coreAcc
                 eF_deleteTableData("cache");
             } else if ($_GET['cache'] == 'query') {
             	eF_executeNew("reset query cache");
-            } else if ($_GET['cache'] == 'editor') {
-                clearEditorCache();
             } else if ($_GET['cache'] == 'apc' && function_exists('apc_clear_cache')) {
             	apc_clear_cache('user');
             }
@@ -365,21 +363,6 @@ if (!isset($currentUser -> coreAccess['maintenance']) || $currentUser -> coreAcc
         	handleAjaxExceptions($e);
         }
         exit;
-    }
-    
-    if (isset($_GET['type']) && $_GET['ajax'] == 1) {
-    	try {
-    		if ($_GET['type'] == 'exported_lessons') {
-    			clearExportedLessonFiles();
-    		} else if ($_GET['type'] == 'exported_courses') {
-    			clearExportedCourseFiles();
-    		} else if ($_GET['type'] == 'backup_temp') {
-    			clearBackupTempFolder();
-    		}
-    	} catch (Exception $e) {
-    		handleAjaxExceptions($e);
-    	}
-    	exit;
     }
 
 //pr($permissions);
@@ -466,18 +449,19 @@ if (!isset($currentUser -> coreAccess['maintenance']) || $currentUser -> coreAcc
             	if (isset($_GET['login']) && eF_checkParameter($_GET['login'], 'login')) {
 					$user = EfrontUserFactory :: factory($_GET['login']);
 					if ($user -> user['autologin'] == "" ) {
-						$token = getRandomString(20, true);
-						$user -> user['autologin'] = $token;
+						$convert = $_GET['login']."_".$usersArray[$_GET['login']]['timestamp'];
+						$converted = md5($convert.G_MD5KEY);
+						$user -> user['autologin'] = $converted;
 					} else {
 						$user -> user['autologin'] = "";
 					}
 					$user -> persist();
-					echo $token;
+					echo $converted;
                 } else if (isset($_GET['addAll'])) {
 					isset($_GET['filter']) ? $usersArray = eF_filterData($usersArray, $_GET['filter']) : null;
 					foreach ($usersArray as $key => $value) {
 						if ($value['autologin'] == "") {
-							$autologin = getRandomString(20, true);
+							$autologin = md5($key."_".$value['timestamp'].G_MD5KEY);
 							eF_updateTableData("users", array('autologin' => $autologin), "login='".$key."'");
 						}
 					}

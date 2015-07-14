@@ -26,9 +26,9 @@
                     <!--
                     <tr><td></td><td>
                     <table><tr><td>
-                    <a id="hiddenPopupLink" href="{$T_GIFTAIKENQUESTIONS_MODULE_BASEURL}&preview=1" onclick = "eF_js_showDivPopup('{$smarty.const._ADDSKILLCATEGORY}', 2)" target = "POPUP_FRAME" ><img style="vertical-align:top" border="0" src= "images/16x16/search.png" /></a>
+                    <a id="hiddenPopupLink" href="{$T_GIFTAIKENQUESTIONS_MODULE_BASEURL}&preview=1" onclick = "eF_js_showDivPopup(event, '{$smarty.const._ADDSKILLCATEGORY}', 2)" target = "POPUP_FRAME" ><img style="vertical-align:top" border="0" src= "images/16x16/search.png" /></a>
                     </td><td>
-                    <a id="hiddenPopupLink" href="{$T_GIFTAIKENQUESTIONS_MODULE_BASEURL}&preview=1" onclick = "eF_js_showDivPopup('{$smarty.const._ADDSKILLCATEGORY}', 2)" target = "POPUP_FRAME" >{$smarty.const._PREVIEW}</a>
+                    <a id="hiddenPopupLink" href="{$T_GIFTAIKENQUESTIONS_MODULE_BASEURL}&preview=1" onclick = "eF_js_showDivPopup(event, '{$smarty.const._ADDSKILLCATEGORY}', 2)" target = "POPUP_FRAME" >{$smarty.const._PREVIEW}</a>
                     </td></tr></table>
 
                     </td></tr>

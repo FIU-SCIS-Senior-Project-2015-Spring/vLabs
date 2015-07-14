@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head profile="http://selenium-ide.openqa.org/profiles/test-case">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="selenium.base" href="http://university.kaseya.com/" />
+<title>004-Student-Start-vLab</title>
+</head>
+<body>
+<table cellpadding="1" cellspacing="1" border="1">
+<thead>
+<tr><td rowspan="1" colspan="3">004-Student-Start-vLab</td></tr>
+</thead><tbody>
+<tr>
+	<td>open</td>
+	<td>/efront-dev/www/index.php?logout=true</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=login_box</td>
+	<td>nptptest032</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>name=password</td>
+	<td>itscholars032</td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>name=submit_login</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>name=submit_accept</td>
+	<td></td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>css=img[alt=&quot;Virtual Lab&quot;]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#devaInfo &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#tab4 &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#devaInfo &gt; span</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectWindow</td>
+	<td>name=mainscreen</td>
+	<td></td>
+</tr>
+<tr>
+	<td>waitForPopUp</td>
+	<td>_blank</td>
+	<td>30000</td>
+</tr>
+<tr>
+	<td>selectWindow</td>
+	<td>null</td>
+	<td></td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=UsernameTextbox</td>
+	<td>nptptest032</td>
+</tr>
+<tr>
+	<td>type</td>
+	<td>id=PasswordTextbox</td>
+	<td>itscholars032</td>
+</tr>
+<tr>
+	<td>clickAndWait</td>
+	<td>id=SubmitButton</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=LogoffButton-btnInnerEl</td>
+	<td></td>
+</tr>
+<tr>
+	<td>selectFrame</td>
+	<td></td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>css=#tab4 &gt; span</td>
+	<td></td>
+</tr>
+
+</tbody></table>
+</body>
+</html>

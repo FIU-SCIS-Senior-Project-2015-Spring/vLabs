@@ -85,31 +85,28 @@ class EfrontTest
     public $doneInfo = false;
 
 
-    public $options = array('duration'          	=> 0,
-                            'mastery_score'			=> 50,
-                            'redoable'          	=> 0,
-                            'onebyone'          	=> 0,
-                            'answers'           	=> 0,
-                            'shuffle_questions' 	=> 0,
-                            'shuffle_answers'   	=> 0,
-                            'given_answers'     	=> 1,
-    						'show_answers_if_pass' 	=> 1,
-    						'show_score'			=> 1,
-                            'random_pool'       	=> 0,
-    						'random_test'       	=> 0,
-    						'random_test_subunits'	=> 0,
-    						'random_test_common_pool'=> 0,
-                            'user_configurable' 	=> 0,
-    						'show_incomplete'		=> 0,
-                            'maintain_history'  	=> 5,
-                            'display_list'      	=> 0,
-                            'pause_test'        	=> 1,
-                            'display_weights'   	=> 1,
-    						'only_forward'			=> 0,
-							'answer_all'        	=> 0,
-							'test_password'     	=> 0,
-    						'redo_wrong'			=> 0,
-							'redirect'				=> 0);
+    public $options = array('duration'          => 0,
+                            'mastery_score'		=> 50,
+                            'redoable'          => 0,
+                            'onebyone'          => 0,
+                            'answers'           => 0,
+                            'shuffle_questions' => 0,
+                            'shuffle_answers'   => 0,
+                            'given_answers'     => 1,
+    						'show_answers_if_pass' => 1,
+    						'show_score'		=> 1,
+                            'random_pool'       => 0,
+                            'user_configurable' => 0,
+    						'show_incomplete'	=> 0,
+                            'maintain_history'  => 5,
+                            'display_list'      => 0,
+                            'pause_test'        => 1,
+                            'display_weights'   => 1,
+    						'only_forward'		=> 0,
+							'answer_all'        => 0,
+							'test_password'     => 0,
+    						'redo_wrong'		=> 0,
+							'redirect'			=> 0);
 
     /**
      * Class constructor
@@ -275,7 +272,6 @@ class EfrontTest
                         'publish'       => $this -> test['publish'],
         				'keep_best'     => $this -> test['keep_best']);
         EfrontCache::getInstance()->deleteCache('test:'.$this -> test['id']);
-        EfrontCache::getInstance()->deleteCache("content_tree:{$_SESSION['s_lessons_ID']}");
         
         eF_updateTableData("tests", $fields, "id=".$this -> test['id']) && eF_updateTableData("content", array("publish" => $this -> test['publish']), "id=".$this -> test['content_ID']);
         
@@ -306,10 +302,7 @@ class EfrontTest
      * @since 3.5.0
      * @access public
      */
-    public function getQuestions($returnObjects = false, $force_get_assigned = false) {	
-		if (!empty($this -> options['random_test']) && !$force_get_assigned) {
-			return $this -> getQuestionsRandomTest($returnObjects);
-		}
+    public function getQuestions($returnObjects = false) {
         if ($this -> questions === false) {
         	//Get content unit names, to be assigned to questions for easy access
             $contentNames = eF_getTableDataFlat("content", "id, name", "lessons_ID=".$this -> test['lessons_ID']);
@@ -364,7 +357,7 @@ class EfrontTest
                 $this -> questions = array();
             }
         }
-//pr($this -> questions);
+
         $questions = array();
         foreach ($this -> questions as $key => $value) {
             if (($value instanceof Question)) {
@@ -372,8 +365,8 @@ class EfrontTest
             } else if (is_array($value)) {
                 $returnObjects ? $questions[$key] = QuestionFactory :: factory($value) : $questions[$key] = $value;
             } 
-        } 
-//vd($questions);   exit;     
+        }
+//pr($questions);
         return $questions;
     }
 
@@ -427,19 +420,6 @@ class EfrontTest
         return $nonQuestions;
     }
 
-    public function getNumQuestionsForRandomTests() {
-    	if (!empty($this -> options['random_test'])) {
-    		$random_questionsNumber = 0;
-    		foreach ($this -> options['random_test'] as $criteria) {
-    			foreach($criteria as $key => $value) {
-    				foreach ($value as $value2) {
-    					$random_questionsNumber += $value2;
-    				}
-    			}
-    		}   	  			
-    		return $random_questionsNumber;
-    	}
-    }
 
     /**
      * Assign questions to test
@@ -486,204 +466,9 @@ class EfrontTest
         //In order to refresh questions
         $this -> questions = false;
 
-        $linked_tests = eF_getTableDataFlat("content c, tests t", "t.id", "t.content_ID=c.id and c.linked_to=".$this -> test['content_ID']);
-		if (!empty($linked_tests)) {
-			$res = eF_getTableData("questions", "id, linked_to", "linked_to!=''");
-			$mapping = array();
-			foreach ($res as $value) {
-				$mapping[$value['id']] = $value['linked_to'];
-			}
-			$mapping[0] = 0;
-		
-			foreach ($linked_tests['id'] as $linked_id) {
-				$source_questions = eF_getTableData("tests_to_questions", "*", "tests_ID=".$this -> test['id']);
-				eF_deleteTableData("tests_to_questions", "tests_ID=".$linked_id);
-				foreach ($source_questions as $value) {
-					array_search($value['questions_ID'], $mapping) !== false ? $set_questions_ID = array_search($value['questions_ID'], $mapping) : $set_questions_ID = $value['questions_ID'];
-					array_search($value['previous_question_ID'], $mapping) !== false ? $set_previous_questions_ID = array_search($value['previous_question_ID'], $mapping) : $set_previous_questions_ID = $value['previous_question_ID'];
-					$fields = array('tests_ID' => $linked_id, 'weight' => $value['weight'], 'questions_ID' => $set_questions_ID, 'previous_question_ID' => $set_previous_questions_ID);
-					eF_insertTableData("tests_to_questions", $fields);		
-				}
-			}
-		}
-        
         return $this -> getQuestions();
     }
 
-    
-	public function getQuestionsForRandomSolvedTests($returnObjects = false) {
-		$all_questions_result = eF_getTableData("questions", "id");
-		foreach ($all_questions_result as $result) {
-			$all_questions[$result['id']] = $result['id'];
-		}
-    	$result = EfrontCompletedTest::retrieveCompletedTest("completed_tests ct, completed_tests_blob ctb, users u", "ct.*,ctb.test", "ct.users_LOGIN=u.login and ct.id=ctb.completed_tests_ID and u.archive=0 and ct.status != 'deleted' and ct.status != 'incomplete' and tests_ID =".$this -> test['id']);
-    	$questions = array();
-    	foreach ($result as $value) {
-    		$completedTest = unserialize($value['test']);
-    		foreach ($completedTest -> questions as $id => $question) { 
-    			if(in_array($id, $all_questions)) {
-    				$questions[$id] = $id;
-    			}
-    			
-    		}
-    	}
-    	foreach ($questions as $key => $value) {
-    		$returnObjects  ? $questions[$key] = QuestionFactory :: factory($key) : $questions[$key] = $key;    		
-    	}
-    	
-    	return $questions;
-    }
-    
-     public function getQuestionsRandomTest($returnObjects = false) {  	  
-     	if (empty($this -> questions)) {	    			
-	     	$criteria = $this -> options['random_test'];   
-	     	foreach ($criteria as $index => $array) {}
-	     	$criteria_type = $index;
- 	
-	     	if (isset($criteria[$criteria_type])) {
-	     		if (!empty($criteria[$criteria_type])) {
-	     			$numLessons = eF_getTableDataFlat("content", "distinct(lessons_ID)", "id IN (".implode(',', array_keys($criteria[$criteria_type])).")");
-	     		}
-	     	}     		     	
-	     	
-
-			if ($this -> options['random_test_common_pool']) {
-				$from_pool = $this -> options['random_test_common_pool'];
-			} else {		// in case of linked tests
-				if (sizeof($numLessons['lessons_ID']) > 1) {
-					$from_pool = true;
-				} else if (sizeof($numLessons['lessons_ID']) == 1 && $numLessons['lessons_ID'][0] != $this ->test['lessons_ID']) {
-					$from_pool = true;
-				} else {
-					$from_pool = false;
-				}
-				
-			}
-
-     	
-			if (!$from_pool) { // if there are performance issues maybe save common_pool flag to test and not retrieve all questions if not necessary
-				$result       = eF_getTableData("questions", "*", "lessons_ID=".$_SESSION['s_lessons_ID'], "content_ID ASC");	
-			} else {//@todo common pool
-				//$currentUser = EfrontUserFactory::factory($_SESSION['s_login']);
-				//$userLessons = $currentUser -> getLessons(false, $_SESSION['s_type']);
-				//$result       = eF_getTableData("questions,lessons", "questions.*", "lessons_ID in (".implode(",",array_keys($userLessons)).") and lessons_ID !=0 and lessons.id=questions.lessons_ID and lessons.active=1", "content_ID ASC");
-				$result       = eF_getTableData("questions", "*", "", "content_ID ASC");
-			}	
-		
-	
-			$content_to_lesson = array();
-			$unitsToQuestionsDifficulties = array();
-			foreach ($result as $value) {				
-				$questions[$value['id']] = $value;
-				if ($value['content_ID'] != 0) {
-					$content_to_lesson[$value['content_ID']] = $value['lessons_ID'];
-				}
-				if (!isset($unitsToQuestionsDifficulties[$value['content_ID']])){
-					$unitsToQuestionsDifficulties[$value['content_ID']] = array();
-				}
-	
-				$unitsToQuestionsDifficulties[$value['content_ID']][$value['difficulty']][] = $value['id'];
-			
-				if (!isset($unitsToQuestionsTypes[$value['content_ID']])) {
-					$unitsToQuestionsTypes[$value['content_ID']] = array();
-				}
-				$unitsToQuestionsTypes[$value['content_ID']][$value['type']][] = $value['id'];
-			}	
-				
-							
-			
-	
-
-			if (!$from_pool) {
-				$currentContent = new EfrontContentTree($_SESSION['s_lessons_ID']);
-			}
-			
-			if ($this -> options['random_test_subunits']) {				
-				$unitsToQuestionsDifficultiesSub 	= $unitsToQuestionsDifficulties;
-				$unitsToQuestionsTypesSub			= $unitsToQuestionsTypes;
-		
-				foreach ($criteria[$criteria_type] as $key => $value) {		
-					
-					if ($key && !empty($content_to_lesson[$key])) { // exclude none units questions	
-						if ($from_pool) {				
-							$currentContent = new EfrontContentTree($content_to_lesson[$key]);	
-						}					
-						$children = $currentContent->getNodeChildren($key);
-						foreach (new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($children), RecursiveIteratorIterator :: SELF_FIRST)) as $child => $foo) {
-							if ($criteria_type == 'difficulty') {
-								foreach (array_keys(Question :: $questionDifficulties) as $difficulty) {
-									$unitsToQuestionsDifficultiesSub[$key][$difficulty] = array_merge((array)$unitsToQuestionsDifficultiesSub[$key][$difficulty], (array)$unitsToQuestionsDifficulties[$child][$difficulty]);
-									if (empty($unitsToQuestionsDifficultiesSub[$key][$difficulty])) {
-										unset($unitsToQuestionsDifficultiesSub[$key][$difficulty]);
-									}
-								}
-							} elseif ($criteria_type == 'type') {
-								foreach (array_keys(Question :: $questionTypes) as $type) {
-									$unitsToQuestionsTypesSub[$key][$type] = array_merge((array)$unitsToQuestionsTypesSub[$key][$type], (array)$unitsToQuestionsTypes[$child][$type]);
-									if (empty($unitsToQuestionsTypesSub[$key][$type])) {
-										unset($unitsToQuestionsTypesSub[$key][$type]);
-									}
-								}
-							}
-							
-						}
-					}
-				}
-				
-				$unitsToQuestionsTypes 			= $unitsToQuestionsTypesSub;
-				$unitsToQuestionsDifficulties 	= $unitsToQuestionsDifficultiesSub;
-			}
-//pr($unitsToQuestionsDifficulties);
-			$selectedQuestions = array();
-			if (isset($criteria['difficulty'])) {			
-				foreach ($criteria['difficulty'] as $key => $arr) {
-					foreach ($arr as $diff => $value) {
-						shuffle($unitsToQuestionsDifficulties[$key][$diff]);
-						$choice = array_slice($unitsToQuestionsDifficulties[$key][$diff], 0, $value);
-						$selectedQuestions = array_merge((array)$selectedQuestions, (array)$choice);			
-					}
-				}		
-		
-			} elseif(isset($criteria['type'])) {
-				foreach ($criteria['type'] as $key => $arr) {
-					foreach ($arr as $type => $value) {
-						shuffle($unitsToQuestionsTypes[$key][$type]);
-						$choice = array_slice($unitsToQuestionsTypes[$key][$type], 0, $value);
-						$selectedQuestions = array_merge((array)$selectedQuestions, (array)$choice);
-					}
-				}
-			}
-  	
-		 	$questions = array(); 
-	 		
-		 	foreach ($selectedQuestions as $value) {
-		 		$questions[$value] = $value;
-		 	}		 	 	
-		 	$temp = array();
-		 	foreach ($questions as $value) {
-		 		 $ques = QuestionFactory :: factory($value);
-		 		 $returnObjects ? $temp[$value] = $ques : $temp[$value] = $ques -> question;
-		 	}
-		 	$this -> questions = $temp;
-
-     	}     		
-     	$questions = array();
-     	
-     	
-     	foreach ($this -> questions as $key => $value) {
-     		if (($value instanceof Question)) {
-     			$returnObjects ? $questions[$key] = $value : $questions[$key] = $value -> question;
-     		} else if (is_array($value)) {
-     			$returnObjects ? $questions[$key] = QuestionFactory :: factory($value) : $questions[$key] = $value;
-     		} else {
-            	$returnObjects ? $questions[$key] = QuestionFactory :: factory($value) : $questions[$key] = $value;
-            } 
-     	}
-
-     	return $questions;
-        
-     }
-    
     /**
      * Remove questions from test
      *
@@ -718,30 +503,6 @@ class EfrontTest
                     eF_updateTableData("tests_to_questions", array("previous_question_ID" => $previousQuestion), "tests_ID = ".$this -> test['id']." and previous_question_ID=".$id);
                 }
             }
-            
-            $linked_tests = eF_getTableDataFlat("content c, tests t", "t.id", "t.content_ID=c.id and c.linked_to=".$this -> test['content_ID']);
-            if (!empty($linked_tests)) {
-            	$res = eF_getTableData("questions", "id, linked_to", "linked_to!=''");
-            	$mapping = array();
-            	foreach ($res as $value) {
-            		$mapping[$value['id']] = $value['linked_to'];
-            	}
-            	$mapping[0] = 0;
-            
-            	foreach ($linked_tests['id'] as $linked_id) {
-            		$source_questions = eF_getTableData("tests_to_questions", "*", "tests_ID=".$this -> test['id']);
-            		eF_deleteTableData("tests_to_questions", "tests_ID=".$linked_id);
-            		foreach ($source_questions as $value) {
-            			array_search($value['questions_ID'], $mapping) !== false ? $set_questions_ID = array_search($value['questions_ID'], $mapping) : $set_questions_ID = $value['questions_ID'];
-            			array_search($value['previous_question_ID'], $mapping) !== false ? $set_previous_questions_ID = array_search($value['previous_question_ID'], $mapping) : $set_previous_questions_ID = $value['previous_question_ID'];
-            			$fields = array('tests_ID' => $linked_id, 'weight' => $value['weight'], 'questions_ID' => $set_questions_ID, 'previous_question_ID' => $set_previous_questions_ID);
-            			eF_insertTableData("tests_to_questions", $fields);
-            		}
-            	}
-            }
-            
-            
-            
             $this -> questions = false;                //Reset questions information
             return $this -> getQuestions();            //Return new questions list
         }
@@ -1182,26 +943,18 @@ class EfrontTest
      * @since 3.5.0
      * @access public
      */
-    public function getQuestionWeight($questionId) {   	
-    	$testQuestions = $this -> getQuestions();
-    	if (!in_array($questionId, array_keys($testQuestions))) {
-    		throw new EfrontTestException(_INVALIDID.': '.$questionId, EfrontTestException :: INVALID_ID);
-    	}
-    	if (empty($this -> options['random_test'])) { 
-	    	foreach ($testQuestions as $id => $question) {
-	    		$weights[$id] = $question['weight'];
-	    	}
-	
-	    	$questionWeight = $weights[$questionId] / array_sum($weights);
-    	} else {
-    		$difficultiesToWeights = array("low" => 1, "medium" => 2, "high" => 3, "very_high" => 4); 		
-    		foreach ($testQuestions as $id => $question) {
-    			$weights[$id] = $difficultiesToWeights[$question['difficulty']];
-    		}
-    		
-    		$questionWeight = $weights[$questionId] / array_sum($weights);
-    	}  	
-    	return $questionWeight;
+    public function getQuestionWeight($questionId) {
+       $testQuestions = $this -> getQuestions();
+       if (!in_array($questionId, array_keys($testQuestions))) {
+           throw new EfrontTestException(_INVALIDID.': '.$questionId, EfrontTestException :: INVALID_ID);
+       }
+
+       foreach ($testQuestions as $id => $question) {
+           $weights[$id] = $question['weight'];
+       }
+
+       $questionWeight = $weights[$questionId] / array_sum($weights);
+       return $questionWeight;
     }
 
     /**
@@ -1584,21 +1337,13 @@ class EfrontTest
 				$completedTest -> questions = $recentlyCompleted -> questions; //when redoing wrong answered, same questions must be selected
 			}
 
-        } elseif (!empty($this -> options['random_test'])) {
-        	if ($recentlyCompleted -> redoOnlyWrong == false) {
-        		$testQuestions  = $this -> getQuestionsRandomTest(true);
-        		$completedTest -> questions = $testQuestions;
-        	} else {
-        		$completedTest -> questions = $recentlyCompleted -> questions;
-        	}
-        	
         } else {
             $completedTest -> questions = $testQuestions;
         }
 
         //2. Shuffle answers inside questions
-        foreach ($completedTest -> questions as $key => $question) {    	
-            if ($this -> options['shuffle_answers'] && $question -> settings['exclude_shuffle'] !== '1') {
+        foreach ($completedTest -> questions as $key => $question) {
+            if ($this -> options['shuffle_answers']) {
                 $question      -> shuffle();
             }
             $completedTest -> questions[$key] = $question;
@@ -1746,16 +1491,17 @@ class EfrontTest
     public function toHTMLQuickForm(& $form = false, $questionId = false, $done = false, $editHandles = false, $nocache = false, $isFeedback = false) {
     	$storeCache = false;
 
-    	if (!$questionId && !$done && !$this -> options['random_pool']  && !$this -> options['random_test'] && !$this -> options['shuffle_questions'] && !$this -> options['shuffle_answers'] && !$nocache) {
-    		if ($testString = EfrontCache::getInstance()->getCache('test:'.$this -> test['id'])) { 			
+    	if (!$questionId && !$done && !$this -> options['random_pool'] && !$this -> options['shuffle_questions'] && !$this -> options['shuffle_answers'] && !$nocache) {
+    		if ($testString = EfrontCache::getInstance()->getCache('test:'.$this -> test['id'])) {
+    			
     		    return $testString;
     		} else  {
 	    		$storeCache = true;
     		}
     	}
 
-        $originalTestQuestions = $this -> getQuestions(true);     //Initialize questions information, it case it isn't
-                                                           
+        $originalTestQuestions = $this -> getQuestions();    
+                                                               //Initialize questions information, it case it isn't
         if (!$form) {
             $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);     //Create a sample form
         }
@@ -1767,15 +1513,12 @@ class EfrontTest
 		// lines added for redo only wrong questions
         $allTestQuestionsFilter = array();
         $resultCompleted = EfrontCompletedTest::retrieveCompletedTest("completed_tests ct join completed_tests_blob ctb on ct.id=ctb.completed_tests_ID", "ctb.test", "archive=1 AND users_LOGIN='".$_SESSION['s_login']."' AND tests_ID=".$this -> test['id'], "timestamp desc");
-
         if (!empty($resultCompleted)) {
         	$recentlyCompleted = unserialize($resultCompleted[0]['test']);
         	if ($recentlyCompleted -> redoOnlyWrong == true && !$done) {
         		foreach ($recentlyCompleted -> questions as $key => $value) {
-        			if($value -> score != 100 && isset($originalTestQuestions[$key])) { // && added for the case professor deleted question from test after student clicked to redo only wrong      				
-        				if (!isset($_GET['resume'])) { 
-        					$value -> userAnswer = false;
-        				}
+        			if($value -> score != 100 && isset($originalTestQuestions[$key])) { // && added for the case professor deleted question from test after student clicked to redo only wrong 
+        				$value -> userAnswer = false;
         				$allTestQuestionsFilter[$key] = $value;
         			}
         		}
@@ -1807,7 +1550,7 @@ class EfrontTest
             }
         }
 		$currentLesson  = $this -> getLesson(true);
-
+	
         foreach ($testQuestions as $id => $question) {
             if ($done) {
                 switch ($question -> score) {
@@ -1823,7 +1566,7 @@ class EfrontTest
                 }
             }
 
-            $weight = round(10000 * $this -> getQuestionWeight($question -> question['id'])) / 100;    
+            $weight = round(10000 * $this -> getQuestionWeight($question -> question['id'])) / 100;
 	        $timeSpentString = '';
             if (!empty($question -> time)) {
 	            $timeSpent = eF_convertIntervalToTime($question -> question['estimate'] - $question -> time);
@@ -1846,7 +1589,7 @@ class EfrontTest
                                 '.($this -> options['display_weights'] || $done && !$isFeedback ? '<span style = "vertical-align:middle;margin-left:10px">('._WEIGHT.'&nbsp;'.$weight.'%)</span>' : '').'
                                 '.($units[$question -> question['content_ID']] && $done ? '<span style = "vertical-align:middle;margin-left:10px">'._UNIT.' "'.$units[$question -> question['content_ID']].'"</span>' : '').'
 								'.(($_SESSION['s_lesson_user_type'] == "student" && $currentLesson -> options['content_report'] == 1)? '<a href = "content_report.php?ctg=tests&edit_question='.$question -> question['id'].'&question_type='.$question -> question['type'].'&lessons_Id='.$_SESSION['s_lessons_ID'].'" onclick = "eF_js_showDivPopup(event, \''._CONTENTREPORT.'\', 1)" target = "POPUP_FRAME"><img src = "images/16x16/warning.png" border=0 style = "vertical-align:middle" alt = "'._CONTENTREPORT.'" title = "'._CONTENTREPORT.'"/></a>' : '').'
-								'.($_SESSION['s_lesson_user_type'] == "professor" && $GLOBALS['currentUser'] -> coreAccess['questions'] == 'change' ? '<a href = "'.basename($_SERVER['PHP_SELF']).'?ctg=tests&edit_question='.$question->question['id'].'&question_type='.$question->question['type'].'&lessonId='.$currentLesson->lesson['id'].'&return='.urlencode($_SERVER['QUERY_STRING']).'" style = "float:right;line-height:32px;"><img src = "images/16x16/edit.png" alt = "'._EDIT.'" title = "'._EDIT.'" style = "loat:right;vertical-align:middle"/></a>' : '').'
+								'.($_SESSION['s_lesson_user_type'] == "professor" ? '<a href = "'.basename($_SERVER['PHP_SELF']).'?ctg=tests&edit_question='.$question->question['id'].'&question_type='.$question->question['type'].'&lessonId='.$currentLesson->lesson['id'].'&return='.urlencode($_SERVER['QUERY_STRING']).'" style = "float:right;line-height:32px;"><img src = "images/16x16/edit.png" alt = "'._EDIT.'" title = "'._EDIT.'" style = "loat:right;vertical-align:middle"/></a>' : '').'
 							</td></tr>
                     </table>';
 			if ($done) {
@@ -1889,7 +1632,7 @@ class EfrontTest
                                         <img src = "images/16x16/error_delete.png" alt = "'._CANCEL.'" title = "'._CANCEL.'" border = "0"  style = "vertical-align:middle"/>
                                     </a>
                                 </span>';
-                          if ($this -> options['show_score'] || $_SESSION['s_type'] != 'student') {   	     	 
+                          if ($this -> options['show_score'] || $_SESSION['s_type'] != 'student') {    
                           	$testString .= '<span style = "border-left:1px solid black;margin-left:5px;padding-left:5px">'._SCOREINTEST.': <span id = "question_'.$id.'_score_coefficient">'.formatScore($question -> score).'</span>% &#215; '.$weight.' = <span id = "question_'.$id.'_scoreInTest">'.formatScore($question -> scoreInTest).'</span>%</span>';
                           }
                     if ($editHandles) {
@@ -1982,9 +1725,6 @@ class EfrontTest
 			}
 
 		}
-		
-		
-		
 /*
         if ($this -> options['shuffle_questions'] && !$form -> isSubmitted()) {
             $form -> addElement("hidden", "answers_order", serialize($shuffleOrder));       //The questions' answers order is hold at a hidden element, so that it can be stored when the test is complete
@@ -2025,7 +1765,6 @@ class EfrontTest
                     var questionMin = new Array();
                     var questionSec = new Array();
                     var showtest=1;
-                    var multipleManyQuestionsLimits = {}; 
     	</script>';
 
             $str .= '
@@ -2167,7 +1906,7 @@ class EfrontCompletedTest extends EfrontTest
      * @access public
      */
     public function __construct(EfrontTest $sourceTest, $login) {
-        $this -> test    = $sourceTest -> test;       
+        $this -> test    = $sourceTest -> test;
         $this -> options = $sourceTest -> options;
         $this -> completedTest['login']   = $login;
         $this -> completedTest['testsId'] = $this -> test['id'];
@@ -2175,6 +1914,8 @@ class EfrontCompletedTest extends EfrontTest
         if ($this -> options['duration']) {
             $this -> convertedDuration = eF_convertIntervalToTime($this -> options['duration']);
         }
+
+
     }
 
     /**
@@ -2301,7 +2042,6 @@ class EfrontCompletedTest extends EfrontTest
 
         //Correct each question and handle uploaded files, if any (@todo)
 		$this     -> completedTest['score'] = 0; //Added to check EC-73
-		
         foreach ($this -> questions as $id => $question) {
         	$results   = $question -> correct();                                    //Get the results, which is the score and the right/wrong answers
         	if ($question -> question['type'] == 'raw_text') {	
@@ -2343,7 +2083,13 @@ class EfrontCompletedTest extends EfrontTest
         	$lesson_name = _SKILLGAPTESTS;
         }
 
-
+        EfrontEvent::triggerEvent(array("type" => EfrontEvent::TEST_COMPLETION,
+        								"users_LOGIN" 	 => $this -> completedTest['login'],
+        								"lessons_ID" 	 => $this ->test['lessons_ID'],
+        								"lessons_name" 	 => $lesson_name,
+        								"entity_ID" 	 => $this -> test['id'],
+        								"entity_name"  	 => $this -> test['name']));
+        
         if ($this -> completedTest['status'] == 'failed') {
                 EfrontEvent::triggerEvent(array("type" => EfrontEvent::TEST_FAILURE,
         								"users_LOGIN" 	 => $this -> completedTest['login'],
@@ -2351,13 +2097,6 @@ class EfrontCompletedTest extends EfrontTest
         								"lessons_name" 	 => $lesson_name,
         								"entity_ID" 	 => $this -> test['id'],
         								"entity_name"  	 => $this -> test['name']));
-        } else {
-        	EfrontEvent::triggerEvent(array("type" => EfrontEvent::TEST_COMPLETION,
-        	"users_LOGIN" 	 => $this -> completedTest['login'],
-        	"lessons_ID" 	 => $this ->test['lessons_ID'],
-        	"lessons_name" 	 => $lesson_name,
-        	"entity_ID" 	 => $this -> test['id'],
-        	"entity_name"  	 => $this -> test['name']));        	
         }
 
         if ($this -> options['duration'] && $this -> time['spent'] > $this -> options['duration']) {
@@ -2398,8 +2137,7 @@ class EfrontCompletedTest extends EfrontTest
             				'score' 	 => $this -> completedTest['score']   ? $this -> completedTest['score']   : null);
 
             EfrontCompletedTest::updateCompletedTest("completed_tests", $fields, "id=".$this -> completedTest['id']);            
-            //if ($this -> options['maintain_history'] !== '') {
-            if(!empty($this -> options['maintain_history'])) {
+            if ($this -> options['maintain_history'] !== '') {
 	        	$result = eF_getTableDataFlat("completed_tests", "id", "status != 'incomplete' and status != 'paused' and users_LOGIN = '".$this -> completedTest['login']."' and tests_ID=".$this -> completedTest['testsId'], "timestamp desc");
 
 	        	if (sizeof($result['id']) > $this -> options['maintain_history']) {
@@ -2493,8 +2231,7 @@ class EfrontCompletedTest extends EfrontTest
         $parentTest 	= new EfrontTest($this -> test['id']);
         $currentStatus  = $parentTest -> getStatus($this -> completedTest['login']);                                            //Get the current test status, to check whether the student is undergoing the test right now
 		$status         = $parentTest -> getStatus($this -> completedTest['login'], $this -> completedTest['id'], true);        //Get the completed tests status
-
-		$potentialScore = $this -> getPotentialScore();                                                                   //Get the potential score for the test, taking into account pending questions
+        $potentialScore = $this -> getPotentialScore();                                                                   //Get the potential score for the test, taking into account pending questions
 
         $str = '
         <table class = "doneTestHeader">
@@ -2866,7 +2603,7 @@ class EfrontCompletedTest extends EfrontTest
                 });
             }
             function editQuestionFeedback(el, id) {
-                Element.extend(el);           
+                Element.extend(el);
                 url = "'.$url.'&ajax=1&question=" + id + "&question_feedback=" + encodeURIComponent($("edit_question_"+id+"_feedback").value);
 
                 if ($("progress_img_"+id)) {
@@ -2958,9 +2695,9 @@ class EfrontCompletedTest extends EfrontTest
     			}
     			exit;
     		} else if (isset($_GET['test_feedback'])) {
-    			$this -> completedTest['feedback'] = htmlspecialchars($_GET['test_feedback']);
+    			$this -> completedTest['feedback'] = $_GET['test_feedback'];
     			$this -> save();
-    			echo htmlspecialchars($_GET['test_feedback']);
+    			echo $_GET['test_feedback'];
     			exit;
     		} else if (isset($_GET['redo_test']) && eF_checkParameter($_GET['redo_test'], 'id')) {
     			$result = eF_getTableData("completed_tests", "tests_ID, users_LOGIN", "id=".$_GET['redo_test']);
@@ -2994,9 +2731,6 @@ class EfrontCompletedTest extends EfrontTest
     					foreach ($this -> questions as $question) {
     						$this -> completedTest['scoreInTest'][$question -> question['id']] = $question -> scoreInTest;
     						$score += $question -> scoreInTest;
-    					}
-    					if ($score > 100) {
-    						$score = 100;
     					}
     					$this -> completedTest['score'] = round($score, 2);
 
@@ -3056,9 +2790,9 @@ class EfrontCompletedTest extends EfrontTest
     			exit;
     		} else if (isset($_GET['question_feedback'])) {
     			if (in_array($_GET['question'], array_keys($this -> questions))) {
-    				$this -> questions[$_GET['question']] -> feedback = htmlspecialchars($_GET['question_feedback']);
+    				$this -> questions[$_GET['question']] -> feedback = $_GET['question_feedback'];
     				$this -> save();
-    				echo htmlspecialchars($_GET['question_feedback']);
+    				echo $_GET['question_feedback'];
     			} else {
     				throw new EfrontTestException(_INVALIDID.': '.$_GET['question'], EfrontTestException :: QUESTION_NOT_EXISTS);
     			}
@@ -3355,7 +3089,7 @@ class MultipleOneQuestion extends Question implements iQuestion
     public function toHTMLQuickForm(&$form) {
         for ($k = 0; $k < sizeof($this -> options); $k++) {
             $index        = $this -> order[$k];                                                               //$index is used to reorder question options, in case it was shuffled
-            $form -> addElement("radio", "question[".$this -> question['id']."]", $this -> options[$index], htmlspecialchars($this -> options[$index]), $index, "styleclass = inputRadio");    //Added float left because of #5244
+            $form -> addElement("radio", "question[".$this -> question['id']."]", $this -> options[$index], htmlspecialchars($this -> options[$index]), $index, "class = inputRadio");    //Add a radio for each option
             //$elements[$k]   = $form -> createElement("radio", "question[".$this -> question['id']."]", $this -> options[$index], $this -> options[$index], $index, "class = inputRadio");    //Add a radio for each option
             //$separators[] = "<br><span class = 'orderedList'>[".($k + 2)."]&nbsp;</span>";
         }
@@ -3654,7 +3388,6 @@ class MultipleManyQuestion extends Question implements iQuestion
      * @access public
      */
     public function toHTMLQuickForm(&$form) {
-  //pr($form); 	
         for ($k = 0; $k < sizeof($this -> options); $k++) {
             $index        = $this -> order[$k];                                                               //$index is used to reorder question options, in case it was shuffled
             //$elements[]   = $form -> createElement("advcheckbox", "question[".$this -> question['id']."][".$index."]", $this -> options[$index], $this -> options[$index], 'class = "inputCheckbox"', array(0, 1));
@@ -3716,16 +3449,6 @@ class MultipleManyQuestion extends Question implements iQuestion
         $questionString .= '
         				</td></tr>
                     </table>';
-
-		if ($this -> settings['limit_answers']) {       
-         	$questionString .= ' <script>
-         		multipleManyQuestionsLimits['.$this -> question['id'].'] = '.sizeof($this->answer).';
-          	</script>';
-		}
-        
-        
-        
-        
 
         return bypassCommonPoolCheck($questionString);
     }
@@ -4292,7 +4015,6 @@ class EmptySpacesQuestion extends Question implements iQuestion
         $questionText = '';
         for ($k = 0; $k < sizeof($this -> answer); $k++) {
         	$alternatives = explode("|", $this->answer[$k]);
-        	$correct = $alternatives[0];
         	shuffle($alternatives);
         	$alternatives = array_combine($alternatives, $alternatives);
             $elements[] = $form -> addElement("static", null, null, $inputLabels[$k]);
@@ -4303,12 +4025,10 @@ class EmptySpacesQuestion extends Question implements iQuestion
             } else {
             	$elements[] = $form -> addElement("text", "question[".$this -> question['id']."][$k]", $inputLabels, 'class = "emptySpacesField" style = "width:'.($matches[1][$k] ? $matches[1][$k] : 250).'px" autocomplete="off"');
             }
-            
-            
             if ($this -> userAnswer !== false) {
                 $form -> setDefaults(array("question[".$this -> question['id']."][$k]" => $this -> userAnswer[$k]));
             } else if ($this->preview_correct) {
-            	$form -> setDefaults(array("question[".$this -> question['id']."][$k]" => $correct));//$this -> answer[$k]));
+            	$form -> setDefaults(array("question[".$this -> question['id']."][$k]" => $this -> answer[$k]));
             }
         }
         $elements[] = $form -> addElement("static", null, null, $inputLabels[$k]);
@@ -4919,706 +4639,6 @@ class MatchQuestion extends Question implements iQuestion
         $order !=  false ? $this -> order = $order : null;
     }
 }
-
-
-/**
- * GridQuestion Class
- *
- * This class is used to manipulate a grid question
- * @package eFront
- */
-class GridQuestion extends Question implements iQuestion
-{
-
-	/**
-	 * Convert question to HTML_QuickForm
-	 *
-	 * This function is used to convert the question to HTML_QuickForm fields.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new GridQuestion(3);                                        //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * $question -> toHTMLQuickForm($form);                                         //Add fields to form
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function toHTMLQuickForm(&$form) {
-		$options = $this -> options;
-		$answers = $this -> answer;
-		array_walk_recursive($options, 'htmlspecialchars');
-		array_walk($answers, 'htmlspecialchars');
-				
-		foreach ($this -> options['grid'] as $row) {
-				foreach ($this -> options['grid_column'] as $column) {                                                           //$index is used to reorder question options, in case it was shuffled
-					//$elements[]   = $form -> addElement("static", null, null, $this -> options[$index]);
-					$elements[]   = $form -> addElement('advcheckbox', "question[".$this -> question['id']."][".$row."][".$column."]", '', null, null, array(0, 1));
-					if ($this -> userAnswer !== false) {
-						$form -> setDefaults(array("question[".$this -> question['id']."][".$row."][".$column."]" => $this -> userAnswer[$row][$column]));
-					} else if ($this->preview_correct) {
-						$form -> setDefaults(array("question[".$this -> question['id']."][".$row."][".$column."]" => $answers[$row][$column]));
-					}
-			}
-		}
-
-	}
-
-	/**
-	 * Create HTML version of unsolved question
-	 *
-	 * This function is used to create the HTML code corresponding
-	 * to the question. The HTML is created using the question form
-	 * fields, so the proper form must be specified. A form renderer
-	 * is used to output the fields. The function calls internally
-	 * toHTMLQuickForm()
-	 * <br/>Example:
-	 * <code>
-	 * $question = new GridQuestion(3);                                        //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * echo $question -> toHTML($form);                                             //Output question HTML code
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to and display
-	 * @return string The HTML code for the question
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function toHTML(&$form) {
-		$this -> toHTMLQuickForm($form);                                           //Assign proper elements to the form
-		$renderer = new HTML_QuickForm_Renderer_ArraySmarty($foo);                //Get a smarty renderer, only because it reforms the form in a very convenient way for printing html
-
-		$form          -> accept($renderer);                                       //Render the form
-		$formArray      = $renderer -> toArray();                                  //Get the rendered form fields
-
-		$questionString = '
-		<table class = "unsolvedQuestion gridQuestion">
-		<tr><td>'.(EfrontUser::isOptionVisible('test_glossary') ? glossary :: applyGlossary($this -> question['text'], $this -> question['lessons_ID']) : $this -> question['text']).' '.$this -> getCounter().'</td></tr>
-		<tr><td>';
-		
-		//shuffle_assoc($formArray['question'][$this -> question['id']]);
-		$questionString .= '<table width="100%" border="1px"><tr><td></td>';
-
-		foreach ($this -> options['grid_column'] as $column) {
-			$questionString .= '<td align = "center">'.$column.'</td>';
-		}
-		$questionString .= '</tr>';
-		foreach ($formArray['question'][$this -> question['id']] as $row => $row_array) {
-			$questionString .='<tr><td>'.$row.'</td>';
-			foreach ($row_array as $column => $value) {
-				$questionString .= "<td align='center'>".$value['html']."</td>";		
-			}
-			$questionString .= '</tr>';
-		}
-		$questionString .= '</table>';
-		
-		
-		$questionString .= '
-		</td></tr>
-		</table>';
-
-		return bypassCommonPoolCheck($questionString);
-	}
-
-	/**
-	 * Display question with correct answer
-	 *
-	 * This function is used to display the question, together
-	 * with its correct answer.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new GridQuestion(3);                                      //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * echo $question -> preview($form);                               		        //Output solved question HTML code
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to and display
-	 * @param boolean $questionStats
-	 * @return string The HTML code of the solved question
-	 * @since 3.6.0
-	 * @access public
-	 */
-	public function preview(&$form, $questionStats = false, $hideAnswerStatus = false) {
-		$this -> toHTMLQuickForm($form);                                           //Assign proper elements to the form
-
-		$results = $this -> correct();     
-
-		foreach($this -> options['grid'] as $row) {                     
-			foreach($this -> options['grid_column'] as $column) {
-				$form -> setDefaults(array("question[".$this -> question['id']."][$row][$column]" => ''));
-			}
-		}
-
-		$renderer           = new HTML_QuickForm_Renderer_ArraySmarty($foo);                //Get a smarty renderer, only because it reforms the form in a very convenient way for printing html
-		$form               -> freeze();                                           //Freeze the form elements
-		$form               -> accept($renderer);                                  //Render the form
-		$formArray           = $renderer -> toArray();                             //Get the rendered form fields
-
-		$correctAnswerClass = '<img style="vertical-align:middle" src="images/16x16/success.png" />';
-		$wrongAnswerClass 	= '<img style="vertical-align:middle" src="images/16x16/error_delete.png" />';
-		
-		$innerQuestionString = '<table width="100%"><tr><td></td>';
-		foreach ($this -> options['grid_column'] as $column) {
-			$innerQuestionString .= '<td>'.$column.'</td>';
-		}
-		$innerQuestionString .= '</tr>';
-		                        
-		foreach ($this -> options['grid'] as $row) {
-			$innerQuestionString .= '<tr><td>'.$row.'</td>';
-			foreach ($this -> options['grid_column'] as $column) {
-				$innerQuestionString .= '<td>'.($this -> answer[$row][$column] ? $correctAnswerClass : $wrongAnswerClass);
-				if ($questionStats[$this -> question['id']]['percent_per_option'][$row][$column]) {
-					//vd($questionStats[$this -> question['id']]['percent_per_option'][$row][$column]);
-					$innerQuestionString .=  "   ". $questionStats[$this -> question['id']]['percent_per_option'][$row][$column] . "%";
-				} elseif ($questionStats !== false) {
-					$innerQuestionString .= "   0%";
-				}
-				$innerQuestionString .= '</td>';
-			}
-			$innerQuestionString .= '</tr>';
-		}
-
-		$innerQuestionString .= '</table>';
-		$questionString = '
-		<table width = "100%">
-		<tr><td>'.$this -> question['text'].'</td></tr>
-		<tr><td style = "vertical-align:middle;padding-bottom:10px">
-		'.$innerQuestionString.'
-		</td></tr>
-		'.($this -> question['explanation'] ? '<tr><td class = "questionExplanation">'._EXPLANATION.': '.$this -> question['explanation'].'</td></tr>' : '').'
-		</table>';
-
-		return $questionString;
-	}
-
-
-
-	/**
-	 * Display solved question
-	 *
-	 * This function is used to display the solved version of the
-	 * question. In order to display it, setDone() must have been
-	 * called before.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new GridQuestion(3);                                        //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * $question -> setDone($answer, $score, $order);                               //Set question to be done
-	 * echo $question -> toHTMLSolved($form);                                       //Output solved question HTML code
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to and display
-	 * @param boolean $showCorrectAnswers Whether to show the correct answers
-	 * @param boolean $$showGivenAnswers Whether to show the given answers
-	 * @return string The HTML code of the solved question
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function toHTMLSolved(&$form, $showCorrectAnswers = true, $showGivenAnswers = true) {
-		$this -> toHTMLQuickForm($form);                                           //Assign proper elements to the form
-
-		$results = $this -> correct();                                             //Correct question
-		foreach ($this -> options['grid'] as $row) {                        
-			foreach ($this -> options['grid_column'] as $column) {
-				if ($showGivenAnswers) {                                               //If the user's given answers should be shown, assign them as defaults in the form
-					$form -> setDefaults(array("question[".$this -> question['id']."][$row][$column]" => $this -> userAnswer[$row][$column]));
-				}  else {
-					$form -> setDefaults(array("question[".$this -> question['id']."][$row][$column]" => ''));
-				}
-			}
-		}
-	
-		$renderer           = new HTML_QuickForm_Renderer_ArraySmarty($foo);                //Get a smarty renderer, only because it reforms the form in a very convenient way for printing html
-		$form               -> freeze();                                           //Freeze the form elements
-		$form               -> accept($renderer);                                  //Render the form
-		$formArray           = $renderer -> toArray();                             //Get the rendered form fields
-		$innerQuestionString = '';
-
-		$innerQuestionString = '<table width="100%" border="1px"><tr><td></td>';
-		foreach ($this -> options['grid_column'] as $column) {
-			$innerQuestionString .= '<td>'.$column.'</td>';
-		}
-		$innerQuestionString .= '</tr>';
-		
-		
-		
-		foreach ($this -> options['grid'] as $row) {                        		
-			$innerQuestionString .='<tr><td>'.$row.'</td>';
-			foreach ($this -> options['grid_column'] as $column) {
-				if ($showCorrectAnswers) {
-					$correctAnswerClass = '<img style="vertical-align:middle" src="images/16x16/success.png" />';
-					$wrongAnswerClass 	= '<img style="vertical-align:middle" src="images/16x16/error_delete.png" />';
-				}
-	
-				//$index = $this -> order[$k];                                           //$index is used to recreate the answers order, for a done test, or to apply the answers shuffle, for an unsolved test
-				if ($results['correct'][$row][$column]) {
-					$innerQuestionString .= '<td>'.$formArray['question'][$this -> question['id']][$row][$column]['html'];
-					if ($showCorrectAnswers) {
-						$innerQuestionString .=  $correctAnswerClass;
-					}
-					$innerQuestionString .= '</td>';
-				} else {
-					$innerQuestionString .= '<td>'.$formArray['question'][$this -> question['id']][$row][$column]['html'];
-					if ($showCorrectAnswers) {
-						$innerQuestionString .=  $wrongAnswerClass;
-					}
-					$innerQuestionString .= '</td>';
-				}
-				//$innerQuestionString .= '</span>'.($this -> answers_explanation[$index] && $results['correct'][$index] ? '&nbsp;<span class = "questionExplanation">'.$this -> answers_explanation[$index].'</span>': '').'<br/>';
-			}
-			$innerQuestionString .= '</tr>';
-		}
-		
-		$innerQuestionString .= '</table>';		
-		
-		
-		
-		$questionString = '
-		<table width = "100%">
-		<tr><td>'.$this -> question['text'].'</td></tr>
-		<tr><td style = "vertical-align:middle;padding-bottom:10px">
-		'.$innerQuestionString.'
-		</td></tr>
-		'.($this -> question['explanation'] ? '<tr><td class = "questionExplanation">'._EXPLANATION.': '.$this -> question['explanation'].'</td></tr>' : '').'
-		</table>';
-
-		return bypassCommonPoolCheck($questionString);
-	}
-
-	/**
-	 * Shuffle question options
-	 *
-	 * This function is used to shuffle the question options,
-	 * so that they are displayed in a random order.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new GridQuestion(3);                                     //Instantiate question
-	 * $newOrder = $question -> shuffle();                                          //Shuffle question options
-	 * </code>
-	 *
-	 * @return array The new question options order
-	 * @since 3.5.0
-	 * @access public
-	 */
-	
-	public function shuffle() {
-		return true;
-	}
-
-	/**
-	 *
-	 * Correct question
-	 *
-	 * This function is used to correct the question. In order to correct it,
-	 * setDone() must already have been called, so that the user answer
-	 * is present.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new GridQuestion(3);                                            //Instantiate question
-	 * $question -> setDone($answer, $score, $order);                               //Set done question information
-	 * $results = $question -> correct();                                           //Correct question
-	 * </code>
-	 *
-	 * @return array The correction results
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function correct() {
-		$results['score'] = 0;
-				
-		
-		if ($this -> settings['answers_logic'] == 'row') {
-			$answer_combinatios = sizeof($this -> options['grid']);
-			$factor            = 1 / $answer_combinatios;
-			foreach ($this -> userAnswer as $row => $row_array) {
-				$row_score = true;
-				foreach ($row_array as $column => $value) {
-					if ($this -> answer[$row][$column] == $value || ($value === '0' && empty($this -> answer[$row][$column]))) {
-						//$results['score']      += $factor;
-						$results['correct'][$row][$column] = true;                                                //Use this variable in order for the template to know how to color the answers (green/red)
-					} else {
-						$results['correct'][$row][$column] = false;
-						$row_score = false;
-					}
-				}
-				if ($row_score) {
-					$results['score']      += $factor;
-				}
-			}
-		} else {
-			$answer_combinatios = sizeof($this -> options['grid']) * sizeof($this -> options['grid_column']);
-			$factor            = 1 / $answer_combinatios;                                        //If the question has 4 options, then the factor is 1/4.
-			foreach ($this -> userAnswer as $row => $row_array) {
-				foreach ($row_array as $column => $value) {
-					if ($this -> answer[$row][$column] == $value || ($value === '0' && empty($this -> answer[$row][$column]))) {
-						$results['score']      += $factor;
-						$results['correct'][$row][$column] = true;                                                //Use this variable in order for the template to know how to color the answers (green/red)
-					} else {
-						$results['correct'][$row][$column] = false;
-					}
-				}
-			}
-		}
-		return $results;
-	}
-
-	/**
-	 * Set question done information
-	 *
-	 * This question is used to set its done information. This information consists of
-	 * the user answer, the score and the answers order.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new GridQuestion(3);                                        //Instantiate question
-	 * $question -> setDone($answer, $score, $order);                               //Set done question information
-	 * </code>
-	 *
-	 * @param array $userAnswer The user answer
-	 * @param float score The user's score in this question
-	 * @param array $order the question options order
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function setDone($userAnswer, $score = false, $order = false) {
-		$this -> userAnswer = $userAnswer;
-		$score !== false ? $this -> score = $score : null;
-		//$order !=  false ? $this -> order = $order : null;
-	}
-}
-
-
-/**
- * HotspotQuestion Class
- *
- * This class is used to manipulate a grid question
- * @package eFront
- */
-class HotspotQuestion extends Question implements iQuestion
-{
-
-	/**
-	 * Convert question to HTML_QuickForm
-	 *
-	 * This function is used to convert the question to HTML_QuickForm fields.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new HotspotQuestion(3);                                        //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * $question -> toHTMLQuickForm($form);                                         //Add fields to form
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function toHTMLQuickForm(&$form) {
-		$options = $this -> options;
-		$answers = $this -> answer;
-			
-		$elements[]   =	$form -> addElement('text', "question[".$this -> question['id']."]", _COORDINATES, 'id="question_'.$this -> question['id'].'" class = "inputText" style = "width:100px"');
-		if ($this -> userAnswer !== false) {
-			//$form -> setDefaults(array("question[".$this -> question['id']."][".$row."][".$column."]" => $this -> userAnswer[$row][$column]));
-		} else if ($this->preview_correct) {
-			//$form -> setDefaults(array("question[".$this -> question['id']."][".$row."][".$column."]" => $answers[$row][$column]));
-		}
-	}
-
-	/**
-	 * Create HTML version of unsolved question
-	 *
-	 * This function is used to create the HTML code corresponding
-	 * to the question. The HTML is created using the question form
-	 * fields, so the proper form must be specified. A form renderer
-	 * is used to output the fields. The function calls internally
-	 * toHTMLQuickForm()
-	 * <br/>Example:
-	 * <code>
-	 * $question = new HotspotQuestion(3);                                        //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * echo $question -> toHTML($form);                                             //Output question HTML code
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to and display
-	 * @return string The HTML code for the question
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function toHTML(&$form) {
-		$this -> toHTMLQuickForm($form);                                           //Assign proper elements to the form
-		$renderer = new HTML_QuickForm_Renderer_ArraySmarty($foo);                //Get a smarty renderer, only because it reforms the form in a very convenient way for printing html
-
-		$form          -> accept($renderer);                                       //Render the form
-		$formArray      = $renderer -> toArray();                                  //Get the rendered form fields
-
-		$questionString = '
-		<table class = "unsolvedQuestion HotspotQuestion">
-		<tr><td>'.(EfrontUser::isOptionVisible('test_glossary') ? glossary :: applyGlossary($this -> question['text'], $this -> question['lessons_ID']) : $this -> question['text']).' '.$this -> getCounter().'</td></tr>
-		<tr><td>';
-
-
-		$questionString .= '<div style="position:relative" id="hotspot_div_'.$this -> question['id'].'"><img id="hotspot_image_'.$this -> question['id'].'" src = "'.G_LESSONSLINK.$this -> options.'" alt = "'._IMAGEFILE.'" title = "'._IMAGEFILE.'" class = "handle" /></div></td></tr>';
-		$questionString .= '<tr><td>&nbsp;</td></tr>';
-		$questionString .= '<tr><td>'._REPLYCOORDINATE.' '.$formArray['question'][$this -> question['id']]['html'] .'</td></tr>';
-
-
-		$questionString .= '
-		</td></tr>
-		</table>';
-
-		
-		$questionString .= "<script>
-		jQuery(document).ready(function(){
-			setHotspotCoords(".$this -> question['id'].");
-		});
-
-		</script>";
-		
-		return bypassCommonPoolCheck($questionString);
-	}
-
-	/**
-	 * Display question with correct answer
-	 *
-	 * This function is used to display the question, together
-	 * with its correct answer.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new HotspotQuestion(3);                                      //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * echo $question -> preview($form);                               		        //Output solved question HTML code
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to and display
-	 * @param boolean $questionStats
-	 * @return string The HTML code of the solved question
-	 * @since 3.6.0
-	 * @access public
-	 */
-	public function preview(&$form, $questionStats = false, $hideAnswerStatus = false) {
-		$this -> toHTMLQuickForm($form);                                           //Assign proper elements to the form
-
-		$results = $this -> correct();
-
-		$form -> setDefaults(array("question[".$this -> question['id']."]" => ''));
-
-
-		$renderer           = new HTML_QuickForm_Renderer_ArraySmarty($foo);                //Get a smarty renderer, only because it reforms the form in a very convenient way for printing html
-		$form               -> freeze();                                           //Freeze the form elements
-		$form               -> accept($renderer);                                  //Render the form
-		$formArray           = $renderer -> toArray();                             //Get the rendered form fields
-
-		$correctAnswerClass = 'class = "correctAnswer"';
-		$wrongAnswerClass 	= 'class = "wrongAnswer"';
-
-		$innerQuestionString = '';
-		
-		$innerQuestionString .= '<img src = "'.G_LESSONSLINK.$this -> options.'" alt = "'._IMAGEFILE.'" title = "'._IMAGEFILE.'" /><br/><br/>';
-
-
-		//$innerQuestionString .= '<td>'.($this -> answer[$row][$column] ? $correctAnswerClass : $wrongAnswerClass);
-		if ($questionStats[$this -> question['id']]['percent_per_option'][0]) {
-			//vd($questionStats[$this -> question['id']]['percent_per_option'][$row][$column]);
-			$innerQuestionString .=  "   ". $questionStats[$this -> question['id']]['percent_per_option'][0] . "%";
-		} elseif ($questionStats !== false) {
-			$innerQuestionString .= "   0%";
-		}
-
-
-		$questionString = '
-		<table width = "100%">
-		<tr><td>'.$this -> question['text'].'</td></tr>
-		<tr><td style = "vertical-align:middle;padding-bottom:10px">
-		'.$innerQuestionString.'
-		</td></tr>
-		'.($this -> question['explanation'] ? '<tr><td class = "questionExplanation">'._EXPLANATION.': '.$this -> question['explanation'].'</td></tr>' : '').'
-		</table>';
-
-		return $questionString;
-	}
-
-
-
-	/**
-	 * Display solved question
-	 *
-	 * This function is used to display the solved version of the
-	 * question. In order to display it, setDone() must have been
-	 * called before.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new HotspotQuestion(3);                                        //Instantiate question
-	 * $form = new HTML_QuickForm("questionForm", "post", "", "", null, true);      //Create a form
-	 * $question -> setDone($answer, $score, $order);                               //Set question to be done
-	 * echo $question -> toHTMLSolved($form);                                       //Output solved question HTML code
-	 * </code>
-	 *
-	 * @param HTML_QuickForm $form The form to add fields to and display
-	 * @param boolean $showCorrectAnswers Whether to show the correct answers
-	 * @param boolean $$showGivenAnswers Whether to show the given answers
-	 * @return string The HTML code of the solved question
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function toHTMLSolved(&$form, $showCorrectAnswers = true, $showGivenAnswers = true) {
-		$this -> toHTMLQuickForm($form);                                           //Assign proper elements to the form
-
-		$results = $this -> correct();                                             //Correct question
-
-		if ($showGivenAnswers) {                                               //If the user's given answers should be shown, assign them as defaults in the form
-			$form -> setDefaults(array("question[".$this -> question['id']."]" => $this -> userAnswer));
-		}  else {
-			$form -> setDefaults(array("question[".$this -> question['id']."]" => ''));
-		}
-
-
-		$renderer           = new HTML_QuickForm_Renderer_ArraySmarty($foo);                //Get a smarty renderer, only because it reforms the form in a very convenient way for printing html
-		$form               -> freeze();                                           //Freeze the form elements
-		$form               -> accept($renderer);                                  //Render the form
-		$formArray           = $renderer -> toArray();                             //Get the rendered form fields
-		$innerQuestionString = '';
-
-		$innerQuestionString .= '<div style="position:relative" id="hotspot_div_'.$this -> question['id'].'"><img src = "'.G_LESSONSLINK.$this -> options.'" alt = "'._IMAGEFILE.'" title = "'._IMAGEFILE.'" /></div><br/><br/>';
-		
-		if ($showGivenAnswers) {
-			if ($showCorrectAnswers) {
-				$correctAnswerClass = 'class = "correctAnswer"';
-				$wrongAnswerClass 	= 'class = "wrongAnswer"';
-			}
-			
-			$temp = explode(',', $this -> userAnswer);
-			$temp[0] = round($temp[0], 2);
-			$temp[1] = round($temp[1], 2);
-			$form_html_shown = implode(',', $temp);
-			
-			if ($results['correct']) {
-				$innerQuestionString .= _REPLYCOORDINATE.' <span '.$correctAnswerClass.' >'.$form_html_shown.'</span><span style="display:none">('.$formArray['question'][$this -> question['id']]['html'].')</span>';
-			} else {
-				$innerQuestionString .= _REPLYCOORDINATE.' <span '.$wrongAnswerClass.' >'.$form_html_shown.'</span><span style="display:none">('.$formArray['question'][$this -> question['id']]['html'].')</span>';
-			}
-			
-			$innerQuestionString .= '<br/><br/>';
-		}
-		
-		if ($showCorrectAnswers) {
-			$innerQuestionString .= '<span class = "correctAnswer">'._RIGHTANSWER.':</span> ';
-			$formattedAnswer = '';
-			foreach ($this->answer as $right_answer) {
-				$formattedAnswer .= '('.$right_answer[0].','.$right_answer[1].')&nbsp;&raquo;&nbsp;'.'('.$right_answer[2].','.$right_answer[3].')<br/>';
-				
-			}
-			$innerQuestionString .= '<span class = "correctAnswer">'.$formattedAnswer.'</span>';
-		}
-		
-
-		$questionString = '
-		<table width = "100%">
-		<tr><td>'.$this -> question['text'].'</td></tr>
-		<tr><td style = "vertical-align:middle;padding-bottom:10px">
-		'.$innerQuestionString.'
-		</td></tr>
-		'.($this -> question['explanation'] ? '<tr><td class = "questionExplanation">'._EXPLANATION.': '.$this -> question['explanation'].'</td></tr>' : '').'
-		</table>';
-
-		return bypassCommonPoolCheck($questionString);
-	}
-
-	/**
-	 * Shuffle question options
-	 *
-	 * This function is used to shuffle the question options,
-	 * so that they are displayed in a random order.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new HotspotQuestion(3);                                     //Instantiate question
-	 * $newOrder = $question -> shuffle();                                          //Shuffle question options
-	 * </code>
-	 *
-	 * @return array The new question options order
-	 * @since 3.5.0
-	 * @access public
-	 */
-	/*
-	 public function shuffle() {
-	$shuffleOrder = range(0, sizeof($this -> options) - 1);
-	shuffle($shuffleOrder);
-	$this -> order = $shuffleOrder;
-
-	return $shuffleOrder;
-	}
-	*/
-	public function shuffle() {
-		return true;
-	}
-
-	/**
-	 *
-	 * Correct question
-	 *
-	 * This function is used to correct the question. In order to correct it,
-	 * setDone() must already have been called, so that the user answer
-	 * is present.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new HotspotQuestion(3);                                            //Instantiate question
-	 * $question -> setDone($answer, $score, $order);                               //Set done question information
-	 * $results = $question -> correct();                                           //Correct question
-	 * </code>
-	 *
-	 * @return array The correction results
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function correct() {
-		$results['score'] = 0;
-		$factor           = 1;
-
-		$right_answers = $this -> answer;
-		$coordinates  = explode(',', $this -> userAnswer);
-		$check_answer = false;
-		
-		foreach ($right_answers as $right_answer) {			
-			if ($coordinates[0] >=  $right_answer[0] && $coordinates[0] <=  $right_answer[2] && $coordinates[1] >=  $right_answer[1] && $coordinates[1] <=  $right_answer[2]) {
-				$check_answer = true;
-			} 			
-		}
-		if ($check_answer) {
-			$results['score']      += $factor;
-			$results['correct'] 	= true;
-		} else {
-			$results['correct'] 	= false;
-		}
-		
-
-		return $results;
-	}
-
-	/**
-	 * Set question done information
-	 *
-	 * This question is used to set its done information. This information consists of
-	 * the user answer, the score and the answers order.
-	 * <br/>Example:
-	 * <code>
-	 * $question = new HotspotQuestion(3);                                        //Instantiate question
-	 * $question -> setDone($answer, $score, $order);                               //Set done question information
-	 * </code>
-	 *
-	 * @param array $userAnswer The user answer
-	 * @param float score The user's score in this question
-	 * @param array $order the question options order
-	 * @since 3.5.0
-	 * @access public
-	 */
-	public function setDone($userAnswer, $score = false, $order = false) {
-		$this -> userAnswer = $userAnswer;
-		$score !== false ? $this -> score = $score : null;
-		//$order !=  false ? $this -> order = $order : null;
-	}
-}
-
-
-
 
 /**
  * RawTextQuestion Class
@@ -6338,8 +5358,6 @@ abstract class Question
                                          'multiple_one'  => _MULTIPLEONE,
                                          'multiple_many' => _MULTIPLEMANY,
                                          'match'         => _MATCH,
-    									 'grid'          => _GRID,
-    									 'hotspot'       => _HOTSPOT,
                                          'true_false'    => _TRUEFALSE,
                                          'drag_drop'     => _DRAGNDROP);
 
@@ -6355,8 +5373,6 @@ abstract class Question
                                               'multiple_one'  => 'images/16x16/question_type_one_correct.png',
                                               'multiple_many' => 'images/16x16/question_type_multiple_correct.png',
                                               'match'         => 'images/16x16/question_type_match.png',
-    										  'grid'          => 'images/16x16/calendar_selection_week.png',
-    										  'hotspot'       => 'images/16x16/layout.png',
                                               'true_false'    => 'images/16x16/question_type_true_false.png',
     										  'drag_drop'	  => 'images/16x16/question_type_drag_drop.png');
 
@@ -6403,8 +5419,7 @@ abstract class Question
 
 
 	public $settings = array('force_correct'	=> 'manual',
-							 'answers_logic'	=> '',
-							 'exclude_shuffle'  => '0');
+							 'answers_logic'	=> '');
 
     /**
      * Question's answer(s)
@@ -6803,8 +5818,6 @@ class QuestionFactory
             case 'multiple_many' : $factory = new MultipleManyQuestion($question); break;
             case 'empty_spaces'  : $factory = new EmptySpacesQuestion($question);  break;
             case 'match'         : $factory = new MatchQuestion($question);        break;
-            case 'grid'          : $factory = new GridQuestion($question);         break;
-            case 'hotspot'       : $factory = new HotspotQuestion($question);      break;
             case 'true_false'    : $factory = new TrueFalseQuestion($question);    break;
             case 'drag_drop'     : $factory = new DragDropQuestion($question);     break;
             default: {

@@ -196,11 +196,7 @@ function filterTree(el, url) {
 
 if (getCookie('hidden_catalog_entries') && getCookie('hidden_catalog_entries').evalJSON(true)) {
 	var ids = getCookie('hidden_catalog_entries').evalJSON(true);
-	ids.each(function (s) {
-		if ($('subtree_img'+s)) {
-			showHideDirections($('subtree_img'+s), $('subtree_children_'+s) ? $('subtree_children_'+s).innerHTML : '', s, 'hide')
-		}
-		})
+	ids.each(function (s) {showHideDirections($('subtree_img'+s), $('subtree_children_'+s) ? $('subtree_children_'+s).innerHTML : '', s, 'hide')})
 }
 
 document.observe("dom:loaded", function() {

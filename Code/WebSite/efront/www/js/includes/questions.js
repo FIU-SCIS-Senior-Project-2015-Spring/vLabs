@@ -35,16 +35,11 @@ function eF_js_addAdditionalChoice(question_type) {
 
 	var counter = 0;
 	for (var i = 0; i < els.length; i++) {                      //Count all the 'input' elements whose names match the selected question type (e.g. multiple_one[0], multiple_one[1] etc)
-		if (question_type == 'grid') {
-			if (els[i].name.match('^grid_column') && els[i].type.match('text')) {
-				counter++;
-			}
-		} else { 
-			if (els[i].name.match('^'+question_type) && els[i].type.match('text')) {
-				counter++;
-			}
+		if (els[i].name.match('^'+question_type) && els[i].type.match('text')) {
+			counter++;
 		}
 	}
+
 	if (counter > 1) {                                                  //If the counter is less than 2 (where 2 is the default input fields), it means that the selected question type is not one that may have multiple inputs (i.e. it may be raw_text)
 		var last_node = document.getElementById(question_type+'_last_node');   //This is the node that the new elements will be inserted before
 
@@ -87,15 +82,6 @@ function eF_js_addAdditionalChoice(question_type) {
 			check.className = 'inputText inputText_QuestionChoice';         //Set its class to 'inputText'
 			check.setAttribute('name', 'correct_match['+counter+']');
 			td_right.appendChild(check);
-		} else if (question_type == 'grid') {
-			var td_right  = document.createElement('td');               //Create a new table cell to hold the new text box
-			tr.appendChild(td_right);
-
-			var check = document.createElement('input');
-			check.setAttribute('type', 'text');
-			check.className = 'inputText inputText_QuestionChoice';         //Set its class to 'inputText'
-			check.setAttribute('name', 'grid_column['+counter+']');
-			td_right.appendChild(check);
 		} else if (question_type == 'drag_drop') {
 			var td_middle = document.createElement('td');               //Create a new table cell to hold the new raquos
 			td_middle.innerHTML = '&nbsp;&raquo;&raquo;&nbsp;';
@@ -118,11 +104,10 @@ function eF_js_addAdditionalChoice(question_type) {
 		img_td.appendChild(img);                                        //Append the image to this cell
 		tr.appendChild(img_td);                                         //Append the <td> to the row
 		//Element.extend(td).insert(new Element('input', {type:'text'}));
-		if (question_type != 'grid') {
-			var img = new Element('img', {src:'themes/default/images/others/transparent.gif', alt:insertexplanation, title:insertexplanation}).addClassName('sprite16').addClassName('sprite16-add').setStyle({marginRight:'5px', verticalAlign:'middle'}).observe('click', function (e) {Element.extend(this).next().toggle();});
-			td = new Element('td').setStyle({paddingLeft:'30px'}).insert(img).insert(new Element('input', {type:'text', name:'answers_explanation['+counter+']'}).addClassName('inputText').hide());
-			Element.extend(tr).insert(td);
-		}
+		var img = new Element('img', {src:'themes/default/images/others/transparent.gif', alt:insertexplanation, title:insertexplanation}).addClassName('sprite16').addClassName('sprite16-add').setStyle({marginRight:'5px', verticalAlign:'middle'}).observe('click', function (e) {Element.extend(this).next().toggle();});
+		td = new Element('td').setStyle({paddingLeft:'30px'}).insert(img).insert(new Element('input', {type:'text', name:'answers_explanation['+counter+']'}).addClassName('inputText').hide());
+		Element.extend(tr).insert(td);
+
 		var parent_node = last_node.parentNode;                         //Find the parent element, that will hold the new element
 		parent_node.insertBefore(tr, last_node);                        //Append the table row, that holds the input element, to its parent.
 	}
@@ -211,55 +196,7 @@ function eF_js_createEmptySpaces() {
 	parent_node.insertBefore(tr, last_node);             //Append the table row, that holds the input element, to its parent.
 }
 
-function eF_js_createGrid() {
 
-	var code = '<table width="100%" border="1px"><tr><td></td>';
-
-	jQuery("input[name*='grid_column']").each(function( index ) {
-		if (this.value != '') {
-			code += '<td>'+this.value+'</td>';
-		}
-	}); 
-	code += '</tr>';
-	
-	jQuery("input[name*='grid[']").each(function( index ) {
-		var row = this;
-		//alert(row);
-		if (row.value != '') {
-			code += '<tr><td>'+row.value+'</td>';
-			jQuery("input[name*='grid_column']").each(function( index_column ) {
-				var column = this;
-				if (column.value != '') {
-					code += '<td><input class = "inputCheckbox" type = "checkbox" name = "answer['+row.value+']['+column.value+']" id = "answer['+row.value+']['+column.value+']" value="1" ></td>';
-				}	
-			}); 
-			code += '</tr>';
-		}
-	}); 	
-	code += '</table>';
-	//alert(code);
-	
-
-	//alert(separators);
-	var last_node   = document.getElementById('grid_node');  //This is the node that the new elements will be inserted before
-	var parent_node = last_node.parentNode;                             //Find the parent element, that will hold the new element
-	if (document.getElementById('gridSpace')) {                         //If the button was pressed again, remove old row and build a new one
-		document.getElementById('gridSpace').parentNode.removeChild(document.getElementById('gridSpace'));
-	}
-
-	var tr = document.createElement('tr');              //Create a table row to hold the new element
-	tr.setAttribute('id', 'gridSpace');                 //We need an id to know which row this is, so we can remove it on demand
-	tr.appendChild(document.createElement('td'));       //Create a new empty table cell for alignment reasons. Append this table cell to the table row we created above
-
-	var td = document.createElement('td');              //Create a new table cell to hold the new element
-	td.setAttribute('colspan', '100%');
-	tr.appendChild(td);                                 //Append this table cell to the table row we created above
-
-						
-	td.innerHTML = code;
-	parent_node.insertBefore(tr, last_node);             //Append the table row, that holds the input element, to its parent.
-	
-}
 
 function ajaxPost(id, el, table_id) {
 	var url = location.toString();

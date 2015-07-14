@@ -1040,30 +1040,9 @@ function propagateCourse(el, course) {
 }
 
 if ($('autocomplete_branches')) {
-	new Ajax.Autocompleter(
-		"autocomplete", 
-		"autocomplete_branches", 
-		"ask.php?ask_type=branches", {
-			paramName: "preffix", 
-			afterUpdateElement : function (t, li) {
-				$('fatherBranch_value').value = li.id;
-			}, 
-		indicator : "busy"
-	}); 
-}
-
-
-function ajaxJobSkillPost(skill_id, el, job_id) {
-	url=location.toString();
-	ajaxRequest(el, url, {
-		method:'get',
-		add_specification: true,
-		skill_id:skill_id,
-		job_id: job_id,
-		specification: encodeURI($('spec_skill_'+skill_id).value),
-		postAjaxRequest:1
-	}, onAjaxJobSkillPost);
-}
-function onAjaxJobSkillPost(el, response) {
-	eF_js_redrawPage('skillsTable');
+	new Ajax.Autocompleter("autocomplete", 
+						   "autocomplete_branches", 
+						   "ask.php?ask_type=branches", {paramName: "preffix", 
+													afterUpdateElement : function (t, li) {$('fatherBranch_value').value = li.id;}, 
+													indicator : "busy"}); 
 }

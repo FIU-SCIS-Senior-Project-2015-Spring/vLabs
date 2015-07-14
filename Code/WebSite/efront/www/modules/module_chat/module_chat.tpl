@@ -1,5 +1,7 @@
 {* smarty template for chat module *}
 
+{if $T_CHAT_MODULE_STATUS == "ON"}
+
 
 
 <script type="text/javascript" >
@@ -10,7 +12,6 @@
 	var flashreload = true;
 </script>
 
-{if $T_CHAT_MODULE_STATUS == "ON"}
 <link href="{$T_CHAT_MODULE_BASELINK}css/screen.css" rel="stylesheet" type="text/css">
 <link href="{$T_CHAT_MODULE_BASELINK}css/chat.css" rel="stylesheet" type="text/css">
 <!--[if IE ]>

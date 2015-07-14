@@ -26,13 +26,7 @@ try {
             eF_redirect("".basename($_SERVER['PHP_SELF'])."?ctg=control_panel&message=".urlencode(_UNAUTHORIZEDACCESS)."&message_type=failure");
         }
         try {
-        	$res = eF_getTableData("user_types", "basic_user_type", "id=".$_GET['delete_user_type']);
-        	
             eF_deleteTableData("user_types", "id='".$_GET['delete_user_type']."'") && eF_updateTableData("users", array("user_types_ID" => 0), "user_types_ID=".$_GET['delete_user_type']);
-            if ($res[0]['basic_user_type'] != 'administrator') {
-            	eF_updateTableData("users_to_courses", array("user_type" => $res[0]['basic_user_type']), "user_type=".$_GET['delete_user_type']);
-            	eF_updateTableData("users_to_lessons", array("user_type" => $res[0]['basic_user_type']), "user_type=".$_GET['delete_user_type']);
-            }
             $message      = _USERTYPEDELETED;
             $message_type = 'success';
         } catch (Exception $e) {
@@ -68,15 +62,18 @@ try {
         } 
         exit;
     } elseif (isset($_GET['add_user_type']) || (isset($_GET['edit_user_type']) && eF_checkParameter($_GET['edit_user_type'], 'text'))) {
-        $studentOptions       = array(	"content"           => _CONTENT,
-        							  	"users"			  	=> _USERS,
-                                      	"statistics"        => _STATISTICS,
-                                      	"personal_messages" => _PERSONALMESSAGES,
-                                      	"control_panel"     => _CONTROLPANEL,
-        							  	"move_block"        => _MOVEBLOCK,
-         							  	"module_itself"     => _MODULEITSELF,
-									  	"dashboard"		  	=> _DASHBOARD,
-        							  	"insert_group_key"  => _VIEWINSERTGROUPKEY);
+        $studentOptions       = array("content"           => _CONTENT,
+        							  "users"			  => _USERS,
+                                      //"calendar"          => _CALENDAR,
+                                      "statistics"        => _STATISTICS,
+                                      //"forum"             => _FORUM,
+                                      "personal_messages" => _PERSONALMESSAGES,
+                                      //"surveys"           => _SURVEYS,
+                                      "control_panel"     => _CONTROLPANEL,
+        							  "move_block"        => _MOVEBLOCK,
+         							  "module_itself"     => _MODULEITSELF,
+									  "dashboard"		  => _DASHBOARD,
+        							  "insert_group_key"  => _VIEWINSERTGROUPKEY);
         if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
             $studentOptions["social"]	= _SOCIAL;
         } #cpp#endif
@@ -87,21 +84,25 @@ try {
 		EfrontUser::isOptionVisible('news') ? $studentOptions["news"]		= _ANNOUNCEMENTS 	: null;
 		EfrontUser::isOptionVisible('forum') ? $studentOptions["forum"]		= _FORUM		 	: null;
 								  
-        $professorOptions     = array(	"settings"          => _LESSONOPTIONS,
-                                      	"users"             => _USERS,
-                                      	"content"           => _CONTENT,
-        								"questions" 		=> _QUESTIONS,
-                                     	"files"             => _FILES,
-                                     	"progress"          => _USERSPROGRESS,
-                                     	"statistics"        => _STATISTICS,
-                                      	"personal_messages" => _PERSONALMESSAGES,
-                                      	"control_panel"     => _CONTROLPANEL,
-									  	"dashboard"		  	=> _DASHBOARD,
-        							  	"move_block"        => _MOVEBLOCK,
-         							  	"module_itself"     => _MODULEITSELF,
-        							  	"professor_courses" => _PROFESSORCREATECOURSES,
-									  	"course_settings"   => _COURSEOPTIONS,
-        							  	"insert_group_key"  => _VIEWINSERTGROUPKEY);
+        $professorOptions     = array("settings"          => _LESSONOPTIONS,
+                                      "users"             => _USERS,
+                                      "content"           => _CONTENT,
+                                      //"news"              => _ANNOUNCEMENTS,
+                                      "files"             => _FILES,
+                                      "progress"          => _USERSPROGRESS,
+                                     // "glossary"          => _GLOSSARY,
+                                      //"calendar"          => _CALENDAR,
+                                      "statistics"        => _STATISTICS,
+                                      //"forum"             => _FORUM,
+                                      "personal_messages" => _PERSONALMESSAGES,
+                                      //"surveys"           => _SURVEYS,
+                                      "control_panel"     => _CONTROLPANEL,
+									  "dashboard"		  => _DASHBOARD,
+        							  "move_block"        => _MOVEBLOCK,
+         							  "module_itself"     => _MODULEITSELF,
+        							  "professor_courses" => _PROFESSORCREATECOURSES,
+									  "course_settings"   => _COURSEOPTIONS,
+        							  "insert_group_key"  => _VIEWINSERTGROUPKEY);
         if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
             $professorOptions["social"]	= _SOCIAL;
         } #cpp#endif
@@ -127,12 +128,13 @@ try {
         							  "module_itself"     => _MODULEITSELF,
                                       "statistics"        => _STATISTICS,
                                       "archive"           => _ARCHIVE,
+                                      //"calendar"          => _CALENDAR,
+                                      //"news"              => _ANNOUNCEMENTS,
+                                      //"forum"             => _FORUM,
                                       "personal_messages" => _PERSONALMESSAGES,
                                       "notifications"	  => _EMAILDIGESTS,
                                       "control_panel"     => _CONTROLPANEL,
-									  "dashboard"		  => _DASHBOARD,
-        							  "search_user"	  	  => _FINDEMPLOYEES,
-        							  "online_users"	  => _CONNECTEDUSERS);
+									  "dashboard"		  => _DASHBOARD);
 									  
 		EfrontUser::isOptionVisible('calendar') ? $administratorOptions["calendar"] 	= _CALENDAR 		: null; 
 		EfrontUser::isOptionVisible('news') ? $administratorOptions["news"]		= _ANNOUNCEMENTS 	: null;

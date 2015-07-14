@@ -67,21 +67,16 @@ function onSetSeenUnit(el, response) {
             if ($('lesson_passed')) {
             	if (results[2] == true) {
             		$('lesson_passed').down().removeClassName('failure').addClassName('success');
+            		$('completed_block').show();
+					if (results[6] == true) {
+						$('show_certificate_block').show();
+					}
+					Effect.ScrollTo('completed_block');
             	} else {
             		$('lesson_passed').down().removeClassName('success').addClassName('failure');
             		//$('completed_block').hide();
             	}
             }
-            if (results[2] == true) {
-		    	if ($('completed_block')) {
-		    		$('completed_block').show();
-		    	}
-				if (results[6] == true) {
-					$('show_certificate_block').show();
-				}
-				Effect.ScrollTo('completed_block');
-		    	
-	    	}
         }
 	} catch (e) {}
 }
@@ -155,21 +150,17 @@ function togglePdf() {
 function toggleAdvancedParameters() {
 
 	if ($('scorm_asynchronous')) {
-		Effect.toggle($('scorm_asynchronous'));
-		Effect.toggle($('scorm_asynchronous_explanation'));
-		Effect.toggle($('scorm_times'));
-		Effect.toggle($('scorm_logging'));
+		$('scorm_asynchronous').toggle();
+		$('scorm_asynchronous_explanation').toggle();
 	}
-	if ($('ctg_type')) {
-		Effect.toggle($('ctg_type'));
-	}
-	Effect.toggle($('maximize_viewport'));
-	Effect.toggle($('object_ids'));
+	$('ctg_type').toggle();
+	$('maximize_viewport').toggle();
+	$('object_ids').toggle();
 	if ($('no_before_unload')) {
-		Effect.toggle($('no_before_unload'));
+		$('no_before_unload').toggle();
 	}
-	Effect.toggle($('indexed'));
-	Effect.toggle($('accessible_explanation'));
+	$('indexed').toggle();
+	$('accessible_explanation').toggle();
 	if ($('advenced_parameter_image').className.match("down")) {
 		setImageSrc($('advenced_parameter_image'), 16, 'navigate_up.png');
 	} else {
@@ -201,29 +192,7 @@ function answerQuestion(el) {
 	});
 }
 
-function submitCompletionTerm(el) {
-	Element.extend(el);
-	$('accept_option').hide();
-	$('reject_option').hide();
-	el.up().insert(new Element('img', {src:'themes/default/images/others/progress1.gif', id:'progress_image'}).setStyle({verticalAlign:'middle', marginLeft:'5px'}));
-	$('accept_form').request({
-		onFailure: function(transport) {
-		$('progress_image').remove();
-		showMessage(transport.responseText, 'failure');
-	},
-	onSuccess:function(transport) {
-		if (transport.responseText == 'accept') {
-			new Effect.Appear($('accept_option'));
-			setSeenUnit(1);
-		} else {
-			new Effect.Appear($('reject_option'));
-			setSeenUnit(0);
-		}
-		$('progress_image').remove();
-		jQuery('#submit_completion_term').attr('disabled', 'disabled');
-	}
-	});
-}
+
 
 /**
 * This function prevents a link from loading upon click.
@@ -244,7 +213,6 @@ function updateProgress(obj) {
 		var lesson_passed 		= obj[2];
 		var unitStatus	  		= obj[5];
 		var certified_course	= obj[6];
-		var visits 				= obj[7];
 		
 	    if (w.$('progress_bar')) {
 	    	w.$('progress_bar').select('span.progressNumber')[0].update(parseFloat(progress) + '%');
@@ -253,32 +221,19 @@ function updateProgress(obj) {
 	    		w.$('passed_conditions').update(parseInt(conditions));
 	    	}
 	    	if (w.$('lesson_passed')) {
-	    		if (lesson_passed == true) {
-	    			w.$('lesson_passed').down().removeClassName('failure').addClassName('success')
-	    		} else {
-	    			w.$('lesson_passed').down().removeClassName('success').addClassName('failure');
-	    		}
-	    	}
-			if (lesson_passed == true) {
-		    	if (w.$('completed_block')) {
-		    		w.$('completed_block').show();
-		    	}
-				if (certified_course == true && w.$('show_certificate_block')) {
-					w.$('show_certificate_block').show();
+				if (lesson_passed == true) {
+					w.$('lesson_passed').down().removeClassName('failure').addClassName('success')
+					w.$('completed_block').show();
+					if (certified_course == true) {
+						w.$('show_certificate_block').show();
+					}
+					//Effect.ScrollTo('completed_block');
+				} else {
+					w.$('lesson_passed').down().removeClassName('success').addClassName('failure');
+					//$('completed_block').hide();
 				}
 	    	}
-
 	    }
-//	    if (visits > -1) {
-//	    	if (w.$('scorm_times')) {
-//	    		if (visits) {
-//	    			w.$('scorm_times').innerHTML = visits;
-//	    		} else {
-//	    			w.$('scorm_times').up().innerHTML = translations['_YOUCANNOTACCESSTHISCONTENTANYMORE'];
-//	    			w.$('ef-scorm-running').hide();
-//	    		}
-//	    	} 
-//	    }
 	    
 	    
 	    var status = '';
@@ -413,7 +368,7 @@ function updateProgress(obj) {
 		    }
 	    }
 	} catch (e) {
-		//alert(e);
+		alert(e);
 	}
 }
 
@@ -431,49 +386,48 @@ function eF_js_setCorrectIframeSize(setHeight)
 {
 	//Event.observe($('scormFrameID').contentWindow, 'beforeunload', function (s) {alert('b');});
 	
-    if (frame = window.document.getElementById('scormFrameID')) {  	
+    if (frame = window.document.getElementById('scormFrameID')) {
         innerDoc    = (frame.contentDocument) ? frame.contentDocument : frame.contentWindow.document;
         
         //Some contents send the final commit after the page closes, thus causing the tree and progress to not be updated on time.
         //For this reason, we copy the onunload event to a beforeunload event. In order to make for some weird contents that use the
         //onunload in other circumstances as well, there is a flag called "noBeforeUnload" that disables this event copying               
-        try {        
-	        if (typeof(noBeforeUnload) == 'undefined' || !noBeforeUnload) {
-	            //Firefox
-		        if ($('scormFrameID').contentWindow.onunload) {	        	
-		        	Event.observe($('scormFrameID').contentWindow, 'beforeunload', $('scormFrameID').contentWindow.onunload);
-		        }
-		        //IE
-		        else if ($('scormFrameID').contentWindow.document.body.onunload) {
-		        	Event.observe($('scormFrameID').contentWindow, 'beforeunload', $('scormFrameID').contentWindow.document.body.onunload);
-		        }
-		        //Sub frames: in case the main doc is frameset, we must go through its frames and apply the same
-		        else if ($('scormFrameID').contentWindow.frames && $('scormFrameID').contentWindow.frames.length > 0) {
-		        	for (var i = 0; i < $('scormFrameID').contentWindow.frames.length; i++) {
-		        		w = $('scormFrameID').contentWindow.frames[i];
-		        		//FF
-		        		if (w.onunload) {
-		        			Event.observe(w, 'beforeunload', w.onunload);
-		        		}
-		        		//IE
-		        		else if (w.document.body.onunload) {
-		        			Event.observe($('scormFrameID').contentWindow, 'beforeunload', w.document.body.onunload);
-		        		}
-		        	}
-		        } 
+        if (typeof(noBeforeUnload) == 'undefined' || !noBeforeUnload) {
+            //Firefox
+	        if ($('scormFrameID').contentWindow.onunload) {
+	        	Event.observe($('scormFrameID').contentWindow, 'beforeunload', $('scormFrameID').contentWindow.onunload);
 	        }
-		} catch(err){} //Added due to strange #5567 (unable to get property onunload of undefined or null reference)
-        objToResize = (frame.style) ? frame.style : frame;        
+	        //IE
+	        else if ($('scormFrameID').contentWindow.document.body.onunload) {
+	        	Event.observe($('scormFrameID').contentWindow, 'beforeunload', $('scormFrameID').contentWindow.document.body.onunload);
+	        }
+	        //Sub frames: in case the main doc is frameset, we must go through its frames and apply the same
+	        else if ($('scormFrameID').contentWindow.frames && $('scormFrameID').contentWindow.frames.length > 0) {
+	        	for (var i = 0; i < $('scormFrameID').contentWindow.frames.length; i++) {
+	        		w = $('scormFrameID').contentWindow.frames[i];
+	        		//FF
+	        		if (w.onunload) {
+	        			Event.observe(w, 'beforeunload', w.onunload);
+	        		}
+	        		//IE
+	        		else if (w.document.body.onunload) {
+	        			Event.observe($('scormFrameID').contentWindow, 'beforeunload', w.document.body.onunload);
+	        		}
+	        	}
+	        } 
+        }
+
+        objToResize = (frame.style) ? frame.style : frame;
         if (setHeight) {
         	objToResize.height = setHeight + 'px';
-        } else {       	
-	        if (frame.document) {     	
+        } else {
+	        if (frame.document) {
 	            objToResize.height = Math.max(innerDoc.body.scrollHeight, frame.document.body.scrollHeight) + 'px';
-	        } else {        	
+	        } else {
 	            objToResize.height = innerDoc.body.scrollHeight + 500 + 'px';
 	        }
         }   
-    }    
+    }
 	Event.observe($('scormFrameID').contentWindow, 'beforeunload', function (s) {setTimeout('', 1000);}); 
 }
 

@@ -7,7 +7,6 @@ function deleteNotification(el, id, event) {
 }
 function onDeleteNotification(el, response) {
 	new Effect.Fade(el.up().up());
-	eF_js_redrawPage('msgQueueTable', true);
 }
 function sendQueueMessages(el) {
 	Element.extend(el).insert(new Element('img', {src:'themes/default/images/others/progress1.gif'}).addClassName('handle'));
@@ -503,7 +502,7 @@ function changeEventCategory(el) {
 	if (_currentEventCategory != "") {
 		if ($('av_' + _currentEventCategory + '_div')) {
 			$('av_' + _currentEventCategory + '_div').setStyle({display:'none'});
-		} else if (_currentEventCategory != "system" && _currentEventCategory != "payments" && _currentEventCategory != "groups" && _currentEventCategory != "branch" && _currentEventCategory != "job") {
+		} else if (_currentEventCategory != "system" && _currentEventCategory != "groups" && _currentEventCategory != "branch" && _currentEventCategory != "job") {
 			$('av_lessons_div').setStyle({display:'none'});
 		}
 	}
@@ -519,7 +518,7 @@ function changeEventCategory(el) {
 	
 		if ($('av_' + _currentEventCategory + '_div')) {
 			$('av_' + _currentEventCategory + '_div').setStyle({display:'block'});
-		} else if (_currentEventCategory != "system" && _currentEventCategory != "payments" && _currentEventCategory != "groups" && _currentEventCategory != "branch" && _currentEventCategory != "job") {
+		} else if (_currentEventCategory != "system" && _currentEventCategory != "groups" && _currentEventCategory != "branch" && _currentEventCategory != "job") {
 			$('av_lessons_div').setStyle({display:'block'});
 		}
 	}	

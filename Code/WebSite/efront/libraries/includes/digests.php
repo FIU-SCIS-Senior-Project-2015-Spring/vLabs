@@ -162,7 +162,7 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
             $durations = array( $day_seconds/4 => "6 " . _HOURS,
             $day_seconds/2 => "12 " . _HOURS,
             $day_seconds => "1 "._DAYLOWER);
-            for ($i = 2; $i <= 90; $i++) {
+            for ($i = 2; $i <= 60; $i++) {
             	$day_seconds += 86400;
             	$durations[$day_seconds] = $i ." ". _DAYS;
             }
@@ -262,13 +262,13 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
             $form -> addElement('textarea', 'message', _BODY, 'class = "digestEditor" id="messageBody" onActivate="myActiveElement=\'\';" style = "width:100%;height:200px"');
 
             // Get available lessons
-            $lessons    = eF_getTableDataFlat("lessons", "id,name", "archive=0 and active=1", "name");
+            $lessons    = eF_getTableDataFlat("lessons", "id,name", "archive=0", "name");
 
             sizeof($lessons) > 0 ? $av_lessons = array_combine(array_merge(array("0"), $lessons['id']),  array_merge(array(_ANYLESSON), $lessons['name'])): $av_lessons = array(0 => _ANYLESSON);
             sizeof($lessons) > 0 ? $lessons = array_combine($lessons['id'], $lessons['name']) : $lessons = array();
 
             // Get available courses
-            $courses    = eF_getTableDataFlat("courses", "id,name", "archive=0 and active=1", "name"); //return only unarchived courses
+            $courses    = eF_getTableDataFlat("courses", "id,name", "archive=0", "name"); //return only unarchived courses
             sizeof($courses) > 0 ? $av_courses = array_combine(array_merge(array("0"), $courses['id']), array_merge(array(_ANYCOURSE), $courses['name'])): $av_courses = array(0 => _ANYCOURSE);
             sizeof($courses) > 0 ? $courses = array_combine($courses['id'], $courses['name']) : $courses = array();
             $smarty -> assign("T_COURSES", $courses);
@@ -481,7 +481,6 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
             	// Set default values
             	$timestamp = $event['timestamp'];
             	// On event and after event types
-          	
             	if (isset($event['event_type'])) {
 
             		// The category of the event: lessons, tests etc
@@ -519,8 +518,7 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
             		$smarty -> assign("T_EVENT_FORM", $type);
 
             		// Get condition
-            		$send_conditions = unserialize($event['send_conditions']);    
-           		    		
+            		$send_conditions = unserialize($event['send_conditions']);        		
             		if ($event_category == "lessons") {
             			$condition = $send_conditions["lessons_ID"];
             		} else if ($event_category == "news") {
@@ -572,7 +570,7 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
             				$form -> setDefaults(array('recipients' => 'supervisors'));
             			} else {
 	            			$condition_category = unserialize($event['send_conditions']);
-	            				
+	
 	            			if (isset($condition_category['lessons_ID'])) {
 	            				if (isset($condition_category['user_type'])) {
 	            					$form -> setDefaults(array('professor'  => $condition_category['lessons_ID'],
@@ -582,8 +580,7 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
 	                                                       'recipients' => 'specific_lesson'));
 	            				}
 	            			} else if (isset($condition_category['courses_ID'])) {
-	            				$form -> setDefaults(array('specific_course'  => $condition_category['courses_ID'],
-	            						'specific_course_completed'  => $condition_category['completed'],
+	            				$form -> setDefaults(array('specific_course_completed'  => $condition_category['completed'],
 	                                                   'recipients'                 => 'specific_course'));
 	
 	            			} else if (isset($condition_category['user_type'])) {
@@ -660,17 +657,11 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
 
             			// Timestamp should be in the future
             			if (isset($_GET['add_notification'])) {
-         				
             				if (false) {
             					//if (time() > $timestamp) {
             					$message = _CANNOTSCHEDULEMESSAGEFORPASTDATE;
             					$message_type = 'failure';
-            				} else {           					
-            					$template_formulations = EfrontNotification::createSubstitutionsArrayForDateNotifications($condition);
-
-            					$subject = eF_formulateTemplateMessage($subject, $template_formulations);
-            					$message = eF_formulateTemplateMessage($message, $template_formulations);
-        
+            				} else {
             					// Notification on a specific time, once
             					if ($message_frequency == "0") {
             						EfrontNotification::addNotification($timestamp, $subject, $message, $condition, $html_message);
@@ -755,13 +746,8 @@ if ($_GET['op'] == "preview" && eF_checkParameter($_GET['sent_id'], 'id') ) {
             			}
 
             			if (isset($_GET['add_notification'])) {
-  							//Added because course not completion notification for already assigned users (rows added while creating notification) has not replaced formulations
-  							//only users assigned to course after creating the notification was correct (since it is created via triggerEvent) (#5918)
-            				$template_formulations = EfrontNotification::createSubstitutionsArrayForDateNotifications($condition);            				
-  							$subject = eF_formulateTemplateMessage($subject, $template_formulations);
-  							$message = eF_formulateTemplateMessage($message, $template_formulations);
-            				
-  							EfrontNotification::addEventNotification($events_type, $subject, $message, $condition, $_POST['event_recipients'], $html_message, $after_time, $send_immediately);
+
+            				EfrontNotification::addEventNotification($events_type, $subject, $message, $condition, $_POST['event_recipients'], $html_message, $after_time, $send_immediately);
             			} else {
             				// if we changed from simple notification event -> on/after event notification
             				if (!isset($_GET['event'])) {

@@ -30,8 +30,7 @@ try {
 		EfrontCourse :: checkCertificateExpire();		
 		EfrontConfiguration :: setValue('last_reset_certificate', time());
 	}
-	
-	$currentTheme = new themes($_SESSION['s_theme']);
+
 	$newTime = '';
 	$jsonValues = array();
 	if ($_SESSION['s_login']) {
@@ -50,35 +49,16 @@ try {
 			}
 		}
 
+
 		if (empty($_SESSION['last_periodic_check']) || time() - $_SESSION['last_periodic_check'] >= ceil($GLOBALS['configuration']['updater_period']/1000)) {
-			
 			$result = eF_executeNew("update user_times set time=time+(".time()."-timestamp_now),timestamp_now=".time()."
-						where session_expired = 0 and session_custom_identifier = '".$_SESSION['s_custom_identifier']."' and users_LOGIN = '".$_SESSION['s_login']."'
-						and entity = '".current($entity)."' and entity_id = '".key($entity)."'");
-			$_SESSION['last_periodic_check'] = time();
+					where session_expired = 0 and session_custom_identifier = '".$_SESSION['s_custom_identifier']."' and users_LOGIN = '".$_SESSION['s_login']."'
+					and entity = '".current($entity)."' and entity_id = '".key($entity)."'");
 			
-			
-			if ($currentTheme -> options['sidebar_interface'] == 0) {
-				if (empty($_SESSION['last_periodic_check_users']) || time() - $_SESSION['last_periodic_check_users'] >= 300) {				
-					$_SESSION['last_periodic_check_users'] = $_SESSION['last_periodic_check'];
-					$online = EfrontUser :: getUsersOnline($GLOBALS['configuration']['autologout_time'] * 60);
-					$_SESSION['online_users'] = $online;
-					if ($currentTheme -> options['sidebar_interface'] == 0) {
-						$jsonValues['online'] = $online;
-					}
-				} else {
-					if ($currentTheme -> options['sidebar_interface'] == 0) {
-						$jsonValues['online'] = $_SESSION['online_users'];
-					}
-				}
-				
-			
-				
-			}
-			
+			//$_SESSION['last_periodic_check'] = time();
+			//$jsonValues['online'] = EfrontUser :: getUsersOnline($GLOBALS['configuration']['autologout_time'] * 60);
 			//$messages = eF_getTableData("f_personal_messages pm, f_folders ff", "count(*)", "pm.users_LOGIN='".$_SESSION['s_login']."' and viewed='no' and f_folders_ID=ff.id and ff.name='Incoming'");
 			//$jsonValues['messages'] = $messages[0]['count(*)'];
-			
 			$jsonValues['status'] = 1;
 			echo json_encode($jsonValues);
 		} else {

@@ -20,38 +20,29 @@ if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 		if (sizeof($result) == 1 || isset($_GET['preview'])) {
 			$course = new EfrontCourse($_GET['course']);
 			if (!isset($_GET['preview'])){
-				if (eF_checkParameter($_GET['user'], 'login') && ( $_SESSION['s_type'] != 'student' || $_SESSION['s_login'] == $_GET['user'])) {
-					$certificate_tpl_id_rtf = $course -> options['certificate_tpl_id_rtf'];
-					if ($certificate_tpl_id_rtf <= 0) {
-						$cfile = new EfrontFile(G_CERTIFICATETEMPLATEPATH."certificate1.rtf");
-					} else {
-						$cfile = new EfrontFile($certificate_tpl_id_rtf);
-					}
-					$template_data = file_get_contents($cfile['path']);
-					$issued_data = unserialize($result[0]['issued_certificate']);
-					$certificate = $template_data;
-					if (sizeof($issued_data) > 1){
-						$certificate   = $template_data;
-						$certificate   = str_replace("#organization#", utf8ToUnicode($issued_data['organization']), $certificate);
-						$certificate   = str_replace("#user_name#", utf8ToUnicode($issued_data['user_name']), $certificate);
-						$certificate   = str_replace("#user_surname#", utf8ToUnicode($issued_data['user_surname']), $certificate);
-						$certificate   = str_replace("#course_name#", utf8ToUnicode($issued_data['course_name']), $certificate);
-						$certificate   = str_replace("#grade#", utf8ToUnicode($issued_data['grade']), $certificate);
-						if (eF_checkParameter($issued_data['date'], 'timestamp')) {
-							$issued_data['date']  = formatTimestamp($issued_data['date']);
-						}
-						$certificate   = str_replace("#date#", utf8ToUnicode($issued_data['date']), $certificate);
-						$certificate   = str_replace("#serial_number#", utf8ToUnicode($issued_data['serial_number']), $certificate);
-					}
+				$certificate_tpl_id_rtf = $course -> options['certificate_tpl_id_rtf'];
+				if ($certificate_tpl_id_rtf <= 0) {
+					$cfile = new EfrontFile(G_CERTIFICATETEMPLATEPATH."certificate1.rtf");
 				} else {
-					if ($_SESSION['s_type'] == 'student') {
-						$offset = '?ctg=lessons_list';
-					} else {
-						$offset = '?ctg=courses&course='.$_GET['course'].'&op=course_certificates';
-					}
-					eF_redirect("".basename($_SERVER['PHP_SELF']).$offset."&message=".urlencode(_UNPRIVILEGEDATTEMPT)."&message_type=failure");
-					exit;
+					$cfile = new EfrontFile($certificate_tpl_id_rtf);
 				}
+				$template_data = file_get_contents($cfile['path']);
+				$issued_data = unserialize($result[0]['issued_certificate']);
+				$certificate = $template_data;
+				if (sizeof($issued_data) > 1){
+					$certificate   = $template_data;
+					$certificate   = str_replace("#organization#", utf8ToUnicode($issued_data['organization']), $certificate);
+					$certificate   = str_replace("#user_name#", utf8ToUnicode($issued_data['user_name']), $certificate);
+					$certificate   = str_replace("#user_surname#", utf8ToUnicode($issued_data['user_surname']), $certificate);
+					$certificate   = str_replace("#course_name#", utf8ToUnicode($issued_data['course_name']), $certificate);
+					$certificate   = str_replace("#grade#", utf8ToUnicode($issued_data['grade']), $certificate);
+					if (eF_checkParameter($issued_data['date'], 'timestamp')) {
+						$issued_data['date']  = formatTimestamp($issued_data['date']);
+					}
+					$certificate   = str_replace("#date#", utf8ToUnicode($issued_data['date']), $certificate);
+					$certificate   = str_replace("#serial_number#", utf8ToUnicode($issued_data['serial_number']), $certificate);
+				}
+
 			} else {
 				$certificateDirectory = G_CERTIFICATETEMPLATEPATH;
 				$selectedCertificate  = $_GET['certificate_tpl'];

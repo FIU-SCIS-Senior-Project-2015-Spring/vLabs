@@ -33,14 +33,14 @@ abstract class EfrontCache
     			self::$_instance = EfrontCache::factory('db');
     		}
     	}
- 	
+    	
     	return self::$_instance;
     }
 
-    public static function factory($method) { 
-    	if (!EfrontConfiguration::CACHE_ENABLED) {
-    		$method = null;	//force dummy cache, which equals to disabled    		
-    	}		
+    public static function factory($method) {
+    	if (!$GLOBALS['configuration']['cache_enabled']) {
+    		$method = null;	//force dummy cache, which equals to disabled
+    	}
     	switch ($method) {
     		case 'apc':      $cache = new EfrontCacheAPC();      break;
     		case 'wincache': $cache = new EfrontCacheWincache(); break;
@@ -54,7 +54,6 @@ abstract class EfrontCache
     public abstract function setCache($key, $entity, $timeout = null);
     public abstract function getCache($key);
     public abstract function deleteCache($key);
-    public abstract function clearCache();
     
     
     protected static function _encode($parameters) {
@@ -74,9 +73,6 @@ class EfrontCacheDummy extends EfrontCache
 	public function deleteCache($key) {
 		return false;
 	}	
-	public function clearCache() {
-		return false;
-	}
 }
 
 class EfrontCacheDB extends EfrontCache
@@ -115,16 +111,13 @@ class EfrontCacheDB extends EfrontCache
 		eF_deleteTableData("cache", "cache_key='".$key."'");
 	}
 	
-	public function clearCache() {
-		return false;
-	}
 	  
 }
 
 class EfrontCacheAPC extends EfrontCache
 {
     public function setCache($key, $entity, $timeout = null) {
-    	$key = self::_encode($key); 	
+    	$key = self::_encode($key);
     	return apc_store($key, $entity, $timeout);
     }
     
@@ -136,10 +129,6 @@ class EfrontCacheAPC extends EfrontCache
     public function getCache($key) {
     	$key = self::_encode($key);
     	return apc_fetch($key);
-    }
-    
-    public function clearCache() {
-    	return apc_clear_cache();
     }
     
 }
@@ -159,10 +148,6 @@ class EfrontCacheWincache extends EfrontCache
 	public function getCache($key) {
 		$key = self::_encode($key);
 		return wincache_ucache_get($key);
-	}
-	
-	public function clearCache() {
-		return wincache_ucache_clear();
 	}
 
 }

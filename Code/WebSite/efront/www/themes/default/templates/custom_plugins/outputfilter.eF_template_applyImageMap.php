@@ -6,7 +6,7 @@
 function smarty_outputfilter_eF_template_applyImageMap($compiled, &$smarty) {
 	ini_set("pcre.backtrack_limit", "1000000");
     //First, match all the existing classes of the images, for example <img class = "close"> and replace them with <img ###close%%% >
-    $compiled = preg_replace('/(<img (?!src="data))(([^>])*)(class\s*=\s*[\'"](.*)[\'"])(.*>)/U', "$1###$5%%%$2$6", $compiled);
+    $compiled = preg_replace('/(<img )(([^>])*)(class\s*=\s*[\'"](.*)[\'"])(.*>)/U', "$1###$5%%%$2$6", $compiled);    
     //Now, replace image src tag with transparent.gif and add the image map classes, 'spriteXX spriteXX-imagename'
     $matches = array('/(<img .*)(?<!\/)\Wimages\/16x16(\/.*)?\/((.*)\.\w{3}\W)/U',
     				 '/(<img .*)(?<!\/)\Wimages\/32x32(\/.*)?\/((.*)\.\w{3}\W)/U');

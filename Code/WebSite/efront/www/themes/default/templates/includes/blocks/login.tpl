@@ -37,17 +37,18 @@
     		<div class = "formElement">
             	<div class = "field">{$T_LOGIN_FORM.submit_login.html}</div>
             	{if $T_CONFIGURATION.signup && !$T_CONFIGURATION.only_ldap}<div class = "small note"><a href = "{$smarty.server.PHP_SELF}?ctg=signup">{$smarty.const._DONTHAVEACCOUNT}</a></div>{/if}
-            	{if $T_CONFIGURATION.saml_enabled}<div class = "small note"><a href = "{$smarty.server.PHP_SELF}?ctg=saml">{$smarty.const._LOGINWITHSAML}</a></div>{/if}
             	{if $T_CONFIGURATION.password_reminder && !$T_CONFIGURATION.only_ldap}<div class = "small note"><a href = "{$smarty.server.PHP_SELF}?ctg=reset_pwd">{$smarty.const._FORGOTPASSWORD}</a></div>{/if}
-            	<div class = "small note"><a href = "{$smarty.server.PHP_SELF}?ctg=contact">{$smarty.const._CONTACTUS}</a></div>
+            	<div class = "small note"><a href="http://university.kaseya.com/KaseyaUniversity/loginhelp.htm" target=_blank><b>Login Help</b></a></div>
+		<div class = "small note"><a href="https://helpdesk.kaseya.com/entries/59521523-Kaseya-University-Tickets-vs-Support-Tickets-FAQ" target=_blank>Contact Us</a></div>
+            	<div class = "small note"><a href="https://helpdesk.kaseya.com/entries/53042197-Kaseya-University-FAQs" target=_blank>Kaseya Univ FAQs</a></div>
             	{if $T_CONFIGURATION.lessons_directory == 1}<div class = "small note"><a href = "{$smarty.server.PHP_SELF}?ctg=lessons">{$smarty.const._LESSONSLIST}</a></div>{/if}
+		<div class = "small note"><a href="http://www.kaseya.com/legal/privacy-statement" target=_blank>Privacy Statement</a></div>
+
     	    </div>
     	</div>
      </form>
 {if $T_OPEN_FACEBOOK_SESSION && !$T_NO_FACEBOOK_LOGIN}        
   	<div id="fb-root"></div>
-	        	 <!--button class="fb_login flatButton">Login with Facebook</button -->      
-					<fb:login-button scope="public_profile,email,publish_actions,status_update">
-					</fb:login-button> 	 
+	        	 <button class="fb_login flatButton">Login with Facebook</button>       	 
 {/if}       	  
 

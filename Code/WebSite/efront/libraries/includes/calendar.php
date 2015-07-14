@@ -43,11 +43,9 @@ $smarty -> assign("T_CALENDAR_TYPES", calendar :: $calendarTypes);
 
 if ($_SESSION['s_type'] != 'administrator' && $_SESSION['s_current_branch']) {	//this applies to branch urls
 	$currentBranch = new EfrontBranch($_SESSION['s_current_branch']);
-	$branchTreeUsers = array_keys($currentBranch->getBranchTreeUsers());	
+	$branchTreeUsers = array_keys($currentBranch->getBranchTreeUsers());
 	foreach ($events as $key => $value) {
-		$in_branches = eF_getTableData('module_hcd_employee_works_at_branch', "*", "users_login='".$value['users_LOGIN']."'");
-		//if creator of course calendar event does not belong to any other branch, show it
-		if ($value['type'] != 'global' && !in_array($value['users_LOGIN'], $branchTreeUsers) && !empty($in_branches)) {
+		if ($value['type'] != 'global' && !in_array($value['users_LOGIN'], $branchTreeUsers)) {
 			unset($events[$key]);
 		}
 	}
@@ -123,5 +121,4 @@ $options = array(array('image' => '16x16/calendar_selection_day.png',	'title' =>
 				 array('image' => '16x16/calendar_selection_month.png', 'title' => _SHOWMONTHEVENTS, 'link' => basename($_SERVER['PHP_SELF'])."?ctg=calendar&view_calendar=$viewCalendar&show_interval=month", 'selected' => ($showInterval == 'month' ? true : false)),
 				 array('image' => '16x16/calendar_selection_all.png',   'title' => _SHOWALLEVENTS,   'link' => basename($_SERVER['PHP_SELF'])."?ctg=calendar&view_calendar=$viewCalendar&show_interval=all",   'selected' => ($showInterval == 'all'   ? true : false)));
 $smarty -> assign("T_CALENDAR_OPTIONS", $options);
-
 

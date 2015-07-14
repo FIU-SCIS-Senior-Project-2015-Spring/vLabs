@@ -1,14 +1,3 @@
-function downloadAttachment(el, id) {
-	parameters = {'download_attachement':id, method: 'get'};
-	var url    = location.toString();
-	ajaxRequest(el, url, parameters, onDownloadAttachment);	
-} 
-
-function onDownloadAttachment(el, response) {
-	var result = response.evalJSON();
-	$('popup_frame').src = 'view_file.php?file='+result.file+'&action=download';
-}
-
 function deleteMessage(el, id) {
 	parameters = {'delete':id, method: 'get'};
 	var url    = location.toString();
@@ -28,7 +17,7 @@ function deleteSelectedMessages(el) {
             messagesToDelete.push(s.value)
         }
     });
-    parameters = {delete_messages:Object.toJSON(messagesToDelete), method: 'post'};
+    parameters = {delete_messages:Object.toJSON(messagesToDelete), method: 'get'};
     ajaxRequest(el, location.toString(), parameters, onDeleteSelectedMessages);   
 }
 
@@ -79,7 +68,7 @@ function moveMessages(el) {
 	        	messagesToMove.push(s.value)
 	        }
 	    });
-	    parameters = {move_messages:Object.toJSON(messagesToMove), folder:folder, method: 'get'};
+	    parameters = {move_messages:Object.toJSON(messagesToDelete), folder:folder, method: 'get'};
 	    ajaxRequest(el, location.toString(), parameters, onMoveMessages);   
 }
 function onMoveMessages(el, response) {

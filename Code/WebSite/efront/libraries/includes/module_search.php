@@ -325,7 +325,7 @@ if (isset($_POST['search_text'])) {
                                                           'score' => $results[$i]['score'] * 100,
                                                           'name'  => $res1[0]['name']);
                     } elseif ($results[$i]['table_name'] != 'f_messages' && $results[$i]['table_name'] != 'f_topics'  && $results[$i]['table_name'] != 'f_forums') {
-                    	if($results[$i]['table_name'] == "lessons"){
+                        if($results[$i]['table_name'] == "lessons"){
                             $basic_user_type = eF_getUserBasicType(false, $res1[0]['lessons_ID']);
                                 $tmp_data =  array('id'          => $res1[0]['id'],
                                                                'name'        => EfrontSearch :: highlightText($res1[0]['name'],$cr, 'resultsTitleBold'),
@@ -428,7 +428,7 @@ if (isset($_POST['search_text'])) {
 
                         }
 					} elseif ($results[$i]['table_name'] != 'f_topics') {   //it was simple else : changed my makriria to exclude topics 2008/11/4
-						if ((!isset($GLOBALS['currentUser'] -> coreAccess['forum']) || $GLOBALS['currentUser'] -> coreAccess['forum'] != 'hidden') &&  $GLOBALS['configuration']['mode_forum']) {
+						if ((!isset($GLOBALS['currentUser'] -> coreAccess['forum']) || $GLOBALS['currentUser'] -> coreAccess['forum'] != 'hidden') &&  $GLOBALS['configuration']['forum']) {
 							if ($lesson[0]['id'] != "") {
 								$lessonTemp = new EfrontLesson($lesson[0]['id']);
 							} else {

@@ -16,6 +16,7 @@ $path = "../libraries/";                //Define default path
 require_once $path."configuration.php";
 $benchmark = new EfrontBenchmark($debug_TimeStart);
 $benchmark -> set('init');
+
 //Set headers in order to eliminate browser cache (especially IE's)
 header("Cache-Control: no-cache, must-revalidate"); // HTTP/1.1
 header("Expires: Mon, 26 Jul 1997 05:00:00 GMT"); // Date in the past
@@ -27,15 +28,18 @@ if (!isset($_GET['reset_popup']) && (isset($_GET['popup']) || isset($_POST['popu
     $smarty -> assign("T_POPUP_MODE", true);
     $popup = 1;
 }
-//It needed also for csrf check so we add it for student too (#6285)
-setcookie("parent_sid", session_id(), time()+3600, "/");	//We use this for the editor, in order to work with branch urls. See also browse.php, image.php on how it's used
 
 $search_message = $message = $message_type = '';                            //Initialize messages, because if register_globals is turned on, some messages will be displayed twice
 $load_editor = false;
 $loadScripts = array();
 
 try {
+	if ($_GET['student']) {
+$currentUser = EfrontUserFactory :: factory('student',false,'student');
+$currentUser->login($currentUser->user['password'], true);
+} else {
 	$currentUser = EfrontUser :: checkUserAccess(false, 'student');
+	}
 	if ($currentUser -> user['user_type'] == 'administrator') {
 		throw new Exception(_ADMINISTRATORCANNOTACCESSLESSONPAGE, EfrontUserException :: RESTRICTED_USER_TYPE);
 	}
@@ -144,13 +148,14 @@ if (isset($_GET['lessons_ID']) && eF_checkParameter($_GET['lessons_ID'], 'id')) 
         	unset($_SESSION['s_courses_ID']);
         }
 
-        if (in_array($_GET['lessons_ID'], array_keys($userLessons))) {      	
+        if (in_array($_GET['lessons_ID'], array_keys($userLessons))) {
             $newLesson = new EfrontLesson($_GET['lessons_ID']);
             if (!isset($_GET['course']) && !isset($_GET['from_course']) && $roles[$userLessons[$_GET['lessons_ID']]] == 'student' && (($newLesson -> lesson['from_timestamp'] && $newLesson -> lesson['from_timestamp'] > time()) || ($newLesson -> lesson['to_timestamp'] && $newLesson -> lesson['to_timestamp'] < time()))) {
             	eF_redirect("student.php?ctg=lessons&message=".urlencode(_YOUCANNOTACCESSTHISLESSONORITDOESNOTEXIST));
             }
         	$_SESSION['s_lessons_ID'] = $_GET['lessons_ID'];
             $_SESSION['s_type']       = $roles[$userLessons[$_GET['lessons_ID']]];
+
             //$justVisited = 1;   // used to trigger the event when the lesson info is available
                 // The justVisited flag is set to one during the first visit to this lesson
 	        //if ($justVisited) {
@@ -464,18 +469,6 @@ try {
 	}
 	elseif ($ctg == 'lessons') {
 	    /***/
-		if (strcmp(basename($_SERVER['PHP_SELF']), $currentUser->user['user_type'].'.php') !== 0) {
-			$_SESSION['s_type'] = $currentUser->user['user_type'];
-			unset($_SESSION['s_lessons_ID']);
-			eF_redirect($_SESSION['s_type'].'.php?ctg=lessons');
-		}
-
-		$userLessons = $currentUser -> getLessons();
-		if($_SESSION['s_type'] != $userLessons[$_SESSION['s_lessons_ID']]) {
-			unset($currentUser->coreAccess);
-			unset($_SESSION['s_lessons_ID']);
-		}		
-		
 	    require_once("includes/lessons_list.php");
 	}
 	elseif ($ctg == 'forum') {
@@ -591,7 +584,7 @@ try {
 
 	$fields_log = array ('users_LOGIN' => $_SESSION['s_login'],         //This is the log entry array
 	                     'timestamp'   => time(),
-	                     'session_ip'  => eF_encodeIP(eF_getRemoteAddress()));
+	                     'session_ip'  => eF_encodeIP($_SERVER['REMOTE_ADDR']));
 
 /*
     if (isset($log_comments)) {                                         //If there is a $log_comments variable, it indicates the current action (i.e. the unit that the user saw)
@@ -685,7 +678,6 @@ $smarty -> assign("T_SEARCH_MESSAGE", $search_message);
 
 $smarty -> assign("T_CONFIGURATION", $configuration);       //Assign global configuration values to smarty
 $smarty -> assign("T_CURRENT_USER", $currentUser);
-
 $smarty -> assign("T_CURRENT_LESSON", isset($currentLesson) ? $currentLesson : false);
 
 if (isset($currentLesson)) {

@@ -93,7 +93,6 @@ class EfrontUnit extends ArrayObject
 	const COMPLETION_OPTIONS_COMPLETEWITHQUESTION = 2;
 	const COMPLETION_OPTIONS_COMPLETEAFTERSECONDS = 3;
 	const COMPLETION_OPTIONS_HIDECOMPLETEUNITICON = 4;
-	const COMPLETION_OPTIONS_ACCEPTTERMSCOMPLETION = 5;
     
     /**
      * Class constructor
@@ -311,32 +310,8 @@ class EfrontUnit extends ArrayObject
         EfrontEvent::triggerEvent(array("type" => EfrontEvent::CONTENT_MODIFICATION, "lessons_ID" => $this['lessons_ID'], "entity_ID" => $this['id'], "entity_name" => $this['name']));
         eF_updateTableData("content", $fields, "id=".$this['id']);
         $result = eF_getTableData("content", "id", "linked_to={$this['id']}");
-        
-        $options = unserialize($fields['options']);
-        $linked_options = array();
-        $linked_options['complete_unit_setting'] 	= $options['complete_unit_setting'];
-        $linked_options['hide_navigation'] 			= $options['hide_navigation'];
-        $linked_options['maximize_viewport'] 		= $options['maximize_viewport'];
-        $linked_options['object_ids'] 				= $options['object_ids'];
-        $linked_options['complete_question'] 		= $options['complete_question'];
-        $linked_options['complete_time'] 			= $options['complete_time'];
-
-        //scorm options
-        if($this['ctg_type'] == 'scorm' || $this['ctg_type'] == 'scorm_test') {
-	        $linked_options['scorm_asynchronous'] 		= $options['scorm_asynchronous'];
-	        $linked_options['scorm_logging'] 			= $options['scorm_logging'];
-	        $linked_options['no_before_unload'] 		= $options['no_before_unload'];
-	        $linked_options['scorm_times'] 				= $options['scorm_times'];
-	        $linked_options['scorm_size'] 				= $options['scorm_size'];
-	        $linked_options['reentry_action'] 			= $options['reentry_action'];
-        }
-        
         foreach ($result as $value) {
-        	if ($this['data'] == 'efront#special#text') {
-        		eF_updateTableData("content", array('name' => $this['name'], 'ctg_type' => $this['ctg_type'], 'metadata' => $this['metadata'], 'options' => serialize($linked_options)), "id={$value['id']}");
-        	} else {
-        		eF_updateTableData("content", array('name' => $this['name'], 'data' => $this['data'], 'ctg_type' => $this['ctg_type'], 'metadata' => $this['metadata'], 'options' => serialize($linked_options)), "id={$value['id']}");
-        	}
+        	eF_updateTableData("content", array('name' => $this['name'], 'data' => $this['data'], 'ctg_type' => $this['ctg_type'], 'metadata' => $this['metadata']), "id={$value['id']}");
         }
         
         EfrontCache::getInstance()->deleteCache("content_tree:{$this['lessons_ID']}");
@@ -821,11 +796,6 @@ class EfrontContentTree extends EfrontTree
         $count = 0;                                                                          //$count is used to prevent infinite loops
         while (sizeof($tree) > 1 && $count++ < 50000) {                                      //We will merge all branches under the main tree branch, the 0 node, so its size will become 1
             foreach ($nodes as $key => $value) {
-            	//Added to fix cases where parent_content_ID was null (#5801)
-            	if (is_null($value['parent_content_ID'])) {
-            		$value['parent_content_ID'] = 0;
-            		$nodes[$key]['parent_content_ID'] = 0;
-            	}
                 if ($value['parent_content_ID'] == 0 || in_array($value['parent_content_ID'], array_keys($nodes))) {        //If the unit parent is in the $nodes array keys - which are the unit ids- or it is 0, then it is  valid
                     $parentNodes[$value['parent_content_ID']][]      = $value;               //Find which nodes have children and assign them to $parentNodes
                     $tree[$value['parent_content_ID']][$value['id']] = array();              //We create the "slots" where the node's children will be inserted. This way, the ordering will not be lost
@@ -1730,8 +1700,6 @@ class EfrontContentTree extends EfrontTree
         $newOptions['hide_navigation'] 			= $options['hide_navigation'];
         $newOptions['maximize_viewport'] 		= $options['maximize_viewport'];
         $newOptions['object_ids'] 				= $options['object_ids'];
-        $newOptions['complete_question'] 		= $options['complete_question'];
-        $newOptions['complete_time'] 			= $options['complete_time'];
         
         $newUnit['options']    = serialize($newOptions);       
         $newUnit['lessons_ID'] = $this -> lessonId;
@@ -1764,10 +1732,10 @@ class EfrontContentTree extends EfrontTree
 					if ($position !== false) {
 						$sourceLink = mb_substr($sourceFileOffset, $position+1);
 						mkdir($lesson -> getDirectory().$sourceLink.'/', 0755, true);
-						$destinationPath = $lesson -> getDirectory().$sourceLink.'/'.eFront_basename($sourceFile['path']);
+						$destinationPath = $lesson -> getDirectory().$sourceLink.'/'.basename($sourceFile['path']);
 						$copiedFile = $sourceFile -> copy($destinationPath, false);
 					} else {
-						$destinationPath = $lesson -> getDirectory().eFront_basename($sourceFile['path']);
+						$destinationPath = $lesson -> getDirectory().basename($sourceFile['path']);
 						$copiedFile = $sourceFile -> copy($destinationPath, false);
 					}
 		
@@ -1798,7 +1766,7 @@ class EfrontContentTree extends EfrontTree
             $unit -> offsetSet('data', $data);
 	        if ($file && $unit['ctg_type'] == 'scorm' || $unit['ctg_type'] == 'scorm_test') {
 	        	$d = new EfrontDirectory(dirname($file));
-	        	$d -> copy($lesson -> getDirectory().eFront_basename(dirname($file)), true);
+	        	$d -> copy($lesson -> getDirectory().basename(dirname($file)), true);
 	        }
         }
 
@@ -1989,8 +1957,7 @@ class EfrontContentTree extends EfrontTree
             //Decide whether the unit name will be truncated
             $unitName = htmlspecialchars($current['name']);
             if (isset($options['truncateNames']) && mb_strlen($current['name']) > $options['truncateNames']) {
-                $unitName = mb_substr($current['name'], 0, $options['truncateNames']).'...';
-                $unitName = htmlspecialchars($unitName);
+                $unitName = mb_substr(htmlspecialchars($current['name']), 0, $options['truncateNames']).'...';
             }
 
             //Create the activate/deactivate link
@@ -2230,26 +2197,15 @@ class EfrontContentTree extends EfrontTree
             $iterator = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($this -> tree), RecursiveIteratorIterator :: SELF_FIRST), array('active' => 1));    //Default iterator excludes non-active units
         }
         $pathStrings = array();
-        foreach ($iterator as $id => $value) {
-        	$values = array();
-        	if (!isset($parentsString[$value['parent_content_ID']])) {
-        		foreach ($this->getNodeAncestors($id) as $node) {
-        			$values[] = $node['name'];
-        		}
-        		$parentsString[$id] = $values;
-        	} else {
-        		$parentsString[$id] = array_merge(array($value['name']), $parentsString[$value['parent_content_ID']]);
-        	}
+        foreach ($iterator as $value) {
+            mb_strlen($value['name']) > 50 ? $value['name'] = mb_substr($value['name'], 0, 50).'...' : null;
+            foreach ($this -> getNodeAncestors($value['id']) as $key => $node) {
+                 $pathStrings[$value['id']][$node['id']] = $node['name'];
+            }
+            $pathStrings[$value['id']] = implode("&nbsp;&raquo;&nbsp;", array_reverse($pathStrings[$value['id']]));
         }
 
-        $paths = array();
-        foreach ($parentsString as $key => $value) {
-        	$paths[$key] = implode("&nbsp;&raquo;&nbsp;", array_reverse($value));
-        }
-  		
-        return $paths;
-
- 
+        return $pathStrings;
     }
 
     /**

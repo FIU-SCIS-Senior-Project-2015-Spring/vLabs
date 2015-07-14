@@ -3,7 +3,7 @@
 {*moduleUsers: The users functions*}
 
     {capture name = "moduleUsers"}
-        {if $smarty.const.G_VERSIONTYPE == 'enterprise' && ($T_CURRENT_USER->coreAccess.users != 'hidden' && $T_CURRENT_USER->coreAccess.organization != 'hidden')} {* #cpp#ifdef ENTERPRISE *}
+        {if $smarty.const.G_VERSIONTYPE == 'enterprise'} {* #cpp#ifdef ENTERPRISE *}
             {include file = "module_hcd.tpl"}
         {else} {* #cpp#else *}
             	<tr><td class = "moduleCell">

@@ -153,7 +153,7 @@ if ($_GET['scorm_review']) {
 
                 foreach ($scormFiles as $scormFile) {
                     /* Imports scorm package to database */
-                    $scormFolderName = EfrontFile :: encode(eFront_basename($scormFile['name'], '.zip'));
+                    $scormFolderName = EfrontFile :: encode(basename($scormFile['name'], '.zip'));
                     $scormPath       = $currentLesson -> getDirectory().$scormFolderName.'/';
                     is_dir($scormPath) OR mkdir($scormPath, 0755);
                     //pr($scormPath.$scormFile['name']);

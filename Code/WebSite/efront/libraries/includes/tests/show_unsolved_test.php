@@ -24,10 +24,9 @@ if (!$_student_) {
 } else {
     $test   = new EfrontTest($currentUnit['id'], true);
     $status = $test -> getStatus($currentUser, $_GET['show_solved_test']);
-    $form    = new HTML_QuickForm("test_form", "post", basename($_SERVER['PHP_SELF']).'?view_unit='.$_GET['view_unit'], "", 'onsubmit = "$(\'submit_test\').disabled=true;"', true);	
+    $form    = new HTML_QuickForm("test_form", "post", basename($_SERVER['PHP_SELF']).'?view_unit='.$_GET['view_unit'], "", 'onsubmit = "$(\'submit_test\').disabled=true;"', true);
 	switch ($status['status']) {
-        case 'incomplete':  
-//$test -> getQuestionsRandomTest(true);
+        case 'incomplete':        	        	 
             if (!$testInstance  = unserialize($status['completedTest']['test'])) {
                 throw new EfrontTestException(_TESTCORRUPTEDASKRESETEXECUTION, EfrontTestException::CORRUPTED_TEST);
             }
@@ -46,7 +45,7 @@ if (!$_student_) {
             }
             $testString    = $testInstance -> toHTMLQuickForm($form, false, false, false, $nocache);            
             $testString    = $testInstance -> toHTML($testString, $remainingTime);
-          
+            
             if ($testInstance -> options['duration'] && $remainingTime < 0) {
             	try {
 	                $values = $form -> exportValues();
@@ -148,18 +147,14 @@ if (!$_student_) {
             }
 
             break;
-        default:	    	
-            if (isset($_GET['confirm'])) {       	
+        default:
+            if (isset($_GET['confirm'])) {
                 //The user specified himself the size of the test
-                if ($test -> options['user_configurable']) {             	
+                if ($test -> options['user_configurable']) {
                     //Get the size of the test, so that we can verify that the value specified is at most equal to it
-	                $test  -> getQuestions();                                    //This way the test's questions are populated, and we will be needing this information	                
-	                if (empty($test -> options['random_test'])) {
-	                	$test -> options['random_pool'] && $test -> options['random_pool'] <= sizeof($test -> questions) ? $questionsNumber = $test -> options['random_pool'] : $questionsNumber = sizeof($test -> questions);
-	                } else {	                	
-	                	$questionsNumber = $test -> getNumQuestionsForRandomTests();
-	                }
-        
+	                $test  -> getQuestions();                                    //This way the test's questions are populated, and we will be needing this information
+	                $test -> options['random_pool'] && $test -> options['random_pool'] <= sizeof($test -> questions) ? $questionsNumber = $test -> options['random_pool'] : $questionsNumber = sizeof($test -> questions);
+
 	                //Assigning the 'user_configurable' value to the 'random_pool' option gives us a test instance with the appropriate number of questions
 	                if (is_numeric($_GET['user_configurable']) && $_GET['user_configurable'] <= $questionsNumber && $_GET['user_configurable'] > 0) {
                         $test -> options['random_pool'] = $_GET['user_configurable'];
@@ -178,19 +173,14 @@ if (!$_student_) {
                 	if ($test -> options['test_password'] != urldecode($_GET['test_password'])) {
                 		eF_redirect(basename($_SERVER['PHP_SELF'])."?view_unit=".$_GET['view_unit'].'&message='.urlencode(_INVALIDPASSWORD));
                 	}
-                }     
-                      
-                $testInstance = $test -> start($currentUser -> user['login']);               
+                }
+                $testInstance = $test -> start($currentUser -> user['login']);
                 eF_redirect(basename($_SERVER['PHP_SELF'])."?view_unit=".$_GET['view_unit']);
                 exit;
-            } else {       	
-                $testInstance = $test;       
+            } else {
+                $testInstance = $test;
                 $test  -> getQuestions();                                    //This way the test's questions are populated, and we will be needing this information
-                if (empty($test -> options['random_test'])) {
-                	$testInstance -> options['random_pool'] && $testInstance -> options['random_pool'] <= sizeof($testInstance -> questions) ? $questionsNumber = $testInstance -> options['random_pool'] : $questionsNumber = sizeof($testInstance -> questions);
-                } else {
-                	$questionsNumber = $test -> getNumQuestionsForRandomTests();
-                }
+                $testInstance -> options['random_pool'] && $testInstance -> options['random_pool'] <= sizeof($testInstance -> questions) ? $questionsNumber = $testInstance -> options['random_pool'] : $questionsNumber = sizeof($testInstance -> questions);
             }
             break;
     }
@@ -235,7 +225,8 @@ if (!$_student_) {
         			$submitValues['question_time'][$id] || $submitValues['question_time'][$id] === 0 ? $question -> time = $submitValues['question_time'][$id] : null;
         		}
         		
-        		if (isset($_GET['auto_save'])) {        			 
+        		if (isset($_GET['auto_save'])) {
+        			 
         			$testInstance -> autoSave($values['question'], $_POST['goto_question']);
         			//$testInstance -> pause($values['question'], $_POST['goto_question']);
         			echo json_encode(array('success' => 1));
@@ -244,7 +235,7 @@ if (!$_student_) {
         		} else if (isset($values['pause_test'])) {
         			$testInstance -> pause($values['question'], $_POST['goto_question']);
         			eF_redirect("".basename($_SERVER['PHP_SELF'])."?ctg=content&type=tests");
-        		} else {     			    			
+        		} else {
         			//Set the unit as "seen"
         			$testInstance -> complete($values['question']);
         			if ($testInstance -> completedTest['status'] == 'failed') {

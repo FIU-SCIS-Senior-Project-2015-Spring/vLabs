@@ -9,10 +9,6 @@
  */
 abstract class EfrontImport
 {
-	
-	const USER_TO_COURSE_EXISTS = 10;
-	const USER_TO_LESSON_EXISTS = 11;
-	
 	/**
 	 * The contents of the file to be imported
 	 *
@@ -41,8 +37,21 @@ abstract class EfrontImport
 	 */
 	protected $log = array();
 
-	protected $course_users = array();
-   
+    /**
+     * Import the data from the file following the designated options
+     *
+     * <br/>Example:
+     * <code>
+     * $importer -> import(); //returns something like /var/www/efront/upload/admin/
+     * $logMessages = $importer -> getLogMessages();
+     * </code>
+     *
+     * @return void
+     * @since 3.6.1
+     * @access public
+     */
+
+
     /**
      * Get the log of the import operations
      *
@@ -80,7 +89,7 @@ abstract class EfrontImport
 				self::$datatypes["skills"] = _SKILLS;
 				self::$datatypes["users_to_jobs"] = _USERSTOJOBS;
 				self::$datatypes["users_to_skills"] = _USERSTOSKILLS;
-				self::$datatypes["courses_to_branches"] = _COURSESTOBRANCHES;
+
 			} #cpp#endif
 		}
 		return self::$datatypes;
@@ -318,8 +327,6 @@ abstract class EfrontImport
 								   "user_type"			=> "user_type",
 								   "registration_date"	=> "timestamp",
 								   "timezone"			=> "timezone",
-								   "short_description"  => "short_description",
-								   "comments" 			=> "comments",
 								   "archive" 			=> "archive");
 				if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 					if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
@@ -390,7 +397,6 @@ abstract class EfrontImport
 						   "course_comments"	=> "comments",
 						   "course_score"		=> "score",
 						   "course_active"		=> "active",
-						   "course_archive"		=> "archive",
 						   "course_end_date"	=> "to_timestamp");
 			case "users_to_lessons":
 				return array("users_login"		=> "users_login",
@@ -406,13 +412,11 @@ abstract class EfrontImport
 			case "users_to_groups":
 				return array("users_login"	=> "users_login",
 							 "group_name"	=> "groups.name");
-				
-			case "courses_to_branches":
-				return array(
-					"course_name" => "course_name",
-					"branch_name" => "branch_name",
-				);
+
+
+
 		}
+
 	}
 
 
@@ -458,11 +462,6 @@ abstract class EfrontImport
 				return array("users_login"	=> "users_login",
 							 "description"	=> "skill");
 
-			case "courses_to_branches":
-				return array(
-					"course_name" => "course_name",
-					"branch_name" => "branch_name",
-				);
 			#cpp#endif
 
 		}
@@ -495,7 +494,7 @@ class EfrontImportCsv extends EfrontImport
 	/*
 	 * The separator between the file's fields
 	 */
-	protected $separator = false;
+	private $separator = false;
 
 	/*
 	 * Array containing metadata about the imported data type (db attribute names, db tables, import-file accepted column names)
@@ -621,12 +620,6 @@ class EfrontImportCsv extends EfrontImport
 			case "users":
 				if ($exception_code == EfrontUserException::USER_EXISTS) { return true; }
 				break;
-			case "users_to_courses":
-				if ($exception_code == self::USER_TO_COURSE_EXISTS) {
-					return true;
-				}
-				break;
-				
 			#cpp#ifdef ENTERPRISE
 			case "branches":
 				if ($exception_code == EfrontBranchException::BRANCH_EXISTS) { return true; }
@@ -709,9 +702,7 @@ class EfrontImportCsv extends EfrontImport
 				case "users_to_skills":
 					// Done automatically in importData by $skill->assignToUser
 					break;
-				case "courses_to_branches":
-					//
-					break;
+
 				#cpp#endif
 
 			}
@@ -981,12 +972,10 @@ class EfrontImportCsv extends EfrontImport
 							$lessonAssignmentsToUsers[$value['lessons_ID']][] = $user;
 						}
 					}
-					if($GLOBALS['configuration']['mode_propagate_courses_to_branch_users']) {
-						$result = eF_getTableData("module_hcd_course_to_branch", "*");
-						foreach ($result as $value) {
-							foreach ($addedBranches[$value['branches_ID']] as $user) {
-								$courseAssignmentsToUsers[$value['courses_ID']][] = $user;
-							}
+					$result = eF_getTableData("module_hcd_course_to_branch", "*");
+					foreach ($result as $value) {
+						foreach ($addedBranches[$value['branches_ID']] as $user) {
+							$courseAssignmentsToUsers[$value['courses_ID']][] = $user;
 						}
 					}
 					foreach ($courseAssignmentsToUsers as $courseId => $users) {
@@ -1046,29 +1035,19 @@ class EfrontImportCsv extends EfrontImport
 							foreach($courses_ID as $course_ID) {
 								$data['courses_ID'] = $course_ID;
 								$course = new EfrontCourse($course_ID);
-								if (is_null($this->course_users[$course_ID])) {
-									$result = eF_getTableDataFlat("users_to_courses", "users_LOGIN", "courses_ID={$course_ID} AND archive=0");
-									$this->course_users[$course_ID] = array_combine($result['users_LOGIN'], $result['users_LOGIN']);
-								}
-								if (isset($this->course_users[$course_ID][$data['users_login']]) && !$data['archive']) {
-									throw new Exception("User is already assigned to the course", self::USER_TO_COURSE_EXISTS);
-								}
-								
+
 								//$course -> addUsers($data['users_login'], (isset($data['user_type']) && $data['user_type']?$data['user_type']:"student"));
 								$course -> addUsers($data['users_login'], (isset($data['user_type'])?$data['user_type']:"student"));
 								$where  = "users_login = '" .$data['users_login']. "' AND courses_ID = " . $data['courses_ID'];
 								$data['completed'] ? $data['completed'] = 1 : $data['completed'] = 0;
-								$this -> cleanUpEmptyValues($data); // Added bacause of #6450
-								
-								
+
 								EfrontCourse::persistCourseUsers($data, $where, $data['courses_ID'], $data['users_login']);
 								if ($data['active']) {
 									$course -> confirm($data['users_login']);
 								} else {
 									$course -> unconfirm($data['users_login']);
 								}
-								$this->course_users[$course_ID][$data['users_login']] = $data['users_login'];
-								
+
 								$this -> log["success"][] = _LINE . " $line: " . _NEWCOURSEASSIGNMENT . " " . $courses_name . " - " . $data['users_login'];
 							}
 		
@@ -1121,15 +1100,7 @@ class EfrontImportCsv extends EfrontImport
 							foreach($lessons_ID as $lesson_ID) {
 								$data['lessons_ID'] = $lesson_ID;
 								$lesson = new EfrontLesson($lesson_ID);
-								if (is_null($this->lesson_users[$lesson_ID])) {
-									$result = eF_getTableDataFlat("users_to_lessons", "users_LOGIN", "lessons_ID={$lesson_ID} AND archive=0");
-									$this->lesson_users[$lesson_ID] = array_combine($result['users_LOGIN'], $result['users_LOGIN']);
-								}
-								
-								if (isset($this->lesson_users[$lesson_ID][$data['users_login']])) {
-									throw new Exception("User is already assigned to the lesson", self::USER_TO_LESSON_EXISTS);
-								}
-								
+				
 								if (!$lesson->lesson['course_only']) {
 									$lesson -> addUsers($data['users_login'], (isset($data['user_type'])?$data['user_type']:"student"));
 								}
@@ -1334,25 +1305,10 @@ class EfrontImportCsv extends EfrontImport
 					}
 
 					$skill = new EfrontSkill($skill_ID);
-					$skill -> assignToEmployee($data['users_login'], $data['specification']);
+					$skill -> assignToEmployee($data['users_login'], $data['module_hcd_employee_has_skill.specification']);
 
 					$this -> log["success"][] = _LINE . " $line: " . _NEWSKILLASSIGNMENT . " " . $data["users_login"] . " - " . $skill_name;
 					break;
-				case "courses_to_branches":
-					$branchId = $this->getBranchByName($data['branch_name']);
-					if(!$branchId[0]) {
-						$fields = array('name' => $data['branch_name'], 'url' => EfrontBranch::getBranchUrl($data['branch_name']));
-						$branch = EfrontBranch :: createBranch($fields);                     
-					} else {
-						$branch = new EfrontBranch($branchId[0]);
-					}
-					$courseId = $this->getCourseByName($data['course_name']);
-					if($courseId[0]) {
-						$branch -> addCoursesToBranch($courseId[0]);
-					}
-					
-					$this -> log["success"][] = _LINE . " $line: " . _NEWCOURSETOBRANCHASSIGNMENT . " " . $data['course_name'] . " - " . $data['branch_name'];
-					break;					
 				#cpp#endif
 			}
 		} catch (Exception $e) {
@@ -1428,7 +1384,8 @@ class EfrontImportCsv extends EfrontImport
 			$this -> log["failure"]["missingdata"] = _THEFILEAPPEARSEMPTYPERHAPSITISNOTFORMATTEDCORRECTLY;		
 		} else {
 			// Pairs of values <Csv column header> => <eFront DB field>
-			$this -> types = EfrontImport::getTypes($type);
+
+			$this -> types = EfrontImport::getTypes($type);	
 			// Pairs of values <eFront DB field> => <import file column>
 			$this -> mappings = $this -> parseHeaderLine($headerLine);	
 
@@ -1438,7 +1395,7 @@ class EfrontImportCsv extends EfrontImport
 			} else {
 				$this->dateFields = array();
 			}
-
+			
 			if ($this -> mappings) {
 				
 				if ($this -> checkImportEssentialField($type)) {
@@ -1716,27 +1673,14 @@ abstract class EfrontExport
 						   "course_comments"	=> "users_to_courses.comments",
 						   "course_score"		=> "users_to_courses.score",
 						   "course_active"		=> "users_to_courses.active",
-						   "course_archive"		=> "users_to_courses.archive",
 						   "course_end_date"	=> "users_to_courses.to_timestamp");
-			case "users_to_lessons":
-				return array(
-					"users_login"		=> "users_LOGIN",
-					"lessons_name"		=> "lessons.name",
-					"lesson_user_type"	=> "user_type",
-					"lesson_completed"	=> "completed",
-					"lesson_comments"	=> "comments",
-					"lesson_score"		=> "score",
-					"lesson_active"		=> "users_to_lessons.active",
-					"lesson_end_date"	=> "users_to_lessons.to_timestamp",
-				);
+
 			case "users_to_groups":
 				return array("users_login"	=> "users_login",
 							 "group_name"	=> "groups.name");
-			case "courses_to_branches":
-				return array(
-					"course_name" => "c.name as course_name",
-					"branch_name" => "b.name as branch_name",
-				);
+
+
+
 		}
 
 	}
@@ -1881,7 +1825,6 @@ class EfrontExportCsv extends EfrontExport
 	 * Get data to be exported
 	 */
 	protected function getData($type) {
-		
 		switch($type) {
 			case "users":
 				if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
@@ -1893,8 +1836,6 @@ class EfrontExportCsv extends EfrontExport
 					return eF_getTableData("users_to_courses JOIN courses ON courses.id = users_to_courses.courses_ID", implode(",", $this -> types), "");
 			case "users_to_groups":
 					return eF_getTableData("users_to_groups JOIN groups ON groups.id = users_to_groups.groups_ID", implode(",", $this -> types), "");
-			case "users_to_lessons":
-				return eF_getTableData("users_to_lessons JOIN lessons ON lessons.id = users_to_lessons.lessons_ID", implode(",", $this -> types), "");
 			#cpp#ifdef ENTERPRISE
 			case "branches":
 				return eF_getTableData("module_hcd_branch LEFT OUTER JOIN module_hcd_branch as father_branches ON module_hcd_branch.father_branch_ID = father_branches.branch_ID", implode(",", $this -> types), "");
@@ -1906,8 +1847,7 @@ class EfrontExportCsv extends EfrontExport
 				return eF_getTableData("module_hcd_employee_has_job_description JOIN module_hcd_job_description ON module_hcd_employee_has_job_description.job_description_ID = module_hcd_job_description.job_description_ID JOIN module_hcd_branch ON module_hcd_job_description.branch_ID = module_hcd_branch.branch_ID JOIN module_hcd_employee_works_at_branch ON (module_hcd_job_description.branch_ID = module_hcd_employee_works_at_branch.branch_ID AND module_hcd_employee_works_at_branch.users_login = module_hcd_employee_has_job_description.users_login)", implode(",", $this -> types), "");
 			case "users_to_skills":
 				return eF_getTableData("module_hcd_employee_has_skill JOIN module_hcd_skills ON module_hcd_employee_has_skill.skill_ID = module_hcd_skills.skill_ID", implode(",", $this -> types), "");
-			case "courses_to_branches":
-				return eF_getTableData("module_hcd_course_to_branch as mcb JOIN courses as c ON c.id = mcb.courses_ID JOIN module_hcd_branch as b ON b.branch_ID=mcb.branches_ID", implode(",", $this -> types), "");
+
 			#cpp#endif
 			return eF_getTableData($type, implode(",", $this -> types), "archive = 0");
 		}

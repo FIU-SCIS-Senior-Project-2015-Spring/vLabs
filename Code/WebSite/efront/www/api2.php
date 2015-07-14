@@ -47,13 +47,12 @@ Below are the available action arguments an the corresponding arguments needed (
 /api2.php?token=<token>&action=category&category=<category_id>
 /api2.php?token=<token>&action=buy_lesson&login=<user_login>&lesson=<lesson_id>
 /api2.php?token=<token>&action=buy_course&login=<user_login>&course=<course_id>
-/api2.php?token=<token>&action=get_user_autologin_key&login=<user_login>&password=<user_password>
+/api2.php?token=<token>&action=get_user_autologin_key&login=<user_login>
 /api2.php?token=<token>&action=set_user_autologin_key&login=<user_login>
 /api2.php?token=<token>&action=languages
 /api2.php?token=<token>&action=user_to_branch&login=<user_login>&branch=<branch_id>&job=<job_id>&position=<position>&job_description=<job_description>
 /api2.php?token=<token>&action=branch_jobs&branch=<branch_id>
-/api2.php?action=create_course&token=<token>&name=<course_name>&directions_ID=<direction_id>&languages_NAME=<language_name>&active=<active>&show_catalog=<show_catalog>&recurring=<recurring>&branches_ID=<branches_ID>&duration=<duration>&max_users=<max_users>&training_hours=<training_hours>&ceu=<ceu>
- * 
+
 API returns xml corresponding to the action argument. For actions like efrontlogin, activate_user etc it returns a status entity ("ok" or "error").
 In case of error it returns also a message entity with description of the error occured.
 */
@@ -72,9 +71,7 @@ In case of error it returns also a message entity with description of the error 
                         $insert['expired'] = 0;
                         $insert['create_timestamp'] = time();
                         try {
-                        	
-                        	$period = time() - 10*24*60*60;   	
-                        	eF_deleteTableData("tokens", "create_timestamp < ".$period); //delete all old tokens
+                        	eF_deleteTableData("tokens", "create_timestamp < ".time() - 10*24*60*60); //delete all old tokens
                         	eF_insertTableData("tokens", $insert);
                         	echo "<xml>";
 							echo "<token>".$token."</token>";
@@ -190,38 +187,6 @@ In case of error it returns also a message entity with description of the error 
 						break;
 					}
 				}
-				 case 'checkpassword' : {
-				 	if (isset($_GET['login']) && eF_checkParameter($_GET['login'], 'login') && isset($_GET['password']) && isset($_GET['token']) && eF_checkParameter($_GET['token'], 'alnum')) {
-				 		try {
-				 			$user = EfrontUserFactory :: factory($_GET['login']);
-				 			$login 	  = $_GET['login'];
-				 			$password = EfrontUser::createPassword($_GET['password']);
-				 				
-				 			$tmp2 = eF_getTableData("users", "password","login='$login'");
-				 			$pwd = $tmp2[0]['password'];
-				 			if ($pwd != $password) {
-				 				echo "<xml>";
-				 				echo "<status>error</status>";
-				 				echo "<message>Invalid password</message>";
-				 				echo "</xml>";
-				 				exit;
-				 			} else {
-				 				echo "<xml>";
-				 				echo "<status>ok</status>";
-				 				echo "</xml>";
-				 				break;				 				
-				 			}
-				 		} catch (EfrontUserException  $e) {
-				 			if ($e -> getCode() == EfrontUserException :: INVALID_PARAMETER) {
-				 				echo "<xml>";
-				 				echo "<status>error</status>";
-				 				echo "<message>Invalid login format</message>";
-				 				echo "</xml>";
-				 				exit;
-				 			}
-				 		}				 		
-				 	}
-				 }
                  case 'login':{
 					if (isset($_GET['username']) && eF_checkParameter($_GET['username'], 'login') && isset($_GET['password']) && isset($_GET['token']) && eF_checkParameter($_GET['token'], 'alnum')) {
 						try {
@@ -364,8 +329,8 @@ In case of error it returns also a message entity with description of the error 
                             $insert['password'] 		= $_GET['password'];
                             $insert['email'] 			= $_GET['email'];
                             $insert['languages_NAME']	= $_GET['languages'];
-                            $insert['name'] 			= urldecode($_GET['name']);
-                            $insert['surname'] 			= urldecode($_GET['surname']);
+                            $insert['name'] 			= $_GET['name'];
+                            $insert['surname'] 			= $_GET['surname'];
                             $insert['user_types_ID'] 	= $_GET['user_types_ID'];
                             $insert['active']			= 1;   // Added makriria
 							
@@ -467,10 +432,10 @@ In case of error it returns also a message entity with description of the error 
 									$user -> user['email'] = $_GET['email'];
 								}
 								if(isset($_GET['name']) && $_GET['name'] != ""){
-									$user -> user['name'] = urldecode($_GET['name']);
+									$user -> user['name'] = $_GET['name'];
 								}
 								if(isset($_GET['surname']) && $_GET['surname']  != ""){
-									$user -> user['surname'] = urldecode($_GET['surname']);
+									$user -> user['surname'] = $_GET['surname'];
 								}
 								if($_GET['language'] != ""){
 									$user -> user['languages_NAME'] = $_GET['language'];
@@ -1321,22 +1286,16 @@ In case of error it returns also a message entity with description of the error 
 							}
                             try {
 								$user 			= EfrontUserFactory :: factory($_GET['login']);
-								if ($user->user['user_type'] != 'administrator') {
-									$coursesList	= $user -> getUserCourses();
-								}
+								$coursesList	= $user -> getUserCourses();
 								echo "<xml>";
-								foreach ($coursesList as $key => $course) {						
+								foreach ($coursesList as $key => $course) {
 									$info		= unserialize($course -> course['info']);
 									$metadata	= unserialize($course -> course['metadata']);
 									echo "<course>";
 									echo "<id>".$course -> course['id']."</id>";
 									echo "<name>".$course -> course['name']."</name>";
-									echo "<active_in_course>".$course->course['active_in_course']."</active_in_course>";
 									echo "<completed>".$course->course['completed']."</completed>";
-									echo "<to_timestamp>".$course->course['to_timestamp']."</to_timestamp>";
 									echo "<score>".$course->course['score']."</score>";
-									echo "<start_date>".$course->course['start_date']."</start_date>";
-									echo "<end_date>".$course->course['end_date']."</end_date>";
 									echo "<info>";
 									foreach ($info as $key => $value) {
 										echo "<".$key.">".$value."</".$key.">";
@@ -1496,7 +1455,7 @@ In case of error it returns also a message entity with description of the error 
                         foreach ($courses as $key => $course) {
                             echo "<course>";
                             echo "<id>".$course -> course['id']."</id>";
-                            echo "<name>"."<![CDATA[".$course -> course['name']."]]>"."</name>";
+                            echo "<name>".$course -> course['name']."</name>";
                             echo "<direction>".$course -> course['directions_ID']."</direction>";
 							echo "<active>".$course -> course['active']."</active>";
 							echo "<show_catalog>".$course -> course['show_catalog']."</show_catalog>";
@@ -1512,7 +1471,7 @@ In case of error it returns also a message entity with description of the error 
 							foreach ($course_lessons as $key2 => $value2) {
 								echo "<lesson>";
 								echo "<id>".$value2['id']."</id>";
-								echo "<name>"."<![CDATA[".$value2['name']."]]>"."</name>";
+								echo "<name>".$value2['name']."</name>";
 								echo "<previous_lessons_ID>".$value2['previous_lessons_ID']."</previous_lessons_ID>";
 								echo "<direction>".$value2['directions_ID']."</direction>";
 								echo "<active>".$value2['active']."</active>";
@@ -1701,7 +1660,7 @@ In case of error it returns also a message entity with description of the error 
 									foreach ($lessons as $key=>$values ) {
 										echo "<lesson>";
 											echo "<id>".$lessons[$key]['id']."</id>";
-											echo "<name>"."<![CDATA[".$lessons[$key]['name']."]]>"."</name>";
+											echo "<name>".$lessons[$key]['name']."</name>";
 											echo "<previous_lessons_ID>".$lessons[$key]['previous_lessons_ID']."</previous_lessons_ID>";
 										echo "</lesson>";
 									}
@@ -2440,21 +2399,10 @@ In case of error it returns also a message entity with description of the error 
                 	break;
                 }
                 case 'get_user_autologin_key':{
-                	if (isset($_GET['token']) && checkToken($_GET['token']) && isset($_GET['password']) && isset($_GET['login'])) {
-                		$login = $_GET['login'];
-                		$password = EfrontUser::createPassword($_GET['password']);
-                		$tmp2 = eF_getTableData("users", "password","login='$login'");
-                		$pwd = $tmp2[0]['password'];
-                		if ($pwd != $password) {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Invalid password</message>";
-                			echo "</xml>";
-                			exit;
-                		}                		
+                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
                 		try {
-                			$user = EfrontUserFactory :: factory($login);
-                			$result = eF_getTableData("users", "autologin", "login='".$login."'");
+                			$user = EfrontUserFactory :: factory($_GET['login']);
+                			$result = eF_getTableData("users", "autologin", "login='".$_GET['login']."'");
                 			echo "<xml>";
                 			echo "<autologin_key>".$result[0]['autologin']."</autologin_key>";
                 			echo "</xml>";
@@ -2469,7 +2417,7 @@ In case of error it returns also a message entity with description of the error 
                 	} else {
                 		echo "<xml>";
                 		echo "<status>error</status>";
-                		echo "<message>No username/password/token provided</message>";
+                		echo "<message>Invalid token</message>";
                 		echo "</xml>";
                 	}
                 	break;
@@ -2479,8 +2427,9 @@ In case of error it returns also a message entity with description of the error 
                 		try {
                 			$user = EfrontUserFactory :: factory($_GET['login']);
 							if ($user -> user['autologin'] == "" ) {
-								$token = getRandomString(20, true);
-								$user -> user['autologin'] = $token;
+								$convert = $_GET['login']."_".$user -> user['timestamp'];
+								$converted = md5($convert.G_MD5KEY);
+								$user -> user['autologin'] = $converted;
 								$user -> persist();
 								echo "<xml>";
 								echo "<status>ok</status>";
@@ -2649,501 +2598,6 @@ In case of error it returns also a message entity with description of the error 
                 		break;
                 	}
                 }
-                case 'create_course': {
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['name'])){
-                			if ($_GET['directions_ID'] && isset($_GET['directions_ID']) && !eF_checkParameter($_GET['directions_ID'], 'uint')) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid category</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			
-                			if ($_GET['recurring_duration'] && isset($_GET['recurring_duration']) && !eF_checkParameter($_GET['recurring_duration'], 'uint')) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Duration must be a positive number</message>";
-                				echo "</xml>";
-                				exit;                				
-                			}
-                			if ($_GET['max_users'] && isset($_GET['max_users']) && !eF_checkParameter($_GET['max_users'], 'uint')) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Max users must be a positive number</message>";
-                				echo "</xml>";
-                				exit;
-                			}                			
-                			if ($_GET['ceu'] && isset($_GET['ceu']) && !eF_checkParameter($_GET['ceu'], 'uint')) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Ceu must be a positive number</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			if ($_GET['price'] && isset($_GET['price']) && $_GET['price'] < 0) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Price be a positive number</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			$languages = EfrontSystem :: getLanguages(true, true);
-                			if($_GET['languages_NAME'] && isset($_GET['languages_NAME']) && !eF_checkParameter($_GET['languages_NAME'], 'string') && !in_array($_GET['languages_NAME'], array_keys($languages))) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid language</message>";
-                				echo "</xml>";
-                				exit;                				
-                			}
-                			
-                			$fields = array(
-                				'languages_NAME' => $GLOBALS['configuration']['onelanguage'] ? $GLOBALS['configuration']['default_language'] : $_GET['languages_NAME'],
-                				'show_catalog'   => $_GET['show_catalog'],
-                				'directions_ID'  => $_GET['directions_ID'],
-                				'name'		   	 => $_GET['name'],
-                				'active'		 => $_GET['active'],
-                				'recurring' 	 => $_GET['recurring'] ? $_GET['recurring'] : null,
-                				'recurring_duration' => $_GET['recurring_duration'] ? $_GET['recurring_duration'] : null, 
-                				'duration'		 =>	$_GET['duration'],
-                				'max_users'		 => $_GET['max_users'] ? $_GET['max_users'] : null,
-                				'price'		  	 => number_format($_GET['price'], 2, '.', ''),
-                				'ceu'		  	 => $_GET['ceu'],
-                				'branches_ID'	 => $_GET['branches_ID'] ? $_GET['branches_ID'] : null,	
-                				'supervisor_LOGIN' => $_GET['supervisor_LOGIN'] ? $_GET['supervisor_LOGIN'] : null);
-
-                			try{
-                				$editCourse = EfrontCourse :: createCourse($fields);
-                				if($_GET['duration']) {
-                					$editCourse -> options['duration'] = $_GET['duration'];
-                					$editCourse->persist();
-                				}
-                				if ($_GET['recurring']) {
-                					$editCourse -> options['recurring'] = $_GET['recurring'];
-                					$editCourse -> options['recurring_duration'] = $_GET['recurring_duration'];
-                					$editCourse->persist();
-                				}
-                				if($_GET['training_hours']) {
-                					$editCourse -> options['training_hours'] = $_GET['training_hours'];
-                					$editCourse->persist();
-                				}
-                				
-                				if ($_GET['branches_ID'] && eF_checkParameter($_GET['branches_ID'], 'id')) {
-                					if (!eF_checkParameter($_GET['supervisor_LOGIN'], 'login')) {
-                						echo "<xml>";
-                						echo "<status>error</status>";
-                						echo "<message>Invalid supervisor login</message>";
-                						echo "</xml>";
-                						break;                						
-                					} else {
-                						$result = eF_getTableData("users", "*", "login='".$_GET['supervisor_LOGIN']."'");
-                						if (sizeof($result) == 0) {
-                							echo "<xml>";
-                							echo "<status>error</status>";
-                							echo "<message>Supervisor does not exist</message>";
-                							echo "</xml>";
-                							break;
-                						} else {
-                							eF_insertTableData("module_hcd_course_to_branch", array("branches_ID" => $_GET['branches_ID'], "courses_ID" => $editCourse -> course['id']));
-                						}
-                					}
-                				} else {
-                					echo "<xml>";
-                					echo "<status>error</status>";
-                					echo "<message>Invalid branch id</message>";
-                					echo "</xml>";
-                					break;
-                				}
-								echo "<xml>";
-								echo "<status>ok</status>";
-								echo "</xml>";
-								break;
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Some problem occured</message>";
-                				echo "</xml>";
-                				break;
-                			}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Course name is mandatory</message>";
-                			echo "</xml>";
-                			break; 
-                		}
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;                		
-                	}
-                }
-                case 'archive_course': {
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['course'])) {
-	                		if (eF_checkParameter($_GET['course'], 'id') == false) {
-	                			echo "<xml>";
-	                			echo "<status>error</status>";
-	                			echo "<message>Invalid course id</message>";
-	                			echo "</xml>";
-	                			exit;
-	                		}
-		                	try {
-		                		$course = new EfrontCourse($_GET['course']);
-		                		$course->archive();
-		                		echo "<xml>";
-		                		echo "<status>ok</status>";
-		                		echo "</xml>";
-		                		break;		                		
-		                	} catch (Exception $e) {
-		                		echo "<xml>";
-		                		echo "<status>error</status>";
-		                		echo "<message>Course doesn't exist</message>";
-		                		echo "</xml>";
-		                		exit;
-		                	}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;
-                		}                		
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;                		
-                	}
-                }
-                case 'unarchive_course': {
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['course'])) {
-                			if (eF_checkParameter($_GET['course'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid course id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			try {
-                				$course = new EfrontCourse($_GET['course']);
-                				$course->unarchive();
-                				echo "<xml>";
-                				echo "<status>ok</status>";
-                				echo "</xml>";
-                				break;
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Course doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;
-                		}
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;
-                	}
-                }                
-                case 'delete_course': {
-					if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['course'])) {
-	                		if (eF_checkParameter($_GET['course'], 'id') == false) {
-	                			echo "<xml>";
-	                			echo "<status>error</status>";
-	                			echo "<message>Invalid course id</message>";
-	                			echo "</xml>";
-	                			exit;
-	                		}
-		                	try {
-		                		$course = new EfrontCourse($_GET['course']);
-		                		$course->delete();
-		                		echo "<xml>";
-		                		echo "<status>ok</status>";
-		                		echo "</xml>";
-		                		break;		                		
-		                	} catch (Exception $e) {
-		                		echo "<xml>";
-		                		echo "<status>error</status>";
-		                		echo "<message>Course doesn't exist</message>";
-		                		echo "</xml>";
-		                		exit;
-		                	}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;
-                		}                		
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;                		
-                	}
-                }
-                case 'archive_lesson': {
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['lesson'])) {
-                			if (eF_checkParameter($_GET['lesson'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid lesson id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			try {
-                				$lesson = new EfrontLesson($_GET['lesson']);
-                				$lesson->archive();
-                				echo "<xml>";
-                				echo "<status>ok</status>";
-                				echo "</xml>";
-                				break;
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Lesson doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;
-                		}
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;
-                	}
-                }
-                case 'unarchive_lesson': {
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['lesson'])) {
-                			if (eF_checkParameter($_GET['lesson'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid lesson id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			try {
-                				$lesson = new EfrontLesson($_GET['lesson']);
-                				$lesson->unarchive();
-                				echo "<xml>";
-                				echo "<status>ok</status>";
-                				echo "</xml>";
-                				break;
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Lesson doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;
-                		}
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;
-                	}
-                }                
-                case 'delete_lesson': {
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['lesson'])) {
-                			if (eF_checkParameter($_GET['lesson'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid lesson id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			try {
-                				$lesson = new EfrontLesson($_GET['lesson']);
-                				$lesson->delete();
-                				echo "<xml>";
-                				echo "<status>ok</status>";
-                				echo "</xml>";
-                				break;
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Lesson doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;
-                		}
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;
-                	}
-                }
-                case 'add_lesson_to_course':{
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['lesson']) && isset($_GET['course'])) {
-                			if (eF_checkParameter($_GET['lesson'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid lesson id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			if (eF_checkParameter($_GET['course'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid lesson id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			try {
-                				$lessonObject = new EfrontLesson($_GET['lesson']);
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Lesson doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}                			
-                			try {
-                				$courseObject = new EfrontCourse($_GET['course']);
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Course doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}                			
-                			
-                			if(!$courseObject-> isCourseLesson($_GET['lesson'])) {
-                				$courseObject -> addLessons($_GET['lesson']);
-                				echo "<xml>";
-                				echo "<status>ok</status>";
-                				echo "</xml>";
-                				break;                				
-                			} else {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Lesson is already assigned to the course</message>";
-                				echo "</xml>";
-                				break;                				
-                			}
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;                			
-                		}
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;                		
-                	}
-                	break;
-                }
-                case 'remove_lesson_from_course':{
-                	if (isset($_GET['token']) && checkToken($_GET['token'])) {
-                		if (isset($_GET['lesson']) && isset($_GET['course'])) {
-                			if (eF_checkParameter($_GET['lesson'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid lesson id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			if (eF_checkParameter($_GET['course'], 'id') == false) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Invalid lesson id</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			try {
-                				$lessonObject = new EfrontLesson($_GET['lesson']);
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Lesson doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			try {
-                				$courseObject = new EfrontCourse($_GET['course']);
-                			} catch (Exception $e) {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Course doesn't exist</message>";
-                				echo "</xml>";
-                				exit;
-                			}
-                			 
-                			if($courseObject-> isCourseLesson($_GET['lesson'])) {
-                				$courseObject -> removeLessons($_GET['lesson']);
-                				echo "<xml>";
-                				echo "<status>ok</status>";
-                				echo "</xml>";
-                				break;
-                			} else {
-                				echo "<xml>";
-                				echo "<status>error</status>";
-                				echo "<message>Lesson not assigned to the course</message>";
-                				echo "</xml>";
-                				break;
-                			}                			
-                		} else {
-                			echo "<xml>";
-                			echo "<status>error</status>";
-                			echo "<message>Incomplete arguments</message>";
-                			echo "</xml>";
-                			break;
-                		}                	
-                	} else {
-                		echo "<xml>";
-                		echo "<status>error</status>";
-                		echo "<message>Invalid token</message>";
-                		echo "</xml>";
-                		break;
-                	}
-                	break;
-                }                
 				default: {
 					//make it so a module can handle an api call but only after they have a valid login (proton)
 					if (isset($_GET['token']) && checkToken($_GET['token']))

@@ -32,14 +32,8 @@ if (isset($_GET['ajax']) && isset($_GET['delete_skill']) && $_change_skills_) {
 	}
 } else {
 	if (isset($_GET['ajax']) && $_GET['ajax'] == 'skillsTable') {
-		//$skills = eF_getTableData("module_hcd_skills LEFT OUTER JOIN module_hcd_skill_categories ON module_hcd_skill_categories.id = module_hcd_skills.categories_ID LEFT OUTER JOIN module_hcd_employee_has_skill ON (module_hcd_employee_has_skill.skill_ID = module_hcd_skills.skill_ID AND module_hcd_employee_has_skill.users_login='".$editedUser->user['login']."') LEFT JOIN users ON module_hcd_employee_has_skill.author_login = users.login", "users_login, module_hcd_skills.description, module_hcd_skill_categories.description as category, specification, score, module_hcd_skills.skill_ID, categories_ID, users.surname, users.name","");
+		$skills = eF_getTableData("module_hcd_skills LEFT OUTER JOIN module_hcd_skill_categories ON module_hcd_skill_categories.id = module_hcd_skills.categories_ID LEFT OUTER JOIN module_hcd_employee_has_skill ON (module_hcd_employee_has_skill.skill_ID = module_hcd_skills.skill_ID AND module_hcd_employee_has_skill.users_login='".$editedUser->user['login']."') LEFT JOIN users ON module_hcd_employee_has_skill.author_login = users.login", "users_login, module_hcd_skills.description, module_hcd_skill_categories.description as category, specification, score, module_hcd_skills.skill_ID, categories_ID, users.surname, users.name","");
 
-		$skills = eF_getTableData("
-			module_hcd_skills
-			LEFT OUTER JOIN module_hcd_skill_categories ON module_hcd_skill_categories.id = module_hcd_skills.categories_ID
-			LEFT OUTER JOIN module_hcd_employee_has_skill ON (module_hcd_employee_has_skill.skill_ID = module_hcd_skills.skill_ID AND module_hcd_employee_has_skill.users_login='".$editedUser->user['login']."')
-			LEFT JOIN users ON module_hcd_employee_has_skill.author_login = users.login", "users_login, module_hcd_skills.description, module_hcd_skill_categories.description as category, specification, score, module_hcd_skills.skill_ID, categories_ID, users.surname, users.name","", "description");
-		
 		$dataSource = $skills;
 		$tableName = "skillsTable";
 		include "sorted_table.php";

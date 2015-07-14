@@ -56,16 +56,6 @@
     $actions[] = "languages";
     $actions[] = "user_to_branch";
     $actions[] = "branch_jobs";
-    $actions[] = "create_course";
-    $actions[] = "archive_course";
-    $actions[] = "unarchive_course";
-    $actions[] = "delete_course";
-    $actions[] = "archive_lesson";
-    $actions[] = "unarchive_lesson";
-    $actions[] = "delete_lesson";
-    $actions[] = "add_lesson_to_course";
-    $actions[] = "remove_lesson_from_course";
-    
     
     $smarty -> assign("T_ACTIONS", $actions);
     
@@ -382,79 +372,8 @@
         	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
         	$form -> addElement('text', 'branch', _BRANCH,   'class = "inputText"');
         	break;
-        }
-        case 'create_course': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'name', _COURSENAME, 'class = "inputText"');
-	       	$form -> addElement('text', 'directions_ID', _DIRECTION, 'class = "inputText"');        	
-        	$form -> addElement('text', 'languages_NAME', _LANGUAGE, 'class = "inputText"');
-        	$form -> addElement('advcheckbox', 'active', _ACTIVEFEM, null, null, array(0, 1));
-        	$form -> addElement('advcheckbox', 'show_catalog', _SHOWCOURSEINCATALOG, null, null, array(0, 1));
-        	$form -> addElement('text', 'price', _PRICE, 'class = "inputText"');
-
-        	$recurringOptions   = array(0 => _NO, 'D' => _DAILY, 'W' => _WEEKLY, 'M' => _MONTHLY, 'Y' => _YEARLY);
-        	$recurringDurations = array('D' => array_combine(range(1, 90), range(1, 90)),
-        			'W' => array_combine(range(1, 52), range(1, 52)),
-        			'M' => array_combine(range(1, 24), range(1, 24)),
-        			'Y' => array_combine(range(1, 5), range(1, 5)));		//Imposed by paypal interface
-        	$form -> addElement('select', 'recurring', _SUBSCRIPTION, $recurringOptions);
-        	$form -> addElement('text', 'recurring_duration', _DAYSCONDITIONAL, 'class = "inputText"');
-        	
-        	$form -> addElement('text', 'branches_ID', _LOCATIONBRANCH, 'class = "inputText"');
-        	$form -> addElement('text', 'supervisor_LOGIN', _ASSIGNMENTAPPROVEDBY, 'class = "inputText"');
-        	
-        	$form -> addElement('text', 'duration', _AVAILABLEFOR, 'class = "inputText"');
-        	$form -> addElement('text', 'max_users', _MAXIMUMUSERS, 'class = "inputText"');
-        	$form -> addElement('text', 'training_hours', _TRAININGHOURS, 'class = "inputText" style = "width:50px"');
-        	if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
-        		if (G_VERSIONTYPE != 'standard') { #cpp#ifndef STANDARD
-        			$form -> addElement('text', 'ceu', _CEUS, 'class = "inputText" style = "width:50px"');
-        		} #cpp#endif
-        	} #cpp#endif        	
-        	break;     	    	
-        }
-        case 'archive_course': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'course', _COURSE, 'class = "inputText"');
-        	break;
-        }
-        case 'unarchive_course': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'course', _COURSE, 'class = "inputText"');
-        	break;
         }        
-        case 'delete_course': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'course', _COURSE, 'class = "inputText"');
-        	break;
-        }
-        case 'archive_lesson': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'lesson', _LESSON, 'class = "inputText"');
-        	break;
-        }
-        case 'unarchive_lesson': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'lesson', _LESSON, 'class = "inputText"');
-        	break;
-        }        
-        case 'delete_lesson': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'lesson', _LESSON, 'class = "inputText"');
-        	break;
-        }
-        case 'add_lesson_to_course': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'lesson', _LESSON, 'class = "inputText"');
-        	$form -> addElement('text', 'course', _COURSE, 'class = "inputText"');
-        	break;
-        }
-        case 'remove_lesson_from_course': {
-        	$form -> addElement('text', 'token', _TOKEN,   'class = "inputText"');
-        	$form -> addElement('text', 'lesson', _LESSON, 'class = "inputText"');
-        	$form -> addElement('text', 'course', _COURSE, 'class = "inputText"');
-        	break;
-        }                
+        
     }
     $form -> addElement('textarea', 'output', _OUTPUT, 'id = "output" class = "simpleEditor inputTextarea" style = "disabled:true;width:60%;height:120px"'); 
     $form -> addElement('submit', 'submit_action', _SUBMIT, 'class = "flatButton"');
@@ -551,7 +470,7 @@
                     }                    
                     
                     if ($stream = fopen(G_SERVERNAME.'api2.php?action=create_user&login='.$login.
-                     '&password='.$pwd.'&name='.urlencode($name).'&surname='.urlencode($surname).'&email='.$email.'&languages='.$language.'&token='.$token.$custom_fields_uri, 'r')) {
+                     '&password='.$pwd.'&name='.$name.'&surname='.$surname.'&email='.$email.'&languages='.$language.'&token='.$token.$custom_fields_uri, 'r')) {
                         $output = stream_get_contents($stream);
                         fclose($stream);
                     }
@@ -572,9 +491,8 @@
 					foreach ($userProfile as $key => $field) {
 						$custom_fields_uri .= "&".$field['name']."=".urlencode($values[$field['name']]);
 					}
-					
                     if ($stream = fopen(G_SERVERNAME.'api2.php?action=update_user&login='.$login.
-                     '&password='.$pwd.'&name='.urlencode($name).'&surname='.urlencode($surname).'&email='.$email.'&token='.$token.'&language='.$language.$custom_fields_uri, 'r')) {
+                     '&password='.$pwd.'&name='.$name.'&surname='.$surname.'&email='.$email.'&token='.$token.'&language='.$language.$custom_fields_uri, 'r')) {
                         $output = stream_get_contents($stream);
                         fclose($stream);
                     }
@@ -915,108 +833,13 @@
                 case 'branch_jobs': {
                 	$token = $values['token'];
                 	$branch = $values['branch'];
+                	pr(G_SERVERNAME.'api2.php?action=branch_jobs&token='.$token.'&branch='.$branch);
                 	if ($stream = fopen(G_SERVERNAME.'api2.php?action=branch_jobs&token='.$token.'&branch='.$branch, 'r')) {
                 		$output = stream_get_contents($stream);
                 		fclose($stream);
                 	}
                 	break;
-                }
-                case 'create_course': {
-                	$token = $values['token'];
-                	$name = $values['name'];
-                	$directions_ID = $values['directions_ID'];
-                	$languages_NAME = $values['languages_NAME'];
-                	$active = $values['active'];
-                	$show_catalog = $values['show_catalog'];
-					$recurring = $values['recurring'];
-                	$branches_ID = $values['branches_ID'];
-                	$supervisor_LOGIN = $values['supervisor_LOGIN'];
-                	$duration = $values['duration'];
-                	$max_users = $values['max_users'];
-                	$training_hours = $values['training_hours'];
-                	$ceu = $values['ceu'];
-                	$price = $values['price'];
-                	$recurring_duration = $values['recurring_duration'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=create_course&token='.$token.'&name='.$name.'&directions_ID='.$directions_ID.'&languages_NAME='.$languages_NAME.'&active='.$active.'&show_catalog='.$show_catalog.'&recurring='.$recurring.'&branches_ID='.$branches_ID.'&supervisor_LOGIN='.$supervisor_LOGIN.'&duration='.$duration.'&max_users='.$max_users.'&training_hours='.$training_hours.'&ceu='.$ceu.'&price='.$price.'&recurring_duration='.$recurring_duration, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}                	
-                	break;
-                }
-                case 'archive_course': {
-                	$token = $values['token'];
-                	$course = $values['course'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=archive_course&token='.$token.'&course='.$course, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
-                }
-                case 'unarchive_course': {
-                	$token = $values['token'];
-                	$course = $values['course'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=unarchive_course&token='.$token.'&course='.$course, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
                 }                
-                case 'delete_course': {
-                	$token = $values['token'];
-                	$course = $values['course'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=delete_course&token='.$token.'&course='.$course, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
-                }
-                case 'archive_lesson': {
-                	$token = $values['token'];
-                	$lesson = $values['lesson'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=archive_lesson&token='.$token.'&lesson='.$lesson, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
-                }
-                case 'unarchive_lesson': {
-                	$token = $values['token'];
-                	$lesson = $values['lesson'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=unarchive_lesson&token='.$token.'&lesson='.$lesson, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
-                }                
-                case 'delete_lesson': {
-                	$token = $values['token'];
-                	$lesson = $values['lesson'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=delete_lesson&token='.$token.'&lesson='.$lesson, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
-                }
-                case 'add_lesson_to_course': {
-                	$token = $values['token'];
-                	$lesson = $values['lesson'];
-                	$course = $values['course'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=add_lesson_to_course&token='.$token.'&lesson='.$lesson.'&course='.$course, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
-                }
-                case 'remove_lesson_from_course': {
-                	$token = $values['token'];
-                	$lesson = $values['lesson'];
-                	$course = $values['course'];
-                	if ($stream = fopen(G_SERVERNAME.'api2.php?action=remove_lesson_from_course&token='.$token.'&lesson='.$lesson.'&course='.$course, 'r')) {
-                		$output = stream_get_contents($stream);
-                		fclose($stream);
-                	}
-                	break;
-                }                                
             }
         }
     }

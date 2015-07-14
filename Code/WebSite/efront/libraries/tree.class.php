@@ -71,22 +71,6 @@ abstract class EfrontTree
        return $iterator -> current();
     }
 
-    public function getFirstVisitableNode($iterator = false) {
-    	if (!$iterator) {
-    		if (EfrontUser::isOptionVisible('tests')) {
-    			$iterator = new EfrontVisitableAndEmptyFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($this -> tree), RecursiveIteratorIterator :: SELF_FIRST)));    //Create a new iterator, so that the internal iterator pointer is not reset
-    		} else {
-    			$iterator = new EfrontVisitableAndEmptyFilterIterator(new EfrontNoTestsFilterIterator (new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($this -> tree), RecursiveIteratorIterator :: SELF_FIRST))));    //Create a new iterator, so that the internal iterator pointer is not reset
-    		}
-    	}
-    	
-    	
-    	$iterator -> rewind();                            //Initialize iterator
-    	
-    	return $iterator -> current();    	
-    }
-    
-    
     /**
      * Get the last tree node
      *
@@ -690,7 +674,7 @@ class EfrontNodeFilterIterator extends FilterIterator
     function accept() {
     	if ($this -> mode) {
             $accepted = true;
-            $current  = $this -> current();     
+            $current  = $this -> current();
             foreach ($this -> mode as $key => $value) {
                 if (!isset($current[$key]) || $current[$key] != $value) {
                     $this -> evaluate ? $accepted = false : $accepted = true;
@@ -703,35 +687,5 @@ class EfrontNodeFilterIterator extends FilterIterator
     }
 }
 
-
-class EfrontNodeFilterIDIterator extends FilterIterator
-{
-	protected $mode;
-	protected $evaluate;
-
-	/**
-	 * $evaluate sets if the mode will be evaluated to true or false
-	 */
-	function __construct($it, $mode = false, $evaluate = true) {
-		parent::__construct($it);
-		$this -> mode     = $mode;
-		$this -> evaluate = $evaluate;
-	}
-
-	function accept() {
-		if ($this -> mode) {
-			$accepted = true;
-			$current  = $this -> current();
-				if (in_array($current['id'], $this -> mode) !== true) {
-					$this -> evaluate ? $accepted = false : $accepted = true;
-				}
-			
-			return $accepted && ($this -> current() instanceof ArrayObject);
-		} else {
-			$this -> evaluate ? $accepted = false : $accepted = true;
-			return $accepted;
-		}
-	}
-}
 
 

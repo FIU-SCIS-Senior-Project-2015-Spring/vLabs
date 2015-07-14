@@ -85,7 +85,7 @@
 					
 					<tr class = "{cycle name = 'test_questions' values = 'oddRowColor, evenRowColor'}">
 						<td>
-						{if $question->question.type == 'multiple_one' || $question->question.type == 'multiple_many' || $question->question.type == 'grid'}
+						{if $question->question.type == 'multiple_one' || $question->question.type == 'multiple_many'}
 							{$question->question.preview_percent}
 						{else}
 							{$question->question.text}

@@ -159,14 +159,8 @@ if ($_GET['op'] == 'course_info') {
 		$smarty -> assign("T_USER_COURSE_LESSON_STATUS", $userCourseLessonsStatus);
 		$smarty -> assign("T_USER_COURSE", $user);
 
-		$select  = "uc.completed";
-		$where[] = "users_LOGIN='".$user->user['login']."'";
-		$where[] = "uc.courses_ID='".$_GET['course']."'";
-		$from 	 = "users_to_courses uc";
-		$result  = eF_getTableData($from, $select, implode(" and ", $where));
-		
-		$form -> setDefaults(array("completed" => $result[0]['completed'],//$user -> user['completed'],
-									   "score"     => round($totalScore),//$user -> user['completed'] ? $user -> user['score'] : round($totalScore),
+		$form -> setDefaults(array("completed" => $user -> user['completed'],
+									   "score"     => $user -> user['completed'] ? $user -> user['score'] : round($totalScore),
 									   "comments"  => $user -> user['comments']));
 		if ($user -> user['to_timestamp']) {					
 	    	$smarty -> assign("T_TO_TIMESTAMP",   $user -> user['to_timestamp']);
@@ -337,7 +331,7 @@ if ($_GET['op'] == 'course_info') {
 				$constraints  = array('archive' => false, 'active' => true) + createConstraintsFromSortedTable();
 			} else {
 				$constraints  = array('archive' => false, 'active' => true);	
-			}		
+			}
 			if ($_SESSION['s_type'] != 'administrator' && $_SESSION['s_current_branch']) {	//this applies to supervisors only
 				$stats_filters = array();
 				$branches	  = array($_SESSION['s_current_branch']);
@@ -856,7 +850,7 @@ if ($_GET['op'] == 'course_info') {
 		try {
 			$certificateFileSystemTree = new FileSystemTree(G_CERTIFICATETEMPLATEPATH);
 			foreach (new EfrontFileTypeFilterIterator(new EfrontFileOnlyFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator($certificateFileSystemTree -> tree, RecursiveIteratorIterator :: SELF_FIRST))), array('rtf')) as $key => $value) {
-				$existingCertificates[eFront_basename($key)] = eFront_basename($key);
+				$existingCertificates[basename($key)] = basename($key);
 			}
 		} catch (Exception $e) {
 			handleNormalFlowExceptions($e);
@@ -1122,12 +1116,7 @@ if ($_GET['op'] == 'course_info') {
 		$smarty->assign('T_ADD_CERTIFICATE_TEMPLATE_FORM', $renderer->toArray());
 
 	} #cpp#endif
-} else if($_GET['op'] == 'upload_signature') {
-	$basedir    = G_THEMESPATH.'default/images/certificate_logos/';
-	$url = basename($_SERVER['PHP_SELF']).'?ctg=courses&op=upload_signature&course='.$_GET['course'];
-	$options = array('delete' => true, 'edit' => true, 'share' => false, 'upload' => true, 'create_folder' => false, 'zip' => false);
-	include "file_manager.php";
-} else if($_GET['op'] == 'rename_certificate_template') {
+} else if($_GET['op'] == 'rename_certificate_template'){
 
 	if(G_VERSIONTYPE != 'community'){ #cpp#ifndef COMMUNITY
 
@@ -1408,13 +1397,11 @@ if ($_GET['op'] == 'course_info') {
 			}
 			exit;
 		} else if (isset($_GET['set_period']) && in_array($_GET['set_period'], array_keys($courseLessons))) {
-			if (eF_checkParameter($_GET['start_period'], 'id') !== false &&  eF_checkParameter($_GET['stop_period'], 'id') !== false) {
-				$lesson        = new EfrontLesson($_GET['set_period']);		
-					
-				$currentCourse -> setLessonScheduleInCourse($lesson, false, false, $_GET['start_period'], $_GET['stop_period']);
-				echo _FROM.' '.$_GET['start_period'].' '._DAYSAFTERCOURSEENROLLMENT.' '._AND.' '._FOR.' '.$_GET['stop_period'].' '._DAYSCONDITIONALLOWERCASE.'&nbsp;';
+			$lesson        = new EfrontLesson($_GET['set_period']);		
+				
+			$currentCourse -> setLessonScheduleInCourse($lesson, false, false, $_GET['start_period'], $_GET['stop_period']);
+			echo _FROM.' '.$_GET['start_period'].' '._DAYSAFTERCOURSEENROLLMENT.' '._AND.' '._FOR.' '.$_GET['stop_period'].' '._DAYSCONDITIONALLOWERCASE.'&nbsp;';
 			exit;
-			}
 		} else if (isset($_GET['delete_schedule']) && in_array($_GET['delete_schedule'], array_keys($courseLessons))) {
 			$lesson = new EfrontLesson($_GET['delete_schedule']);
 			$currentCourse -> unsetLessonScheduleInCourse($lesson);

@@ -126,10 +126,8 @@
     	{assign var = "title" value = "`$title`<span>&nbsp;&raquo;&nbsp;</span><a class='titleLink' href = '`$smarty.server.PHP_SELF`?ctg=expired'>`$smarty.const._SESSIONEXPIRED`</a>"}
         {eF_template_printBlock title = $smarty.const._SESSIONEXPIRED content = $smarty.capture.t_session_expired_code image = "32x32/exclamation.png"}
     {elseif $smarty.get.ctg == 'lessons' && $T_CONFIGURATION.lessons_directory == 1}
-		{if in_array('lessons', $T_POSITIONS.leftList) == false &&  in_array('lessons', $T_POSITIONS.rightList) == false}
-    		{assign var = "title" value = "`$title`<span>&nbsp;&raquo;&nbsp;</span><a class='titleLink' href = '`$smarty.server.PHP_SELF`?ctg=lessons'>`$smarty.const._COURSES`</a>"}
-    		{eF_template_printBlock title = $smarty.const._COURSES  content = $smarty.capture.t_lessons_code image = $T_BLOCKS.lessons.image}
-		{/if}
+    	{assign var = "title" value = "`$title`<span>&nbsp;&raquo;&nbsp;</span><a class='titleLink' href = '`$smarty.server.PHP_SELF`?ctg=lessons'>`$smarty.const._COURSES`</a>"}
+    	{eF_template_printBlock title = $smarty.const._COURSES  content = $smarty.capture.t_lessons_code image = $T_BLOCKS.lessons.image}
     {elseif $smarty.get.ctg == 'lesson_info' && $T_CONFIGURATION.lessons_directory == 1}
     	{if $T_LESSON_INFO}
 			{assign var = "title" value = "`$title`<span>&nbsp;&raquo;&nbsp;</span><a class='titleLink' href = '`$smarty.server.PHP_SELF`?ctg=lessons'>`$smarty.const._COURSES`</a><span>&nbsp;&raquo;&nbsp;</span><a class='titleLink' href = '`$smarty.server.PHP_SELF`?ctg=lesson_info&lessons_ID=`$T_LESSON->lesson.id`&course=`$T_COURSE->course.id`'>`$smarty.const._INFOFORLESSON`: &quot;`$T_LESSON->lesson.name`&quot;</a>"}

@@ -65,9 +65,8 @@ $loadScripts[] = 'includes/groups';
         $form -> registerRule('checkParameter', 'callback', 'eF_checkParameter');
 
         $roles = EfrontLessonUser :: getStudentRoles(true);
-		//array_unshift($roles, _DONTUSEDEFAULTGROUP);
-        $roles = array(0 => _DONTUSEDEFAULTGROUP) + $roles;
-        
+		array_unshift($roles, _DONTUSEDEFAULTGROUP);
+
         $form -> addElement('text', 'name', _GROUPNAME, 'class = "inputText"');
         $form -> addElement('text', 'description', _DESCRIPTION, 'class = "inputText"');
         $form -> addElement('static', 'sidenote', '<img src = "images/16x16/wizard.png" class = "ajaxHandle" alt = "'._AUTOMATICALLYGENERATEGROUPKEY.'" title = "'._AUTOMATICALLYGENERATEGROUPKEY.'" onclick = "$(\'unique_key_id\').value = \''.md5(time()).'\';"/>');// timestamp guarantess uniqueness
@@ -78,8 +77,8 @@ $loadScripts[] = 'includes/groups';
         $form -> addElement('select', 'user_types_ID' , _DEFAULTLEARNERTYPE, $roles, 'class = "inputText"');
         $form -> addElement('static', 'note', _DEFAULTLEARNERTYPEINFO.' '.$remainingKeyUsagesLabel);
 
-        if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
-        	if (G_VERSIONTYPE != 'standard') { #cpp#ifndef STANDARD
+        if (G_VERSIONTYPE != 'comunity') { #cpp#ifndef COMMUNITY
+        	if (G_VERSIONTYPE != 'comunity') { #cpp#ifndef STANDARD
         		$form -> addElement('advcheckbox', 'is_default', _ISTHEDEFAULTEFRONTSYSTEMGROUP,  null, 'class = "inputCheckBox"', array(0, 1));
         		$form -> addElement('static', 'note', _ISTHEDEFAULTEFRONTSYSTEMGROUPINFO);
         		if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
@@ -246,10 +245,6 @@ $loadScripts[] = 'includes/groups';
             			}
 
             		} else if (isset($_GET['addAll']) && $_GET['table'] == "coursesTable") {
-            			$constraints = array('archive' => false, 'instance' => false) + createConstraintsFromSortedTable();
-            			$courses      = $currentGroup -> getGroupCoursesAggregatingResultsIncludingUnassigned($constraints);
-            			$courses = EfrontCourse :: convertCourseObjectsToArrays($courses);
-            			 
             			isset($_GET['filter']) ? $courses = eF_filterData($courses, $_GET['filter']) : null;
             			foreach ($courses as $course) {
             				if (!$course['in_group']) {
@@ -303,9 +298,7 @@ $loadScripts[] = 'includes/groups';
             			$groupUsers = array_merge($groupUsers['professor'], $groupUsers['student']);
             			$groupLessons = $currentGroup -> getLessons();
 
-            			$lessonIds = array_keys($groupLessons);     
-//Replaced old code for performance (#5847)
-/*            			
+            			$lessonIds = array_keys($groupLessons);     			
             	        $result	 = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,user_type", "archive=0");
             			$usersTolessons = array();
             			foreach ($result as $value) {
@@ -334,21 +327,6 @@ $loadScripts[] = 'includes/groups';
             						}
             					}
             				}
-            			}          			
-*/           			
-    			
-            			if ($currentGroup -> group['user_types_ID'] == '0') {
-            				foreach ($groupUsers as $user) {
-            					$user = EfrontUserFactory :: factory($user);
-            					$user -> user['user_types_ID'] ? $userType[] = $user -> user['user_types_ID'] : $userType[] = $user -> user['user_type'];
-            				}
-            			} else {
-            				$userType = $currentGroup -> group['user_types_ID'];
-            			}
-            			foreach ($lessonIds as $id) {
-            				$lesson = new EfrontLesson($id);
-            				$lesson -> addUsers($groupUsers, $userType, true, true);	
-            				
             			}
             		}
             		exit;

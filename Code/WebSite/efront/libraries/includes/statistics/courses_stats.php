@@ -36,19 +36,14 @@ try {
 	    	$rolesBasic = EfrontLessonUser :: getLessonsRoles();
 	    	$smarty -> assign("T_BASIC_ROLES_ARRAY", $rolesBasic);
 
-	    	$constraints = array('archive' => false, 'table_filters' => $stats_filters, 'condition' => 'r.course_user_type IN ("'.implode('","', array_keys(EfrontLessonUser::getStudentRoles())).'")');		
-    		$numUsers = $infoCourse -> countCourseUsersAggregatingResults($constraints);
-    		if ($numUsers) {
-    			$usersPerRole['student'] = $numUsers;
-    		}	    
-
-    		$constraints = array('archive' => false, 'table_filters' => $stats_filters, 'condition' => 'r.course_user_type IN ("'.implode('","', array_keys(EfrontLessonUser::getProfessorRoles())).'")');
-    		$numUsers = $infoCourse -> countCourseUsersAggregatingResults($constraints);
-    		if ($numUsers) {
-    			$usersPerRole['professor'] = $numUsers;
-    		}
-    		
-    		
+	    	foreach ($rolesBasic as $key => $role) {
+	    		$constraints = array('archive' => false, 'table_filters' => $stats_filters, 'condition' => 'u.user_type = "'.$key.'"');
+	    		$numUsers = $infoCourse -> countCourseUsersAggregatingResults($constraints);
+	    		if ($numUsers) {
+	    			$usersPerRole[$key] = $numUsers;
+	    		}
+	    		//$role == 'student' ? $studentRoles[] = $key : $professorRoles[] = $key;
+	    	}
 	    	$infoCourse -> course['users_per_role'] = $usersPerRole;
 	    	$infoCourse -> course['num_users'] 		= array_sum($usersPerRole);
 
@@ -73,11 +68,9 @@ try {
 	    			$lesson_ids[] = $lesson['id'];
 	    		}
 	    		$status = array();
-	    		if(is_array($lesson_ids) && !empty($lesson_ids)) {
-		    		$result = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,completed", "lessons_ID in (".implode(",", $lesson_ids).")");
-		    		foreach ($result as $value) {
-		    			$status[$infoCourse->course['id']][$value['users_LOGIN']][$value['lessons_ID']] = $value;
-		    		}
+	    		$result = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,completed", "lessons_ID in (".implode(",", $lesson_ids).")");
+	    		foreach ($result as $value) {
+	    			$status[$infoCourse->course['id']][$value['users_LOGIN']][$value['lessons_ID']] = $value;
 	    		}
 	    		
 /*	    		
@@ -259,10 +252,6 @@ if (isset($_GET['excel'])) {
     $workSheet -> write(2, 9, _PERCENTAGE, $titleCenterFormat);
     $workSheet -> write(2, 10, _ENROLLEDON, $titleCenterFormat);
     $workSheet -> write(2, 11, _COMPLETED, $titleCenterFormat);
-    
-    if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
-    	$workSheet -> write(2, 12, _BRANCH, $titleLeftFormat);
-    } #cpp#endif
 
     $roles = EfrontLessonUser :: getLessonsRoles(true);
     $row = 3;
@@ -277,12 +266,10 @@ if (isset($_GET['excel'])) {
     	$lesson_ids[] = $lesson['id'];
     }
     $status = array();
-	if(is_array($lesson_ids) && !empty($lesson_ids)) {
-	    $result = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,completed", "lessons_ID in (".implode(",", $lesson_ids).")");
-	    foreach ($result as $value) {
-	    	$status[$infoCourse->course['id']][$value['users_LOGIN']][$value['lessons_ID']] = $value;
-	    }
-	}
+    $result = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,completed", "lessons_ID in (".implode(",", $lesson_ids).")");
+    foreach ($result as $value) {
+    	$status[$infoCourse->course['id']][$value['users_LOGIN']][$value['lessons_ID']] = $value;
+    }
     /*
     if (!empty($users)) {
     	$status = EfrontStats :: getUsersCourseStatus($infoCourse, array_keys($users));
@@ -310,7 +297,7 @@ if (isset($_GET['excel'])) {
     } #cpp#endif
 
     foreach ($users as $info) {
-        $workSheet -> writeString($row, 4, $info['login'], $fieldLeftFormat);
+        $workSheet -> write($row, 4, $info['login'], $fieldLeftFormat);
         $workSheet -> write($row, 5, $info['name'], $fieldLeftFormat);
         $workSheet -> write($row, 6, $info['surname'], $fieldLeftFormat);
         $workSheet -> write($row, 7, $roles[$info['user_type']], $fieldLeftFormat);
@@ -409,11 +396,9 @@ if (isset($_GET['excel'])) {
     	$lesson_ids[] = $lesson['id'];
     }
     $status = array();
-    if(is_array($lesson_ids) && !empty($lesson_ids)) {
-	    $result = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,completed", "lessons_ID in (".implode(",", $lesson_ids).")");
-	    foreach ($result as $value) {
-	    	$status[$infoCourse->course['id']][$value['users_LOGIN']][$value['lessons_ID']] = $value;
-	    }
+    $result = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,completed", "lessons_ID in (".implode(",", $lesson_ids).")");
+    foreach ($result as $value) {
+    	$status[$infoCourse->course['id']][$value['users_LOGIN']][$value['lessons_ID']] = $value;
     }
     foreach($users as $key => $value){
     	$lesson_status = $status[$course_id][$key];

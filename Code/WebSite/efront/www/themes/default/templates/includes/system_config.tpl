@@ -81,20 +81,11 @@
 		{/capture}
 	{/if} {* #cpp#endif *}
 {/if} {* #cpp#endif *}
-{if $smarty.const.G_VERSIONTYPE != 'community'} {* #cpp#ifndef COMMUNITY *}
-	{if $smarty.const.G_VERSIONTYPE != 'standard'} {* #cpp#ifndef STANDARD *}
-		{capture name = "external_saml"}
-			{eF_template_printForm form=$T_EXTERNAL_SAML_FORM}
-		{/capture}
-	{/if} {* #cpp#endif *}
-{/if} {* #cpp#endif *}
-
 		<div class="tabber">
 			{eF_template_printBlock tabber = "options" title=$smarty.const._EXTERNALTOOLS data=$smarty.capture.external_main image='32x32/generic.png' help = 'System_settings#External_tools_2'}
 			{eF_template_printBlock tabber = "math" title=$smarty.const._MATHSETTINGS data=$smarty.capture.external_math image='32x32/generic.png'  help = 'System_settings#Math_Settings'}
 			{eF_template_printBlock tabber = "livedocx" title=$smarty.const._PHPLIVEDOCX data=$smarty.capture.external_livedocx image='32x32/generic.png'  help = 'System_settings#PHP_Livedocx'}
 			{eF_template_printBlock tabber = "ldap" title=$smarty.const._LDAP data=$smarty.capture.external_ldap image='32x32/generic.png'  help = 'System_settings#LDAP'}
-			{eF_template_printBlock tabber = "saml" title=$smarty.const._SAML data=$smarty.capture.external_saml image='32x32/generic.png'  help = 'System_settings#SAML'}
 	{if $smarty.const.G_VERSIONTYPE != 'standard'} {* #cpp#ifndef STANDARD *}
 			{eF_template_printBlock tabber = "facebook" title=$smarty.const._FACEBOOK data=$smarty.capture.external_facebook image='32x32/generic.png' help = 'System_settings#External_tools_2'}
 	{/if} {* #cpp#endif *}

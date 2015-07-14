@@ -465,7 +465,7 @@ if (isset($GLOBALS['currentTheme'] -> options['sidebar_interface']) && $GLOBALS[
 					$newMenu -> insertMenuOption(array("id" => "file_manager_a", "image" => "file_explorer", "link" => $_SESSION['s_type'].".php?ctg=personal&user=".$_SESSION['s_login']."&op=files", "title" => _PERSONALFILES), $toolsMenuId);
 	            }
 
-	            if ($currentUser->aspects['hcd']->isSupervisor() || EfrontUser::isOptionVisible('show_organization_chart') || $_SESSION['s_type'] == 'administrator') {
+	            if ($currentUser->aspects['hcd']->isSupervisor() || EfrontUser::isOptionVisible('show_organization_chart')) {
 	            	$newMenu -> insertMenuOption(array('id' => 'chart_a',  'image' => "organization", 'title' => _ORGANISATIONCHART,                       'target' => "mainframe",    'link' => $_SESSION['s_type'] . ".php?ctg=module_hcd&op=chart"), $toolsMenuId);
 	            }
 
@@ -681,6 +681,7 @@ if (EfrontUser::isOptionVisible('func_userstatus')) {
     if ($currentUser -> coreAccess['dashboard'] != 'hidden') {
 		$smarty -> assign("T_SHOW_USER_STATUS",1);
 	}
+
 }
 
 $smarty -> assign("T_SIDEBARWIDTH", $sideframe_width);

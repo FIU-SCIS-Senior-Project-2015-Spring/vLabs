@@ -75,7 +75,7 @@ if (isset($_GET['notification_id']) && eF_checkParameter($_GET['notification_id'
 		$recipient = substr($notification['recipient'], 0, strpos($notification['recipient'], " "));
 
 		// Check the format of the email
-		if ($notification['html_message']) {
+		if (substr($notification['body'], 0, 6) == "<html>") {
 			$onlyText = false;
 		} else {
 			$onlyText = true;

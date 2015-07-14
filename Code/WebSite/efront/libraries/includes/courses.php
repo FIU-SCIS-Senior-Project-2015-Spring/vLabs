@@ -120,17 +120,9 @@ else if (isset($_GET['ajax']) && isset($_GET['edit_course']) && $_change_) {
 	        $rolesBasic = EfrontLessonUser :: getLessonsRoles();
 	        $smarty -> assign("T_BASIC_ROLES_ARRAY", $rolesBasic);
 
-	        $constraints   = array('archive' => false, 'active' => 1, 'return_objects' => false) + createConstraintsFromSortedTable();       
+	        $constraints   = array('archive' => false, 'active' => 1, 'return_objects' => false) + createConstraintsFromSortedTable();
+			$users         = $editCourse -> getCourseUsersIncludingUnassigned($constraints);
 			$totalEntries  = $editCourse -> countCourseUsersIncludingUnassigned($constraints);
-			if ($totalEntries > 10000 && $constraints['sort'] == 'null') {
-				$filter = false;
-			} else if ($totalEntries < 10000 && $constraints['sort'] == 'null') {
-				$filter = true;
-				$constraints['sort'] = 'active_in_course';
-				$constraints['order'] = 'desc';
-			} 		  	        
-			$users         = $editCourse -> getCourseUsersIncludingUnassigned($constraints, $filter);
-			//$totalEntries  = $editCourse -> countCourseUsersIncludingUnassigned($constraints);
 			$dataSource	   = $users;
 			$tableName     = $_GET['ajax'];
 			$alreadySorted = 1;

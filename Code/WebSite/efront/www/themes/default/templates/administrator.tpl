@@ -120,10 +120,7 @@
 	{capture name = "modulePersonal"}
 		{assign var = "title" value = "`$title`&nbsp;&raquo;&nbsp;<a class = 'titleLink' href = '`$smarty.server.PHP_SELF`?ctg=users'>`$smarty.const._USERS`</a>"}
 		{assign var = "formatted_login" value = $T_EDITEDUSER->user.login|formatLogin}
-		{if !$smarty.get.add_user}
 		{assign var = "title" value = "`$title`&nbsp;&raquo;&nbsp;<a class = 'titleLink' href = '`$smarty.server.PHP_SELF`?ctg=personal&user=`$T_EDITEDUSER->user.login`'>`$formatted_login`</a>"}
-		{/if}
-		
 		{if $T_OP == 'dashboard'}
 			{assign var = 'title' value = "`$title`&nbsp;&raquo;&nbsp;<a class = 'titleLink' href ='`$smarty.server.PHP_SELF`?ctg=personal&user=`$smarty.get.user`&op=dashboard'>`$smarty.const._DASHBOARD`</a>"}
 		{elseif $T_OP == 'profile' && $smarty.get.add_user}

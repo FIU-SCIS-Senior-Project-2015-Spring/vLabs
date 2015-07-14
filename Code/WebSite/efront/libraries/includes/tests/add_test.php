@@ -42,20 +42,7 @@ if ($configuration['math_content'] && $configuration['math_images']) {
 
 if (isset($_GET['edit_test'])) {
     $currentTest = new EfrontTest($_GET['edit_test']);
-    if (!$skillgap_tests) {
-    	$currentUnit = new EfrontUnit($currentTest->test['content_ID']);
-    	$is_linked = ($currentUnit['linked_to']) ? true : false;
-    }
-     
-    if($is_linked) {
-    	eF_redirect("".ltrim(basename($_SERVER['PHP_SELF']), "/")."?ctg=tests&message=".urlencode(_LINKEDTESTSCANNOTBEEDITTED)."&message_type=failure");
-    }
-    if (!empty($currentTest -> options['random_test']) && $_GET['random_test'] == 0) {
-    	$testQuestions = $currentTest -> getQuestions(false, true);
-    } else {
-    	$testQuestions = $currentTest -> getQuestions();
-    }
-
+    $testQuestions 	= $currentTest -> getQuestions();
     //if test contains a question from another lesson, display all lessons questions
 	if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 		if (G_VERSIONTYPE != 'standard') { #cpp#ifndef STANDARD  
@@ -65,55 +52,14 @@ if (isset($_GET['edit_test'])) {
 		    		if ($value['lessons_ID'] != $_SESSION['s_lessons_ID']) {
     					$showAllFlag = true;
     				}
-    			}//@todo for random test too   			
+    			}
     			if ($showAllFlag) {
 	    			$_GET['showall'] = 1;
     			}
     		}
-    		if ($currentTest -> options['random_test'] && (!isset($_GET['random_test']) || $_GET['random_test'])) {   			 
-    			$_GET['random_test'] = 1;
-    			$random_test = true;
-    			if ($currentTest -> options['random_test_subunits'] && (!isset($_GET['subunits']) || $_GET['subunits'])) {
-    				$_GET['subunits'] = 1;
-    				$include_subunits = true;
-    			}
-    		} else {  			
-    			$random_test = false;
-    		}
-    		
-    		$smarty -> assign("T_RANDOM_TEST", $random_test);
-    		$smarty -> assign("T_RANDOM_TEST_INCLUDE_SUBUNITS", $include_subunits);
-    		if ($random_test) {
-    			$smarty -> assign("T_RANDOM_CRITERIA", $currentTest -> options['random_test']);
-    			if (isset($currentTest -> options['random_test']['difficulty'])) {
-    				$smarty -> assign("T_RANDOMTESTOPTION",'difficulty');
-    			} else if (isset($currentTest -> options['random_test']['type'])) {
-    				$smarty -> assign("T_RANDOMTESTOPTION",'type');
-    			}
-    			$lesson_units = $currentLesson-> getUnits();
-    			//$showAllFlag = false;
-//pr($lesson_units);   
-//pr($currentTest -> options['random_test']['difficulty']); 			
-/*    			foreach ($currentTest -> options['random_test']['difficulty'] as $key => $value) {
-    				if (!isset($lesson_units[$key])) {
-    					$showAllFlag = true;
-    				}
-    			}
-    			foreach ($currentTest -> options['random_test']['type'] as $key => $value) {
-    				if (!isset($lesson_units[$key])) {
-    					$showAllFlag = true;
-    				}
-    			}
-    			if ($showAllFlag && !isset($_GET['showall'])) {
-    				$_GET['showall'] = 1;
-    			}
-*/    			
-    		}
-    	//vd($showAllFlag);	
     	} #cpp#endif
 	} #cpp#endif		
 }
-
 
 //These will be needed throughout the page
 $smarty -> assign("T_QUESTIONTYPESTRANSLATIONS", Question :: $questionTypes);//pr($question_types_translations);
@@ -147,7 +93,6 @@ $form -> addElement('text', 'redoable', null, 'size = "5"');
 $form -> addElement('text', 'maintain_history', null, 'size = "5"');
 $form -> addElement('text', 'mastery_score', _MASTERYSCORE, 'size = "5"');
 $form -> addElement('text', 'test_password', _TESTPASSWORD, "class = 'inputText'");
-$form -> addElement('text', 'custom_class', _LOADCUSTOMCLASS, "class = 'inputText'");
 $form -> addElement('advcheckbox', 'onebyone',          null, null, null, array(0, 1));
 $form -> addElement('advcheckbox', 'only_forward',      null, null, null, array(0, 1));
 
@@ -201,61 +146,32 @@ if (!$skillgap_tests) {
     $selectedUnit ? $units = $currentContent -> getNodeChildren($selectedUnit) : $units = $currentContent -> tree;
     foreach ($iterator = new EfrontAttributeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($units)), array('id', 'name')) as $key => $value) {
         $key == 'id' ? $ids[] = $value : $names[] = $value;
-    }       
-    
+    }
     $unitNames    = array_combine($ids, $names);
     $unitNames[0] = _NONEUNIT;
     if ($_GET['showall'] && EfrontUser::isOptionVisible('questions_pool')) {  
-    	
         if (G_VERSIONTYPE != 'community') { #cpp#ifndef COMMUNITY
 			if (G_VERSIONTYPE != 'standard') { #cpp#ifndef STANDARD	
-        		$userLessons = $currentUser -> getLessons(false, 'professor');
-    			$result       = eF_getTableData("questions,lessons", "questions.*", "lessons_ID in (".implode(",",array_keys($userLessons)).") and lessons_ID !=0 and lessons.id=questions.lessons_ID and lessons.active=1 and questions.linked_to IS NULL", "content_ID ASC");     
-    			$content_to_lessons =  array();
-    			foreach ($result as $value) {
-    				if ($value['content_ID']) {
-    					$content_to_lessons[$value['lessons_ID']][] = $value['content_ID'];
-    					$content_to_lessons[$value['lessons_ID']] = array_values(array_unique($content_to_lessons[$value['lessons_ID']]));
-    				}
-    			}
+    			$result       = eF_getTableData("questions,lessons", "questions.*", "lessons_ID !=0 and lessons.id=questions.lessons_ID and lessons.active=1", "content_ID ASC");     
 			} #cpp#endif
         } #cpp#endif
     } else {
-    	$result       = eF_getTableData("questions", "*", "linked_to IS NULL and lessons_ID=".$currentLesson -> lesson['id'], "content_ID ASC");     //Retrieve all questions that belong to this unit or its subunits
-    	//for questions already added to test from another lesson
-    	/* if (isset($_GET['edit_test'])) {
-    		$testQuestions 	= $currentTest -> getQuestions();   			 		
-			$result 		= array_merge(array_values($result),array_values($testQuestions)); //@todo check
-    	} */
+    	$result       = eF_getTableData("questions", "*", "lessons_ID=".$currentLesson -> lesson['id'], "content_ID ASC");     //Retrieve all questions that belong to this unit or its subunits
+    	if (isset($_GET['edit_test'])) {
+    		//for questions already added to test from another lesson
+    		//$testQuestions 	= $currentTest -> getQuestions();  		
+			$result 		= array_merge(array_values($result),array_values($testQuestions));
+    	}
     }
-	 
+    
     if ($_GET['showall'] && EfrontUser::isOptionVisible('questions_pool')) {  
 		$directionsTree  = new EfrontDirectionsTree();
 		$directionsPaths = $directionsTree -> toPathString();
 		$lessons = EFrontLesson :: getLessons(false, true);
 		foreach ($lessons as $key => $value) {
-			$lessons[$key]['lesson_path'] =  $directionsPaths[$value['directions_ID']]."&nbsp;&raquo;&nbsp;".$value['name'];
-			
-			$temp = new EfrontContentTree($key);		
-			$iterator = new EfrontNodeFilterIDIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($temp -> tree), RecursiveIteratorIterator :: SELF_FIRST), array('active' => 1)), $content_to_lessons[$key]);    //Default iterator excludes non-active units
-			$contentTrees[$key] = $temp -> toPathStrings($iterator);
+			$lessons[$key]['lesson_path'] =  $directionsPaths[$value['directions_ID']]." --> ".$value['name'];
 		}
-
-		foreach ($contentTrees as $key => $value) {
-			foreach ($value as $key2 => $value2) {
-				$contentTreesAll[$key2] = $lessons[$key]['lesson_path']."&nbsp;&raquo;&nbsp;".$value2;
-			}
-		}
-				
-		$smarty -> assign("T_LESSONS", $lessons);   	
-		$smarty -> assign("T_CONTENT_TREES", $contentTrees);
-    } elseif (!$_GET['showall']) {
-    	$temp = new EfrontContentTree($_SESSION['s_lessons_ID']);
-    	$contentTrees = $temp -> toPathStrings();
-    	$contentTrees[0] = _NONEUNIT;
-    	    	
-    	
-   //pr($contentTrees);exit; 	
+		$smarty -> assign("T_LESSONS", $lessons);    
     }
 } else {
 
@@ -272,120 +188,37 @@ if (!$skillgap_tests) {
 			
 }
 
-if (!$skillgap_tests) {
-	$unitsToQuestionsDifficulties 	= array();
-	$unitsToQuestionsTypes			= array();
-	foreach ($result as $value) {
-	    $questions[$value['id']] = $value;
-	    if (!isset($unitsToQuestionsDifficulties[$value['content_ID']])){
-	        $unitsToQuestionsDifficulties[$value['content_ID']] = array();
-	    }
-	    if (!isset($unitsToQuestionsDifficulties[$value['content_ID']][$value['difficulty']])) {
-	        $unitsToQuestionsDifficulties[$value['content_ID']][$value['difficulty']] = 0;
-	    }
-	    $unitsToQuestionsDifficulties[$value['content_ID']][$value['difficulty']]++;
-	
-	    if (!isset($unitsToQuestionsTypes[$value['content_ID']])) {
-	        $unitsToQuestionsTypes[$value['content_ID']] = array();
-	    }
-	    if (!isset($unitsToQuestionsTypes[$value['content_ID']][$value['type']])) {
-	        $unitsToQuestionsTypes[$value['content_ID']][$value['type']] = 0;
-	    }
-	    $unitsToQuestionsTypes[$value['content_ID']][$value['type']]++;
-	}
-} else {
-		foreach ($result as $value) {
-			$questions[$value['id']] = $value;
-		}
+$unitsToQuestionsDifficulties = array();
+foreach ($result as $value) {
+    $questions[$value['id']] = $value;
+    if (!isset($unitsToQuestionsDifficulties[$value['content_ID']])){
+        $unitsToQuestionsDifficulties[$value['content_ID']] = array();
+    }
+    if (!isset($unitsToQuestionsDifficulties[$value['content_ID']][$value['difficulty']])) {
+        $unitsToQuestionsDifficulties[$value['content_ID']][$value['difficulty']] = 0;
+    }
+    $unitsToQuestionsDifficulties[$value['content_ID']][$value['difficulty']]++;
+
+    if (!isset($unitsToQuestionsTypes[$value['content_ID']])) {
+        $unitsToQuestionsTypes[$value['content_ID']] = array();
+    }
+    if (!isset($unitsToQuestionsTypes[$value['content_ID']][$value['type']])) {
+        $unitsToQuestionsTypes[$value['content_ID']][$value['type']] = 0;
+    }
+    $unitsToQuestionsTypes[$value['content_ID']][$value['type']]++;
 }
-//pr($unitsToQuestionsDifficulties);
+
+$smarty -> assign("T_UNITS_TO_QUESTIONS_DIFFICULTIES", $unitsToQuestionsDifficulties);
+$smarty -> assign("T_UNITS_TO_QUESTIONS_TYPES", $unitsToQuestionsTypes);
+//pr($unitsToQuestions);
 if (!$skillgap_tests) {
-	if ($_GET['subunits']) {
-		if (!$_GET['showall']) {		
-			foreach ($iterator = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST)) as $key => $value) {		
-				$children = $currentContent->getNodeChildren($value['id']);
-				foreach (new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($children), RecursiveIteratorIterator :: SELF_FIRST)) as $child => $foo) {
-					$subunits[$key][] = $child;				
-				}
-			}
-		} else {
-			$lessons = EFrontLesson :: getLessons(false, true);	
-			foreach ($lessons as $lesson_ID => $lesson) {
-				$lessonsContent = new EfrontContentTree($lesson_ID);				
-				foreach ($iterator = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($lessonsContent -> tree), RecursiveIteratorIterator :: SELF_FIRST)) as $key => $value) {
-					$children = $lessonsContent -> getNodeChildren($value['id']);
-					foreach (new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($children), RecursiveIteratorIterator :: SELF_FIRST)) as $child => $foo) {
-						$subunits[$key][] = $child;
-					}
-				}
-			}
-		}
-		$unitsToQuestionsDifficultiesSub = array();
-		foreach ($unitsToQuestionsDifficulties as $key => $value) {
-			if (!empty($subunits[$key])) {
-				$unitsToQuestionsDifficultiesSub[$key] = $unitsToQuestionsDifficulties[$key];
-				foreach ($subunits[$key] as $value2) {
-					foreach ($unitsToQuestionsDifficulties[$value2] as $type => $num) {
-						$unitsToQuestionsDifficultiesSub[$key][$type] += $num;
-					}
-				}			
-			} else {
-				$unitsToQuestionsDifficultiesSub[$key] = $unitsToQuestionsDifficulties[$key];
-			}
-		}
-		
-		$unitsToQuestionsTypesSub = array();
-		foreach ($unitsToQuestionsTypes as $key => $value) {
-			if (!empty($subunits[$key])) {
-				$unitsToQuestionsTypesSub[$key] = $unitsToQuestionsTypes[$key];
-				foreach ($subunits[$key] as $value2) {
-					foreach ($unitsToQuestionsTypes[$value2] as $type => $num) {
-						$unitsToQuestionsTypesSub[$key][$type] += $num;
-					}
-				}
-		
-			} else {
-				$unitsToQuestionsTypesSub[$key] = $unitsToQuestionsTypes[$key];
-			}
-		}
-		
-		//Added lines to hide subunits if parent units contain questions
-		foreach ($unitsToQuestionsDifficultiesSub as $unit_id => $questions_) {
-			foreach ($subunits[$unit_id] as $val) {
-				unset($unitsToQuestionsDifficultiesSub[$val]);
-			}
-		}
-		
-		foreach ($unitsToQuestionsTypesSub as $unit_id => $questions_) {
-			foreach ($subunits[$unit_id] as $val) {
-				unset($unitsToQuestionsTypesSub[$val]);
-			}
-		}
-		
-		$smarty -> assign("T_UNITS_TO_QUESTIONS_DIFFICULTIES", $unitsToQuestionsDifficultiesSub);
-		$smarty -> assign("T_UNITS_TO_QUESTIONS_TYPES", $unitsToQuestionsTypesSub);
-		
-		
-		
-	} else {
-		$smarty -> assign("T_UNITS_TO_QUESTIONS_DIFFICULTIES", $unitsToQuestionsDifficulties);
-		$smarty -> assign("T_UNITS_TO_QUESTIONS_TYPES", $unitsToQuestionsTypes);
-		
-	}
-
-	if ($_GET['showall'] && EfrontUser::isOptionVisible('questions_pool')) {
-		$contentTreesAll[0] = _NONEUNIT;		
-		$smarty -> assign("T_UNITS_NAMES", $contentTreesAll);
-	} else {
-    	$smarty -> assign("T_UNITS_NAMES", $contentTrees);
-	}
-
-
-	$smarty -> assign("T_QUESTION_DIFFICULTIES", Question::$questionDifficulties);
-	$smarty -> assign("T_QUESTION_DIFFICULTIES_ICONS", Question::$questionDifficultiesIcons);
-	$smarty -> assign("T_QUESTION_TYPES", Question::$questionTypes);
-	$smarty -> assign("T_QUESTION_TYPES_ICONS", Question::$questionTypesIcons);
+    $smarty -> assign("T_UNITS_NAMES", $unitNames);
 }
+$smarty -> assign("T_QUESTION_DIFFICULTIES", Question::$questionDifficulties);
+$smarty -> assign("T_QUESTION_DIFFICULTIES_ICONS", Question::$questionDifficultiesIcons);
+$smarty -> assign("T_QUESTION_TYPES", Question::$questionTypes);
+$smarty -> assign("T_QUESTION_TYPES_ICONS", Question::$questionTypesIcons);
+
 if (isset($_GET['add_test'])) {
     $form -> addElement('submit', 'submit_test', _SAVETESTANDADDQUESTIONS, 'class = "flatButton"');
   /*  $form -> setDefaults(array('given_answers'    => 1,
@@ -447,11 +280,7 @@ if (isset($_GET['add_test'])) {
     }
 
     $smarty -> assign("T_CURRENT_TEST", $currentTest);
-     if (!empty($currentTest -> options['random_test']) && $_GET['random_test'] == 0) {
-    	$testQuestions = $currentTest -> getQuestions(false, true);
-    } else {
-    	$testQuestions = $currentTest -> getQuestions();
-    }
+    $testQuestions = $currentTest -> getQuestions();
 
     $stats = $currentTest -> questionsInfo();
     $stats['duration'] 	  = eF_convertIntervalToTime($stats['total_duration']);
@@ -510,7 +339,6 @@ if ($form -> isSubmitted() && $form -> validate()) {
                                 'display_weights'   => $values['display_weights'],
 								'answer_all'   		=> $values['only_forward'] ? 0 : $values['answer_all'],
 								'test_password'   	=> $values['test_password'],
-								'custom_class'   	=> $values['custom_class'],
 								'redo_wrong'   		=> $values['redo_wrong'],
                         		'general_threshold' => $values['general_threshold'],        //skill-gap option
                          	    'assign_to_new'     => $values['assign_to_new'],            //skill-gap option
@@ -534,7 +362,6 @@ if ($form -> isSubmitted() && $form -> validate()) {
                                 'display_weights'   => 0,
 								'answer_all'   		=> 1,
 								'test_password'		=> '',
-								'custom_class'		=> '',
 								'redo_wrong'   		=> 0,
                         		'general_threshold' => 0,        //skill-gap option
                          	    'assign_to_new'     => 0,            //skill-gap option
@@ -676,28 +503,17 @@ if ($skillgap_tests) {
 }
 if (isset($_GET['ajax']) && $_GET['ajax'] == 'questionsTable') {
     // If no lesson then define the current lesson name => _SKILLGAPTESTS (used for correct filtering)
-	$contentTrees = array();
-	$difficultiesToWeights = array("low" => 1, "medium" => 2, "high" => 3, "very_high" => 4);
-
-	
-    foreach ($questions as $qid => $question) {	
-    	if ($question['lessons_ID']) {
-    		if (!isset($contentTrees[$question['lessons_ID']])) { 
-    			$temp = new EfrontContentTree($question['lessons_ID']);
-    			$contentTrees[$question['lessons_ID']] = $temp -> toPathStrings();
-    		}
-    	}
+    foreach ($questions as $qid => $question) {
         $questions[$qid]['text']           = strip_tags($question['text']);        //If we ommit this line, then the questions list is html formatted, images are displayed etc, which is *not* the intended behaviour
-        $questions[$qid]['parent_name']    = $unitNames[$question['content_ID']];    
-        $questions[$qid]['weight']         = !empty($testQuestions[$qid]['weight']) ? $testQuestions[$qid]['weight'] : $difficultiesToWeights[$question['difficulty']];  
+        $questions[$qid]['parent_name']    = $unitNames[$question['content_ID']];
+        $questions[$qid]['weight']         = $testQuestions[$qid]['weight'];
         $questions[$qid]['partof']         = 0;
         $questions[$qid]['estimate_interval'] = eF_convertIntervalToTime($question['estimate']);
         if ($question['lessons_ID'] == 0) {
             $questions[$qid]['name'] = _SKILLGAPTESTS;
         } else {
-            $questions[$qid]['name'] 				= _LESSON . ': "' . $question['name'] . '"';
-            $questions[$qid]['lesson_name']        	= $lessons[$question['lessons_ID']]['name'];
-            $questions[$qid]['parent_unit'] 		= $contentTrees[$question['lessons_ID']][$question['content_ID']];
+            $questions[$qid]['name'] = _LESSON . ': "' . $question['name'] . '"';
+            $questions[$qid]['lesson_name']        = $lessons[$question['lessons_ID']]['name'];
         }
 
         if ($skillgap_tests && $question['type'] == 'raw_text') {
@@ -708,9 +524,11 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 'questionsTable') {
         	unset($questions[$qid]);
         }
     }
- 
-	foreach ($testQuestions as $gid => $question) { 
-		$questions[$gid]['partof'] = 1;
+
+    foreach ($testQuestions as $testQuestion) {                                     //Set to selected the questions that the test includes, along with their weights
+        $form -> setDefaults(array('questions['.$testQuestion['id'].']'       => 1,
+                                               'question_weight['.$testQuestion['id'].']' => $testQuestion['weight']));
+        $questions[$testQuestion['id']]['partof'] = 1;
     }
 
     isset($_GET['limit']) && eF_checkParameter($_GET['limit'], 'uint') ? $limit = $_GET['limit'] : $limit = G_DEFAULT_TABLE_SIZE;
@@ -732,16 +550,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 'questionsTable') {
         isset($_GET['offset']) && eF_checkParameter($_GET['offset'], 'int') ? $offset = $_GET['offset'] : $offset = 0;
         $questions = array_slice($questions, $offset, $limit, true);
     }
-    
-    foreach ($questions as $gid => $question) {
-    	if (!empty($testQuestions[$gid])) {
-    		$form -> setDefaults(array('questions['.$gid.']'       => 1,
-    				'question_weight['.$gid.']' => $testQuestions[$gid]['weight']));
-    	} else {
-    		$form -> setDefaults(array('question_weight['.$gid.']' => $question['weight']));
-    	}
-    }
-    
+
     foreach ($questions as $id => $question) {
         $form -> addElement("checkbox", "questions[".$id."]", null, null, 'id = "checked_'.$id.'" onclick = "ajaxPost(\''.$id.'\', this, \'questionsTable\');"');
         $form -> addElement('select', 'question_weight['.$id.']', null, array_combine(range(1,10), range(1,10)), 'id = "weight_'.$id.'" onchange = "$(\'checked_'.$id.'\').checked=true;ajaxPost(\''.$id.'\', this);"');
@@ -860,13 +669,7 @@ if (isset($_GET['postAjaxRequest'])) {
 					$nonTestQuestions = $nonTestQuestionsTemp;
 				}
                 isset($_GET['filter']) ? $nonTestQuestions = eF_filterData($nonTestQuestions,$_GET['filter']) : null;
-    
-         		$difficultiesToWeights = array("low" => 1, "medium" => 2, "high" => 3, "very_high" => 4);
-         		$questions_to_add = array(); 
-         		foreach ($nonTestQuestions as $key => $value) {
-         			$questions_to_add[$key] = $difficultiesToWeights[$value['difficulty']];
-         		}
-                $currentTest -> addQuestions($questions_to_add);
+                $currentTest -> addQuestions(array_combine(array_keys($nonTestQuestions), array_fill(0, sizeof($nonTestQuestions), 1)));
             } else if (isset($_GET['removeAll'])) {
                 $testQuestions = $currentTest -> getQuestions();
 
@@ -885,11 +688,8 @@ if (isset($_GET['postAjaxRequest'])) {
                 isset($_GET['filter']) ? $testQuestions = eF_filterData($testQuestions,$_GET['filter']) : null;
                 $currentTest -> removeQuestions(array_keys($testQuestions));
             }
-			
-            unset($currentTest-> options['random_test']);
-			$currentTest -> persist();
-            
-			//ArrayObject is required in order for json to work well with prototype
+
+            //ArrayObject is required in order for json to work well with prototype
             $stats 	   = new ArrayObject($currentTest -> questionsInfo());
             $stats['difficulties']  = new ArrayObject($stats['difficulties']);
             $stats['types'] 	    = new ArrayObject($stats['types']);
@@ -915,6 +715,7 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 'randomize') {
             	 				'mean_difficulty' => is_numeric($_POST['mean_difficulty']) ? $_POST['mean_difficulty']   : '',
             					'balance' 		  => is_numeric($_POST['balance'])   	  ? $_POST['balance']    	   : 50);
         $params['duration'] = $params['duration']*60;
+
         //Remove units and difficulties that are set to 'Off'
         if (isset($_POST['unit_to_difficulty'])) {
             foreach ($_POST['unit_to_difficulty'] as $key => $value) {
@@ -962,9 +763,8 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 'randomize') {
 
         $questions = $currentTest -> randomize($params, $reqs);
         //ArrayObject is required in order for json to work well with prototype
-        $stats 	   = new ArrayObject($currentTest -> questionsInfo($questions));               
+        $stats 	   = new ArrayObject($currentTest -> questionsInfo($questions));
         $stats['difficulties'] = new ArrayObject($stats['difficulties']);
-
         $stats['types'] 	   = new ArrayObject($stats['types']);
         $stats['percentage']   = new ArrayObject($stats['percentage']);
         $stats['duration'] 	   = eF_convertIntervalToTime($stats['total_duration']);
@@ -1024,28 +824,6 @@ if (isset($_GET['ajax']) && $_GET['ajax'] == 'random_pool' && isset($_GET['rando
     }
 
     exit;
-}
-
-if (isset($_GET['ajax']) && $_GET['ajax'] == 'create_random_test') {	
-	try {
-		//Remove units and difficulties that are set to 'Off'
-		//@todo Check if it is better to remove 0 values from array
-		if (isset($_POST['unit_to_difficulty'])) {
-			$currentTest -> options['random_test'] = array('difficulty' => $_POST['unit_to_difficulty']);						
-		} else if (isset($_POST['unit_to_type'])) {
-			$currentTest -> options['random_test'] = array('type' => $_POST['unit_to_type']);			
-		}
-		$currentTest -> options['random_test_subunits'] = $_POST['include_subunits'];
-		$currentTest -> options['random_test_common_pool'] = $_GET['showall'];
-		$currentTest -> options['random_pool'] = 0;
-		$currentTest -> persist();
-		//header("content-type:application/json");
-		//echo json_encode($_POST['unit_to_difficulty']);
-	} catch (Exception $e) {
-		header("HTTP/1.0 500 ");
-		echo $e -> getMessage().' ('.$e -> getCode().')';
-	}
-	exit;
 }
 
 

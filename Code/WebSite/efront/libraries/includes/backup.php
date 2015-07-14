@@ -64,11 +64,7 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
         	$backupTypes = array ("0" => _DATABASEONLY);
         } else {
         	$backupTypes = array ("0" => _DATABASEONLY, "1" => _ALLDATABACKUP);
-        	if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
-        		$backupTypes[3] = _ALLDATASYSTEMBACKUP;
-        	}
         }
-        
         $backup_form -> addElement('select', 'backuptype', null, $backupTypes);
         $backup_form -> addElement('submit', 'submit_backup', _TAKEBACKUP, 'class = "flatButton" onclick = "$(\'backup_image\').show();"');
 

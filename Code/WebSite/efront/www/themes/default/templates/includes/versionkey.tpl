@@ -35,14 +35,9 @@
 	        				<td class = "elementCell" id = "version_filename"></td></tr>
 	        			<tr><td class = "labelCell" >{$smarty.const._FILESIZE}:&nbsp;</td>
 	        				<td class = "elementCell"  id = "version_filesize"></td></tr>
-	        			<tr><td class = "labelCell" >{$smarty.const._BACKUP}:&nbsp;</td>
-	        				<td class = "elementCell"  id = "version_backup">
-	        				<input type="checkbox" id="backup" name="backup" value="1" checked="checked" />
-	        			</td></tr>	
 	        			<tr><td></td>
-	        			
 	        				<td class = "submitCell">
-	        					<button id = "version_download" type = "button" name = "version_download" class = "flatButton" onclick = "downloadVersionFile(this,$('backup').checked)">{$smarty.const._DOWNLOADANDINSTALL}</button>
+	        					<button id = "version_download" type = "button" name = "version_download" class = "flatButton" onclick = "downloadVersionFile(this)">{$smarty.const._DOWNLOADANDINSTALL}</button>
 	        				</td></tr>
 	        			<tr id = "progress_cell" style = "display:none"><td colspan = "2" style = "text-align:center;"><p id = "progress_message">Downloading...</p><img src = "images/others/progress_big.gif" title = "{$smarty.const._DOWNLOADING}" alt = "{$smarty.const._DOWNLOADING}"/></td></tr>
 	        			<tr id = "finished_cell" style = "display:none"><td colspan = "2" style = "text-align:center;"><p><span style = "vertical-align:middle">Upgrade complete! Click </span><a href = "administrator.php?ctg=versionkey">here</a><span style = "vertical-align:middle"> to continue</span></p></td></tr>

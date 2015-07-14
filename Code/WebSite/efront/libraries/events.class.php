@@ -97,8 +97,6 @@ class EfrontEvent
     const COURSE_PROGRAMMED_EXPIRY = 58;
     const COURSE_CERTIFICATE_EXPIRY = 59;		// users_LOGIN, lessons_ID, lessons_name
     const COURSE_PROGRESS_RESET = 65;		// users_LOGIN, lessons_ID, lessons_name
-    const COURSE_USER_APPROVAL	= 66;		// users_LOGIN, lessons_ID, lessons_name
-    const COURSE_USER_REFUSAL	= 67;		// users_LOGIN, lessons_ID, lessons_name
     
 
     // Test codes: [75-99]
@@ -164,10 +162,6 @@ class EfrontEvent
     const COUPON_USAGE = 352;
     const NEW_MANUAL_PAYMENT = 353;              // users_LOGIN, users_name/surname, entity_ID (=coupons_ID), entity_name (=coupon_code)
 
-    const SYSTEM_USER_ACTIVATE = 354;
-    
-    const SYSTEM_USER_ARCHIVE = 355;
-    const SYSTEM_USER_UNARCHIVE = 356;
 
 	const MODULE_BASE_TYPE_CODE = 1000;		// all events with type > 1000 are considered module-related events
 											// the type of each event inside each module class is [type_value] - 1000
@@ -269,8 +263,6 @@ class EfrontEvent
 							   EfrontEvent::COURSE_PROGRAMMED_EXPIRY => array("text" => _PROGRAMMEDCOURSEEXPIRY, "category" => "courses", "canBePreceded" => 1, "priority" => 1, "afterEvent" => 1),
 							   EfrontEvent::COURSE_CERTIFICATE_EXPIRY => array("text" => _CERTIFICATEEXPIRY, "category" => "courses", "canBePreceded" => 1, "priority" => 1),
    							   EfrontEvent::COURSE_PROGRESS_RESET => array("text" => _COURSE_PROGRESS_RESET, "category" => "courses", "priority" => 1),
-   							   EfrontEvent::COURSE_USER_APPROVAL => array('text' => _SUPERVISORAPPROVAL, "category" => "courses"),
-   							   EfrontEvent::COURSE_USER_REFUSAL => array('text' => _SUPERVISORREFUSAL, "category" => "courses"),
    					
    							   EfrontEvent::NEW_POST_FOR_LESSON_TIMELINE_TOPIC => array("text" => _NEW_POST_FOR_LESSON_TIMELINE_TOPIC, "category" => "social"),
    							   EfrontEvent::DELETE_POST_FROM_LESSON_TIMELINE => array("text" => _DELETE_POST_FROM_LESSON_TIMELINE, "category" => "social"),
@@ -309,11 +301,7 @@ class EfrontEvent
    							   EfrontEvent::NEW_BALANCE_PAYMENT => array("text" => _NEWBALANCEPAYMENT, "category" => "payments"),
    							   EfrontEvent::NEW_MANUAL_PAYMENT => array("text" => _NEWMANUALPAYMENT, "category" => "payments"),
    							   EfrontEvent::NEW_PAYPAL_PAYMENT => array("text" => _NEWPAYPALPAYMENT, "category" => "payments"),
-   							   EfrontEvent::COUPON_USAGE => array("text" => _COUPONUSAGE, "category" => "payments"),
-   							   
-							   EfrontEvent::SYSTEM_USER_ACTIVATE => array('text' => _USERACTIVATED, "category" => "system"),
-   							   EfrontEvent::SYSTEM_USER_ARCHIVE  => array('text' => _USERARCHIVED, "category" => "system"),
-   							   EfrontEvent::SYSTEM_USER_UNARCHIVE  => array('text' => _USERUNARCHIVED, "category" => "system"),
+   							   EfrontEvent::COUPON_USAGE => array("text" => _COUPONUSAGE, "category" => "payments")
 							   );
 
 //2222222222222222222222222
@@ -728,21 +716,15 @@ class EfrontEvent
     	if ($this -> event['type'] == EfrontEvent::COURSE_PROGRAMMED_START || $this -> event['type'] == EfrontEvent::COURSE_PROGRAMMED_EXPIRY) {
     		$subst_array['course_start_date'] = formatTimestamp($this -> event['entity_ID'], 'time');
     		$subst_array['course_end_date'] = formatTimestamp($this -> event['entity_name'], 'time');
-    	} else if ($event_types[abs($this -> event['type'])]['category'] == 'courses') {
-    		if (!empty($this -> event['lessons_ID'])) {
-    			$course = new EfrontCourse($this -> event['lessons_ID']);
-    			$subst_array['course_start_date'] = formatTimestamp($course -> course['start_date'], 'time');
-    			$subst_array['course_end_date'] = formatTimestamp($course -> course['end_date'], 'time');
-    		}
     	}
 
-   	
+    	
     	if (isset($event_types[abs($this -> event['type'])])) {
 
     		$type = $event_types[abs($this -> event['type'])];
     		//echo $type . "***";
     		// the $this -> event['lessons_name'] might refer to courses or lessons according to the category
-    		if ($event_types[abs($this -> event['type'])]['category'] == "courses") {
+    		if ($type['category'] == "courses") {
     			$subst_array['courses_name'] = $this -> event['lessons_name'];
     		} else if ($type['category'] == 'payments') {
     			$subst_array['lessons_name'] = $this -> event['lessons_name'];
@@ -1193,11 +1175,7 @@ class EfrontEvent
 	            $this -> event['message'] .=  _SCHEDULEDEXPIRYOFCOURSE . " <b>" . $this -> event['lessons_name'] ."</b>";
 	        } else if ($this -> event['type'] == EfrontEvent::COURSE_PROGRESS_RESET) {
 	            	$this -> event['message'] .=  _WASBEINGRESETCOURSEPROGRESS . " <b>" . $this -> event['lessons_name'] ."</b>";
-	        } else if ($this -> event['type'] == EfrontEvent::COURSE_USER_APPROVAL) {
-	            	$this -> event['message'] .=  _WASAPPROVEDBYSUPERVISORFOR . " <b>" . $this -> event['lessons_name'] ."</b>";
-	        } else if ($this -> event['type'] == EfrontEvent::COURSE_USER_REFUSAL) {
-	            	$this -> event['message'] .=  _WASREFUSEDBYSUPERVISORFOR . " <b>" . $this -> event['lessons_name'] ."</b>";
-	        } else if ($this -> event['type'] == EfrontEvent::TEST_CREATION) {
+	        }  else if ($this -> event['type'] == EfrontEvent::TEST_CREATION) {
 	        	$this -> event['message'] .=  _CREATEDTHETEST . " <b>" . $this -> event['entity_name'] ."</b> " . _FORTHELESSON . " <b>" . $this -> event['lessons_name'] ."</b>";
 	        }  else if ($this -> event['type'] == EfrontEvent::CONTENT_MODIFICATION) {
 	            $this -> event['message'] .=  _HASMODIFIEDUNIT  . " <b>" . $this -> event['entity_name'] ."</b> " . _OFTHELESSON . " <b>" . $this -> event['lessons_name'] ."</b>";
@@ -1303,14 +1281,8 @@ class EfrontEvent
 	            $this -> event['message'] .=  _HASCERTIFICATED . " <b>" . $this -> event['lessons_name'] ."</b> " . _WITHGRADE ." <b>". $this -> event['entity_name'] ."</b> ". _WITHKEY . " <b> ". $this -> event['entity_ID'] ."</b>";
 	        } else if ($this -> event['type'] == EfrontEvent::COURSE_CERTIFICATE_REVOKE) {
 	            $this -> event['message'] .=  _HASLOSTCERTIFICATE . " <b>" . $this -> event['lessons_name'] ."</b>";
-	        } else if ($this -> event['type'] == EfrontEvent::COURSE_CERTIFICATE_EXPIRY) {
+	        }  else if ($this -> event['type'] == EfrontEvent::COURSE_CERTIFICATE_EXPIRY) {
 	            $this -> event['message'] .=  _CERTIFICATEEXPIRY . " <b>" . $this -> event['lessons_name'] ."</b>";
-			} else if ($this -> event['type'] == EfrontEvent::SYSTEM_USER_ACTIVATE) {
-	        	$this -> event['message'] .=  _WASACTIVATEDFROMTHESYSTEM;
-	        } else if ($this -> event['type'] == EfrontEvent::SYSTEM_USER_ARCHIVE) {
-				$this -> event['message'] .=  _WASARCHIVEDFROMTHESYSTEM;
-			} else if ($this -> event['type'] == EfrontEvent::SYSTEM_USER_UNARCHIVE) {
-				$this -> event['message'] .=  _WASUNARCHIVEDFROMTHESYSTEM;
 	        } else {
 	          return false;
 	        }

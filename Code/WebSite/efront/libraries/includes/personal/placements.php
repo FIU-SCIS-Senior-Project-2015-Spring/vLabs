@@ -140,22 +140,15 @@ if (G_VERSIONTYPE == 'enterprise') { #cpp#ifdef ENTERPRISE
 
 function eF_local_printBranchJobs($branch) {
 	$result = $branch -> getJobDescriptions();
-	
 	$branchJobs = array("--- {$branch->branch['name']} ---");
 	foreach ($result as $value) {
-		$branchJobsSorted[$value['description']] = $value['description'];
+		$branchJobs[$value['description']] = $value['description'];
 	}
-	asort($branchJobsSorted);
-	$branchJobs = array_merge($branchJobs, $branchJobsSorted);
-
-	
 	$branchJobs['#empty#'] = "--- "._OTHERBRANCHJOBS." ---";
 	$result = eF_getTableData("module_hcd_job_description", "distinct description");
 	foreach ($result as $value) {
-		$branchJobsSorted2[$value['description']] = $value['description'];
+		$branchJobs[$value['description']] = $value['description'];
 	}
-	asort($branchJobsSorted2);
-	$branchJobs = array_merge($branchJobs, $branchJobsSorted2);
 
 	return $branchJobs;
 }

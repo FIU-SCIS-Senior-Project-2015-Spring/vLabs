@@ -16,38 +16,33 @@ try {
 
         if (in_array($_GET['login'], $additionalAccounts)) {
             $newUser = EfrontUserFactory::factory($_GET['login']);
-            $lessonID = $_SESSION['s_lessons_ID'];
-            $courseID = $_SESSION['s_courses_ID'];
-	        if ($newUser -> user['active']) {
-				$currentUser -> logout(session_id());
-				$newUser -> isLdapUser = false; // in order to work for ldap users
-				$newUser -> login($newUser -> user['password'], true);
-				if ($_SESSION['s_type'] != 'administrator' && $lessonID) {
-					if ($courseID) {
-	                	setcookie('c_request', $_SESSION['s_type'].'.php?lessons_ID='.$lessonID."&from_course=".$courseID, time() + 300, false, false, false, true);
-					} else {
-						setcookie('c_request', $_SESSION['s_type'].'.php?lessons_ID='.$lessonID, time() + 300);
-					}
-	            }
-	            EfrontEvent::triggerEvent(array("type" => EfrontEvent::SYSTEM_VISITED, "users_LOGIN" => $newUser -> user['login'], "users_name" => $newUser -> user['name'], "users_surname" => $newUser -> user['surname']));
-	            
-				unset($_SESSION['referer']);
-				$redirectPage = $GLOBALS['configuration']['login_redirect_page'];
-				if ($redirectPage == "user_dashboard" && $newUser -> user['user_type'] != "administrator") {
-					echo 'userpage.php?ctg=personal';
-				}elseif (strpos($redirectPage, "module") !== false) {
-					echo 'userpage.php?ctg=landing_page';
+			$lessonID = $_SESSION['s_lessons_ID'];
+			$courseID = $_SESSION['s_courses_ID'];
+			$currentUser -> logout(session_id());
+			$newUser -> isLdapUser = false; // in order to work for ldap users
+			$newUser -> login($newUser -> user['password'], true);
+			if ($_SESSION['s_type'] != 'administrator' && $lessonID) {
+				if ($courseID) {
+                	setcookie('c_request', $_SESSION['s_type'].'.php?lessons_ID='.$lessonID."&from_course=".$courseID, time() + 300, false, false, false, true);
 				} else {
-					echo 'userpage.php';
+					setcookie('c_request', $_SESSION['s_type'].'.php?lessons_ID='.$lessonID, time() + 300);
 				}
-            } else {
-            	echo 'userpage.php?message='.urlencode(_USERINACTIVE).'&message_type=failure';
             }
+            EfrontEvent::triggerEvent(array("type" => EfrontEvent::SYSTEM_VISITED, "users_LOGIN" => $newUser -> user['login'], "users_name" => $newUser -> user['name'], "users_surname" => $newUser -> user['surname']));
+            
+			unset($_SESSION['referer']);
+			$redirectPage = $GLOBALS['configuration']['login_redirect_page'];
+			if ($redirectPage == "user_dashboard" && $newUser -> user['user_type'] != "administrator") {
+				echo 'userpage.php?ctg=personal';
+			}elseif (strpos($redirectPage, "module") !== false) {
+				echo 'userpage.php?ctg=landing_page';
+			} else {
+				echo 'userpage.php';
+			}
         }
     }
 
 } catch (Exception $e) {
-	vd($e);
 	handleAjaxExceptions($e);
 }
 

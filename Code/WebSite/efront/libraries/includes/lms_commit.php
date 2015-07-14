@@ -5,21 +5,6 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
 	exit;
 }
 
-if (is_dir("scorm_logs") && eF_checkParameter($_POST['content_ID'], 'id')) {
-	
-	$unit = new EfrontUnit($_POST['content_ID']);
-	if ($unit['options']['scorm_logging']) {
-		$lesson = new EfrontLesson($_SESSION['s_lessons_ID']);
-
-		$str = formatTimestamp(time(), 'time').", {$currentUser->user['login']}, Committed data for '{$unit['name']} ({$_POST['content_ID']}) in lesson {$lesson->lesson['name']} ({$lesson->lesson['id']}):";
-		foreach ($_POST as $key=>$value) {
-			if ($key != 'content_ID' && $key != 'users_LOGIN' && $value) {
-				$str .= " {$key}:{$value},";
-			}
-		}
-		file_put_contents("scorm_logs/".date("Y_m_d").".scorm.log", $str."\n", FILE_APPEND);
-	}
-}
 
 try {
 	//pr($_POST);pr($_GET);
@@ -50,7 +35,6 @@ try {
 			strtolower($fields['lesson_status']) == 'passed' ||
 			strtolower($fields['lesson_status']) == 'completed') {
 		$seenUnit = true;
-		
 	} else {
 		$seenUnit = false;
 	}	
@@ -367,9 +351,7 @@ try {
 		$trackActivityInfo[$fields['content_ID']]['completion_status'] = strtolower($fields['lesson_status']);
 		$trackActivityInfo[$fields['content_ID']]['success_status']	   = strtolower($fields['lesson_status']);
 
- 		if (empty(json_decode($fields['objectives']))) {
- 		    unset($fields['objectives']);
- 		}
+		unset($fields['objectives']);
 		unset($fields['navigation']);
 		unset($fields['completion_status']);
 		unset($fields['success_status']);
@@ -421,9 +403,6 @@ try {
 		if ($_GET['scorm_version'] == '2004') {
 			eF_updateTableData("scorm_data_2004", $fields, "id=".$result[0]['id']);		//Update old values with new ones
 		} elseif($credit) {
-			if (empty($fields['score'])) {
-				unset($fields['score']);	//this way, if a content sends completion but not score, it will not overwrite existing score
-			} 
 			eF_updateTableData("scorm_data", $fields, "id=".$result[0]['id']);		//Update old values with new ones
 		}
 	} else {
@@ -439,27 +418,7 @@ try {
 	}
 
 	if ($credit && $seenUnit) {
-		$scoUser -> setSeenUnit($scoUnit, $scoLesson, true);		
-	}
-	$remaining_times = -1;
-	if ($credit) {
-		if ($seenUnit || strtolower($fields['completion_status']) == 'failed' || strtolower($fields['lesson_status']) == 'failed') {
-			$result = eF_getTableData("users_to_content", "visits, attempt_identifier", "content_ID={$unit['id']} and users_LOGIN='{$scoUser->user['login']}'");
-			if (!empty($result)) {
-// 				vd($_SESSION['attempt_identifier']);
-// 				vd($result[0]['attempt_identifier']);
-				
-				$visits = $result[0]['visits'];
-				if ($_SESSION['attempt_identifier'] != $result[0]['attempt_identifier']) {
-					eF_updateTableData("users_to_content", array("visits" => $result[0]['visits']+1, "attempt_identifier"=>$_SESSION['attempt_identifier']), "content_ID={$unit['id']} and users_LOGIN='{$scoUser->user['login']}'");
-					$visits = $result[0]['visits']+1;
-				}
-			} else {
-				eF_insertTableData("users_to_content", array("attempt_identifier" => $_SESSION['attempt_identifier'], "visits" => 1, "content_ID"=>$unit['id'], "lessons_ID" => $unit['lessons_ID'], "users_LOGIN"=>$scoUser->user['login']));
-				$visits = 1;
-			}
-			$remaining_times = $unit['options']['scorm_times'] - $visits;
-		}
+		$scoUser -> setSeenUnit($scoUnit, $scoLesson, true);
 	}
 
 	$newUserProgress	 = EfrontStats :: getUsersLessonStatus($scoLesson, $scoUser -> user['login']);
@@ -467,15 +426,15 @@ try {
 	$newPercentage	   	 = $newUserProgress[$scoLesson -> lesson['id']][$scoUser -> user['login']]['overall_progress'];
 	$newConditionsPassed = $newUserProgress[$scoLesson -> lesson['id']][$scoUser -> user['login']]['conditions_passed'];
 	$newLessonPassed	 = $newUserProgress[$scoLesson -> lesson['id']][$scoUser -> user['login']]['lesson_passed'];
-
-	if ($scoLesson -> lesson['course_only'] && $_SESSION['s_courses_ID']) {
+	//pr($trackActivityInfo);
+	if ($scoLesson -> lesson['course_only']) {
 		$res = eF_getTableData("users_to_courses","issued_certificate","courses_ID=".$_SESSION['s_courses_ID']." and users_LOGIN='".$_SESSION['s_login']."'");
 		if ($res[0]['issued_certificate'] != "") {
 			$courseCertified = true;
 		}	
 	}
 	
-	echo json_encode(array($newPercentage, $newConditionsPassed, $newLessonPassed, $scormState, $redirectTo, $trackActivityInfo,  $courseCertified, $remaining_times));
+	echo json_encode(array($newPercentage, $newConditionsPassed, $newLessonPassed, $scormState, $redirectTo, $trackActivityInfo,  $courseCertified));
 
 } catch (Exception $e) {
 	echo json_encode(array('error' => $e->getMessage()));

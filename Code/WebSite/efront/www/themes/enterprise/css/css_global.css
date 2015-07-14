@@ -291,12 +291,6 @@ background:#A1B6C8 url('../images/css_images/gradient.gif') repeat-x top;
 border:1px solid #2a4562;
 color:#FFFFFF;
 }
-.anc_gre_btn {	
-width: 1.5em;  
-font-size: 17px;
-display: inline-block;
-padding: 1px!important;
-}
 table.formElements{margin-left:0px;margin-right:0px;}
 table.formElements a{vertical-align:middle;}
 table.formElements a img{vertical-align:middle;border-width:0px;}

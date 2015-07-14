@@ -101,24 +101,7 @@ class EfrontNotification
             $this -> notification = $notification[0];
         }
     }
-     public static function createSubstitutionsArrayForDateNotifications($conditions) {
-     	$subs_array = array();
-     	if (isset($conditions['courses_ID'])) {
-     		$res = eF_getTableData('courses', 'name', 'id='.$conditions['courses_ID']);
-     		$subs_array['courses_name'] = $res[0]['name'];
-     	} elseif (isset($conditions['lessons_ID'])) {
-     		$res = eF_getTableData('lessons', 'name', 'id='.$conditions['lessons_ID']);
-     		$subs_array['lessons_name'] = $res[0]['name'];
-     	} elseif (isset($conditions['groups_ID'])) {
-     		$res = eF_getTableData('groups', 'name', 'id='.$conditions['groups_ID']);
-     		$subs_array['groups_name'] = $res[0]['name'];
-     	} elseif (isset($conditions['user_type'])) {
-     		$roles = EfrontUser :: getRoles(true);
-     		$subs_array['users_type'] = $roles[$conditions['user_type']];
-     	} 
-     	
-     	return $subs_array;
-     }
+
     /**
      * Get all system notification types
      *
@@ -213,8 +196,8 @@ class EfrontNotification
 										  "subject"    		=> _PASSWORDRECOVERY,
 										  "message"			=> _DEARUSER." ###users_name###,<br><br>".
 												               _THISISANAUTOMATEDEMAILSENTFROM." ###host_name### "._BECAUSEYOUASKEDTORECOVERPASSWORD." "._PLEASECLICKTHECONFIRMATIONLINKBELOW.".<br><br>"
-												               .'###host_name###index.php?ctg=reset_pwd&login=###users_login###&id=###md5(###users_login###)###<br><br>'
-												               ._ALTERNATIVELYCOPYANDPASTEBROWSER.".<br>"._CLIKCINGONTHELINKWILLCONFIRM." <br>"._FORFURTHERCONTACTADMINAT.' ###host_name###index.php?ctg=contact <br><br>'._KINDREGARDSEFRONT."<br>---<br>"._ADMINISTRATIONGROUP."<br>###site_name###<br>###site_motto###<br>"
+												               .'###host_name###/index.php?ctg=reset_pwd&login=###users_login###&id=###md5(###users_login###)###<br><br>'
+												               ._ALTERNATIVELYCOPYANDPASTEBROWSER.".<br>"._CLIKCINGONTHELINKWILLCONFIRM." <br>"._FORFURTHERCONTACTADMINAT.' ###host_name###/index.php?ctg=contact <br><br>'._KINDREGARDSEFRONT."<br>---<br>"._ADMINISTRATIONGROUP."<br>###site_name###<br>###site_motto###<br>"
 												               ._AUTOMATEDEMAILSENTFROM." ###host_name### "._ON." ###date###<br><br>");
 			eF_insertTableData("event_notifications", $default_notification);
 		}
@@ -225,7 +208,7 @@ class EfrontNotification
 									      "send_immediately"=> 1,
 										  "subject"    		=> _PASSWORDRECOVERY,
 										  "message"			=> _DEARUSER." ###users_name###,<br><br>"._THISISANAUTOMATEDEMAILSENTFROM." ###host_name### "._WITHTHENEWPASSWORD." <br>"._THENEWPASSWORDIS."<br><br>###new_password###<br>
-               												   <br>"._FORFURTHERCONTACTADMINAT." ###host_name###index.php?ctg=contact <br><br>"._KINDREGARDSEFRONT."<br>---<br>"._ADMINISTRATIONGROUP."<br>###site_name###<br>###site_motto###<br>"
+               												   <br>"._FORFURTHERCONTACTADMINAT." ###host_name###/index.php?ctg=contact <br><br>"._KINDREGARDSEFRONT."<br>---<br>"._ADMINISTRATIONGROUP."<br>###site_name###<br>###site_motto###<br>"
                												   ._AUTOMATEDEMAILSENTFROM." ###host_name### "._ON." ###date###");
 
 			eF_insertTableData("event_notifications", $default_notification);
@@ -236,9 +219,9 @@ class EfrontNotification
 									      "send_conditions" => serialize(array()),
 									      "send_immediately"=> 1,
 										  "subject"    		=> _ACCOUNTACTIVATIONMAILSUBJECT,
-										  "message"			=> _DEARUSER." ###users_name###,<br><br>"._WELCOMETOOUR.' '._ELEARNINGPLATFORM.".! <br>"._ACCOUNTACTIVATIONMAILBODY."<br>###host_name###index.php?account=###users_login###&key=###timestamp###<br><br><br>".
+										  "message"			=> _DEARUSER." ###users_name###,<br><br>"._WELCOMETOOUR.' '._ELEARNINGPLATFORM.".! <br>"._ACCOUNTACTIVATIONMAILBODY."<br>###host_name###/index.php?account=###users_login###&key=###timestamp###<br><br><br>".
 												               _AUTOMATEDEMAILSENTFROM.' ###host_name### '._ON.' ###date###<br>'.
-												               _FORFURTHERCONTACTADMINAT." ###host_name###index.php?ctg=contact <br><br>"._KINDREGARDSEFRONT."<br>---<br>"._ADMINISTRATIONGROUP."<br>###site_name###<br>###site_motto###<br>");
+												               _FORFURTHERCONTACTADMINAT." ###host_name###/index.php?ctg=contact <br><br>"._KINDREGARDSEFRONT."<br>---<br>"._ADMINISTRATIONGROUP."<br>###site_name###<br>###site_motto###<br>");
 			eF_insertTableData("event_notifications", $default_notification);
 		}
 		
@@ -984,8 +967,9 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
 	    		  	
 	    			} #cpp#endif
 				} elseif (is_array($this -> notification['send_conditions'])) {
+
 	            	$this -> recipients = $this -> notification['send_conditions'];
-	            	
+
 			    	// The recipients array definitely exists, due to constructor checks
 			    	if (isset($this -> recipients["lessons_ID"]) && $this -> recipients["lessons_ID"]) {
 			    		$lesson = new EfrontLesson($this -> recipients["lessons_ID"]);
@@ -1016,16 +1000,12 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
 			    			}
 			    			
 			    		}
-			    	} else if (isset($this -> recipients["courses_ID"])) {
-
-			    		$entity_parts = explode("_",$this->notification['id_type_entity']);
-			    		$notification_type = $entity_parts[1]; 
-			    		
+			    	} else if (isset($this -> recipients["courses_ID"])) {			    		
 			    		if ($this -> recipients['user_type'] == "professor") {
 							$completed_condition = " AND uc.user_type = 'professor'";
 			    		} else if ($this -> recipients['completed'] == "1") {
 			    			$completed_condition = " AND completed = '1'";
-			    		} else if ($this -> recipients['completed'] == "2" || $notification_type == EfrontEvent::COURSE_PROGRAMMED_EXPIRY) {
+			    		} else if ($this -> recipients['completed'] == "2") {
 			    			$completed_condition = " AND completed = '0' and uc.user_type in ('".implode("','", array_keys(EfrontLessonUser::getStudentRoles()))."')";
 			    		} else {
 			    			$completed_condition = "";
@@ -1051,15 +1031,6 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
 			    				$recipients = array();
 			    				foreach ($result['users_LOGIN'] as $supervisor) {
 			    					$recipients[$supervisor] = array("login" => $supervisor);
-			    				}
-			    				$filtered_recipients = array();
-			    				if (!empty($recipients)) {
-			    					$active_recipients = eF_getTableDataFlat("users", "login", "active=1 and archive=0 and login IN ('".implode("','", array_keys($recipients))."')");
-			    					
-			    					foreach ($active_recipients["login"] as $login) {
-			    						$filtered_recipients[$login] = array("login" => $login);
-			    					}
-			    					$recipients = $filtered_recipients;
 			    				}
 			    			} else {
 			    				$query = "select distinct u.login, u.name, u.surname, u.email, u.user_type as basic_user_type, u.active, u.user_types_ID from module_hcd_employee_works_at_branch ewb join users u on u.login=ewb.users_login where ewb.assigned=1 and supervisor=1 and u.active=1 and u.archive=0 and branch_ID in (select branch_ID from module_hcd_employee_works_at_branch ewb, users_to_courses uc where uc.users_LOGIN=ewb.users_login and ewb.assigned=1 and uc.courses_ID=". $this -> recipients["courses_ID"]." and uc.archive=0)";	//get course users' supervisors
@@ -1221,7 +1192,6 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
                          'Content-Transfer-Encoding' => '7bit',
     					 'Date' => date("r"));
 
-    	
     	if ($this -> notification['html_message'] == 1) {
     		$header['Content-type'] = 'text/html;charset="UTF-8"';                       // if content-type is text/html, the message cannot be received by mail clients for Registration content
     	} else {
@@ -1263,35 +1233,23 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
         $message = eF_formulateTemplateMessage($message, $template_formulations);
     	$message = eF_replaceMD5($message);
 
-    	if ($GLOBALS['configuration']['notifications_send_mode'] == 0) {	//email only   
-    		if (!empty($recipient['email'])) { 		
-    			$result = $smtp -> send($recipient['email'], $header, $message);
-    		}
+    	if ($GLOBALS['configuration']['notifications_send_mode'] == 0) {	//email only    		
+    		$result = $smtp -> send($recipient['email'], $header, $message);
     	} else if ($GLOBALS['configuration']['notifications_send_mode'] == 1) {	//pm only
     		$pm = new eF_PersonalMessage($recipient['login'], $recipient['login'], $header['Subject'], $message);
     		$result = $pm->send();
     	} else if ($GLOBALS['configuration']['notifications_send_mode'] == 2) {	//email and pm
     		$pm = new eF_PersonalMessage($recipient['login'], $recipient['login'], $header['Subject'], $message);
     		$pm->send();
-    		if (!empty($recipient['email'])) {
-    			$result = $smtp -> send($recipient['email'], $header, $message); 
-    		}   		
+    		$result = $smtp -> send($recipient['email'], $header, $message);    		
     	}
     	
-    	if (PEAR::isError($result)) {
-    		$admin = EfrontSystem::getAdministrator();
-    		eF_mail($GLOBALS['configuration']['system_email'], $admin->user['email'], _AUTOMATEDEMAILSENTFROM.$admin->user['email'], $result -> getMessage());
-    		throw new EfrontNotificationException($result -> getMessage(), EfrontNotificationException::GENERAL_ERROR);    		
-    	}
-    	
-    	if ($result === true) {
-			// put into sent_notifications table
-    	    eF_insertTableData("sent_notifications", array(
-    	    	"timestamp"		=> time(),
-    			"recipient"		=> $recipient['email'] . " (" .$recipient['name'] . " " . $recipient['surname'] . ")",
-    			"subject"		=> $header['Subject'],
-    			"body"			=> $message,
-    	    	"html_message"	=> $this -> notification['html_message']));
+    	if ($result) {
+    	// put into sent_notifications table
+    	    eF_insertTableData("sent_notifications", array("timestamp" => time(),
+    												   		"recipient" => $recipient['email'] . " (" .$recipient['name'] . " " . $recipient['surname'] . ")",
+    												   		"subject"   => $header['Subject'],
+    												   		"body"	   => $message));
     	    return true;
     	} else {
     	    return false;
@@ -1332,12 +1290,6 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
 
     	$result = eF_getTableData("notifications", "*", "active = 1 AND timestamp <" . time(), "timestamp ASC LIMIT $limit");
 
-    	// Delete notifications for inactive users
-    	$notifications_to_delete = eF_getTableData("notifications as n, users as u", "n.id", "n.recipient=u.login AND u.active=0");
-    	foreach($notifications_to_delete as $notification) {
-    		eF_deleteTableData("notifications", "id = '" . $notification['id'] . "'");
-    	}
-    	
     	$notifications_to_send = array();
     	foreach ($result as $next_notification) {
     		$notification = new EfrontNotification($next_notification);
@@ -1361,9 +1313,9 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
     				}
     			}
     		} catch (Exception $e) {
-    			$sendingErrors[] = $e -> getMessage();  			
+    			$sendingErrors[] = $e -> getMessage();
     		}
-    		
+
     		// Check if the notification is periodical - if so  arrange (insert) the next notification
     		// Note here: generated single recipient notifications should never have a send interval
     		if ($notification -> notification['send_interval'] != "") {
@@ -1375,14 +1327,17 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
     		if ($sendingErrors) {
     			throw new Exception(implode(",", $sendingErrors));
     		}
+
     		// If all $limit messages have been sent, check whether some recipients still remain
     		if (!$limit) {
+
     			// Push all remaining recipients back to the notifications list, as single user notifications
     			if (sizeof($recipients) > 0) {
     				$notifications_to_send = array();
     				foreach ($recipients as $login => $recipient) {
     					$notifications_to_send[] = time() . "', '" . $login . "', '".$notification -> notification['message']  . "', '".$notification -> notification['subject'] . "', '" . $notification -> notification['id_type_entity'];
     				}
+
     				if (sizeof($notifications_to_send)) {
     					eF_executeNew("INSERT INTO notifications (timestamp, recipient, message, subject, id_type_entity) VALUES ('". implode("'),('", $notifications_to_send) . "')");
     				}
@@ -1391,6 +1346,7 @@ h) Enhmerwsh ana X meres gia shmantika gegonota sto eFront (auto prepei na to sy
     			return $init_limit;	// all messages have been sent
     		}
     	}
+
     	return $init_limit - $limit;
     }
 

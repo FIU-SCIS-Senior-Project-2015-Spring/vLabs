@@ -253,8 +253,6 @@
 							{$T_GROUPS[$item.option]}
 						{elseif $item.condition == 'active'}
 							{if $item.option == 1}{$smarty.const._ACTIVE}{else}{$smarty.const._INACTIVE}{/if}
-						{elseif $item.condition == 'archive'}
-							{if $item.option == 1}{$smarty.const._ARCHIVED}{else}{$smarty.const._NONARCHIVED}{/if}
 						{elseif $item.condition == 'branch' || $item.condition == 'branch_tree'}
 							{$T_BRANCHES[$item.option]}
 						{elseif $item.condition == 'learning_status'}

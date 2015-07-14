@@ -48,12 +48,13 @@ if (isset($currentUser -> coreAccess['configuration']) && $currentUser -> coreAc
 } else {
 	$userMainForm -> addElement("submit", "submit", _SAVE, 'class = "flatButton"');
 	if ($userMainForm -> isSubmitted() && $userMainForm -> validate()) {
+		pr($_POST);
 		$values = $userMainForm -> exportValues();
 		if ($values['reset_license_note'] || $values['reset_license_note_always']) {
 			eF_updateTableData("users", array("viewed_license" => 0), "viewed_license = 1");
 		}
 		if ($values['username_format']) {
-			EfrontCache::getInstance()->deleteCache('usernames');
+			EfrontCache::getInstance()->deleteCache(G_DBNAME.':_usernames');
 		}
 		if ($values['time_reports'] != $GLOBALS['configuration']['time_reports']) {
 			EfrontSystem::switchLessonReportingMode($values['time_reports']);

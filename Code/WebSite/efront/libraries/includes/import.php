@@ -126,7 +126,7 @@ if ($form -> isSubmitted() && $form -> validate()) {
 					sort($fileContents);
 					//Check if it is a SCORM file
 					if (in_array("imsmanifest.xml", $fileContents)) {
-						$scormFolderName = EfrontFile :: encode(eFront_basename($file['name'], '.zip'));
+						$scormFolderName = EfrontFile :: encode(basename($file['name'], '.zip'));
 						$scormPath       = $currentLesson -> getDirectory().$scormFolderName.'/';
 						is_dir($scormPath) OR mkdir($scormPath, 0755);
 
@@ -176,7 +176,7 @@ if ($form -> isSubmitted() && $form -> validate()) {
 				$offsetDir   	= str_replace($currentLesson -> getDirectory(), "", $file['directory']);
 				$parentId		 = $units[dirname($offset)];
 
-				$fields = array('name'       => eFront_basename($file['name'], '.'.$pathParts['extension']),
+				$fields = array('name'       => basename($file['name'], '.'.$pathParts['extension']),
                                 'lessons_ID' => $currentLesson -> lesson['id'],
                                 'parent_content_ID' => $parentId ? $parentId : 0);
 				
@@ -230,19 +230,19 @@ if ($form -> isSubmitted() && $form -> validate()) {
 					$fields['data'] = '<iframe style="visibility:hidden;display:none" src="view_file.php?file='.$file['id'].'&action=download"></iframe>';
 					$unit = $currentContent -> insertNode($fields);
 				} elseif ($pathParts['extension'] == 'txt')	{
-					$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download"><img src="images/file_types/txt.png" style="vertical-align:middle" />'.eFront_basename($file['name']).'</a>';
+					$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download"><img src="images/file_types/txt.png" style="vertical-align:middle" />'.basename($file['name']).'</a>';
 					$unit = $currentContent -> insertNode($fields);
 				} elseif ($pathParts['extension'] == 'doc' || $pathParts['extension'] == 'rtf' || $pathParts['extension'] == 'docx' || $pathParts['extension'] == 'xls' || $pathParts['extension'] == 'xlsx' || $pathParts['extension'] == 'ppt' || $pathParts['extension'] == 'pptx' || $pathParts['extension'] == 'zip' || $pathParts['extension'] == 'rar')	{
-					$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download"><img src="images/file_types/'.$pathParts['extension'].'.png" style="vertical-align:middle" />'.eFront_basename($file['name']).'</a>';
+					$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download"><img src="images/file_types/'.$pathParts['extension'].'.png" style="vertical-align:middle" />'.basename($file['name']).'</a>';
 					$unit = $currentContent -> insertNode($fields);
 				} elseif ($pathParts['extension'] == 'js') {
 					//do not create unit for js files
 				}
 				else {
 					if (file_exists(G_THEMESPATH.'default/images/file_types/'.$pathParts['extension'].'.png')){
-						$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download"><img src="images/file_types/'.$pathParts['extension'].'.png" style="vertical-align:middle" />'.eFront_basename($file['name']).'</a>';
+						$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download"><img src="images/file_types/'.$pathParts['extension'].'.png" style="vertical-align:middle" />'.basename($file['name']).'</a>';
 					} else {
-						$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download">'.eFront_basename($file['name']).'</a>';
+						$fields['data'] = '<a href = "view_file.php?file='.$file['id'].'&action=download">'.basename($file['name']).'</a>';
 					}
 					$unit = $currentContent -> insertNode($fields);
 				}

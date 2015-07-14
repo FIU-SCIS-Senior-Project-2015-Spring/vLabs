@@ -240,25 +240,9 @@
 		    <tr><td class = "labelCell">{$smarty.const._CLEAROPCODECACHE}:&nbsp;</td>
 		        <td class = "submitCell"><input class = "flatButton" type = "button" value = "{$smarty.const._CLEAR}" onclick = "clearCache(this, 'apc')"/></td></tr>
 		    {/if}
-		     <tr><td class = "labelCell">{$smarty.const._CLEAREDITORCACHE}:&nbsp;</td>
-		        <td class = "submitCell"><input class = "flatButton" type = "button" value = "{$smarty.const._CLEAR}" onclick = "clearCache(this, 'editor')"/></td></tr>
-		    
         </table>
 	{/capture}
 
-	{capture name = 't_clear_files_code'}
-        <table>
-		    <tr><td class = "labelCell">{$smarty.const._CLEAREXPORTEDLESSONFILES}:&nbsp;</td>
-		        <td class = "submitCell"><input class = "flatButton" type = "button" value = "{$smarty.const._CLEAR}" onclick = "clearFiles(this, 'exported_lessons')"/></td></tr>
-			<tr><td class = "labelCell">{$smarty.const._CLEAREXPORTEDCOURSEFILES}:&nbsp;</td>
-		        <td class = "submitCell"><input class = "flatButton" type = "button" value = "{$smarty.const._CLEAR}" onclick = "clearFiles(this, 'exported_courses')"/></td></tr>
-        	<tr><td class = "labelCell">{$smarty.const._CLEARBACKUPTEMPFOLDER}:&nbsp;</td>
-		        <td class = "submitCell"><input class = "flatButton" type = "button" value = "{$smarty.const._CLEAR}" onclick = "clearFiles(this, 'backup_temp')"/></td></tr>
-        
-		</table>
-	{/capture}
-	
-	
 	{capture name = "t_cleanup_div_code"}
 		<div class = "tabber">
 		{if !isset($T_CURRENT_USER->coreAccess.configuration) || $T_CURRENT_USER->coreAccess.configuration == 'change'}
@@ -267,7 +251,6 @@
 		        {eF_template_printBlock tabber = "permissions" title=$smarty.const._PERMISSIONS data=$smarty.capture.t_permissions_code image='32x32/generic.png'}
 		{/if}
 		        {eF_template_printBlock tabber = "clear_cache" title=$smarty.const._CLEARCACHE data=$smarty.capture.t_clear_cache_code image='32x32/error_delete.png'}
-		        {eF_template_printBlock tabber = "clear_files" title=$smarty.const._CLEARFILES data=$smarty.capture.t_clear_files_code image='32x32/error_delete.png'}
 		</div>
 	{/capture}
 

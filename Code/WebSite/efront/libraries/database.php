@@ -130,8 +130,6 @@ function eF_insertTableData($table, $fields)
     isset($fields['id']) ? $customId = $fields['id'] : $customId = 0;
     $fields = eF_addSlashes($fields);
     array_walk($fields, create_function('&$v, $k', 'if (is_string($v)) $v = "\'".$v."\'"; else if (is_null($v)) $v = "null"; else if ($v === false) $v = 0; else if ($v === true) $v = 1;'));
-    //array_walk($fields, create_function('&$v, $k', 'if (is_null($v)) $v = "null"; else if ($v === false) $v = 0; else if ($v === true) $v = 1; else $v = "\'".$v."\'"; ')); //check if better
-    
     $sql = "insert into $table (".implode(",", array_keys($fields)).") values (".implode(",", ($fields)).")";
 
     $result = $GLOBALS['db'] -> Execute($sql);

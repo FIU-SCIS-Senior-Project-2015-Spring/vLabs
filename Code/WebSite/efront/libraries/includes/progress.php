@@ -3,7 +3,7 @@ if (str_replace(DIRECTORY_SEPARATOR, "/", __FILE__) == $_SERVER['SCRIPT_FILENAME
     exit;
 }
 
-if (!EfrontUser::isOptionVisible('progress')) {
+if (isset($currentUser -> coreAccess['progress']) && $currentUser -> coreAccess['progress'] == 'hidden') {
     eF_redirect(basename($_SERVER['PHP_SELF'])."?ctg=control_panel&message=".urlencode(_UNAUTHORIZEDACCESS)."&message_type=failure");exit;
 }
 
@@ -91,7 +91,7 @@ if (isset($_GET['edit_user']) && eF_checkParameter($_GET['edit_user'], 'login'))
         }
     }
 
-    $testNames = eF_getTableDataFlat("tests t, content c", "t.id, c.name", "c.id=t.content_ID and t.active=1 and t.publish=1 and c.ctg_type='tests' and c.lessons_ID=".$currentLesson -> lesson['id']);
+    $testNames = eF_getTableDataFlat("tests t, content c", "t.id, c.name", "c.id=t.content_ID and t.active=1 and c.ctg_type='tests' and c.lessons_ID=".$currentLesson -> lesson['id']);
     $testNames = array_combine($testNames['id'], $testNames['name']);
 
 
@@ -110,7 +110,6 @@ if (isset($_GET['edit_user']) && eF_checkParameter($_GET['edit_user'], 'login'))
     foreach($scormDoneTests as $key => $value) {
         $userStats['scorm_done_tests'][$key] = array('name' => $value['name'], 'score' => $value['score'], 'content_ID' => $key);
     }
- 
     unset($userStats['done_tests']['average_score']);
     $smarty -> assign("T_USER_LESSONS_INFO", $userStats);
 
@@ -166,11 +165,8 @@ try {
 		} else {
 			$timestamp = time();
 		}
-		$res = eF_getTableData("users_to_lessons", "user_type", "users_LOGIN='".$_GET['change_user']."' AND lessons_ID='".$currentLesson -> lesson['id']."'");
-		if($res[0]['user_type'] == 'student') {
-			$user = EfrontUserFactory :: factory($_GET['change_user'], false, 'student');
-			$user -> changeProgressInLesson($currentLesson, $timestamp);
-		}		
+		$user = EfrontUserFactory :: factory($_GET['change_user']);		
+		$user -> changeProgressInLesson($currentLesson, $timestamp);
 		exit;
 	}
 	
@@ -188,11 +184,8 @@ try {
 	    	$info = eF_getTableData("users_to_lessons", "users_LOGIN,lessons_ID,completed,score,to_timestamp,comments", "users_LOGIN IN (".$list.") and lessons_ID = ".$currentLesson -> lesson['id']);					
 			foreach ($info as $value) {
 				if ($value['completed'] == 0) {
-					$res = eF_getTableData("users_to_lessons", "user_type", "users_LOGIN='".$value['users_LOGIN']."' AND lessons_ID='".$currentLesson -> lesson['id']."'");
-					if($res[0]['user_type'] == 'student') {
-      					$user = EfrontUserFactory :: factory($value['users_LOGIN'], false, 'student');
-						$user -> completeLesson($currentLesson -> lesson['id'], 100, '', $timestamp);
-					}
+					$user = EfrontUserFactory :: factory($value['users_LOGIN']);		
+					$user -> completeLesson($currentLesson -> lesson['id'], 100, '', $timestamp);
 				}
 			}
 	    }

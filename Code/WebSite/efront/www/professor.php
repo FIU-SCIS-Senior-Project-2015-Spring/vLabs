@@ -567,18 +567,6 @@ try {
 	}
 	elseif ($ctg == 'lessons') {
 	    /***/
-		if (strcmp(basename($_SERVER['PHP_SELF']), $currentUser->user['user_type'].'.php') !== 0) {
-			$_SESSION['s_type'] = $currentUser->user['user_type'];
-			unset($_SESSION['s_lessons_ID']);
-			eF_redirect($_SESSION['s_type'].'.php?ctg=lessons');
-		}
-		
-		$userLessons = $currentUser -> getLessons();
-		if($_SESSION['s_type'] != $userLessons[$_SESSION['s_lessons_ID']]) {
-			unset($currentUser->coreAccess);
-			unset($_SESSION['s_lessons_ID']);
-		}
-				
 	    require_once("lessons_list.php");
 	}
 	elseif ($ctg == 'forum') {

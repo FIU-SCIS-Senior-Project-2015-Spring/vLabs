@@ -31,7 +31,7 @@ tinymceConfigs["simpleEditor"] = {
 	convert_urls : true,
 	document_base_url:"'.G_SERVERNAME.'",
 	content_css : "'.G_CURRENTTHEMEURL.'css/css_global.css? + new Date().getTime()",
-	extended_valid_elements : "*[*],p[style]"
+	extended_valid_elements : "*[*]"
     };
     
 tinymceConfigs["messageEditor"] = {
@@ -50,7 +50,7 @@ tinymceConfigs["messageEditor"] = {
 	remove_script_host : false,
 	document_base_url:"'.G_SERVERNAME.'",
 	content_css : "'.G_CURRENTTHEMEURL.'css/css_global.css? + new Date().getTime()",
-	extended_valid_elements : "*[*],p[style]"
+	extended_valid_elements : "*[*]"
     };
     
 tinymceConfigs["digestEditor"] = {
@@ -67,7 +67,7 @@ tinymceConfigs["digestEditor"] = {
 	convert_urls : true,
 	document_base_url:"'.G_SERVERNAME.'",
 	content_css : "'.G_CURRENTTHEMEURL.'css/css_global.css? + new Date().getTime()",
-	extended_valid_elements : "*[*],p[style]",
+	extended_valid_elements : "*[*]",
 	handle_event_callback : "digestHandleEvent"
     };
 
@@ -85,8 +85,8 @@ tinymceConfigs["mceEditor"] = {
 	gecko_spellcheck : true,
 	document_base_url:"'.G_SERVERNAME.'",
     plugins : "autolink,lists,spellchecker,pagebreak,layer,insertdatetime,iframe,noneditable,visualchars,xhtmlxtras,tooltip,Jsvk,java,asciimath,asciisvg,table,save,advhr,advimage,advlink,style,emotions,iespell,preview,searchreplace,print,contextmenu,media,paste,directionality,fullscreen,template,save_template",
-	theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect,|,ltr,rtl,|,sub,sup,|,print,fullscreen",
-    theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,tooltip,image,media,advhr,java,iframe,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor,|,charmap,emotions,iespell,advhr",
+	theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect,|,ltr,rtl,|,sub,sup",
+    theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,tooltip,image,media,advhr,java,iframe,cleanup,help,code,|,insertdate,inserttime,preview,|,forecolor,backcolor,|,charmap,emotions,iespell,advhr,|,print,fullscreen",
     theme_advanced_buttons3 : "tablecontrols,|,hr,removeformat,visualaid,|,insertlayer,moveforward,movebackward,absolute,|,styleprops,spellchecker,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,blockquote,pagebreak,|,insertfile,insertimage,asciimath,asciimathcharmap,separator,template,save_template'.$vkeyboard.'",    
     theme_advanced_buttons4 : "",
     plugin_preview_width : "950",
@@ -104,7 +104,7 @@ tinymceConfigs["mceEditor"] = {
     plugin_insertdate_timeFormat : "%H:%M:%S",
 	content_css : "'.G_CURRENTTHEMEURL.'css/css_global.css? + new Date().getTime()",
 	valid_elements : "#p",
-    extended_valid_elements : "*[*],p[style]",
+    extended_valid_elements : "*[*]",
     template_external_list_url : "editor/templates_list.php"
 	};
 
@@ -141,7 +141,7 @@ tinymceConfigs["templateEditor"] = {
     plugin_insertdate_dateFormat : "%Y-%m-%d",
     plugin_insertdate_timeFormat : "%H:%M:%S",
 	content_css : "'.G_CURRENTTHEMEURL.'css/css_global.css? + new Date().getTime()",
-    extended_valid_elements : "*[*],p[style]"
+    extended_valid_elements : "*[*]"
     };
 
 

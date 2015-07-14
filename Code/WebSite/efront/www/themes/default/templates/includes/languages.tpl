@@ -62,8 +62,6 @@
                                     {if $T_CREATE_LANGUAGE_FORM.translation.error}<tr><td></td><td class = "formError" colspan = "2">{$T_CREATE_LANGUAGE_FORM.translation.error}</td></tr>{assign var = 'div_error' value = 'upload_language_table'|cat:$smarty.section.form_list.index}{/if}
                                     <tr><td class = "labelCell">{$smarty.const._RTLLANGUAGE}:&nbsp;</td>
                                         <td class = "elementCell">{$T_CREATE_LANGUAGE_FORM.rtl.html}</td></tr>
-									<tr><td class = "labelCell">{$T_CREATE_LANGUAGE_FORM.custom.label}:&nbsp;</td>
-                                        <td class = "elementCell">{$T_CREATE_LANGUAGE_FORM.custom.html}</td></tr>
                                     <tr><td class = "labelCell">{$smarty.const._FILENAME}:&nbsp;</td>
                                         <td class = "elementCell">{$T_CREATE_LANGUAGE_FORM.language_upload.html}</td></tr>
                                     <tr><td></td>

@@ -26,7 +26,7 @@ try {
             $smarty -> assign("T_CLASSMATES", 1);
         }
     } #cpp#endif
-    
+
     if (isset($_GET['op']) && $_GET['op'] == 'search') {
         /**Functions to perform searches*/
         require_once "module_search.php";
@@ -104,10 +104,9 @@ try {
             $events = calendar :: getCalendarEventsForUser($currentUser);
             if ($_SESSION['s_type'] != 'administrator' && $_SESSION['s_current_branch']) {	//this applies to branch urls
             	$currentBranch = new EfrontBranch($_SESSION['s_current_branch']);
-            	$branchTreeUsers = array_keys($currentBranch->getBranchTreeUsers());         	
+            	$branchTreeUsers = array_keys($currentBranch->getBranchTreeUsers());
             	foreach ($events as $key => $value) {
-            		$in_branches = eF_getTableData('module_hcd_employee_works_at_branch', "*", "users_login='".$value['users_LOGIN']."'");
-            		if ($value['type'] != 'global' && !in_array($value['users_LOGIN'], $branchTreeUsers) && !empty($in_branches)) {
+            		if ($value['type'] != 'global' && !in_array($value['users_LOGIN'], $branchTreeUsers)) {
             			unset($events[$key]);
             		}
             	}
@@ -138,23 +137,20 @@ try {
         }
 
         //Professor and student common blocks
-        if ($_professor_ || $_student_) {  	      
+        if ($_professor_ || $_student_) {  	
             //Projects block
             if ($currentLesson -> options['projects'] && EfrontUser::isOptionVisible('projects')) {
                 if ($_professor_) {
                     $result = eF_getTableData("users_to_projects as up,projects as p", "p.title,p.id,up.users_LOGIN,up.upload_timestamp,up.last_comment", "p.lessons_ID=".$_SESSION['s_lessons_ID']." and p.id=up.projects_ID and filename!=''","up.upload_timestamp desc");
-                    $currentLesson = new EfrontLesson($GLOBALS['currentLesson'] -> lesson['id']);
-                    $lessonUsers = $currentLesson -> getUsers('student');
                     foreach ($result as $value) {
-                    	if (in_array($value['users_LOGIN'], array_keys($lessonUsers))) {
-                    		$projects[] = $value;
-                    	}
+                        $projects[] = $value;
                     }        
                 } else {
                     $projects = $currentLesson -> getProjects(false, $currentUser -> user['login']);
+               
                     $projectsInControlPanel = $projects;
                     foreach ($projects as $key => $value) {
-                    	if ($value['deadline'] < time() || $value['filename']) {
+                    	if ($value['deadline'] < time()) {
                     		unset($projects[$key]);	//We unset the expired projects, instead of not retrieving them in the first place, because we want them all to determine whether to show the 'projects' icon
                     	}
                     }
@@ -331,54 +327,10 @@ try {
                     $smarty -> assign("T_LESSON_COMPLETED", $userProgress['completed']);
                     $headerOptions[] = array('text' => _LESSONCOMPLETE, 'image' => '32x32/success.png', 'href' => basename($_SERVER['PHP_SELF']).'?ctg=progress&popup=1', 'onclick' => "eF_js_showDivPopup(event, '"._LESSONINFORMATION."', 2)", 'target' => 'POPUP_FRAME');
                 }
-                               
-				if ($currentLesson -> lesson['course_only'] && isset($_SESSION['s_courses_ID'])) {				
-					$current_course = new EfrontCourse($_SESSION['s_courses_ID']);	
-					
-					$check_completed_course =  eF_getTableData("users_to_courses", "completed,from_timestamp as active_in_course", "users_LOGIN='".$_SESSION['s_login']."' and courses_ID=".$_SESSION['s_courses_ID']);
-
-					if ($current_course -> course['start_date'] && $current_course -> course['start_date'] > time()) {
-						$current_course -> course['remaining'] = null;
-					} elseif ($current_course -> course['end_date'] && $current_course -> course['end_date'] < time()) {
-						$current_course -> course['remaining'] = 0;
-					} else if ($current_course -> options['duration'] && $check_completed_course[0]['active_in_course']) {
-						if ($check_completed_course[0]['active_in_course'] < $current_course -> course['start_date']) {
-							$check_completed_course[0]['active_in_course'] = $current_course -> course['start_date'];
-						}
-						$current_course -> course['remaining'] = $check_completed_course[0]['active_in_course'] + $current_course -> options['duration']*3600*24 - time();
-						if ($current_course -> course['end_date'] && $current_course -> course['end_date'] < $check_completed_course[0]['active_in_course'] + $current_course -> options['duration']*3600*24) {
-							$current_course -> course['remaining'] = $current_course -> course['end_date'] - time();
-						}
-					} else {
-						$current_course -> course['remaining'] = null;
-					}
-					if (!empty($current_course -> course['remaining'])) {
-						$smarty -> assign("T_COURSE_USER_REMAINING_STRING", '<span style = "font-style:italic">&nbsp;('.eF_convertIntervalToTime($current_course -> course['remaining'], true).' '.mb_strtolower(_REMAINING).')</span>');
-					}
-					//Added code to check course completion in case course must have been completed but it is not (remove lesson from course after all other lessons were completed)									
-					if ($userProgress['completed'] && $current_course -> options['auto_complete'] && !$check_completed_course[0]['completed']) {
-						$constraints   = array('archive' => false, 'active' => true, 'return_objects' => false);
-						$courseLessons = $current_course -> getCourseLessons($constraints);						
-						if (!empty($courseLessons)) {
-							$userLessons = array();
-							$result = eF_getTableData("users_to_lessons", "lessons_ID,completed,score", "users_LOGIN='".$_SESSION['s_login']."' and lessons_ID IN (".implode(',', array_keys($courseLessons)).")");
-							foreach ($result as $value) {
-								if ($userLessons[$value['lessons_ID']] = $value);
-							}						
-							$completed 	   = $score	= array();
-							foreach ($courseLessons as $lessonId => $value) {
-								$userLessons[$lessonId]['completed'] ? $completed[] = 1 : $completed[] = 0;
-								$score[] = $userLessons[$lessonId]['score'];
-							}
-							
-							if (array_sum($completed) == sizeof($completed)) {									//If all the course's lessons are completed, then auto complete the course, using the mean lessons score
-								$currentUser -> completeCourse($current_course -> course['id'], round(array_sum($score) / sizeof($score)), _AUTOCOMPLETEDCOURSE);
-							}
-						}
-					}
-					
+				
+				if ($currentLesson -> lesson['course_only'] && isset($_SESSION['s_courses_ID'])) {
 					$res = eF_getTableData("users_to_courses","issued_certificate","courses_ID=".$_SESSION['s_courses_ID']." and users_LOGIN='".$_SESSION['s_login']."'");
-					
+					$current_course = new EfrontCourse($_SESSION['s_courses_ID']);
 					if ($res[0]['issued_certificate'] != "") {						
 						$headerOptions[] = array('text' => _VIEWCOURSECERTIFICATE, 'image' => '32x32/certificate.png', 'href' => basename($_SERVER['PHP_SELF']).'?ctg=lessons&course='.$_SESSION['s_courses_ID'].'&export='.$current_course -> options['certificate_export_method'].'&user='.$_SESSION['s_login']);
 					}	
@@ -401,9 +353,8 @@ try {
 					if (EfrontUser::isOptionVisible('tests')) { 
 		            	$iterator = new EfrontVisitableFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST))); 
 					} else { 
-						$iterator = new EfrontNoTestsFilterIterator (new EfrontVisitableFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST))));    //Create a new iterator, so that the internal iterator pointer is not reset
-					} 
-					                    	
+		            	$iterator = new EfrontNoTestsFilterIterator (new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST)));    //Create a new iterator, so that the internal iterator pointer is not reset 
+					}                     	
                     $iterator -> next();
                     $firstUnseenUnit = $firstUnit = $iterator -> current();
 
@@ -516,7 +467,7 @@ try {
                     if (EfrontUser::isOptionVisible('lessons') && EfrontUser::isOptionVisible('curriculum')) {
                         $controlPanelOptions[] = array('text' => _CURRICULUM, 'image' => "32x32/curriculum.png", 'href' => "administrator.php?ctg=curriculums");
                     }
-                	if (EfrontUser::isOptionVisible('skillgaptests')) {
+                	if (EfrontUser::isOptionVisible('skilulgaptests')) {
                 		$controlPanelOptions[] = array('text' => _SKILLGAPTESTS, 'image' => "32x32/skill_gap.png", 'href' => "administrator.php?ctg=tests");
                 	}
                 } #cpp#endif
@@ -606,10 +557,11 @@ try {
                 $currentLesson -> options['lesson_info'] ? $controlPanelOptions[0]  = array('text' => _LESSONINFORMATION, 'image' => "32x32/information.png",       'href' => basename($_SERVER['PHP_SELF'])."?ctg=lesson_information") : null;
                 
 	            if (EfrontUser::isOptionVisible('tests')) {     	
-	                 $firstNodeIterator = new EfrontVisitableFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST)));
+	                 $firstNodeIterator = new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST));  
 	            } else {
 	                 $firstNodeIterator = new EfrontNoTestsFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($currentContent -> tree), RecursiveIteratorIterator :: SELF_FIRST)));
 	            }
+				
                 if ($currentContent && $currentContent -> getFirstNode($firstNodeIterator) && !empty($firstNodeIterator)){
                     $controlPanelOptions[1]  = array('text' => _CONTENTMANAGEMENT, 'image' => "32x32/content.png",      'href' => basename($_SERVER['PHP_SELF'])."?ctg=content&view_unit=".$currentContent -> getFirstNode($firstNodeIterator) -> offsetGet('id'));
                 }  else {
@@ -661,7 +613,7 @@ try {
 			if (EfrontUser::isOptionVisible('feedback')) {
                     $currentLesson -> options['feedback'] ? $controlPanelOptions[9] = array('text' => _FEEDBACK, 'image' => "32x32/feedback.png", 'href' => basename($_SERVER['PHP_SELF'])."?ctg=feedback") : null;
                 }
-            if (EfrontUser::isOptionVisible('progress')) {
+            if ($currentUser -> coreAccess['progress'] != 'hidden') {
                 $controlPanelOptions[12] = array('text' => _USERSPROGRESS, 'image' => "32x32/status.png", 'href' => basename($_SERVER['PHP_SELF'])."?ctg=progress");
             }
             if (EfrontUser::isOptionVisible('forum')) {

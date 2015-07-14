@@ -6,7 +6,7 @@
 	   **************************************************************
 	   *}
 	{capture name = 't_job_description_code'}
-				{$T_JOB_DESCRIPTIONS_FORM.javascript}
+	{$T_JOB_DESCRIPTIONS_FORM.javascript}
 				 <table width = "75%">
 					 <tr>
 						 <td width="70%">
@@ -154,18 +154,14 @@
 					</tr>
 				</table>
 				{/if}
-				</form>
+
 <!--ajax:skillsTable-->
-			<table style = "width:100%" class = "sortedTable" size = "{$T_SKILLS_SIZE}" sortBy = "0" id = "skillsTable" useAjax = "1" rowsPerPage = "{$smarty.const.G_DEFAULT_TABLE_SIZE}" url = "{$smarty.server.PHP_SELF}?ctg=module_hcd&op=job_descriptions&edit_job_description={$smarty.get.edit_job_description}&tab=skills&">
-				<tr class = "topTitle">
-					<td class = "topTitle" name="description" width="25%">{$smarty.const._SKILL}</td>
-					<td class = "topTitle" name="category" width="20%">{$smarty.const._CATEGORY}</td>
-					<td class = "topTitle" name="specification" width="*">{$smarty.const._SPECIFICATION}</td>
-					<td class = "topTitle" name="job_description_ID" align="center">{$smarty.const._CHECK}</td>
-				</tr>
-
-
-
+				<table style = "width:100%" class = "sortedTable" size = "{$T_SKILLS_SIZE}" sortBy = "0" id = "skillsTable" useAjax = "1" rowsPerPage = "{$smarty.const.G_DEFAULT_TABLE_SIZE}" url = "{$smarty.server.PHP_SELF}?ctg=module_hcd&op=job_descriptions&edit_job_description={$smarty.get.edit_job_description}&tab=skills&">
+					<tr class = "topTitle">
+						<td class = "topTitle" name="description" width="25%">{$smarty.const._SKILL}</td>
+						<td class = "topTitle" name="category">{$smarty.const._CATEGORY}</td>
+						<td class = "topTitle" name="job_description_ID" align="center">{$smarty.const._CHECK}</td>
+					</tr>
 
 			{if isset($T_SKILLS)}
 					{foreach name = 'skill_list' key = 'key' item = 'skill' from = $T_SKILLS}
@@ -178,15 +174,8 @@
 							{/if}
 						</td>
 						<td>{$skill.category}</td>
-				<td>
-				{if $_change_skills_}
-					<input class = "inputText" type="text" id="spec_skill_{$skill.skill_ID}" onchange="ajaxJobSkillPost('{$skill.skill_ID}', this , '{$smarty.get.edit_job_description}');" value="{$skill.specification}" style="width:50%;{if $skill.job_description_ID != $smarty.get.edit_job_description}display:none{/if}" />
-				{else}
-					{$skill.specification}
-				{/if}
-				</td>					
 						<td align="center">
-							<input class = "inputCheckBox" type = "checkbox" id="skill_{$skill.skill_ID}" name = "skill" {if $_change_}onclick = "$('spec_skill_{$skill.skill_ID}').toggle(); ajaxPost('{$skill.skill_ID}', this);"{else}disabled{/if}
+							<input class = "inputCheckBox" type = "checkbox" id="skill_{$skill.skill_ID}" name = "skill" {if $_change_}onclick = "ajaxPost('{$skill.skill_ID}', this);"{else}disabled{/if}
 							{if $skill.job_description_ID == $smarty.get.edit_job_description}
 							 checked
 							{/if}
@@ -210,7 +199,7 @@
 <!--/ajax:skillsTable-->
 
 			{/if}
-			
+			</form>
 
 			{/capture}
 

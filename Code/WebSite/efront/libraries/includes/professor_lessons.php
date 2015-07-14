@@ -595,13 +595,6 @@ if (isset($_GET['delete_lesson']) && eF_checkParameter($_GET['delete_lesson'], '
 	        		
 	        		if (isset($_GET['ajax']) && $_GET['ajax'] == 'usersTable') {
 	        			$constraints   = array('archive' => false, 'active' => 1, 'return_objects' => false) + createConstraintsFromSortedTable();
-	        			if ($_SESSION['s_current_branch']) {
-	        				$branch = new EfrontBranch($_SESSION['s_current_branch']);
-	        				$branches = $branch->getAllSubbranches();
-	        				$branches[] = $_SESSION['s_current_branch'];
-	        				$constraints['branch'] = $branches;
-	        			}	        			
-	        			
 	        			$users         = $editLesson -> getLessonUsersIncludingUnassigned($constraints);
 	        			$totalEntries  = $editLesson -> countLessonUsersIncludingUnassigned($constraints);
 	        		

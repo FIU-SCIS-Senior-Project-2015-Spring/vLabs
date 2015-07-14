@@ -61,9 +61,6 @@ isset($_GET['question_type']) && in_array($_GET['question_type'], array_keys($qu
 
 if (isset($_GET['edit_question'])) {                                                        //We are changing an existing question.
     $currentQuestion = QuestionFactory :: factory($_GET['edit_question']);
-    if($currentQuestion->question['linked_to']) {
-    	eF_redirect("".ltrim(basename($_SERVER['PHP_SELF']), "/")."?ctg=tests&message=".urlencode(_LINKEDQUESTIONSCANNOTBEEDITTED)."&message_type=failure");    	
-    }
     $postTarget = basename($_SERVER['PHP_SELF'])."?ctg=tests&from_unit=".$_GET['from_unit']."&edit_question=".$currentQuestion -> question['id']."&question_type=".$currentQuestion -> question['type'];
 } else {
     $postTarget = basename($_SERVER['PHP_SELF'])."?ctg=tests&add_question=1&from_unit=".$_GET['from_unit']."&question_type=".$question_type;
@@ -192,7 +189,6 @@ switch ($_GET['question_type']) { //Depending on the question type, the user mig
 
     case 'multiple_many':
 		$form -> addElement('select', 'answers_logic', _SCORECALCULATIONMODE, array('' => _DEFAULT, 'or' => mb_strtoupper(_OR), 'and' => mb_strtoupper(_AND)));
-		$form -> addElement('select', 'limit_answers', _LIMITUSERANSWERS, array('0' => _NO,'1' => _YES));
         if ($form -> isSubmitted() || isset($currentQuestion)) {
             if (isset($currentQuestion) && !$form -> isSubmitted()) {
                 $values['multiple_many']         = unserialize($currentQuestion -> question['options']);
@@ -222,7 +218,6 @@ switch ($_GET['question_type']) { //Depending on the question type, the user mig
                 $form -> setDefaults(array('answers_explanation['.$key.']' => $values['answers_explanation'][$key]));
             }
             $form -> setDefaults(array('answers_logic' => $currentQuestion -> settings['answers_logic']));
-            $form -> setDefaults(array('limit_answers' => $currentQuestion -> settings['limit_answers']));
             if ($currentQuestion -> settings['answers_or']) {		//For compatibility reasons, this used to be 'answers_or'
             	$form -> setDefaults(array('answers_logic' => 'or'));
             }
@@ -231,7 +226,7 @@ switch ($_GET['question_type']) { //Depending on the question type, the user mig
                 $question_values = array('type'    => 'multiple_many',
                                          'options' => serialize($values['multiple_many']),
                                          'answer'  => serialize($values['correct_multiple_many']),
-										 'settings' => serialize(array('answers_logic' => $form -> exportValue('answers_logic'), 'limit_answers' => $form -> exportValue('limit_answers'))));
+										 'settings' => serialize(array('answers_logic' => $form -> exportValue('answers_logic'))));
             }
         } else {
             //By default, only 2 options are displayed
@@ -293,8 +288,6 @@ switch ($_GET['question_type']) { //Depending on the question type, the user mig
         break;
 
     case 'match':
-    	$form -> addElement('advcheckbox', 'exclude_shuffle', _EXCLUDESHUFFLEFROMQUESTION, null, 'class = "inputCheckBox"', array(0, 1));
-    	
         if ($form -> isSubmitted() || isset($currentQuestion)) {
             if (isset($currentQuestion) && !$form -> isSubmitted()) {
                 $values['match']         = unserialize($currentQuestion -> question['options']);
@@ -313,14 +306,11 @@ switch ($_GET['question_type']) { //Depending on the question type, the user mig
                 $form -> setDefaults(array('correct_match['.$key.']' => $values['correct_match'][$key]));
                 $form -> setDefaults(array('answers_explanation['.$key.']' => $values['answers_explanation'][$key]));
             }
-            
-            $form -> setDefaults(array('exclude_shuffle' => $currentQuestion -> settings['exclude_shuffle']));
 
             if ($form -> validate()) {
                 $question_values = array('type'    => 'match',
                                          'options' => serialize($values['match']),
-                                         'answer'  => serialize($values['correct_match']),
-                		 				 'settings' => serialize(array('exclude_shuffle' => $form -> exportValue('exclude_shuffle'))));
+                                         'answer'  => serialize($values['correct_match']));
             }
         } else {
             //By default, only 2 pairs of choices given.
@@ -336,142 +326,6 @@ switch ($_GET['question_type']) { //Depending on the question type, the user mig
             $form -> addRule('correct_match[1]', _THEFIELD.' '._ISMANDATORY, 'required', null, 'client');
         }
         break;
-        
-    case 'grid':
-    		$form -> addElement('button', 'generate_grid', _CREATEGRID, 'class = "flatButton" onclick = "eF_js_createGrid()"');
-    		$form -> addElement('select', 'answers_logic', _SCORECALCULATIONMODE, array('' => _DEFAULT, 'row' => _PERROW));
-    		
-        	if ($form -> isSubmitted() || isset($currentQuestion)) {
-        		if (isset($currentQuestion) && !$form -> isSubmitted()) {
-        			$options         		= unserialize($currentQuestion -> question['options']);
-        			$values['grid'] 		= $options['grid'];
-        			$values['grid_column'] 	= $options['grid_column'];
-        			$values['answer'] = unserialize($currentQuestion -> question['answer']);
-       			
-        			//$values['answers_explanation']  = $currentQuestion -> answers_explanation;
-        			$current_grid = '<table width="100%" border="1px"><tr><td></td>';
-        			foreach ($values['grid_column'] as $column) {
-        				$current_grid .='<td>'.$column.'</td>';
-        			}
-        			$current_grid .= '</tr>';
-        			foreach ($values['grid'] as $row) {
-        				$current_grid .='<tr><td>'.$row.'</td>';
-        				foreach ($values['grid_column'] as $column) {
-        					($values['answer'][$row][$column] === '1') ? $checked = 'checked': $checked = '';
-     					
-        					$current_grid .= '<td><input class = "inputCheckbox" type = "checkbox" name = "answer['.$row.']['.$column.']" id = "answer['.$row.']['.$column.']" value="1" '.$checked.' ></td>';
-        				}
-        				$current_grid .= '</tr>';
-        			}
-        			$current_grid .= '</table>';
-        			$smarty -> assign("T_CURRENT_GRID", $current_grid);
-        		} else {
-        			$values = $form -> getSubmitValues();
-        			$values['grid'] = array_values(array_filter($values['grid']));
-        			$values['grid_column'] = array_values(array_filter($values['grid_column']));
-     			 			
-        		}
-        		
-        		if (sizeof($values['grid']) >= sizeof($values['grid_column'])) {
-        			$pattern = $values['grid'];
-        		} else {
-        			$pattern = $values['grid_column'];
-        		}
-       		
-        		foreach ($pattern as $key => $value) {
-        			$form -> addElement('text', 'grid['.$key.']', null, 'class = "inputText inputText_QuestionChoice"');
-        			$form -> addElement('text', 'grid_column['.$key.']', null, 'class = "inputText inputText_QuestionChoice"');
-        			//$form -> addElement('text', 'answers_explanation['.$key.']', null, 'class = "inputText inputText_QuestionChoice"'.(!$values['answers_explanation'][$key] ? 'style = "display:none"' : ''));
-        			
-        			$form -> setDefaults(array('grid['.$key.']' => $values['grid'][$key]));
-        			$form -> setDefaults(array('grid_column['.$key.']' => $values['grid_column'][$key]));
-        			//$form -> setDefaults(array('answers_explanation['.$key.']' => $values['answers_explanation'][$key]));
-        		}
-        		$form -> addRule('grid[0]', _THEFIELD.' '._ISMANDATORY, 'required', null, 'client');
-        		$form -> addRule('grid_column[0]', _THEFIELD.' '._ISMANDATORY, 'required', null, 'client');
-        
-        		$form -> setDefaults(array('answers_logic' => $currentQuestion -> settings['answers_logic']));
-        		
-        		if ($form -> validate()) {
-        			$question_values = array('type'    => 'grid',
-        					'options' => serialize(array('grid'=> $values['grid'], 'grid_column' => $values['grid_column'])),
-        					'answer'  => serialize($values['answer']),
-        					'settings' => serialize(array('answers_logic' => $form -> exportValue('answers_logic'))));
-        		}
-        	} else {
-        		//By default, only 2 pairs of choices given.
-        		$form -> addElement('text', 'grid[0]', null, 'class = "inputText inputText_QuestionChoice"');
-        		$form -> addElement('text', 'grid_column[0]', null, 'class = "inputText inputText_QuestionChoice"');        		
-        		//$form -> addElement('text', 'answers_explanation[0]', null, 'class = "inputText inputText_QuestionChoice" style = "display:none"');
-        		$form -> addElement('text', 'grid[1]', null, 'class = "inputText inputText_QuestionChoice"');
-        		$form -> addElement('text', 'grid_column[1]', null, 'class = "inputText inputText_QuestionChoice"');
-        		//$form -> addElement('text', 'answers_explanation[1]', null, 'class = "inputText inputText_QuestionChoice" style = "display:none"');
-        		$form -> addRule('grid[0]', _THEFIELD.' '._ISMANDATORY, 'required', null, 'client');
-        		$form -> addRule('grid_column[0]', _THEFIELD.' '._ISMANDATORY, 'required', null, 'client');
-        		
-        	}
-        	break;
-     case 'hotspot':
-    		$form -> addElement('button', 'generate_area', _CLEAR, 'class = "flatButton" onclick = "jQuery(\'#hotspot_answer\').val(\'\')"');
-    		$form -> addElement('text', "answer", _COORDINATES, 'class = "inputText" id="hotspot_answer" style = "width:500px" readonly');
-    		
-    		//By default, only 2 pairs of choices given.
-    		$filter = array_keys(FileSystemTree :: getFileTypes('image'));
-    		
-    		$filesystem     = new FileSystemTree(G_LESSONSPATH.$_SESSION['s_lessons_ID'], false);
-    		$filesystem_initial     = new FileSystemTree(G_LESSONSPATH.$_SESSION['s_lessons_ID'], true);   		
-    		foreach (new EfrontDirectoryOnlyFilterIterator($filesystem_initial -> tree) as $key => $value) {
-    			if (is_file($value['path'].'/imsmanifest.xml')) {
-    				unset($filesystem -> tree[$key]);
-    			}
-    		} 		
-    		
-    		$tree = $filesystem -> tree;
-    		$files[0] = _SELECTIMAGETOMARKAREA;
-    		foreach (new EfrontFileOnlyFilterIterator(new EfrontFileTypeFilterIterator(new EfrontNodeFilterIterator(new RecursiveIteratorIterator($filesystem -> tree, RecursiveIteratorIterator :: SELF_FIRST)), $filter, true)) as $key => $value) {
-    			$files[str_replace(G_LESSONSPATH,'',$value['path'])] = str_replace(G_LESSONSPATH.$_SESSION['s_lessons_ID'].'/','',$value['path']);
-    		}
-    		
-    		$form -> addElement('select', 'options',       null, $files,   'class = "inputSelectLong" onchange = "var prepend = \''.G_LESSONSLINK.'/'.'\'; prepend=prepend.concat(this.options[this.selectedIndex].value); if (this.options[this.selectedIndex].value!=0){$(\'hotspotSpace\').src=prepend;$(\'hotspotSpace\').show()} else {$(\'hotspotSpace\').hide();jQuery(\'div[class^=imgareaselect-]\').hide();}"');
-
-    	
-        	if ($form -> isSubmitted() || isset($currentQuestion)) {
-        		if (isset($currentQuestion) && !$form -> isSubmitted()) {
-        			
-        			$positions = unserialize($currentQuestion -> question['answer']);  
-        			$positions_str = ''; 
-        			foreach ($positions as $position) {
-        				$positions_str .= '('.$position[0].','.$position[1].')('.$position[2].','.$position[3].')||';
-        			}
-        			//$values['answer'] = $positions_str;
-
-        			
-        			$form -> setDefaults(array('options' => $currentQuestion -> question['options']));
-        			$form -> setDefaults(array('answer' => $positions_str));
-        			$smarty -> assign("T_CURRENT_HOTSPOT_IMAGE", G_LESSONSLINK.$currentQuestion -> question['options']);
-        		} else {
-        			$values = $form -> getSubmitValues();       			 			
-        		}
-        
-        		if ($form -> validate()) {
-        			$pieces = explode('||', $values['answer']);
-        			$position = array();
-        			foreach ($pieces as $piece) {
-        				if (!empty($piece)) {
-	        				$temp = str_replace(')(', ',', $piece);
-	        				$temp = str_replace(array('(',')'), '', $temp);
-	        				$position[] = explode(',', $temp);
-        				}
-
-        			}
-        			
-        			
-        			$question_values = array('type'    => 'hotspot',
-        					'options' => $values['options'],
-        					'answer'  => serialize($position));
-        		}
-        	} 
-        	break;
     case 'drag_drop':
         if ($form -> isSubmitted() || isset($currentQuestion)) {
             if (isset($currentQuestion) && !$form -> isSubmitted()) {
@@ -572,7 +426,6 @@ switch ($_GET['question_type']) { //Depending on the question type, the user mig
 //Common fields and actions for all question types
 if ($form -> isSubmitted() && $form -> validate()) {
     $form_values                    = $form -> exportValues();
-    
     //$question_values['code']        = $form_values['code'];
     $question_values['text']        = applyEditorOffset($form_values['question_text']);
     $question_values['content_ID']  = $form_values['content_ID'] ? $form_values['content_ID'] : 0;

@@ -113,7 +113,7 @@
          {/capture}
 
         	{if $T_COURSE_INSTANCES && sizeof($T_COURSE_INSTANCES) > 1}
-        	<div class = "lessonInfo"><span class = "infoTitle">{$smarty.const.AVAILABLEINSTANCES}:</span>
+        	<div class = "lessonInfo"><span class = "infoTitle">Available Instances:</span>
         		<select onchange = "var val = this.options[this.options.selectedIndex].value;location = '{$smarty.server.PHP_SELF}?'+'{$smarty.server.QUERY_STRING}'.replace(/&courses_ID=\d*/, '&courses_ID='+val).replace(/&info_course=\d*/, '&info_course='+val);">
         			{foreach name = 'instances_list' item = "item" key = 'key' from = $T_COURSE_INSTANCES}
         			<option value = "{$key}" {if $smarty.get.courses_ID == $key || $smarty.get.info_course == $key}selected{/if}>{$item->course.name}</option>

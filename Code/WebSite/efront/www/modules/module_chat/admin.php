@@ -14,24 +14,40 @@ if ($_GET['force'] == "getLessonFromId") { getLessonFromId(); }
 
 /////////////////////////////////////////////////////////////////////////////
 function clearU2ULogs(){
-	//$sql = "DELETE FROM module_chat WHERE isLesson='0'";
-	eF_deleteTableData("module_chat", "isLesson='0'");
-	//echo _CHAT_CHAT_HISTORY_SUCCESSFULY_DELETED;
-	echo 'Chat history successfuly deleted';
+
+	$sql = "DELETE FROM module_chat WHERE isLesson='0'";
+	$result = mysql_query($sql);
+	
+	if (!$result) {
+    	die('Error executing Clear Log query: ' . mysql_error());
+	}
+	else{
+		echo ("CHAT HISTORY SUCCESFULLY DELETED");
+	}
 }
 ///////////////////////////////////////////////////////////////////////////////
 function clearAllLogs(){
-	//$sql = "DELETE FROM module_chat WHERE 1";
-	eF_deleteTableData("module_chat", "1");
-	//echo _CHAT_CHAT_HISTORY_SUCCESSFULY_DELETED;
-	echo 'Chat history successfuly deleted';
+
+	$sql = "DELETE FROM module_chat WHERE 1";
+	$result = mysql_query($sql);
+	
+	if (!$result) {
+    	die('Error executing Clear Log query: ' . mysql_error());
+	}
+	else{
+		echo ("CHAT HISTORY SUCCESFULLY DELETED");
+	}
 }
 //////////////////////////////////////////////////////////////////////////////
 function getLessonFromId(){
+
 	if (eF_checkParameter($_GET['loglessonid'], 'id')) {
 		$id = $_GET["loglessonid"];
-		$result = eF_getTableData('lessons', 'id, name', "id='".$id."'");
-		echo json_encode(array('name' => $result[0]['name'], 'id' => $result[0]['id']));
+		$sql = "SELECT name FROM lessons WHERE id='".$id."'";
+		$result = mysql_query($sql);
+	}
+	while ($lesson = mysql_fetch_array($result)){
+		echo $lesson["name"];
 	}
 }
 

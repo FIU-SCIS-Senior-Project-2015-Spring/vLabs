@@ -358,18 +358,12 @@ class module_BBB extends EfrontModule {
 		/*** Ajax Methods - Add/remove skills/jobs***/
 		if (isset($_GET['postAjaxRequest'])) {
 			/** Post skill - Ajax skill **/
-			if (eF_checkParameter($_GET['edit_BBB'], 'id') === false) {
-				header("HTTP/1.0 500 ");
-				echo _UNPRIVILEGEDATTEMPT;
-				exit;
-			}
-			
 			if ($_GET['insert'] == "true") {
 				// Adding a user to a conference
 				eF_insertTableData("module_BBB_users_to_meeting", array('users_LOGIN' => $_GET['user'], 'meeting_ID' => $_GET['edit_BBB']));
 			} else if ($_GET['insert'] == "false") {
-					// Removing a user from a conference
-					eF_deleteTableData("module_BBB_users_to_meeting", "users_LOGIN = '" . $_GET['user'] . "' AND meeting_ID = '" . $_GET['edit_BBB'] . "'");
+				// Removing a user from a conference
+				eF_deleteTableData("module_BBB_users_to_meeting", "users_LOGIN = '" . $_GET['user'] . "' AND meeting_ID = '" . $_GET['edit_BBB'] . "'");
 			} else if (isset($_GET['addAll'])) {
 				// Add all users to a conference
 				$users = eF_getTableData("users JOIN users_to_lessons ON users.login = users_to_lessons.users_LOGIN LEFT OUTER JOIN module_BBB_users_to_meeting ON users.login = module_BBB_users_to_meeting.users_LOGIN", "users.login, users.name, users.surname, meeting_ID", "users_to_lessons.lessons_ID = '" . $_SESSION['s_lessons_ID'] . "' AND (meeting_ID <> '" . $_GET['edit_BBB'] . "' OR meeting_ID IS NULL)");
@@ -382,7 +376,6 @@ class module_BBB extends EfrontModule {
 						$users_attending[] = $user['login'];
 					}
 				}
-				
 			} else if (isset($_GET['removeAll'])) {
 				// Remove all users from a conference
 				$users_attending = eF_getTableData("users JOIN users_to_lessons ON users.login = users_to_lessons.users_LOGIN LEFT OUTER JOIN module_BBB_users_to_meeting ON users.login = module_BBB_users_to_meeting.users_LOGIN", "users.login", "users_to_lessons.lessons_ID = '" . $_SESSION['s_lessons_ID'] . "' AND meeting_ID = '" . $_GET['edit_BBB'] . "'");

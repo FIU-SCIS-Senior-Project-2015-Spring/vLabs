@@ -109,7 +109,7 @@ class EfrontLesson
                             'comments'        => 1,
                             'news'			  => 1,
                             'online'          => 1,
-                         	'progress'		  => 1,
+                          //'chat'            => 0,
                             'scorm'           => 1,
 							'ims'             => 1,
 							'tincan'          => 1,
@@ -885,19 +885,16 @@ class EfrontLesson
 	 * @since 3.5.0
 	 * @access public
 	 */
-
-	public function getUsers($basicType = false, $refresh = false) {	
-		if ($this -> users === false  || $refresh || $basicType) {                //Make a database query only if the variable is not initialized, or it is explicitly asked
-			$users = array();
+	public function getUsers($basicType = false, $refresh = false) {
+		if ($this -> users === false || $refresh || $basicType) {                //Make a database query only if the variable is not initialized, or it is explicitly asked
+			$this -> users = array();
 			
 			if ($basicType && eF_checkParameter($basicType, 'alnum_general')) {
 				$users = array();
 				if ($basicType == 'professor') {
 					$roles = EfrontLessonUser :: getProfessorRoles();
-					$roles = array_keys($roles);
 				} else if ($basicType == 'student') {
 					$roles = EfrontLessonUser :: getStudentRoles();
-					$roles = array_keys($roles);
 				} else {
 					$roles = $basicType;
 				}
@@ -905,7 +902,6 @@ class EfrontLesson
 				$result = eF_getTableData("users u, users_to_lessons ul", "u.*, ul.user_type as role, ul.from_timestamp, ul.completed, ul.to_timestamp as timestamp_completed", "u.user_type != 'administrator' and ul.archive = 0 and u.archive = 0 and ul.users_LOGIN = login and lessons_ID=".$this -> lesson['id']." and ul.user_type in ('".implode("','", $roles)."')");
 			} else {
 				$result = eF_getTableData("users u, users_to_lessons ul", "u.*, ul.user_type as role, ul.from_timestamp, ul.completed, ul.to_timestamp as timestamp_completed", "u.user_type != 'administrator' and ul.archive = 0 and u.archive = 0 and ul.users_LOGIN = login and lessons_ID=".$this -> lesson['id']);
-				
 			}
 
 			foreach ($result as $value) {
@@ -924,16 +920,14 @@ class EfrontLesson
 														'timestamp_completed' => $value['timestamp_completed'],
                                                         'partof'          => 1);
 			}
-		
 			if (!$basicType) {
 				$this->users = $users;
-				
 			}
 		}
 
 		if ($basicType) {
 			return $users;
-		} else {		
+		} else {			
 			return $this -> users;
 		}
 
@@ -1236,9 +1230,8 @@ class EfrontLesson
 		}
 
 		//$sql = "users.active = 1 and users.languages_NAME = '".$this -> lesson['languages_NAME']."' and login NOT IN ('".implode("','", array_keys($lessonUsers))."') ";
-
 		$sql = "users.active = 1 and login NOT IN ('".implode("','", array_keys($lessonUsers))."') ";
-		$type && in_array($type, EfrontUser :: $basicUserTypes) ? $sql.= "and user_type == '".$type."'" : $sql.= "and user_type != 'administrator'";
+		$type && in_array($type, EfrontUser :: basicUserTypes) ? $sql.= "and user_type == '".$type."'" : $sql.= "and user_type != 'administrator'";
 
 		$result = eF_getTableData("users", "*", $sql);
 		$nonLessonUsers = array();
@@ -1325,7 +1318,7 @@ class EfrontLesson
 	 * @since 3.5.0
 	 * @access public
 	 */
-	public function addUsers($users, $roles = 'student', $confirmed = true, $ignore_existing = false) {		
+	public function addUsers($users, $roles = 'student', $confirmed = true) {
 		$users = EfrontUser::verifyUsersList($users);
 		$users = $this -> filterOutArchivedUsers($users);
 		$roles = EfrontUser::verifyRolesList($roles, sizeof($users));
@@ -1351,9 +1344,8 @@ class EfrontLesson
 		}
 
 		$this -> addUsersToLesson($usersToAddToLesson);
-		if (!$ignore_existing) {
-			$this -> setUserRolesInLesson($usersToSetRoleToLesson);
-		}
+		$this -> setUserRolesInLesson($usersToSetRoleToLesson);
+
 		$this -> users = false;					//Reset users cache
 		//return $this -> getUsers();
 	}
@@ -1551,7 +1543,7 @@ class EfrontLesson
 	 * @since 3.5.0
 	 * @access public
 	 */
-	public function archiveLessonUsers($users, $return_users = true) {
+	public function archiveLessonUsers($users) {
 		$users = EfrontUser::verifyUsersList($users);
 		$this -> sendNotificationsRemoveLessonUsers($users);
 
@@ -1562,11 +1554,7 @@ class EfrontLesson
 		}
 
 		$this -> users = false;					//Reset users cache
-		if ($return_users) {
-			return $this -> getUsers();
-		} else {
-			return true;
-		}
+		return $this -> getUsers();
 	}
 
 
@@ -2351,6 +2339,7 @@ class EfrontLesson
 					foreach (new EfrontNodeFilterIterator(new RecursiveIteratorIterator(new RecursiveArrayIterator($content -> tree), RecursiveIteratorIterator :: SELF_FIRST)) as $key => $unit) {
 						$unit -> delete();
 					}
+
 					break;
 
 				case 'users':
@@ -2436,8 +2425,6 @@ class EfrontLesson
 					}
 					break;
 			}
-			
-			EfrontCache::getInstance()->deleteCache();
 		}
 
 
@@ -3031,7 +3018,7 @@ class EfrontLesson
 	 * @access public
 	 * @see EfrontLesson :: initialize()
 	 */
-	public function import($file, $deleteEntities = false, $lessonProperties = false, $keepName = false, $exclude_search = false) {
+	public function import($file, $deleteEntities = false, $lessonProperties = false, $keepName = false) {
 
 		if ($deleteEntities) {
 			$this -> initialize($deleteEntities);               //Initialize the lesson aspects that the user specified
@@ -3041,7 +3028,6 @@ class EfrontLesson
 		}
 
 		$fileList = $file -> uncompress();
-		
 		$file -> delete();
 
 		$fileList = array_unique(array_reverse($fileList, true));
@@ -3050,14 +3036,15 @@ class EfrontLesson
 		$dataFile -> delete();
 
 		$data              = unserialize($filedata);
+
 		$data['content']   = self :: eF_import_fixTree($data['content'], $last_current_node);
 
 		for ($i = 0; $i < sizeof($data['files']); $i++) {
 			if (isset($data['files'][$i]['file'])) {
-				$newName = str_replace(G_ROOTPATH, '', dirname($data['files'][$i]['file']).'/'.EfrontFile :: encode(eFront_basename($data['files'][$i]['file'])));
+				$newName = str_replace(G_ROOTPATH, '', dirname($data['files'][$i]['file']).'/'.EfrontFile :: encode(basename($data['files'][$i]['file'])));
 				$newName = preg_replace("#(.*)www/content/lessons/#", "www/content/lessons/", $newName);
 				$newName = preg_replace("#www/content/lessons/\d+/(.*)#", "www/content/lessons/".($this -> lesson['share_folder'] ? $this -> lesson['share_folder'] : $this -> lesson['id'])."/\$1", $newName);
-				if ($data['files'][$i]['original_name'] != eFront_basename($data['files'][$i]['file'])) {
+				if ($data['files'][$i]['original_name'] != basename($data['files'][$i]['file'])) {
 					if (is_file(G_ROOTPATH.$newName)) {
 						$replaceString['/\/?(view_file.php\?file=)'.$data['files'][$i]['id'].'([^0-9])/'] = '${1}'.array_search(G_ROOTPATH.$newName, $fileList).'${2}';    //Replace old ids with new ids
 						//$mp[$data['files'][$i]['id']] = array_search(G_ROOTPATH.$newName, $fileList);
@@ -3075,10 +3062,10 @@ class EfrontLesson
 
 		for ($i = 0; $i < sizeof($data['files']); $i++) {
 			if (isset($data['files'][$i]['file'])) {
-				$newName = str_replace(G_ROOTPATH, '', dirname($data['files'][$i]['file']).'/'.EfrontFile :: encode(eFront_basename($data['files'][$i]['file'])));
+				$newName = str_replace(G_ROOTPATH, '', dirname($data['files'][$i]['file']).'/'.EfrontFile :: encode(basename($data['files'][$i]['file'])));
 				$newName = preg_replace("#(.*)www/content/lessons/#", "www/content/lessons/", $newName);
 				$newName = preg_replace("#www/content/lessons/\d+/(.*)#", "www/content/lessons/".($this -> lesson['share_folder'] ? $this -> lesson['share_folder'] : $this -> lesson['id'])."/\$1", $newName);
-				if ($data['files'][$i]['original_name'] != eFront_basename($data['files'][$i]['file'])) {
+				if ($data['files'][$i]['original_name'] != basename($data['files'][$i]['file'])) {
 					if (is_dir(G_ROOTPATH.$newName)) {
 						$file = new EfrontDirectory(G_ROOTPATH.$newName);
 						$file -> rename(G_ROOTPATH.dirname($newName).'/'.EfrontFile :: encode(rtrim($data['files'][$i]['original_name'], "/")));
@@ -3179,10 +3166,9 @@ class EfrontLesson
 							unset($tabledata[$i]['shuffle_answers']);
 						}
 					}
-				}				
-				if ($table == 'calendar') {				
-					$tabledata = array_values($tabledata); // Because export returned assiciative array			
-					for ($i = 0; $i < sizeof($tabledata); $i++) { 
+				}
+				if ($table == 'calendar') {
+					for ($i = 0; $i < sizeof($tabledata); $i++) {
 						if (isset($tabledata[$i]['lessons_ID'])) {
 							if ($tabledata[$i]['lessons_ID']) {
 								$tabledata[$i]['foreign_ID'] = $tabledata[$i]['lessons_ID'];
@@ -3193,12 +3179,8 @@ class EfrontLesson
 							}
 							unset($tabledata[$i]['lessons_ID']);
 						}
-						
-						unset($tabledata[$i]['name']);
-						unset($tabledata[$i]['lesson_name']);
-					}					
+					}
 				}
-			
 				for ($i = 0; $i < sizeof($tabledata); $i++) {
 					if ($table == "tests") {
 						if (!isset($tabledata[$i]['lessons_ID'])) {
@@ -3260,12 +3242,10 @@ class EfrontLesson
 							}
 						}
 
-						$new_id = eF_insertTableData($table, $fields);						
-						if (!$exclude_search) {							
-							if ($table == "content") {
-								EfrontSearch :: insertText($content_name, $new_id, "content", "title");
-								EfrontSearch :: insertText(strip_tags($content_data), $new_id, "content", "data");
-							}
+						$new_id = eF_insertTableData($table, $fields);
+						if ($table == "content") {
+							EfrontSearch :: insertText($content_name, $new_id, "content", "title");
+							EfrontSearch :: insertText(strip_tags($content_data), $new_id, "content", "data");
 						}
 						$map[$table][$old_id] = $new_id;
 					}
@@ -3328,10 +3308,8 @@ class EfrontLesson
 				$replaced = preg_replace(array_keys($replaceString), array_values($replaceString), $content_data[$i]['data']);
 
 				eF_updateTableData("content", array('data' => $replaced), "id=".$content_data[$i]['id']);
-				if (!$exclude_search) {
-					EfrontSearch :: removeText('content', $content_data[$i]['id'], 'data');                                     //Refresh the search keywords
-					EfrontSearch :: insertText($replaced, $content_data[$i]['id'], "content", "data");
-				}
+				EfrontSearch :: removeText('content', $content_data[$i]['id'], 'data');                                     //Refresh the search keywords
+				EfrontSearch :: insertText($replaced, $content_data[$i]['id'], "content", "data");
 			}
 		}
 
@@ -3343,10 +3321,8 @@ class EfrontLesson
 			foreach ($regs[1] as $value) {
 				$replaced   = str_replace("##EFRONTINNERLINK##.php?ctg=content&amp;view_unit=".$value,"##EFRONTINNERLINK##.php?ctg=content&amp;view_unit=".$map["content"][$value], $content_data[$i]['data']);
 				eF_updateTableData("content", array('data' => $replaced), "id=".$content_data[$i]['id']);
-				if (!$exclude_search) {
-					EfrontSearch :: removeText('content', $content_data[$i]['id'], 'data');                                     //Refresh the search keywords
-					EfrontSearch :: insertText($replaced, $content_data[$i]['id'], "content", "data");
-				}
+				EfrontSearch :: removeText('content', $content_data[$i]['id'], 'data');                                     //Refresh the search keywords
+				EfrontSearch :: insertText($replaced, $content_data[$i]['id'], "content", "data");
 			}
 		}
 
@@ -3356,10 +3332,7 @@ class EfrontLesson
 				eF_updateTableData("tests", array("name" => $test['c_name']), "id=".$test['id']);
 			}
 		}
-		
-
-		EfrontCache::getInstance()->clearCache();
-		
+		//exit;
 		return true;
 
 	}
@@ -3573,7 +3546,6 @@ class EfrontLesson
 		}
 		if (isset($exportEntities['export_calendar'])) {
 			$calendar = calendar::getLessonCalendarEvents($this);
-			$calendar = array_values($calendar);		
 			if (sizeof($calendar) > 0) {
 				$data['calendar'] = $calendar;
 			}
@@ -3687,6 +3659,7 @@ class EfrontLesson
 				$data[$module -> className] = $moduleData;
 			}
 		}
+
 		file_put_contents($this -> directory.'/'."data.dat", serialize($data));                         //Create database dump file	
 		if ($exportFiles) {
 			$lessonDirectory = new EfrontDirectory($this -> directory);
@@ -3698,19 +3671,8 @@ class EfrontLesson
 
 		$newList         = FileSystemTree :: importFiles($file['path']);                                //Import the file to the database, so we can download it
 		$file            = new EfrontFile(current($newList));
-		
-		
-		if (empty($GLOBALS['currentUser'])){
-			if ($_SESSION['s_login']) {
-				$GLOBALS['currentUser'] =  EfrontUserFactory :: factory($_SESSION['s_login']);
-				$userTempDir     = $GLOBALS['currentUser'] -> user['directory'].'/temp';
-			} else {
-				$userTempDir     = sys_get_temp_dir();
-			}
-		} else {
-			$userTempDir     = $GLOBALS['currentUser'] -> user['directory'].'/temp';
-		}
-		
+
+		$userTempDir     = $GLOBALS['currentUser'] -> user['directory'].'/temp';                        //The compressed file will be moved to the user's temp directory
 
 		if (!is_dir($userTempDir)) {                                                                    //If the user's temp directory does not exist, create it
 			$userTempDir = EfrontDirectory :: createDirectory($userTempDir, false);
@@ -3759,11 +3721,11 @@ class EfrontLesson
 				$data = str_replace("view_file.php?file=".$file['id'], "files".$filePath, $data);
 			}					
 			$unitContent = $this -> createSCORMHtmlFiles($data);
-        	$unitFilename = $htmlExportFolder.str_replace('?', ' ',$unit['name']).".html";        	
+        	$unitFilename = $htmlExportFolder.$unit['name'].".html";
         	file_put_contents(EfrontFile :: encode($unitFilename), $unitContent);
 
         	$metadata = $this->getSCORMAssetMetadata($unit);
-        	$metadataFilename = $htmlExportFolder.str_replace('?', ' ',$unit['name']).".xml";
+        	$metadataFilename = $htmlExportFolder.$unit['name'].".xml";
         	//file_put_contents($metadataFilename, $metadata);
         	file_put_contents(EfrontFile :: encode($metadataFilename), $metadata);
         	
@@ -3787,7 +3749,7 @@ class EfrontLesson
 		$metadata_str      = $this -> buildSCORMManifestMetadata(0);
 		
 		$manifest          = $this -> buildSCORMManifestMain($metadata_str . $organizations_str . $resources_str);		
-
+		
 		file_put_contents($scormExportFolder."imsmanifest.xml", $manifest);
 
 		/*Create functions files*/
@@ -4300,9 +4262,9 @@ class EfrontLesson
 
 		for ($i = 0 ; $i < sizeof($units) ; $i++) {
 			$resource_str .= '
-			<resource identifier="' . $units[$i]['id'] . '" type="webcontent" adlcp:scormtype="sco" href="html/' . rawurlencode(EfrontFile :: encode(str_replace('?', ' ', $units[$i]['name']))) . '.html">
+			<resource identifier="' . $units[$i]['id'] . '" type="webcontent" adlcp:scormtype="sco" href="html/' . rawurlencode(EfrontFile :: encode($units[$i]['name'])) . '.html">
 				<metadata></metadata>
-				<file href="html/' .rawurlencode(EfrontFile :: encode(str_replace('?', ' ', $units[$i]['name']))) . '.html"/>
+				<file href="html/' .rawurlencode(EfrontFile :: encode($units[$i]['name'])) . '.html"/>
 				<dependency identifierref="dep_SPECIAL"/>';
 
 			$unitFiles = $units[$i]->getFiles(true);			
@@ -4311,9 +4273,9 @@ class EfrontLesson
 				$resource_str   .= '
 				<dependency identifierref="dep_' . $i . '_' . $j . '"/>';
 				$dependency_str .= '
-					<resource identifier="dep_' . $i . '_' . $j . '" type="webcontent" adlcp:scormtype="asset" href="'.rawurlencode(EfrontFile :: encode(str_replace('?', ' ', $file))).'">
+					<resource identifier="dep_' . $i . '_' . $j . '" type="webcontent" adlcp:scormtype="asset" href="'.rawurlencode(EfrontFile :: encode($file)).'">
 						<metadata></metadata>
-						<file href="'.rawurlencode(EfrontFile :: encode(str_replace('?', ' ', $file))).'"/>
+						<file href="'.rawurlencode(EfrontFile :: encode($file)).'"/>
 					</resource>';
 			}
 			$resource_str .= '
@@ -5484,7 +5446,7 @@ class EfrontLesson
 
 	public function getUsersActiveTimeInLesson($constraints = array()) {
 		$lessonUsers = array();
-		$constraints   = array('return_objects' => false) + (array)$constraints;
+		$constraints   = array('return_objects' => false) + $constraints;
 		foreach ($this->getLessonUsers($constraints) as $key=>$value) {
 			$lessonUsers[$key] = 0;
 		}
@@ -5661,11 +5623,6 @@ class EfrontLesson
 		$instance -> course['originating_course'] = $originateCourse -> course['id'];
 		$instance -> course['instance_source'] 	  = $instanceSource -> lesson['id'];
 		$instance -> persist();
-		
-		$modules = eF_loadAllModules();
-		foreach ($modules as $module) {
-			$module -> onCreateInstance($instance-> lesson['id'], $instanceSource -> lesson['id']);
-		}
 
 		return $instance;
 	}

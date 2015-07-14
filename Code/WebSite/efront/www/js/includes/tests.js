@@ -31,24 +31,6 @@ function deleteTest(el, id) {
 function onDeleteTest(el, reponse) {
 	new Effect.Fade(el.up().up());
 }
-function deleteTestExecutions(el, id) {
-	parameters = {delete_test_executions:id, method: 'get'};
-	var url    = location.toString();
-	ajaxRequest(el, url, parameters, onDeleteTestExecutions);	
-}
-function onDeleteTestExecutions(el, response) {
-	eF_js_redrawPage('pendingTable', true);
-	$('average_score_'+response).innerHTML = '-';
-}
-function deleteLessonTestsExecutions(el, id) {
-	parameters = {delete_lesson_tests_executions:id, method: 'get'};
-	var url    = location.toString();
-	ajaxRequest(el, url, parameters, onDeleteLessonTestsExecutions);	
-}
-function onDeleteLessonTestsExecutions(el, reponse) {
-	eF_js_redrawPage('pendingTable', true);
-	jQuery('td[id^="average_score_"]').text('-');
-}
 function publish(el, id) {
 	parameters = {publish_test:id, method: 'get'};
 	var url    = location.toString();
@@ -85,7 +67,8 @@ function randomize(el, mode) {
     }  else if (mode == 'percentage') {
     	parameters = Object.extend(parameters, $('percentage_form').serialize(true));
     }
-    Object.extend(parameters, {method:'post'}); 
+    Object.extend(parameters, {method:'post'});
+    
     ajaxRequest(el, url+'&ajax=randomize', parameters, onRandomize);
 }
 function onRandomize(el, response) {
@@ -101,22 +84,6 @@ function onRandomize(el, response) {
         
     eF_js_changePage(1, 0);
 }
-
-function createRandomTest(el, mode, common_pool) {  
-	var parameters;
-    if (mode == 'difficulty') {
-        parameters = $('difficulty_form').serialize(true);
-    } else if (mode == 'type') {
-    	parameters = $('type_form').serialize(true);
-    } 
-    Object.extend(parameters, {method:'post'}); 
-    ajaxRequest(el, url+'&ajax=create_random_test&showall='+common_pool, parameters, onCreateRandomTest);
-}
-
-function onCreateRandomTest(el, response) {
-	
-}
-
 
 function updateSettings(response) {
 	response = response.evalJSON();
@@ -844,10 +811,6 @@ function checkQuestions() {
     		r.select('input[type=radio]').each(function (s) {s.checked ? finished[count] = 1 : null;});
     	} else if (r.hasClassName('multipleManyQuestion')) {
     		r.select('input[type=checkbox]').each(function (s) {s.checked ? finished[count] = 1 : null;});
-    	} else if (r.hasClassName('gridQuestion')) {
-    		r.select('input[type=checkbox]').each(function (s) {s.checked ? finished[count] = 1 : null;});
-    	} else if (r.hasClassName('HotspotQuestion')) {
-    		r.select('input[type=text]').each(function (s) {s.value ? finished[count] = 1 : null;});
     	} else if (r.hasClassName('matchQuestion')) {
     		//r.select('select').each(function (s) {s.checked ? finished[count] = 1 : null;});
     		finished[count] = 1;
@@ -947,9 +910,6 @@ function toggleAdvancedParameters() {
 	if ($('test_password')) {
 		$('test_password').toggle();
 	}
-	if ($('custom_class')) {
-		$('custom_class').toggle();
-	}
 	if ($('keep_best')) {
 		$('keep_best').toggle();
 	}	
@@ -1003,58 +963,4 @@ jQuery('div[id*=question_]').find('input,select,textarea,div.draggable').on('mou
 	}
 });
 */
-if (typeof multipleManyQuestionsLimits !== 'undefined') {
-	for (var key in multipleManyQuestionsLimits) {
-		multipleManyQuestionsLimitsFunction(key, multipleManyQuestionsLimits[key])
-	}	
-}
-function multipleManyQuestionsLimitsFunction(question, limit) {
-	var theCheckboxes = jQuery("input[name*='question["+question+"]']"); 	
-	theCheckboxes.click(function()
-	{
-	    if (theCheckboxes.filter(":checked").length > limit)
-	    	jQuery(this).removeAttr("checked");
-	});
-}
 
-
-function setHotspotCoords(id){
-	jQuery('#hotspot_image_'+id).click(function(e){
-		var x = e.pageX - jQuery(this).offset().left;
-		var y = e.pageY - jQuery(this).offset().top;
-		jQuery('#question_'+id).val(x+','+y);		
-		jQuery("img[id*='pin_"+id+"']").remove(); 	
-		var x_pin = x-4;
-		var y_pin=  y-10;	
-		x_pin = x_pin.toFixed(1);
-		y_pin = y_pin.toFixed(1);
-		jQuery('#hotspot_div_'+id).append('<img src="themes/default/images/others/pin_red.png" id="pin_'+id+'" style="position:absolute;left:'+x_pin+'px; top:'+y_pin+'px; z-index:1000;">');		
-	}); 
-}
-
-jQuery(document).ready(function() {
-	jQuery("div[id*='hotspot_div_']").each(function(index){
-		var hotspot_question_ID = this.id.substr(12);	
-		var coordinates = jQuery('#question_'+hotspot_question_ID).val();	
-		var coord= coordinates.split(',');		
-		var x_pin = coord[0]-4;
-		var y_pin= coord[1]-10;		
-		if (coord != '') {
-			jQuery('#hotspot_div_'+hotspot_question_ID).append('<img src="themes/default/images/others/pin_red.png" id="pin_'+hotspot_question_ID+'" style="position:absolute;left:'+x_pin+'px; top:'+y_pin+'px; z-index:1000;">');		
-		}
-	});
-	
-	if (jQuery("#hotspot_answer").val()) {
-		var answer = jQuery("#hotspot_answer").val();
-		answer = answer.substr(0,answer.indexOf('||'));
-		answer = answer.replace(')(',',');
-		answer = answer.replace(')','');
-		answer = answer.replace('(','');
-		var coord = answer.split(',');
-		var coords = {x1 : coord[0], y1 : coord[1], x2 : coord[2], y2: coord[3]};
-		
-		jQuery("#hotspotSpace").imgAreaSelect(coords);
-		//alert(answer);
-	}
-	 	
-});

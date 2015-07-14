@@ -1,10 +1,3 @@
-{if $smarty.get.user_form}
-	<div id="training_record_popup">
-		{include file="includes/personal/user_form.tpl"}
-	</div>
-{else}
-
-
 
 {assign var = "courses_url" value = "`$smarty.server.PHP_SELF`?ctg=statistics&option=user&sel_user=`$smarty.get.sel_user`&"}
 {assign var = "_change_handles_" value = false}
@@ -244,12 +237,9 @@
 		</table>
 	{/if}
 
-
 	{if $smarty.get.sel_user}
-	
 		<table class = "statisticsTools">
-			<tr>
-				<td id = "right">
+			<tr><td id = "right">
 					{$smarty.const._EXPORTSTATS}
 					<a href = "{$T_BASIC_TYPE}.php?ctg=statistics&option=user&sel_user={$T_USER_LOGIN}&excel=user">
 						<img src = "images/file_types/xls.png" title = "{$smarty.const._XLSFORMAT}" alt = "{$smarty.const._XLSFORMAT}"/>
@@ -257,14 +247,7 @@
 					<a href = "{$T_BASIC_TYPE}.php?ctg=statistics&option=user&sel_user={$T_USER_LOGIN}&pdf=user">
 						<img src = "images/file_types/pdf.png" title = "{$smarty.const._PDFFORMAT}" alt="{$smarty.const._PDFFORMAT}"/>
 					</a>
-					{if $T_BASIC_TYPE == 'administrator' || $T_BASIC_TYPE == 'professor' }
-				    |
-					<a href="javascript:void(0);"  onclick='win = window.open("{$smarty.server.REQUEST_URI}&user_form=1&printable=1", "printable", "width=1050,height=650,scrollbars=yes,resizable=yes,status=yes,toolbar=no,location=no,menubar=yes,top="+(parseInt(parseInt(screen.height)/2) - 500)+",left="+(parseInt(parseInt(screen.width)/2) - 500)+"");'>
-						<img src = "images/16x16/reports.png" title = "{$smarty.const._USERFORM}" alt = "{$smarty.const._USERFORM}"/>
-					</a>
-					{/if}
-				</td>
-			</tr>
+				</td></tr>
 		</table>
 		<br/>
 		<table class = "statisticsGeneralInfo">
@@ -449,5 +432,3 @@
 		{eF_template_printBlock title = $smarty.const._USERSTATISTICS data = $smarty.capture.user_statistics image = '32x32/users.png' help = 'Reports'}
 	{/if}
 
-<div>
-{/if}

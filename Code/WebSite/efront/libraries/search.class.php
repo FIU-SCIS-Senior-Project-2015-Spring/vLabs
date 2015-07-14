@@ -100,8 +100,7 @@ class EfrontSearch
 		                //$rows[] = "('".implode("','",$fields)."')";
 		            }
 		        }
-		        
-		        $allFields = array_map('unserialize', array_unique(array_map('serialize', $allFields)));
+
 		        //$res = eF_executeNew("insert into search_keywords (".implode(",", array_keys($fields)).") values ".implode(",",$rows)."");
 		        eF_insertTableDataMultiple("search_keywords", $allFields);
 		    }

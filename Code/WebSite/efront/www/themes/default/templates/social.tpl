@@ -27,7 +27,7 @@ translations['_YOUHAVEBEENSUCCESSFULLYADDEDTOTHEGROUP'] = '{$smarty.const._YOUHA
 		                                </td></tr>
                                 {/capture}
 							
-							{if $T_CONFIGURATION.mode_calendar}
+
 								{capture name = "moduleCalendar"}
 			                                <tr><td class = "moduleCell">
 			                                        {capture name='t_calendar_code'}
@@ -42,7 +42,7 @@ translations['_YOUHAVEBEENSUCCESSFULLYADDEDTOTHEGROUP'] = '{$smarty.const._YOUHA
 
 			                                </td></tr>
                                 {/capture}
-							{/if}
+
 							{if $T_FACEBOOK_ENABLED}
 								{capture name = "moduleFacebook"}
 			                                <tr><td class = "moduleCell">

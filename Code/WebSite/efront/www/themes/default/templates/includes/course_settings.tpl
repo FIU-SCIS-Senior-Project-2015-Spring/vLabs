@@ -142,9 +142,6 @@
 						<span>
 							&nbsp;<img src="images/16x16/go_into.png" title="{$smarty.const._FORMATCERTIFICATELIVEDOCXMETHOD}" alt="{$smarty.const._FORMATCERTIFICATELIVEDOCXMETHOD}"/>&nbsp;<a href="{$smarty.server.PHP_SELF}?{$T_BASE_URL}&op=format_certificate_docx">{$smarty.const._FORMATCERTIFICATELIVEDOCXMETHOD}</a>
 						</span>
-						<span>
-							<img src="images/16x16/add.png" title="{$smarty.const._UPLOADSIGNATURE}" alt="{$smarty.const._UPLOADSIGNATURE}"/>&nbsp;<a href="{$smarty.server.PHP_SELF}?{$T_BASE_URL}&op=upload_signature&popup=1" onclick="eF_js_showDivPopup(event, '{$smarty.const._UPLOADSIGNATURE}', 3)" target="POPUP_FRAME">{$smarty.const._UPLOADSIGNATURE}</a>&nbsp;
-						</span>
 					</div>
 
 					<fieldset class="fieldsetSeparator">
@@ -314,8 +311,6 @@
 	{/if}
 
 	{/if} {* #cpp#endif *}
-{elseif $T_OP == 'upload_signature'}
-{$T_FILE_MANAGER}
 {elseif $T_OP == 'rename_certificate_template'}
 	{if $smarty.const.G_VERSIONTYPE != 'community'} {* #cpp#ifndef COMMUNITY *}
 				{capture name = 't_rename_certificate_template_code'}
@@ -523,12 +518,12 @@
 				<tr {if !$lesson.active}class = "deactivatedTableElement"{/if}><td>{$lesson.name}:&nbsp;</td>
 					<td>
 						<span id = "schedule_dates_{$id}">
-						{if $lesson.start_date != ''}
+						{if $lesson.start_date}
 							{$smarty.const._FROM} #filter:timestamp_time_nosec-{$lesson.start_date}#
 							{$smarty.const._TO} #filter:timestamp_time_nosec-{$lesson.end_date}#
 							{assign var = "start_date" value = $lesson.start_date}
 							{assign var = "end_date" value = $lesson.end_date}						
-						{elseif $lesson.start_period != ''}
+						{elseif $lesson.start_period}
 							<span>{$smarty.const._FROM}&nbsp;{$lesson.start_period}&nbsp;{$smarty.const._DAYSAFTERCOURSEENROLLMENT}&nbsp;{$smarty.const._AND}&nbsp;{$smarty.const._FOR}&nbsp;{$lesson.end_period}&nbsp;{$smarty.const._DAYSCONDITIONALLOWERCASE}</span>
 						{else}
 							<span class = "emptyCategory">{$smarty.const._NOSCHEDULESET}</span>

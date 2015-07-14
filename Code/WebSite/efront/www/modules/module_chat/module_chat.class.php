@@ -2,18 +2,11 @@
 
 //include_once ("../PEAR/Spreadsheet/Excel/Writer.php");
 
-include("../../../libraries/configuration.php");
-
-session_start();
-global $dbh;
-$dbh = mysql_connect(G_DBHOST,G_DBUSER,G_DBPASSWD) or die('Could not connect to mysql server.' );
-mysql_selectdb(G_DBNAME,$dbh);
-
 class module_chat extends eFrontModule{
 
 
 	public function getName() {
-		return _CHAT_CHAT;
+		return "Chat Module";
 	}
 
 	public function getPermittedRoles() {
@@ -28,7 +21,8 @@ class module_chat extends eFrontModule{
 
 
 	public function onInstall(){
-		eF_executeNew("DROP TABLE IF EXISTS module_chat");
+
+		eF_executeNew("drop table if exists module_chat");
 		$res1 = eF_executeNew("CREATE TABLE module_chat (
 							id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
 							from_user VARCHAR(255) NOT NULL DEFAULT '',
@@ -40,14 +34,14 @@ class module_chat extends eFrontModule{
 							) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 							);
 
-		eF_executeNew("DROP TABLE IF EXISTS module_chat_users");
+		eF_executeNew("drop table if exists module_chat_users");
 		$res2 = eF_executeNew("CREATE TABLE module_chat_users (username VARCHAR(100) NOT NULL,
 							timestamp_ TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 							UNIQUE (username)
 							) ENGINE=InnoDB DEFAULT CHARSET=utf8"
 							);
 
-		eF_executeNew("DROP TABLE IF EXISTS module_chat_config");
+		eF_executeNew("drop table if exists module_chat_config");
 		$res3 = eF_executeNew("CREATE TABLE module_chat_config (status INT NOT NULL DEFAULT  '1',
 							chatHeartbeatTime INT NOT NULL DEFAULT  '1500',
 							refresh_rate INT NOT NULL DEFAULT  '60000'
@@ -59,7 +53,7 @@ class module_chat extends eFrontModule{
 							);
 
 
-		return ($res1 && $res2 && $res3 && $res4);
+		return ($res1 && $res2 && $res3 &&res4);
 	}
 
 	public function onUninstall() {
@@ -71,11 +65,39 @@ class module_chat extends eFrontModule{
     }
 
 	public function getCenterLinkInfo() {
-        return array('title' => _CHAT_CHAT,
-                     'image' => $this -> moduleBaseDir.'img/chat.png',
-                     'link' => $this -> moduleBaseUrl);
+        $optionArray = array('title' => 'Chat',
+                             'image' => $this -> moduleBaseDir.'img/chat.png',
+                             'link' => $this -> moduleBaseUrl);
+        $centerLinkInfo = $optionArray;
+
+        return $centerLinkInfo;
     }
 
+	public function getModule(){
+		return true;
+	}
+
+	/*public function getSidebarLinkInfo () {
+	//echo("holaaaaaaa");
+        $currentUser = $this -> getCurrentUser();
+    	// professors should see a link in the lessons menu
+
+			$link_of_menu_lessons = array (
+                              'id' => 'chat_module1',
+                              'title' => "chat module",
+                              'image' => $this -> moduleBaseLink . 'img/16x16/chat',
+                              'eFrontExtensions' => '1',      //no extension provided up
+                              'link'  => $this -> moduleBaseUrl
+							  );
+
+           return array ('tools' => array ('links'=>$link_of_menu_lessons));
+
+// and admins should see a link in the users menu and in a newly defined menu
+
+}
+	*/
+
+	// Get module css
     public function getModuleCSS() {
         return $this->moduleBaseDir."css/screen.css";
     }
@@ -94,10 +116,6 @@ class module_chat extends eFrontModule{
 		}
 
 		$result = eF_executeNew ("SELECT login FROM users");
-		$result2 = eF_executeNew ("SELECT users_LOGIN, lessons_ID FROM users_to_lessons WHERE archive=0");
-		foreach ($result2 as $value2){
-			$users_lessons_all[$value2['users_LOGIN']][] = $value2["lessons_ID"];
-		}
 
 		foreach ($result as $value) {
 			if ($value["login"] != $user){
@@ -105,12 +123,11 @@ class module_chat extends eFrontModule{
 
 				$rate = 0;
 
-				//$result2 = eF_executeNew ("SELECT lessons_ID FROM users_to_lessons WHERE archive=0 and users_LOGIN='".$value['login']."'");
+				$result2 = eF_executeNew ("SELECT lessons_ID FROM users_to_lessons WHERE archive=0 and users_LOGIN='".$value['login']."'");
 
-				//foreach ($result2 as $value2){
-					//$users_lessons[] = $value2["lessons_ID"];
-				$users_lessons = $users_lessons_all[$value["login"]];
-				//}
+				foreach ($result2 as $value2){
+					$users_lessons[] = $value2["lessons_ID"];
+				}
 
 				$common_lessons[$value["login"]] = array_intersect($users_lessons, $currentUserLessons);
 				$rate =  sizeof($common_lessons[$value["login"]]);
@@ -125,33 +142,49 @@ class module_chat extends eFrontModule{
 	}
 
 	public function isPopup() {
+		/*$pageURL = 'http';
+		if ($_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+			$pageURL .= "://";
+		if ($_SERVER["SERVER_PORT"] != "80") {
+			$pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+		}
+		else {
+			$pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+		}
+		return $pageURL;*/
 		if (isset($_GET['popup'])){
-			if ($_GET['popup']==1){
+			if ($_GET['popup']==1)
 				return true;
-			}
 		}
 		return false;
 	}
 
 
 	public function addScripts() {
-		return array("scriptaculous/effects", "scriptaculous/controls");
+		return array("scriptaculous/effects",
+					 "scriptaculous/controls");
 	}
 
 
+
+	//public function getSmartyTpl() {
 	public function onPageFinishLoadingSmartyTpl() {
 
-		if (!isset($_SESSION['lesson_rooms'])) {
+		if (!isset($_SESSION['lesson_rooms']))
 			$_SESSION['lesson_rooms'] = array();
-		}
+
 		$smarty = $this -> getSmartyVar();
 
 		$mainScripts = array_merge(array('../modules/module_chat/js/chat'),getMainScripts());
 		$smarty -> assign("T_HEADER_MAIN_SCRIPTS", implode(",", $mainScripts));
 
+		//$page = $this->isPopup();
+
+		//if ($this->contains($page,"popup=1")){
 		if ($this->isPopup()){
 			$smarty -> assign("T_CHAT_MODULE_STATUS", "OFF");
-		} else {
+		}
+		else{
 			$smarty -> assign("T_CHAT_MODULE_STATUS", "ON");
 		}
 
@@ -161,7 +194,8 @@ class module_chat extends eFrontModule{
 			$_SESSION['utype'] = $currentUser -> getType();
 			$this -> calculateCommonality($currentUser -> login);
 			eF_executeNew("INSERT IGNORE INTO module_chat_users (username ,timestamp_) VALUES ('".$_SESSION['chatter']."', CURRENT_TIMESTAMP);");
-		}else{
+		}
+		else{
 			$currentUser = $this -> getCurrentUser();
 			if ($_SESSION['chatter'] != $currentUser -> login){
 				$_SESSION['chatter'] = $currentUser -> login;
@@ -183,141 +217,167 @@ class module_chat extends eFrontModule{
 		return $this -> moduleBaseDir . "module_chat.tpl";
 	}
 
-	public function getModule(){
-		return true;
-	}	
-	
-	
 	public function getSmartyTpl() {
+
 		$smarty = $this -> getSmartyVar();
-
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Module rates
-		$heartbeatForm = new HTML_QuickForm('module_chat_heartbeat_form', "post", $this->moduleBaseUrl, "", null, true);
-		$heartbeatForm->addElement('text', 'engine_rate', _CHAT_ENGINE_RATE, 'class="inputText" style="width:100px;"');
-		$heartbeatForm->addRule('engine_rate', _THEFIELD . ' '. _CHAT_ENGINE_RATE . ' ' . _ISMANDATORY, 'required', null, 'client');
-		$heartbeatForm->addRule('engine_rate', _THEFIELD . ' '. _CHAT_ENGINE_RATE . ' ' . _CHAT_MUST_BE_NUMERIC_VALUE, 'numeric', null, 'client');
-		$heartbeatForm->addRule('engine_rate', _THEFIELD . ' '. _CHAT_ENGINE_RATE . ' ' . _CHAT_MUST_BE_GREATER_THAN_ONE, 'callback', create_function('$a', '$res = ($a >= 1) ? true : false; return $res;'));
-		$heartbeatForm->addElement('text', 'refresh_rate', _CHAT_USERLIST_REFRESH_RATE, 'class="inputText" style="width:100px;"');
-		$heartbeatForm->addRule('refresh_rate', _THEFIELD . ' ' . _CHAT_USERLIST_REFRESH_RATE . ' ' . _ISMANDATORY, 'required', null, 'client');
-		$heartbeatForm->addRule('refresh_rate', _THEFIELD . ' ' . _CHAT_USERLIST_REFRESH_RATE . ' ' . _CHAT_MUST_BE_NUMERIC_VALUE, 'numeric', null, 'client');
-		$heartbeatForm->addRule('refresh_rate', _THEFIELD . ' '. _CHAT_ENGINE_RATE . ' ' . _CHAT_MUST_BE_GREATER_THAN_ONE, 'callback', create_function('$a', '$res = ($a >= 1) ? true : false; return $res;'));
-		$heartbeatForm->addElement('submit', 'submit', _SUBMIT, 'class="flatButton"');
-
-		$heartbeatForm -> setDefaults(array('engine_rate' => $this->getChatHeartbeat()/1000, 'refresh_rate' => $this->getRefreshRate()/1000));
 		
-		$renderer = prepareFormRenderer($heartbeatForm);
-		$smarty->assign("T_CHAT_CHATHEARTBEAT_FORM", $renderer -> toArray());
+		$smarty->assign('T_CHAT_ERROR_RATE', "");
+		$smarty->assign('T_CHAT_ERROR2_RATE', "");
 
-		if ($heartbeatForm -> isSubmitted() && $heartbeatForm -> validate()) {
-			$values = $heartbeatForm -> exportValues();
-			$this -> setChatHeartbeat($values['engine_rate']*1000);
-			$this -> setRefreshRate($values['refresh_rate']*1000);
-			eF_redirect($this -> moduleBaseUrl . '&message_type=success&message=' . urlencode(_CHAT_VALUES_UPDATED_SUCCESSFULLY));
-		}
-
+			if (isset($_POST['rate']) && isset($_POST['rate2'])){
 			
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Create Log file	
+				$ok = true;
+				if ($_POST['rate'] < 1){
+					$smarty->assign('T_CHAT_ERROR_RATE', " New Rate must be greater or equal to 1.");
+					$ok = false;
+				}
+				if ($_POST['rate2'] < 1){
+					$smarty->assign('T_CHAT_ERROR2_RATE', " New Rate must be greater or equal to 1.");
+					$ok = false;
+				}
+				
+				if ($ok){
+					$this -> setChatHeartbeat($_POST['rate']*1000);
+					$this -> setRefresh_rate($_POST['rate2']*1000);
+				}
+			}
 
-		$logForm = new HTML_QuickForm("module_chat_createlog_form", "post", $this->moduleBaseUrl."&createLog=1", "", null, true);
-		$logForm->addElement('hidden', 'hidden_lesson_id', '', 'id = "hidden_lesson_id"');
-		$logForm->addElement('text', 'lesson_title', _CHAT_LESSON_TITLE, 'maxlength="100" size="100" class="autoCompleteTextBox" id="autocomplete"');
-		$logForm->addRule('lesson_title', _THEFIELD.' '._CHAT_LESSON_TITLE. ' ' ._ISMANDATORY, 'required', null, 'client');
-		$logForm->addElement('date', 'from',  _CHAT_FROM_DATE, array('format' => 'dMY', 'minYear' => 2010, 'maxYear' => date('Y')));
-		$logForm->addElement('date', 'until', _CHAT_UNTIL_DATE, array('format' => 'dMY', 'minYear' => 2010, 'maxYear' => date('Y')));
-		$logForm->addElement('submit', 'submit', _SUBMIT, 'class="flatButton"');
-		
-		$week_ago = $this->subtractDaysFromToday(7);
-		$logForm->setDefaults(array('until' => array('d' => date('d'), 'M' => date('m'), 'Y' => date('Y')), 'from' => $week_ago));			
-		
-		$renderer = prepareFormRenderer($logForm);
-		$smarty->assign("T_CHAT_CREATE_LOG_FORM", $renderer -> toArray());
-		
-		if (isset($_GET['createLog'])){
-			$log = $this->createLessonHistory(
-					$_POST['hidden_lesson_id'],
-					$_POST['from']['Y'].'-'.$_POST['from']['M'].'-'.$_POST['from']['d'].' '."00:00:00" ,
-					$_POST['until']['Y'].'-'.$_POST['until']['M'].'-'.$_POST['until']['d'].' '."23:59:59");
-		
-			$smarty->assign('T_LOG', $log);
-			$smarty->assign('T_CHAT_LESSON_TITLE', $l2);
-		}
-		if($_POST['exportAdminChat']) {
-			$this -> adminLogsExportToExcel($_POST['logTitle'], $_POST['data']);
-			exit;
-		}
-		
-		
-		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		// Clear chat logs		
+			$r = $this->getChatHeartbeat();
+			$r2 = $this->getRefresh_rate();
+
+			$smarty->assign('T_CHAT_CURRENT_RATE', $r/1000);
+			
+
+			$form = new HTML_QuickForm("change_chatheartbeat_form", "post", $this->moduleBaseUrl."&setChatHeartBeat=1", "", null, true);
+			$form->addElement('text', 'rate', "rate", 'class="inputText" value="'.($r/1000).'" style="width:100px;"');
+			$form->addRule('rate', _THEFIELD.' "Rate" '._ISMANDATORY, 'required', null, 'client');
+			$form->addRule('rate', "Non numeric Value", 'numeric', null, 'client');
+			$form->addRule('rate', "Rate must be greater than 1", 'callback', create_function('$rate', 'return ($rate >= 1);'));
+			
+			$form->addElement('text', 'rate2', "rate2", 'class="inputText" value="'.($r2/1000).'" style="width:100px;"');
+			$form->addRule('rate2', _THEFIELD.' "Rate" '._ISMANDATORY, 'required', null, 'client');
+			$form->addRule('rate2', "Non numeric Value", 'numeric', null, 'client');
+			
+			$form->addElement('submit', 'submit1', _SUBMIT, 'class="flatButton"');
+			
+			
+			$renderer = new HTML_QuickForm_Renderer_ArraySmarty($smarty);
+			$form->setJsWarnings(_BEFOREJAVASCRIPTERROR, _AFTERJAVASCRIPTERROR);
+			$form->setRequiredNote("mesh");
+			$form->accept($renderer);
+			$smarty->assign('T_CHAT_CHANGE_CHATHEARTBEAT_FORM', $renderer->toArray());
+			
+			///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			
+			/*$smarty->assign('T_CHAT_ERROR2_RATE', "");
+			
+			if (isset($_POST['rate2'])){
+				if ($_POST['rate2'] >= 1)
+					$this -> setRefresh_rate($_POST['rate2']*1000);
+				else
+					$smarty->assign('T_CHAT_ERROR2_RATE', " New Rate must be greater or equal to 1.");
+			}
+
+			$r2 = $this->getRefresh_rate();
+
+			$smarty->assign('T_CHAT_CURRENT_REFRESH_RATE', $r2/1000);
+
+			$form = new HTML_QuickForm("change_refreshrate_form", "post", $this->moduleBaseUrl."&setRefresh_rate=1", "", null, true);
+			$form->addElement('text', 'rate2', "rate2", 'class="inputText" value="'.($r2/1000).'" style="width:100px;"');
+			$form->addRule('rate2', _THEFIELD.' "New Rate" '._ISMANDATORY, 'required', null, 'client');
+			$form->addRule('rate2', "Non numeric Value", 'numeric', null, 'client');
+			$form->addElement('submit', 'submit2', _SUBMIT, 'class="flatButton"');
+			$renderer = new HTML_QuickForm_Renderer_ArraySmarty($smarty);
+			$form->setJsWarnings(_BEFOREJAVASCRIPTERROR, _AFTERJAVASCRIPTERROR);
+			$form->setRequiredNote("mesh");
+			$form->accept($renderer);
+			$smarty->assign('T_CHAT_CHANGE_REFRESHRATE_FORM', $renderer->toArray());*/
+
+			/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			//$lessons = $this -> getLessonsCatalogue();
+			//$smarty->assign('T_CHAT_LESSONS', $lessons);
+			$textfieldcontent = "";
+			if (isset($_POST['lessontitle'])){
+				$textfieldcontent = $_POST['lessontitle'];
+				//$l = strip_tags($_POST['lessontitle']);
+				//$l2 = substr($l, strpos($l, '→')+5);
+				$log = $this->createLessonHistory($_POST['lessontitle'],
+											$_POST['from']['Y'].'-'.$_POST['from']['M'].'-'.$_POST['from']['d'].' '."00:00:00" ,
+											$_POST['until']['Y'].'-'.$_POST['until']['M'].'-'.$_POST['until']['d'].' '."23:59:59"
+											);
+											
+				$smarty->assign('T_LOG', $log);							
+				$smarty->assign('T_CHAT_LESSON_TITLE', $l2);
+
+			}
+
+			$form = new HTML_QuickForm("create_log_form", "post", $this->moduleBaseUrl."&createLog=1", "", null, true);
+			$date_from = $form->addElement('date', 'from', 'From Date:', array('format' => 'dMY', 'minYear' => 2010, 'maxYear' => date('Y')));
+			$date_until = $form->addElement('date', 'until', 'Until Date:', array('format' => 'dMY', 'minYear' => 2010, 'maxYear' => date('Y')));
+			$form->addElement('text', 'lessontitle', "lessontitle", 'maxlength="100" size="100" class="autoCompleteTextBox" id="autocomplete" value="'.$textfieldcontent.'"');
+			$form->addRule('lessontitle', _THEFIELD.' "Lesson Title" '._ISMANDATORY, 'required', null, 'client');
+			$week_ago = $this->subtractDaysFromToday(7);
+
+			$form->setDefaults(array('until' => array('d' => date('d'), 'M' => date('m'), 'Y' => date('Y')),
+									 'from' => $week_ago
+									 ));			
+
+			$form->addElement('submit', 'submit', "Create Log", 'class="flatButton"');
+			$renderer = new HTML_QuickForm_Renderer_ArraySmarty($smarty);
+			$form->setJsWarnings(_BEFOREJAVASCRIPTERROR, _AFTERJAVASCRIPTERROR);
+			$form->setRequiredNote("mesh");
+			$form->accept($renderer);
+			$smarty->assign('T_CHAT_CREATE_LOG_FORM', $renderer->toArray());
+
+////////
+
 		return $this -> moduleBaseDir . "control_panel.tpl";
 	}
 
 
-
-	private function adminLogsExportToExcel($title, $log) {
-		require_once ('lib/PHPExcel_1.7.9_doc/Classes/PHPExcel.php');
-
-		$objPHPExcel = new PHPExcel();
-		$objPHPExcel->getProperties()->setCreator("eFront"); // TODO efront version nun
-		$objPHPExcel->getProperties()->setLastModifiedBy("eFront"); // TODO efront version nun
-		$objPHPExcel->getActiveSheet()->setTitle(_CHAT_LOG."-".$title);
-		$objPHPExcel->getProperties()->setSubject(_CHAT_LOG."-".$title);		
-		
-		$objPHPExcel->setActiveSheetIndex(0);
-		
-		array_pop($log);
-		
-		$row = 2; $previousLoginNameLength = 1;$previousMsgLength = 1;$previousDateLength = 1;
-		foreach($log as $line) {
-			// first row is headers
-			if($row == 2) {
-				$objPHPExcel->getActiveSheet()->SetCellValue('B'.$row, $line[0]);
-				$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $line[1]);
-				$objPHPExcel->getActiveSheet()->SetCellValue('D'.$row, $line[2]);
-				$objPHPExcel->getActiveSheet()->getStyle("B".$row.":D".$row)->applyFromArray(array('font' => array('bold' => true), 'borders' => array('bottom' => array('style' => PHPExcel_Style_Border::BORDER_THIN))));
-			} else {
-		
-				if( (strlen($line[0])+ 5) > $previousLoginNameLength) {
-					$objPHPExcel->getActiveSheet()->SetCellValue('B'.$row, $line[0])->getColumnDimension('B')->setWidth(strlen($line[0])+5);
-					$previousLoginNameLength = strlen($line[0]) + 5;
-				} else {
-					$objPHPExcel->getActiveSheet()->SetCellValue('B'.$row, $line[0])->getColumnDimension('B')->setWidth($previousLoginNameLength);
-				}
-				
-				if( (strlen($line[1])+ 5) > $previousMsgLength) {
-					$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $line[1])->getColumnDimension('C')->setWidth(strlen($line[1])+5);
-					$previousMsgLength = strlen($line[1]) + 5;
-				} else {
-					$objPHPExcel->getActiveSheet()->SetCellValue('C'.$row, $line[1])->getColumnDimension('C')->setWidth($previousMsgLength);
-				}
-				
-				if( (strlen($line[1])+ 5) > $previousDateLength) {
-					$objPHPExcel->getActiveSheet()->SetCellValue('D'.$row, $line[2])->getColumnDimension('D')->setWidth(strlen($line[2])+5);
-					$previousDateLength = strlen($line[2]) + 5;
-				} else {
-					$objPHPExcel->getActiveSheet()->SetCellValue('D'.$row, $line[2])->getColumnDimension('D')->setWidth($previousDateLength);
-				}
-		
-			}
-			$row++;
-		}
-		
-		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
-		$objWriter->save(G_UPLOADPATH.$_SESSION['s_login']."/"._CHAT_LOG."-".$title.".xls");
-		echo G_UPLOADPATH.$_SESSION['s_login']."/"._CHAT_LOG."-".$title.".xls";		
-	}
-	
-
-
 	public function getNavigationLinks() {
 		$currentUser = $this -> getCurrentUser();
-        return array (array ('title' => _HOME, 'link'  => $currentUser -> getType() . ".php?ctg=control_panel"), array ('title' => "Chat Module", 'link'  => $this -> moduleBaseUrl));
+
+        /*if ($currentUser -> getType() == 'administrator') {
+			if (isset($_GET['setChatHeartBeat'])){
+				return array (array ('title' => _HOME, 'link'  => $currentUser -> getType() . ".php?ctg=control_panel"),
+								array ('title' => "Chat Module", 'link'  => $this -> moduleBaseUrl),
+								array ('title' => "Chat Engine Rate", 'link' => ($this -> moduleBaseUrl)."&setChatHeartBeat=1"));
+			}
+			else if (isset($_GET['setRefresh_rate'])){
+				return array (array ('title' => _HOME, 'link'  => $currentUser -> getType() . ".php?ctg=control_panel"),
+								array ('title' => "Chat Module", 'link'  => $this -> moduleBaseUrl),
+								array ('title' => "User List Refresh Rate", 'link' => ($this -> moduleBaseUrl)."&setRefresh_rate=1"));
+			}
+			else if (isset($_GET['createLog'])){
+				return array (array ('title' => _HOME, 'link'  => $currentUser -> getType() . ".php?ctg=control_panel"),
+								array ('title' => "Chat Module", 'link'  => $this -> moduleBaseUrl),
+								array ('title' => "Create History Log", 'link' => ($this -> moduleBaseUrl)."&createLog=1"));
+			}
+			else{*/
+            	return array (array ('title' => _HOME, 'link'  => $currentUser -> getType() . ".php?ctg=control_panel"),
+								array ('title' => "Chat Module", 'link'  => $this -> moduleBaseUrl));
+			//}
+        //}
 	}
 
+	public function checkRate($rate){
+		if ($rate<1)
+			return false;
+		return true;
+	}
+	private function contains($str, $content){
+		$str = strtolower($str);
+		$content = strtolower($content);
+
+		if (strpos($str,$content))
+			return true;
+		else
+			return false;
+	}
 
 	private function getChatHeartbeat(){
+
 		$rate = eF_getTableData("module_chat_config", "chatHeartbeatTime", "1");
 		foreach( $rate as $r ){
 			return $r['chatHeartbeatTime'];
@@ -325,7 +385,8 @@ class module_chat extends eFrontModule{
 
 	}
 
-	private function getRefreshRate(){
+	private function getRefresh_rate(){
+
 		$rate = eF_getTableData("module_chat_config", "refresh_rate", "1");
 		foreach( $rate as $r ){
 			return $r['refresh_rate'];
@@ -334,42 +395,99 @@ class module_chat extends eFrontModule{
 
 
 	private function setChatheartBeat($rate){
-		ef_updateTableData('module_chat_config', array('chatHeartbeatTime' => $rate));
+		$sql = "update module_chat_config set chatHeartbeatTime = '".$rate."' where 1";
+		$query = mysql_query($sql);
 	}
 
-	private function setRefreshRate($rate){
-		ef_updateTableData('module_chat_config', array('refresh_rate' => $rate));
+
+	private function setRefresh_rate($rate){
+
+		$sql = "update module_chat_config set refresh_rate = '".$rate."' where 1";
+		$query = mysql_query($sql);
+	}
+
+	private function getLessonsCatalogue(){
+
+		$lsn = eF_getTableData("lessons", "name", "1");
+
+		$lessons = array();
+
+		foreach ($lsn as $lesson){
+			$lessons[] = $lesson['name'];
+		}
+		return $lessons;
 	}
 
 	private function createLessonHistory($lesson, $from, $until){
+		$lesson = str_replace(' ','_',$lesson);
+		
+		//if (time() > strtotime($from)){
+		//	$sql = "select * from module_chat where (module_chat.to_user = '".$lesson."') order by id ASC";
+		//}
+		//else{
+			$sql = "select * from module_chat where (module_chat.to_user = '".$lesson."' AND module_chat.sent >='".$from."' AND module_chat.sent <= '".$until."') order by id ASC";
+		//}
+		$query = mysql_query($sql);
+
+		/*$data = array();
+		$workbook = new Spreadsheet_Excel_Writer();
+		$workbook->setVersion(8);
+
+
+		$worksheet =& $workbook->addWorksheet($lesson.' ');
+		$worksheet->setInputEncoding('utf-8');
+		$worksheet->setColumn(1,1,50);
+		$worksheet->setColumn(0,0,15);
+		$worksheet->setColumn(2,2,18);
+
+		$format_title =& $workbook->addFormat();
+		$format_title->setBold();
+		$format_title->setAlign('center');
+		$format_title->setFgColor('000000');
+		$format_title->setBgColor('000000');
+		$format_title->setColor('white');
+		$format_title->setPattern(1);
+
+		$multipleLineDataFormat = &$workbook->addFormat( array('Border'=> 1, 'Align' => 'left' ) );
+		$multipleLineDataFormat->setTextWrap();
+
+		$format_user =& $workbook->addFormat();
+		$format_user->setAlign('center');
+		$format_user->setBorder(1);
+
+		$format_date = $workbook->addFormat();
+		$format_date->setBorder(1);
+
+
+		$worksheet->write(0, 0, 'FROM USER', $format_title);
+		$worksheet->write(0, 1, 'MESSAGE', $format_title);
+		$worksheet->write(0, 2, 'SENT AT', $format_title);
+		*/
 		$i = 1;
-		$results = eF_getTableData('module_chat', '*', "(module_chat.to_user = '".$lesson."' AND module_chat.sent >='".$from."' AND module_chat.sent <= '".$until."')");
-		$log  = "<span style='float:right'>";
-		$log .= "<a onclick='javascript:exportChatAdmin();' href='javascript:void(0)'>";
-		$log .= "<img src = 'images/file_types/xls.png' title = '"._XLSFORMAT."' alt = '"._XLSFORMAT."' />";
-		$log .= "</a>";
-		$log .= "</span>";
-		$log .= "<br>";
-		$log .= "<table id='admin_chat_logs' class='sortedTable' width='100%'>";
-		$log .= "<tr>";
-		$log .= "<td class = 'topTitle'>"._FROM."</td>";
-		$log .= "<td class = 'topTitle alignCenter'>"._MESSAGE."</td>";
-		$log .= "<td class = 'topTitle' colspan='2'>"._DATE."/"._TIME."</td>";
-		$log .= "</tr>";
-		$rowColorClass = array("oddRowColor", "evenRowColor");
-		foreach($results as $chat) {
-			$log .= "<tr class='".$rowColorClass[$i%2]."'>";
-			$log .= "<td class='sender'>".$chat["from_user"].":</td>";
-			$log .= "<td class='alignCenter chatmsg'>".$chat["message"]."</td>";
-			$log .= "<td class='alignLeft date'>".$chat["sent"]."</td>";
-			$log .= "</tr>";
+		$log = "<br>"."<table class=\"sortedTable\" width=\"100%\">";
+		$log .= "<tr><td class = \"topTitle\">From</td><td class = \"topTitle alignCenter\">Message</td><td class = \"topTitle\">Date/Time<td></tr>";
+		while ($chat = mysql_fetch_array($query)) {
+
+			/*$worksheet->write($i, 0, $chat["from_user"], $format_user);
+			$worksheet->write($i, 1, $chat["message"], $multipleLineDataFormat);
+			$worksheet->write($i, 2, $chat["sent"], $format_date);*/
+			
+			if ($i%2==0)
+				$log .= "<tr class=\"oddRowColor\"><td class=\"sender\">".$chat["from_user"].":</td><td class=\"alignCenter chatmsg\">".$chat["message"]."</td><td class=\"alignLeft date\">".$chat["sent"]."</td></td>";
+			else
+				$log .= "<tr class=\"evenRowColor\"><td class=\"sender\">".$chat["from_user"].":</td><td class=\"alignCenter chatmsg\">".$chat["message"]."</td><td class=\"alignLeft date\">".$chat["sent"]."</td></td>";
+			
 			$i++;
 		}
-		$log.= "</table>";	
+		$log.= "</table>";
 		return $log;
+
+		//$workbook->send($lesson);
+		//$workbook->close();
 	}
 
-	private function subtractDaysFromToday($number_of_days) {
+	function subtractDaysFromToday($number_of_days)
+	{
     	$today = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
 
     	$subtract = $today - (86400 * $number_of_days);

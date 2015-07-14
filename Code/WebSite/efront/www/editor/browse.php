@@ -66,7 +66,7 @@ try {
     $t_offset = str_replace('//','/', $filesBaseUrl.$offset.'/');
     $t_offset = str_replace('//','/', $t_offset);  
 	$smarty -> assign("T_OFFSET", $t_offset);
-  	$files = $folders = array(); 	
+  	$files = $folders = array();
     //for_type defines which kind of files we need.
     switch ($_GET['for_type']) {
         case 'image'	: $mode = true; $filter = array_keys(FileSystemTree :: getFileTypes('image')); break;
@@ -76,21 +76,19 @@ try {
         case 'files'	: $mode = false; $filter = array(); break;
         default     	: $mode = true; $filter = array(); break;        
     }
+
+    $filesystem = new FileSystemTree($directory['path']);
     
-    $filesystem = new FileSystemTree($directory['path'], true);
     //$directory != $rootDir ? $tree = $filesystem -> seekNode($directory['path']) : $tree = $filesystem -> tree; // Changed because of #2634
     $tree = $filesystem -> tree;
     foreach (new EfrontDirectoryOnlyFilterIterator(new EfrontNodeFilterIterator(new ArrayIterator($tree, RecursiveIteratorIterator :: SELF_FIRST))) as $key => $value) {
         $value['image']    = $value -> getTypeImage();
         $folders[]         = (array)$value;
     }
-    
-  
     foreach (new EfrontFileOnlyFilterIterator(new EfrontFileTypeFilterIterator(new EfrontNodeFilterIterator(new ArrayIterator($tree, RecursiveIteratorIterator :: SELF_FIRST)), $filter, $mode)) as $key => $value) {
         $value['image']    = $value -> getTypeImage();
         $files[]           = (array)$value;
     }
-  
     //for sorting files
 	$folders 	= eF_multiSort($folders, 'name');
 	$files 		= eF_multiSort($files, 'name');
