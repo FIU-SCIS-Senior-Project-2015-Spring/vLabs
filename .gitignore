@@ -1,5 +1,10 @@
 Code/WebSite/efront/libraries/configuration.php
-Code/vLabsScheduler/out/
-Code/vLabsScheduler/classes/
-Code/vLabsScheduler/.idea/
-Code/vLabsScheduler/lib/
+.idea
+*.cache
+*.iml
+*.cache
+*.class
+*.jar
+**/out
+**/classes
+**/.DS_Store
