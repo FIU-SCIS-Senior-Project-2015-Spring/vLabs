@@ -93,9 +93,9 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 									//$("#mainscreenid").attr('src',url.replace(/&amp;/g,"&"));
 									
 									if(currentSRC == url){
-									    $('.iframetab')[0].contentWindow.location.reload(true);
+									    $('#iframetab' + workingTab)[0].contentWindow.location.reload(true);
 									}else{
-									    $(".iframetab").attr('src',url.replace(/&amp;/g,"&"));
+									    $('#iframetab' + workingTab).attr('src',url.replace(/&amp;/g,"&"));
 									}
 									
 									setRdpTabInfo('showing', workingTab, true);
@@ -112,9 +112,8 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 								// Shows a message while waiting
 								var message = "This virtual machine is not ready! Please be patient while the RDP server loads.";
 								markCurrentInstanceState('disabled');
-								alert(message);
-								//$("#mainscreenid").attr('src','webRDPMessage.php?tab='+workingTab+'&message='+message);
-								
+								$('#iframetab' + workingTab).attr('src','webRDPMessage.php?message='+message);
+
 								setRdpTabInfo('ready', workingTab, false);
 								setRdpTabInfo('showing', workingTab, false);
 							}
@@ -219,7 +218,7 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 		success: function(data) {
 			if(data){
 				if(command == "getState"){
-					//setRdpTabInfo('state', workingTab, data,'vmInstanceCmd: getState');
+					setRdpTabInfo('state', workingTab, data,'vmInstanceCmd: getState');
 					markCurrentInstanceState(data,'vmInstanceCmd');
 				}else{
 					// if the command fails
@@ -232,8 +231,8 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 				if(workingTab == currentTabSelected){
 					//parseStatefromCommand(command, this.workingTab);
 					
-					//setRdpTabInfo('ready', workingTab, false);
-					//setRdpTabInfo('showing', workingTab, false);
+					setRdpTabInfo('ready', workingTab, false);
+					setRdpTabInfo('showing', workingTab, false);
 					
 					showCmdMessages(command);
 					setTimeControl();
@@ -241,10 +240,10 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 					clearInterval(stateInterval);
 					
 					if(command == "powerOff" || command == "shutdown"){
-						//setRdpTabInfo('state', workingTab, 'off','vmInstanceCmd: getState');
+						setRdpTabInfo('state', workingTab, 'off','vmInstanceCmd: getState');
 						markCurrentInstanceState(data,'vmInstanceCmd');
 					}else if(command == "suspend"){
-						//setRdpTabInfo('state', workingTab, 'suspended','vmInstanceCmd: getState');
+						setRdpTabInfo('state', workingTab, 'suspended','vmInstanceCmd: getState');
 						markCurrentInstanceState(data,'vmInstanceCmd');
 					}else{
 						current.vmInstanceCmd('getState', instanceId, vmName);	// -- original

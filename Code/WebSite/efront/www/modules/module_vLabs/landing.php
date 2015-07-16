@@ -82,6 +82,7 @@
 		<button id="restartvm">Restart</button>
 		<button id="pausevm">Pause</button>
 		<button id="refreshvm">Refresh</button>
+		<button id="refreshall">Refresh All</button>
 		<label for="res">Resolution: </label>
 		<select name="res" id="resolution" width="100px">
 			<option>default</option>
@@ -174,9 +175,11 @@
 			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
 			var srcUrl = getRdpTabInfo('veInsURL', currentTabSelected);
 			//show vm controls
+			$('#vmcontrols').empty();
+			$('#vmcontrols').append(getVMControlHTML());
+			setupVMControlButtons();
 			$("#vmcontrols").show();
-			$("#resolution").prop('selectedIndex', 0);
-			$("#cdepth").prop('selectedIndex', 0);
+
 			loadTab($(this).attr("href"), srcUrl);		//$(this).attr("rel")
 		});
 
@@ -295,7 +298,7 @@ function loadTab(tab, url){
 		//create and load iframe
 		var html = [];
 		html.push('<div class="tabIframeWrapper">');
-		html.push('<iframe class="iframetab" src="' + url + '" width="100%" height="70%" style="border:none"></iframe>');
+		html.push('<iframe id="iframetab' + currentTabSelected + '" class="iframetab" src="' + url + '" width="100%" height="70%" style="border:none"></iframe>');
 		html.push('</div>');
 		$(tab).append(html.join(""));
 		$("iframe").focus();
@@ -310,9 +313,10 @@ function generateGuacUrl(src, depth, dim){
 	var params = src.substring(src.indexOf("&"), src.length);	//all the parameters after id
 	
 	//generate the connection id and the new url
-	if(depth == null){ id = dim[0] + port + dim[1]; }
-	else if(dim == null){ id = depth + port + depth; }
-	else{ id = depth + dim[0] + port + dim[1] + depth;}
+	//order as follows: port always at beginning, then depth if there, then resolution width, height
+	if(depth == null){ id = port + dim[0] + dim[1]; }
+	else if(dim == null){ id = port + depth; }
+	else{ id = port + depth + dim[0] + depth[1];}
 
 	id = (id.length < 15) ? id : id.substring(0, 15); //if id is longer than 15 chars then take the first 15
 	newSrc = guacUrl + id + "?id=" + id + params;
