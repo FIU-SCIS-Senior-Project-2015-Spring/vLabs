@@ -144,8 +144,8 @@ class module_vLabs extends EfrontModule {
 		$hours = 3;
 		$minutes = 0;
 
-		//$encrypted_password = $_COOKIE["encrypted_password_4_efront"];
-        $encrypted_password = $currentUser->user['password'];
+		$encrypted_password = $_COOKIE["encrypted_password_4_efront"];
+        //$encrypted_password = $currentUser->user['password'];
 		$encrypted_password_encoded = urlencode($encrypted_password);
 		$courseid = $_SESSION['s_courses_ID'];
 		//echo "<br> \$courseid is $courseid";
