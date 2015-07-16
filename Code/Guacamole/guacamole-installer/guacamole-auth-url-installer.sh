@@ -58,14 +58,14 @@ echo -e ""
 # copy guacamole.properties to its required location
 echo -e "Copying guacamole.properties..."
 mkdir -p $GUACAMOLE_ETC_FOLDER  # create folder if not present
-cp $GUACAMOLE_PROPERTIES $GUACAMOLE_ETC_FOLDER
+cp --remove-destination $GUACAMOLE_PROPERTIES $GUACAMOLE_ETC_FOLDER
 
 # create soft link to guacamole.properties 
 echo -e "Creating softlink to guacamole.properties..."
 mkdir -p $GUACAMOLE_USR_SHARE_FOLDER
 # remove link if exists, and re-create it
-if [ -f $GUACAMOLE_USR_SHARE_FOLDER$GUACAMOLE_PROPERTIES ]; then
-	rm $GUACAMOLE_USR_SHARE_FOLDER$GUACAMOLE_PROPERTIES
+if [ -h $GUACAMOLE_USR_SHARE_FOLDER$GUACAMOLE_PROPERTIES ]; then
+	rm -f $GUACAMOLE_USR_SHARE_FOLDER$GUACAMOLE_PROPERTIES
 fi
 ln -s $GUACAMOLE_ETC_FOLDER$GUACAMOLE_PROPERTIES $GUACAMOLE_USR_SHARE_FOLDER$GUACAMOLE_PROPERTIES 
 
@@ -81,14 +81,15 @@ ln -s $GUACAMOLE_ETC_FOLDER$GUACAMOLE_PROPERTIES $GUACAMOLE_USR_SHARE_FOLDER$GUA
 echo -e "Copying guacamole.war file..."
 mkdir -p $GUACAMOLE_VAR_LIB_FOLDER  # create folder if not present
 # rename the file to remove the version and place it in its destination
-cp $GUACAMOLE_WAR_WITH_VERSION $GUACAMOLE_VAR_LIB_FOLDER$GUACAMOLE_WAR 
+cp --remove-destination $GUACAMOLE_WAR_WITH_VERSION $GUACAMOLE_VAR_LIB_FOLDER$GUACAMOLE_WAR 
 
 # create soft link to guacamole.war
 echo -e "Creating softlink to guacamole.war"
 mkdir -p $GUACAMOLE_WEBAPPS_FOLDER  # create folder if not present
 # delete link if present, then create link
-if [ -f $GUACAMOLE_WEBAPPS_FOLDER$GUACAMOLE_WAR ]; then
-	rm $GUACAMOLE_WEBAPPS_FOLDER$GUACAMOLE_WAR  
+if [ -h $GUACAMOLE_WEBAPPS_FOLDER$GUACAMOLE_WAR ]; then
+	echo -e "link already exists, removing it."
+	rm -f $GUACAMOLE_WEBAPPS_FOLDER$GUACAMOLE_WAR  
 fi
 ln -s $GUACAMOLE_VAR_LIB_FOLDER$GUACAMOLE_WAR $GUACAMOLE_WEBAPPS_FOLDER$GUACAMOLE_WAR  
 
@@ -102,7 +103,7 @@ ln -s $GUACAMOLE_VAR_LIB_FOLDER$GUACAMOLE_WAR $GUACAMOLE_WEBAPPS_FOLDER$GUACAMOL
 echo -e "Copying guacamole auth jar file..."
 mkdir -p $GUACAMOLE_CLASSPATH  # create folder if it does not exist
 # rename jar file to remove version and copy it to the folder just created
-cp $GUACAMOLE_JAR_WITH_VERSION $GUACAMOLE_CLASSPATH$GUACAMOLE_JAR 
+cp --remove-destination $GUACAMOLE_JAR_WITH_VERSION $GUACAMOLE_CLASSPATH$GUACAMOLE_JAR 
 
 
 

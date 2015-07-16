@@ -86,7 +86,8 @@ A list of all the prerequisite libraries that will need to be installed before G
 
 server.xml
 ----------
-This file is for Tomcat, and enables port 
+This file is a configuration file for Tomcat, it opens the port needed for Guacamole.
+The section of interest is marked with: "Enabled for Guacamole".
 
 guacamole-aut-url-1.0-SNAPSHOT.jar
 ----------------------------------
