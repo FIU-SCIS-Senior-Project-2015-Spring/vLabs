@@ -1,6 +1,8 @@
 /***
  *	This Guacamole plugin allows for the authentication parameters to be passed 
  *	directly in the URL.
+ *  The other class in this package (Crypt) is used to decrypt the password parameter
+ *  which comes encrypted from the caller, using a similar php class.
  *	
  *	Author: Juan Riano
  *	FIU / Senior Project / Summer 2015
@@ -134,6 +136,10 @@ public class UrlAuthenticationProvider extends SimpleAuthenticationProvider {
 			else if (name.equals(PARAM_PREFIX + "protocol")) {
 				config.setProtocol(request.getParameter(name));
 			}
+			// Decrypt the password
+			else if (name.equals(PARAM_PREFIX + "password")) {
+				config.setParameter(name.substring(PARAM_PREFIX.length()), Crypt.decrypt(request.getParameter(name)));
+			}
 			else {	// Set the guac parameters, removing the guac. string first
 				config.setParameter(name.substring(PARAM_PREFIX.length()), request.getParameter(name));
 			}
@@ -193,4 +199,3 @@ public class UrlAuthenticationProvider extends SimpleAuthenticationProvider {
 		return getUserContext(credentials);        
 	}
 }
-
