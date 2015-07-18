@@ -138,6 +138,8 @@ if ($action == "reloadOrders") {
 	//$currentUser = $this -> getCurrentUser();
 	//$currentUser -> getRole($this -> getCurrentLesson());
 	//echo "current user is: ".$currentUser;
+	//echo "root path is: " . G_ROOTPATH;
+
 
 	$orders = db_getOrders();
 
@@ -388,7 +390,7 @@ if ($action == "reloadOrders") {
 	}
 
 
-	$adminId = userlogin;//jh original =$_SESSION["userid"];
+	$adminId = $userlogin;//jh original =$_SESSION["userid"];
 	$userdata = db_getUserById($userlogin);
 
 	$timeZoneId = "";
@@ -604,7 +606,7 @@ if ($action == "reloadOrders") {
 
 	$o = array("id"=>$order_id,
 			"ordernumber"=>$order_ordernumber,
-			"username"=>$user_username,
+			"username"=>$user_name,
 			"purchasedate"=>date(DATE_ATOM, ($order_purchasedate/1000)),
 			"lastmodification"=>$order_lastmodification ,
 			"fulfillmentorderstate"=>$order_fulfillmentorderstate,
@@ -688,7 +690,7 @@ if ($action == "reloadOrders") {
 		$i=0;		
 		foreach ($packageItems as $pi){
 			$percentageReturned = $assignmentsResponse[$i++]->percentageReturned; //jh NOTE: this is tied to the above call!!
-			$subtotal = $pi['quantity']*$dbOrderItem_quantity*$pi['price'];
+			$subtotal = $pi['quantity']*$dbOrderItem['quantity']*$pi['price'];
 			$partialRefund = ($subtotal * $percentageReturned)/100;	
 			$refundAmount = $refundAmount + $partialRefund;		
 			
@@ -700,9 +702,9 @@ if ($action == "reloadOrders") {
 //		echo "refund total ".$refundAmount;
 	}else{
 		$assignment = array("creditTypeId"=>$dbItem_referenceid,
-							"quantity"=>$dbOrderItem_quantity,
+							"quantity"=>$dbOrderItem['quantity'],
 							"purchaseId"=>$dbOrder_ordernumber,
-							"active"=>!$dbOrderItem_cancelled
+							"active"=>!$dbOrderItem['cancelled']
 							);	
 		array_push($assignmentsRequest, $assignment);
 		
@@ -859,9 +861,6 @@ function ord_getItemDescription($itemid, $orderid){
 
     //Test with ordernumber:  IA4f310f1212c9b
 
-
-
-
     $order = db_getOrderById($orderid);  //jh candidate for removal since this info was already obtained in calling section:  reloadOrderItems.  maybe is better to pass these individual values as arguments???
     //printr($order);
 
@@ -928,7 +927,7 @@ function ord_getItemDescription($itemid, $orderid){
             }
 
     //		echo '<script type="text/javascript">alert("in orders.php after $packageItems after foreach items, item before soap call")</script>';
-
+            //echo "Right before ws_getCreditTypeById() call";
             $creditType = ws_getCreditTypeById($item_referenceid); //jh here another getCreditTypeById. Replace with Ajax call
             //jh CAREFUL!!!! NEED TO TEST IF creditType returned is null else it will look ugly
 
