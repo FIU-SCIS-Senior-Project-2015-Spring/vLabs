@@ -201,7 +201,7 @@ function getCurDevaInsInfo() {
 									vms.vmInfo[i].accessAddress+'&guac.port='+vms.vmInfo[i].accessPort+
 									'&guac.domain='+vms.vmInfo[i].domain+
 									'&guac.username='+escape(vms.vmInfo[i].username)+
-									'&guac.password=icard005test';	//vms.vmInfo[i].password 
+									'&guac.password=' +$('#encryptedPassword').val();	//vms.vmInfo[i].password 
 
 									//alert("linkurl= " +linkURL);
 

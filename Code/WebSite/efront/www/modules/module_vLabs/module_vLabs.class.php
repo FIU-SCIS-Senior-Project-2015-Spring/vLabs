@@ -117,6 +117,7 @@ class module_vLabs extends EfrontModule {
 		
 		$username = $currentUser->user['login'];
         $userID = $currentUser->user['id'];
+        $userEmail = $currentUser->user['email'];
 		$userTypesID = $currentUser->user['user_types_ID'];
 		$rolesPlain = EfrontUser::getRoles(true);
 		$roleTypeName = $rolesPlain[$userTypesID];
@@ -146,8 +147,9 @@ class module_vLabs extends EfrontModule {
 
 		$encrypted_password = $_COOKIE["encrypted_password_4_efront"];
         //$encrypted_password = $currentUser->user['password'];
-		$encrypted_password_encoded = urlencode($encrypted_password);
-		$courseid = $_SESSION['s_courses_ID'];
+		//$encrypted_password_encoded = urlencode($encrypted_password);
+		//echo "<br> \$encrypted_password_encoded is $encrypted_password_encoded";
+        $courseid = $_SESSION['s_courses_ID'];
 		//echo "<br> \$courseid is $courseid";
 		
 		if (!$vLabGranted[$roleTypeName]){
@@ -163,28 +165,28 @@ class module_vLabs extends EfrontModule {
 				case '2':
 				case '7':
 					//default
-					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default&course=$courseid&username=$username&uid=$userID&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password_encoded");	
+					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
 				case '3':
 				case '5':
 					//blue
-					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=blue&course=$courseid&username=$username&uid=$userID&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password_encoded");	
+					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=blue&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
 				case '4':
 				case '9':
 					//bluehtml
-					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=bluehtml&course=$courseid&username=$username&uid=$userID&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password_encoded");	
+					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=bluehtml&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
 				case '6':
 					//green
-					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=green&course=$courseid&username=$username&uid=$userID&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password_encoded");	
+					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=green&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
 				case '11':
 					//flatgrey
-					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=flatgrey&course=$courseid&username=$username&uid=$userID&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password_encoded");	
+					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=flatgrey&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
 				default:
-					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default&course=$courseid&username=$username&uid=$userID&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password_encoded");	
+					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
 			}
 		}

@@ -49,7 +49,8 @@
 	<input id="username" type="hidden" value="<?php echo $_GET['username']; ?>" />
 	<input id="hours" type="hidden" value="<?php echo $_GET['hours']; ?>" />
 	<input id="minutes" type="hidden" value="<?php echo $_GET['minutes']; ?>" />
-	<input id="encryptedPassword" type="hidden" value="<?php echo $_GET['encrypted_password']; ?>" />
+	<input id="encryptedPassword" type="hidden" value="<?php echo urlencode($_GET['encrypted_password']); ?>" />
+	<input id="email" type="hidden" value="<?php echo $_GET['email']; ?>" />
 	<input id="courseURL" type="hidden" value="KU-poweredby-ITS.html"/>
 	<input id="resourcetype" type="hidden" value="VIRTUAL LAB" />
 	<input id="veInsId" type="hidden" value="false"/>
@@ -85,14 +86,13 @@
 		<button id="refreshall">Refresh All</button>
 		<label for="res">Resolution: </label>
 		<select name="res" id="resolution" width="100px">
-			<option>default</option>
-			<option>640x480</option>
-			<option>800x600</option>
-			<!--<option>1024x768</option>-->
+			<option value="default">default</option>
+			<option value="640x480">640x480</option>
+			<option value="800x600">800x600</option>
 		</select>
 		<label for="color">Color Depth: </label>
 		<select name="color" id="cdepth" width="100px">
-			<option value="">default</option>
+			<option value="default">default</option>
 			<option value="8">8</option>
 			<option value="16">16</option>
 			<option value="24">24</option>
@@ -174,13 +174,60 @@
 		$("a.rdptab").click(function(){
 			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
 			var srcUrl = getRdpTabInfo('veInsURL', currentTabSelected);
-			//show vm controls
+			var paramstoadd = "";
+			var tab = $(this).attr("href");
+
+			//get vm controls
 			$('#vmcontrols').empty();
 			$('#vmcontrols').append(getVMControlHTML());
-			setupVMControlButtons();
-			$("#vmcontrols").show();
 
-			loadTab($(this).attr("href"), srcUrl);		//$(this).attr("rel")
+			//ajax to find bpp and res, if other than default then append the params to the iframe source
+			$.ajax({
+				url: "vmcontrols.php",
+				type: "post",
+				data: {"action" : "getBpp", "email" : $("#email").val()},
+				success: function(data){
+					if(data != 'default'){
+						//make the selects reflect the chosen bpp and add to params to add to guacamole
+						$('#cdepth option[value="' + data + '"]').remove();
+						$('#cdepth').prepend('<option selected="selected" value="' + data + '">' + data + '</option>');
+						paramstoadd = paramstoadd + "&guac.color-depth=" + data;
+					}
+				},
+				complete: function(){
+					//get resolution
+					$.ajax({
+						url: "vmcontrols.php",
+						type: "post",
+						data: {"action" : "getResolution", "email" : $("#email").val()},
+						success: function(data){
+							if(data != 'default'){
+								//make the selects reflect the chosen bpp and add to params to add to guacamole
+								var vals = data.split('x');
+								$('#resolution option[value="' + data + '"]').remove();
+								$('#resolution').prepend('<option selected="selected" value="' + data + '">' + data + '</option>');
+								paramstoadd = paramstoadd + "&guac.width=" + vals[0] + "&guac.height=" + vals[1];
+							}
+						},
+						complete: function(){
+							setupVMControlButtons();
+							//bind the event handlers for the selects
+							$('#cdepth').change(function(){changeBpp()});
+							$('#resolution').change(function(){changeRes()});
+							$("#vmcontrols").show();
+
+							//load tab with the appropriate srcURL
+							alert("params to add: " + paramstoadd);
+							if(paramstoadd != ""){
+								loadTab(tab, srcUrl + paramstoadd);
+							}
+							else{
+								loadTab(tab, srcUrl);
+							}
+						}
+					});
+				}
+			});
 		});
 
 		//clicking a non-rdp tab
@@ -212,82 +259,101 @@
 		$(".tabwhitespace, .tabIframeWrapper").click(function(){
 			$("iframe").focus();
 		});
-
-		//changing color depth of rdp session
-		$("#cdepth").change(function(){
-			var currSrc = getRdpTabInfo('veInsURL', currentTabSelected);
-			//grab the iframe
-			var tabpanel = $('.ui-tabs-panel:not(.ui-tabs-hide)');
-			var iframe = tabpanel.find('.iframetab');
-			//grab chosen depth value
-			var dval = $("#cdepth").val();
-			//grab current resolution option set
-			var rval = $("#resolution option:selected").text();
-
-			if(rval != "default"){
-				var dimensions = rval.split("x");
-
-				if(dval != ""){
-					//reload iframe source with both res and depth parameters
-					var temp = currSrc + "&guac.color-depth=" + dval + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1];
-					iframe.attr('src', generateGuacUrl(temp, dval, dimensions));
-				}
-				else{
-					//reset to default color depth and the specified res
-					var temp = currSrc + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1];
-					iframe.attr('src', generateGuacUrl(temp, null, dimensions));
-				}
-			}
-			else{
-				if(dval != ""){
-					//reload iframe source with just the color depth parameter added
-					var temp = currSrc + "&guac.color-depth=" + dval;
-					iframe.attr('src', generateGuacUrl(temp, dval, null));
-				}
-				else{
-					//reload with default color depth and res
-					iframe.attr('src', currSrc);
-				}
-			}
-		});
-
-		//changing the resolution of rdp session
-		$("#resolution").change(function(){
-			var currSrc = getRdpTabInfo('veInsURL', currentTabSelected);
-			//grab the iframe
-			var tabpanel = $('.ui-tabs-panel:not(.ui-tabs-hide)');
-			var iframe = tabpanel.find('.iframetab');
-			//grab the chosen resolution value
-			var rval = $("#resolution option:selected").text();
-			//grab the current color depth option set
-			var dval = $("#cdepth").val();
-
-			if(rval != "default"){
-				var dimensions = rval.split("x");
-				if(dval != ""){
-					//reload with res and the set color depth params
-					var temp = currSrc + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1] +"&guac.color-depth=" + dval;
-					iframe.attr('src', generateGuacUrl(temp, dval, dimensions));
-				}
-				else{
-					//reload with the chosen resolution and default cdepth
-					var temp = currSrc + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1];
-					iframe.attr('src', generateGuacUrl(temp, null, dimensions));
-				}
-			}
-			else{ //rval is default
-				if(dval != ""){
-					//reload with the previously chosen color depth param added
-					var temp = currSrc + "&guac.color-depth=" + dval;
-					iframe.attr('src', generateGuacUrl(temp, dval, null));
-				}
-				else{
-					//just reload with default everything
-					iframe.attr('src', currSrc);
-				}	
-			}
-		});
 	});
+
+function changeRes(){
+	var currSrc = getRdpTabInfo('veInsURL', currentTabSelected);
+	//grab the iframe
+	var tabpanel = $('.ui-tabs-panel:not(.ui-tabs-hide)');
+	var iframe = tabpanel.find('.iframetab');
+	//grab the chosen resolution value
+	var rval = $("#resolution option:selected").text();
+	//grab the current color depth option set
+	var dval = $("#cdepth").val();
+
+	//write the new res val to the database
+	$.ajax({
+		url: "vmcontrols.php",
+		type: "post",
+		data: {"action" : "setResolution", "resolution" : rval , "email" : $("#email").val()},
+		error: function(){
+			alert("error: Cannot update user settings");
+		}
+	});
+
+	if(rval != 'default'){
+		var dimensions = rval.split("x");
+		if(dval != 'default'){
+			//reload with res and the set color depth params
+			var temp = currSrc + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1] +"&guac.color-depth=" + dval;
+			iframe.attr('src', generateGuacUrl(temp, dval, dimensions));
+		}
+		else{
+			//reload with the chosen resolution and default cdepth
+			var temp = currSrc + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1];
+			iframe.attr('src', generateGuacUrl(temp, null, dimensions));
+		}
+	}
+	else{ //rval is default
+		if(dval != 'default'){
+			//reload with the previously chosen color depth param added
+			var temp = currSrc + "&guac.color-depth=" + dval;
+			iframe.attr('src', generateGuacUrl(temp, dval, null));
+		}
+		else{
+			//just reload with default everything
+			iframe.attr('src', currSrc);
+		}	
+	}
+}
+
+function changeBpp(){
+	var currSrc = getRdpTabInfo('veInsURL', currentTabSelected);
+	//grab the iframe
+	var tabpanel = $('.ui-tabs-panel:not(.ui-tabs-hide)');
+	var iframe = tabpanel.find('.iframetab');
+	//grab chosen depth value
+	var dval = $("#cdepth").val();
+	//grab current resolution option set
+	var rval = $("#resolution option:selected").text();
+
+	//write the new cdpeth value to database
+	alert("ajax with: " + dval);
+	$.ajax({
+		url: "vmcontrols.php",
+		type: "post",
+		data: {"action" : "setBpp", "bpp" : dval , "email" : $("#email").val()},
+		error: function(){
+			alert("error: Cannot update user settings");
+		}
+	});
+
+	if(rval != 'default'){
+		var dimensions = rval.split("x");
+
+		if(dval != 'default'){
+			//reload iframe source with both res and depth parameters
+			var temp = currSrc + "&guac.color-depth=" + dval + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1];
+			iframe.attr('src', generateGuacUrl(temp, dval, dimensions));
+		}
+		else{
+			//reset to default color depth and the specified res
+			var temp = currSrc + "&guac.width=" + dimensions[0] + "&guac.height=" + dimensions[1];
+			iframe.attr('src', generateGuacUrl(temp, null, dimensions));
+		}
+	}
+	else{
+		if(dval != 'default'){
+			//reload iframe source with just the color depth parameter added
+			var temp = currSrc + "&guac.color-depth=" + dval;
+			iframe.attr('src', generateGuacUrl(temp, dval, null));
+		}
+		else{
+			//reload with default color depth and res
+			iframe.attr('src', currSrc);
+		}
+	}
+}
 
 function loadTab(tab, url){
 	if($(tab).find("iframe").length != 0){

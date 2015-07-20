@@ -69,6 +69,7 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 			hostName: hostName,
 			hostPort: hostPort,
 			userid: $('#userid').val(),	// JAM added: 03.21.2012
+			email: $('#email').val(),
 			defaultHeight: '70'
 		},
 		success: function(data) {
@@ -82,7 +83,7 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 								setRdpTabInfo('ready', workingTab, true);
 
 								if(!getRdpTabInfo('showing', workingTab)){	//if not showing
-									var url = getRdpTabInfo('veInsURL', workingTab); //$("#veInsURL").val(); //Guacamole url?
+									var url = getRdpTabInfo('veInsURL', workingTab); //$("#veInsURL").val(); 
 									//url = url + "&frameBpp=" + data.bpp;
 									//url = url + "&frameHeight=" + data.height;
 									//url = url + "&frameWidth=" + data.width;

@@ -1,5 +1,8 @@
 <?php
 require('config.php');
+require_once("../../../libraries/configuration.php");	
+require_once("../../../libraries/database.php");
+require_once("../../../libraries/globals.php");
 ini_set("soap.wsdl_cache_enabled", "0");
 
 header("Access-Control-Allow-Origin: *");
@@ -114,8 +117,9 @@ if($action == 'getState'){
 		$hostPort = $_POST['hostPort'];
 		$userid = $_POST['userid'];
 		$defaultHeight = $_POST['defaultHeight'];
+		$email = $_POST['email'];
 		
-		isRDPReady($hostName, $hostPort, $userid, $defaultHeight);	// Edited: JAM 03.21.2012
+		isRDPReady($hostName, $hostPort, $userid, $defaultHeight, $email);	// Edited: JAM 03.21.2012
 		
 	}
 }else if ($action=='getUserCurAppId'){
@@ -132,10 +136,10 @@ if($action == 'getState'){
 }else if ($action=='getBpp'){
 	header('Content-Type: text/x-json');
 	
-	if (isset($_POST['userid'])){
-		$userid = $_POST['userid'];
+	if (isset($_POST['email'])){
+		$email = $_POST['email'];
 		
-		$bpp = getBpp($userid);
+		$bpp = getBppValue($email);
 		echo json_encode($bpp);
 	}else{
 		$action = "";
@@ -143,21 +147,21 @@ if($action == 'getState'){
 }else if ($action=='setBpp'){
 	header('Content-Type: text');
 
-	if (isset($_POST['userid'])){
-		$userid = $_POST['userid'];
+	if (isset($_POST['email'])){
+		$email = $_POST['email'];
 		$bpp = $_POST['bpp'];
 		
-		setBpp($userid,$bpp);
+		setBpp($email,$bpp);
 	}else{
 		$action = "";
 	}
 }else if ($action=='getResolution'){
 	header('Content-Type: text/x-json');
 	
-	if (isset($_POST['userid'])){
-		$userid = $_POST['userid'];
+	if (isset($_POST['email'])){
+		$email = $_POST['email'];
 		
-		$resolution = getResolution($userid);
+		$resolution = getResolutionValue($email);
 		echo json_encode($resolution);
 	}else{
 		$action = "";
@@ -165,11 +169,11 @@ if($action == 'getState'){
 }else if ($action=='setResolution'){
 	header('Content-Type: text');
 
-	if (isset($_POST['userid'])){
-		$userid = $_POST['userid'];
+	if (isset($_POST['email'])){
+		$email = $_POST['email'];
 		$resolution = $_POST['resolution'];
 		
-		setResolution($userid, $resolution);
+		setResolution($email, $resolution);
 	}else{
 		$action = "";
 	}
@@ -273,7 +277,7 @@ function getAppointmentTimer($devaInsId){
 	//return $result;
 }
 
-function isRDPReady($hostName, $hostPort, $userid, $defaultHeight){	// Edited: JAM 03.21.2012
+function isRDPReady($hostName, $hostPort, $userid, $defaultHeight, $email){	// Edited: JAM 03.21.2012
 	require('config.php');
 	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
 	$location =$WEB_SERVICES_URL;
@@ -286,9 +290,9 @@ function isRDPReady($hostName, $hostPort, $userid, $defaultHeight){	// Edited: J
 		$client=new SoapClient($wsdl,array('location'=>$location));
 
 		$result = $client->isRDPReady($params);
-		$result->bpp = getBppValue($userid);
-		$result->height = getResolutionHeight($userid,$defaultHeight);
-		$result->width = getResolutionWidth($userid);
+		$result->bpp = getBppValue($email);
+		$result->height = getResolutionHeight($email,$defaultHeight);
+		$result->width = getResolutionWidth($email);
 
 	} catch (Exception $e) {
 	
@@ -332,72 +336,73 @@ function getUserCurAppId($username, $course, $resourceType){
 	//return $result;
 }
 
-function getBpp($userId){
+function getBppValue($email){
     try {  		
-   	$sql = "SELECT data FROM mdl_user_info_data WHERE userid = ".$userId." and fieldid = 19";
-	$bpp = get_record_sql($sql);
+   	//$sql = "SELECT data FROM module_vlabs_user_info_data WHERE email = ".$email." and field_id = 19";
+		$bppdata = eF_getTableData("module_vlabs_user_info_data", "data", "email='$email' and field_id=19");
+		foreach($bppdata as $bpp){
+			$bppval = $bpp['data'];
+			return $bppval;
+		}
     } catch (Exception $e) {
         //echo $e->getMessage();
-	$bpp = null;
+		return null;
     }
-    return $bpp;
 }
 
-function getBppValue($userId){
-    $bpp =  get_field('user_info_data','data','userid',$userId,'fieldid',19);
-    //return $bpp;
-    $bppString = "16";
-    if($bpp != false){
-        $bppString = $bpp;
+function getBpp($email){
+    try {  		
+	   	//$sql = "SELECT data FROM mdl_user_info_data WHERE userid = ".$userId." and fieldid = 19";
+		$bpp = eF_getTableData("module_vlabs_user_info_data", "data", "email='$email' and field_id=19");
+    } catch (Exception $e) {
+        //echo $e->getMessage();
+		$bpp = null;
     }
-    return $bppString;
+	return $bpp;
 }
 
-function setBpp($userId, $bpp){
+function setBpp($email, $bpp){
    	try {
-		if(record_exists('user_info_data', 'userid', $userId, 'fieldid', 19)){
-			$sql = "UPDATE mdl_user_info_data SET data ='".$bpp."' WHERE userid = ".$userId." and fieldid = 19";
-			execute_sql($sql,false);
-		}else{
-			$sql = "INSERT INTO mdl_user_info_data (userid, fieldid, data) VALUES (".$userId.", 19, '".$bpp."')";
-			execute_sql($sql,false);
-		}
+		eF_insertOrupdateTableData("module_vlabs_user_info_data", array("email" => $email, "field_id" => 19 ,"data" => $bpp), "email='$email' and field_id=19");
 		echo "changed";
     } catch (Exception $e) {
         echo $e->getMessage();
     }	
 }
 
-function getResolution($userId){
-    try {  		
-   	$sql = "SELECT data FROM mdl_user_info_data WHERE userid = ".$userId." and fieldid = 20";
-	$resolution = get_record_sql($sql);
+function getResolution($email){
+     try {  		
+	   	//$sql = "SELECT data FROM mdl_user_info_data WHERE userid = ".$userId." and fieldid = 19";
+		$res = eF_getTableData("module_vlabs_user_info_data", "data", "email='$email' and field_id=20");
     } catch (Exception $e) {
         //echo $e->getMessage();
-	$resolution = null;
+		$res = null;
     }
-    return $resolution;
+	return $res;
 }
-function getResolutionValue($userId){
-    $resolution =  get_field('user_info_data','data','userid',$userId,'fieldid',20);
-    return $resolution;
-}
-function setResolution($userId, $resolution){
-   	try {
-		if(record_exists('user_info_data', 'userid', $userId, 'fieldid', 20)){
-			$sql = "UPDATE mdl_user_info_data SET data ='".$resolution."' WHERE userid = ".$userId." and fieldid = 20";
-			execute_sql($sql,false);
-		}else{
-			$sql = "INSERT INTO mdl_user_info_data (userid, fieldid, data) VALUES (".$userId.", 20, '".$resolution."')";
-			execute_sql($sql,false);
+function getResolutionValue($email){
+    try {  		
+   	//$sql = "SELECT data FROM module_vlabs_user_info_data WHERE email = ".$email." and field_id = 19";
+		$res = eF_getTableData("module_vlabs_user_info_data", "data", "email='$email' and field_id=20");
+		foreach($res as $resolution){
+			$resval = $resolution['data'];
+			return $resval;
 		}
+    } catch (Exception $e) {
+        //echo $e->getMessage();
+		return null;
+    }
+}
+function setResolution($email, $resolution){
+   	try {
+		eF_insertOrupdateTableData("module_vlabs_user_info_data", array("email" => $email, "field_id" => 20 ,"data" => $resolution), "email='$email' and field_id=20");
 		echo "changed";
     } catch (Exception $e) {
         echo $e->getMessage();
     }	
 }
-function getResolutionHeight($userid,$defaultHeight){
-    $resString = getResolutionValue($userid);
+function getResolutionHeight($email,$defaultHeight){
+    $resString = getResolutionValue($email);
     $pos = strrpos($resString, "x");
     if ($pos === false) { // Not Found
         //echo 'width="100%" height="'.$defaultHeight.'%"';
@@ -410,8 +415,8 @@ function getResolutionHeight($userid,$defaultHeight){
     }
     return $height;
 }
-function getResolutionWidth($userid){
-    $resString = getResolutionValue($userid);
+function getResolutionWidth($email){
+    $resString = getResolutionValue($email);
     $pos = strrpos($resString, "x");
     if ($pos === false) { // Not Found
 	$width = "100%";
