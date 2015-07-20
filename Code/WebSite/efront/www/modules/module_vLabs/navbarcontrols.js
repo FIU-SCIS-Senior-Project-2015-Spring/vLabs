@@ -135,7 +135,7 @@ function setupVMControlButtons(){
 		var vmname = getRdpTabInfo('veName', currentTabSelected);
     	markCurrentInstanceState("disabled");
     	var bvObj = new vmcObj();
-		//setTimeout(function(){ buttonBundleClick('refresh', instanceId, vmname, bvObj); },3000);	//need to figure out cmd
+		setTimeout(function(){ buttonBundleClick('refreshAll', instanceId, vmname, bvObj); },3000);	//need to figure out cmd
     });
   //   if(state)
 		// markCurrentInstanceState(state);
@@ -426,9 +426,9 @@ function showCmdMessages(command){
 		message = "This virtual machine is being restarted! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
 		$('#iframetab' + currentTabSelected).attr('src','webRDPMessage.php?message='+message);	
 	
-	}else if(command == "refresh"){
+	}else if(command == "refresh" || command == "refreshall"){
 		markCurrentInstanceState('disabled');
-		message = "This virtual machine is being refreshed! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
+		message = "This virtual machine(s) is being refreshed! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
 		$('#iframetab' + currentTabSelected).attr('src','webRDPMessage.php?message='+message);
 
 	}else if(command == "off"){

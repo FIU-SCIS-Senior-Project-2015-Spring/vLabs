@@ -214,7 +214,8 @@ vmcObj.prototype.vmInstanceCmd = function(command, instanceId, vmName) {
 			action: command,
 			instanceId:  instanceId,
 			vmName: vmName,
-			requestingUser:  $('#username').val()
+			requestingUser:  $('#username').val(),
+			encryptedPassword: $('#encryptedPassFromCookie').val()
 		},
 		success: function(data) {
 			if(data){

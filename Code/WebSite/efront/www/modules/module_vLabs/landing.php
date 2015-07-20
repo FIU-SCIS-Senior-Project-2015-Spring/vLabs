@@ -50,6 +50,7 @@
 	<input id="hours" type="hidden" value="<?php echo $_GET['hours']; ?>" />
 	<input id="minutes" type="hidden" value="<?php echo $_GET['minutes']; ?>" />
 	<input id="encryptedPassword" type="hidden" value="<?php echo urlencode($_GET['encrypted_password']); ?>" />
+	<input id="encryptedPassFromCookie" type="hidden" value="<?php echo $_GET['encrypted_password']; ?>"/>
 	<input id="email" type="hidden" value="<?php echo $_GET['email']; ?>" />
 	<input id="courseURL" type="hidden" value="KU-poweredby-ITS.html"/>
 	<input id="resourcetype" type="hidden" value="VIRTUAL LAB" />
@@ -217,7 +218,6 @@
 							$("#vmcontrols").show();
 
 							//load tab with the appropriate srcURL
-							alert("params to add: " + paramstoadd);
 							if(paramstoadd != ""){
 								loadTab(tab, srcUrl + paramstoadd);
 							}

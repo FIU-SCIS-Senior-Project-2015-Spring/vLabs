@@ -95,11 +95,24 @@ if($action == 'getState'){
 	if (isset($_POST['instanceId']) && isset($_POST['vmName'])){
 		$instanceId = $_POST['instanceId']; 
 		$vmName = $_POST['vmName'];
+		$encryptedPassword = $_POST['encryptedPassword'];
 	
-		refreshInstanceRequest($instanceId, $vmName);
+		refreshInstanceRequest($instanceId, $vmName, $encryptedPassword);
 	}
 		
-}else if ($action=='getAppointmentTimer'){
+}else if ($action=='refreshAll'){
+	header('Content-Type: text/x-json');
+	
+	if (isset($_POST['instanceId']) && isset($_POST['vmName'])){
+		$instanceId = $_POST['instanceId'];
+		$encryptedPassword = $_POST['encryptedPassword']; 
+		//$vmName = $_POST['vmName'];
+	
+		refreshAllInstanceRequest($instanceId, $encryptedPassword);
+	}
+		
+}
+else if ($action=='getAppointmentTimer'){
 	header('Content-Type: text/x-json');
 	
 	if (isset($_POST['instanceId'])){
@@ -218,7 +231,7 @@ function instanceCmdRequest($devaInsId, $vmName, $cmd1, $cmd2){
 
 
 
-function refreshInstanceRequest($devaInsId, $vmName){
+function refreshInstanceRequest($devaInsId, $vmName, $encryptedPassword){
 	require('config.php');
 	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
 	$location =$WEB_SERVICES_URL;
@@ -229,11 +242,12 @@ function refreshInstanceRequest($devaInsId, $vmName){
 	try {
 					
 		$params = array('devaInsId' => $devaInsId,
-						'vmName' => $vmName); 			
+						'vmName' => $vmName,
+						'encryptedPassword' => $encryptedPassword); 			
 
 		$client=new SoapClient($wsdl,array('location'=>$location));
 
-		$result = $client->refreshVM($params);
+		$result = $client->refreshVMWithEncryptedPassword($params);
 		
 
 	} catch (Exception $e) {
@@ -246,6 +260,38 @@ function refreshInstanceRequest($devaInsId, $vmName){
 	}	
 	return $result;
 }
+
+
+
+function refreshAllInstanceRequest($devaInsId, $encryptedPassword){
+	require('config.php');
+	$wsdl=$VIRTUAL_LABS_WSDL;//"http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl";
+	$location =$WEB_SERVICES_URL;
+	
+	//$devaInsId = 'c9bfaa50-2036-4b93-a701-848a6671864f';
+	//$vmName = 'Laptop 1 (laptop1)';
+	
+	try {
+					
+		$params = array('devaInsId' => $devaInsId,
+						'encryptedPassword' => $encryptedPassword); 			
+
+		$client=new SoapClient($wsdl,array('location'=>$location));
+
+		$result = $client->refreshVEWithEncryptedPassword($params);
+		
+
+	} catch (Exception $e) {
+	
+		echo $e->getMessage();
+	
+	}catch (SoapFault $soapfault) {
+	
+		echo $soapfault->getMessage();
+	}	
+	return $result;
+}
+
 
 
 function getAppointmentTimer($devaInsId){
