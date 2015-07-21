@@ -14,6 +14,14 @@ package edu.fiu.cis.acrl.virtuallabs.guacamole.auth;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
+import java.io.File;
+import java.io.FileInputStream; 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import org.glyptodon.guacamole.GuacamoleException;
+import org.glyptodon.guacamole.properties.GuacamoleProperties;
+import org.glyptodon.guacamole.properties.StringGuacamoleProperty;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 
@@ -25,8 +33,18 @@ import org.slf4j.Logger;
 public class Crypt {
 
 	private static Logger logger = LoggerFactory.getLogger(Crypt.class);
-	private static String key = "ks03nlg3mz38l2z3";	
 
+	/***
+	 *  The classpath directory where the key.key file is/shold be stored.
+	 *  This is retrieved from guacamole.properties.
+	 */
+	public static final StringGuacamoleProperty LIB_DIRECTORY = new StringGuacamoleProperty() {
+		@Override
+		public String getName() { return "lib-directory"; }
+	};
+
+	// read the key from a file named key.key located in the same folder as this .jar file
+	private static String key = readKey("key.key");
 
 
 
@@ -92,5 +110,33 @@ public class Crypt {
 			logger.debug("decrypted string: {}", output);
 
 		return output;
+	}
+
+
+
+	/***
+	 *  Reads the encryption key from a text file stored
+	 *  in the same directory as this .jar file.
+	 */
+	private static String readKey(String keyFileName) {
+		String line = null;
+		try {
+			// key.key is stored in the classpath directory, get that info from guacamole.properties
+			String classPathDir = GuacamoleProperties.getProperty(LIB_DIRECTORY);
+			File dir = new File(classPathDir);
+			File fin = new File(dir.getCanonicalPath() + File.separator + keyFileName);
+			FileInputStream fis = new FileInputStream(fin);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+			line = br.readLine();
+			if (line == null)
+				logger.info("Error: reading encryption in Crypt.readKey() returned null!");
+			br.close();
+		} catch (IOException e) {
+			logger.info("Error reading encryption key in Crypt.readKey()");
+		} catch (GuacamoleException e) {
+			logger.info("Error opening the LIB_DIRECTORY");
+		}		
+		
+		return line;
 	}
 }

@@ -17,6 +17,9 @@ GUACAMOLE_VERSION=0.9.7  # the Guacamole version installed in this server
 # the Guacamole configuration file
 GUACAMOLE_PROPERTIES=guacamole.properties
 
+# the file containing the password decrypting string
+KEY_FILE=key.key
+
 # guacamole_auth_url.jar file names
 GUACAMOLE_JAR_WITH_VERSION=guacamole-auth-url-1.0-SNAPSHOT.jar
 GUACAMOLE_JAR=guacamole-auth-url.jar
@@ -28,7 +31,7 @@ GUACAMOLE_WAR=guacamole.war
 # folders that need to be created to setup Guacamole
 GUACAMOLE_ETC_FOLDER=/etc/guacamole/
 GUACAMOLE_VAR_LIB_FOLDER=/var/lib/guacamole/
-GUACAMOLE_CLASSPATH="${GUACAMOLE_VAR_LIB_FOLDER}classpath/"
+GUACAMOLE_CLASSPATH_FOLDER="${GUACAMOLE_VAR_LIB_FOLDER}classpath/"
 GUACAMOLE_USR_SHARE_FOLDER=/usr/share/$TOMCAT/.guacamole/
 GUACAMOLE_WEBAPPS_FOLDER=/var/lib/$TOMCAT/webapps/
 
@@ -54,6 +57,18 @@ echo -e ""
 #---------------------------------------
 # FIRST PART: CONFIGURE GUACAMOLE SERVER 
 #---------------------------------------
+
+# copy key.key to the classpath directory, abort if file is missing
+echo -e "Copying key.key..."
+mkdir -p $GUACAMOLE_CLASSPATH_FOLDER  # create folder if it does not exist
+# check if file is in this directory
+if [ -f ./$KEY_FILE ]; then
+	# if file already exists, overwrite it
+	cp --remove-destination ./$KEY_FILE $GUACAMOLE_CLASSPATH_FOLDER$KEY_FILE
+else
+	echo -e "Error: missing key.key file. Please create it. Check README.txt for information."
+	exit 1
+fi
 
 # copy guacamole.properties to its required location
 echo -e "Copying guacamole.properties..."
@@ -101,9 +116,9 @@ ln -s $GUACAMOLE_VAR_LIB_FOLDER$GUACAMOLE_WAR $GUACAMOLE_WEBAPPS_FOLDER$GUACAMOL
 
 # copy the guacamole-auth-url.jar file to its required location
 echo -e "Copying guacamole auth jar file..."
-mkdir -p $GUACAMOLE_CLASSPATH  # create folder if it does not exist
+mkdir -p $GUACAMOLE_CLASSPATH_FOLDER  # create folder if it does not exist
 # rename jar file to remove version and copy it to the folder just created
-cp --remove-destination $GUACAMOLE_JAR_WITH_VERSION $GUACAMOLE_CLASSPATH$GUACAMOLE_JAR 
+cp --remove-destination $GUACAMOLE_JAR_WITH_VERSION $GUACAMOLE_CLASSPATH_FOLDER$GUACAMOLE_JAR 
 
 
 

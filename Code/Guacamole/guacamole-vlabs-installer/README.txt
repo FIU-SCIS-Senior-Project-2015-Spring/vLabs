@@ -13,9 +13,11 @@ refer to the project documentation section of this project.
 THE SHORT VERSION
 ------------------------------------------
 
-Getting a Guacamole server ready for vLabs is easy, just run 
-the following two commands:
+Getting a Guacamole server ready for vLabs is easy, just complete these 22 steps: 
 
+1) Create the text file key.key with a single line with the encription string
+   for URL password encryption. (16 characters), save it in this directory.
+2) run the following commands
 sudo guacamole-installer.sh
 sudo guacamole-auth-url-installer.sh
 
@@ -24,34 +26,41 @@ sudo guacamole-auth-url-installer.sh
 THE LONG VERSION
 -----------------------------------------
 
-This folder has 8 files, this is all that is needed to install
-Guacamole and the authentication plugin
+This folder has 7 files and 1 folder, this is all that is needed
+to install Guacamole and the authentication plugin.
 
-The installation 
-process will create more files. When Guacamole and the plugin
-are installed, this files can be deleted or moved into a folder
-to keep for reference.
+The installation process will create additional folders, 
+when Guacamole and the plugin are installed, these folders
+will be deleted by the installer.
 
 This installer was made for version 0.9.7 of Guacamole, and
 hopefully it will need very little modifications to work in 
 future versions.
 
 
-The files: The 8 initial (required) files are:
-=========
-
+The initial 7 files and 1 folder are required
+---------------------------------------------
 firewal.sh
 guacamole-installer.sh
 guacamole-auth-url-installer.sh
 guacamole.properties
 guacamole-VERSION-dependency.list.txt
 server.xml
-guacamole-auth-url-1.0-SNAPSHOT.jar
 README.txt
+./guacamole-auth-url/
 
-Plus these files that will be downloaded to build Guacamole:
+
+Create the file key.key as a simple text file with a single line
+containing a 16 character key to decrypt the password.
+----------------------------------------------------------------
+key.key
+
+
+Plus these files will be created and downloaded by this instaler
+----------------------------------------------------------------
 guacamole-server-0.9.7.tar.gz
 guacamole-client-0.9.7.tar.gz
+guacamole-auth-url-1.0-SNAPSHOT.jar
 
 
 
@@ -89,16 +98,25 @@ server.xml
 This file is a configuration file for Tomcat, it opens the port needed for Guacamole.
 The section of interest is marked with: "Enabled for Guacamole".
 
-guacamole-aut-url-1.0-SNAPSHOT.jar
-----------------------------------
-Authentication plugin that enables Guacamole to open connections with all the client's information passed via the URL.
+key.key
+-------
+A text file you need to create with a single line containing the unencrypting key for Guacamole.
+This string needs to be 16 url safe characters.
 
 README.txt
 ----------
 This file.
 
+./guacamole-auth-url/
+--------------------
+The Maven project folder for the plugin, that will be used to build the .jar plugin file.
 
 
+
+guacamole-aut-url-1.0-SNAPSHOT.jar
+----------------------------------
+Authentication plugin that enables Guacamole to open connections with all the client's information passed via the URL.
+This file will be buit by the installer.
 
 guacamole-server-0.9.7.tar.gz
 -----------------------------

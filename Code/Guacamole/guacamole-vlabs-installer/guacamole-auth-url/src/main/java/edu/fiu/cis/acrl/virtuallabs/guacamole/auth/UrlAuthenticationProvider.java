@@ -67,6 +67,7 @@ public class UrlAuthenticationProvider extends SimpleAuthenticationProvider {
 	public static final String ID_PARAM = "id";
 	public static final String TIMESTAMP_PARAM = "timestamp";
 	public static final String PARAM_PREFIX = "guac.";
+	public static final String PASSWORD = "password";
 
 
 	/**
@@ -136,9 +137,13 @@ public class UrlAuthenticationProvider extends SimpleAuthenticationProvider {
 			else if (name.equals(PARAM_PREFIX + "protocol")) {
 				config.setProtocol(request.getParameter(name));
 			}
-			// Decrypt the password
+			// Get the encrypted password
+			else if (name.equals(PARAM_PREFIX + "encrypted_password")) {
+				config.setParameter(PASSWORD, Crypt.decrypt(request.getParameter(name)));
+			}
+			// Get un-encrypted password if it exists
 			else if (name.equals(PARAM_PREFIX + "password")) {
-				config.setParameter(name.substring(PARAM_PREFIX.length()), Crypt.decrypt(request.getParameter(name)));
+				config.setParameter(PASSWORD, request.getParameter(name));
 			}
 			else {	// Set the guac parameters, removing the guac. string first
 				config.setParameter(name.substring(PARAM_PREFIX.length()), request.getParameter(name));

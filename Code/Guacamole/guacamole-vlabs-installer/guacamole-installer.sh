@@ -53,6 +53,15 @@ GUACAMOLE_CLIENT_DOWNLOAD=http://sourceforge.net/projects/guacamole/files/curren
 GUACAMOLE_WAR_DESTINATION=$(pwd)  # will save war file in current folder
 # destination for tomcat's server.xml file
 TOMCAT_SERVER_XML_FOLDER=/etc/$TOMCAT 
+# destination for the 
+
+
+# build location for the .jar plugin
+GUACAMOLE_AUTH_URL_MAVEN_FOLDER=./guacamole-auth-url/
+# the folder there the .jar plugin will be deposited
+GUACAMOLE_AUTH_URL_BUILD_FOLDER="${GUACAMOLE_AUTH_URL_MAVEN_FOLDER}target/"
+# the results of the build will be saved in the same place as the WAR
+
 
 
 # abort on error
@@ -87,6 +96,19 @@ if [[ $response =~ ^(no|n) ]]; then
 	echo -e "Quitting installer..."
 	exit 0
 fi
+
+
+
+# first of all remove old guacamole directories and files
+# and stop guacamole service.
+/etc/init.d/guacd stop
+# files
+rm -f /var/lib/$TOMCAT/webapps/guacamole.war
+# directories
+rm -drf /etc/guacamole/
+rm -drf /usr/share/$TOMCAT/.guacamole/
+rm -drf /var/lib/guacamole/
+
 
 
 
@@ -154,11 +176,22 @@ mvn -DskipTests package
 cd ..
 
 
-# extract results
+# build the guacamole-auth-url pluggin .jar file
+echo -e "\n\nBuilding the guacamole-auth-url plugin"
+cd $GUACAMOLE_AUTH_URL_MAVEN_FOLDER
+mvn -DskipTests package
+cd ..
+
+
+# extract web applications results
 echo -e "\n\nThe Guacamole web application will be saved here: ${GUACAMOLE_WAR_DESTINATION}"
 mkdir -p $GUACAMOLE_WAR_DESTINATION
 cp $GUACAMOLE_CLIENT/guacamole/target/$GUACAMOLE_WAR $GUACAMOLE_WAR_DESTINATION
 
+
+# extract plugin .jar results
+echo -e "\n\nThe guacamole-auth-url .jar file will be saved here: ${GUACAMOLE_WAR_DESTINATION}"
+cp "${GUACAMOLE_AUTH_URL_BUILD_FOLDER}guacamole-auth-url"*.jar $GUACAMOLE_WAR_DESTINATION
 
 
 # delete folders used to build Guacamole
