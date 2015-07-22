@@ -159,29 +159,31 @@ class module_vLabs extends EfrontModule {
 		else{
 			//grab the current theme set to pass as a url paramater.
 	        //this parameter will be used to properly set the css include for the module to be consistent
-			$tid = $_SESSION['s_theme'];
-			switch($tid){
-				case '1':
-				case '2':
-				case '7':
+			//$tid = $_SESSION['s_theme'];
+            $tid = eF_getTableData('themes', 'name', 'id=' . $_SESSION['s_theme']);
+            $tname = $tid[0]['name'];
+			switch($tname){
+				case 'default':
+				case 'eFront2013':
+				case 'IE6':
 					//default
 					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=default&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
-				case '3':
-				case '5':
+				case 'blue':
+				case 'enterprise':
 					//blue
 					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=blue&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
-				case '4':
-				case '9':
+				case 'blue_html5':
+				case 'modern':
 					//bluehtml
 					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=bluehtml&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
-				case '6':
+				case 'green':
 					//green
 					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=green&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
-				case '11':
+				case 'pad':
 					//flatgrey
 					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=flatgrey&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;

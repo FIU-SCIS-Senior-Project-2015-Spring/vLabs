@@ -41,6 +41,9 @@
 	}
 ?>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css">
+<script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
+<script src="http://imagesloaded.desandro.com/imagesloaded.pkgd.min.js"></script>
 <script src="jqtimer/jquery.countdown.js"></script>
 
 </head>
@@ -90,6 +93,7 @@
 			<option value="default">default</option>
 			<option value="640x480">640x480</option>
 			<option value="800x600">800x600</option>
+			<option value="1024x768">1024x768</option>
 		</select>
 		<label for="color">Color Depth: </label>
 		<select name="color" id="cdepth" width="100px">
@@ -124,11 +128,19 @@
 	</ul>
 	<!-- Network Diagram -->
 	<div id="tabs-1"> 
-		<center><img src=http://ita-portal.cis.fiu.edu/mod/deva/embedded/img/K2-3_Network-Diagram.png></center>
+		<center><img src="http://ita-portal.cis.fiu.edu/mod/deva/embedded/img/K2-3_Network-Diagram.png" width="762" height="838" usemap="#netmap"></center>
+		<map name="netmap">
+			<area id="kasrect" shape="rect"  coords="525,85,725,235" href="http://university-cdn.kaseya.net/vsapres/web20/core/login.aspx" alt="Kaseya Server" data-tooltip="tooltip"></area>
+			<area id="dcrect" shape="rect" coords="250,425,440,695" href="" alt="dc (Domain Controller)" onclick="changeTab('dc');"><area>
+			<area id="ws2rect" shape="rect" coords="20,395,210,555" href="" alt="ws1 (Workstation 1)" onclick="changeTab('ws1');"></area>
+			<area id="ws1rect" shape="rect" coords="20,555,210,715" href="" alt="ws2 (Workstation 2)" onclick="changeTab('ws2');"></area>
+			<area id="recrect" shape="rect" coords="515,595,750,715" href="" alt="reception" onclick="changeTab('reception');"></area>
+			<area id="laprect" shape="rect" coords="515,440,750,595" href="" alt="laptop-ceo" onclick="changeTab('laptop-ceo');"></area>
+		</map>
 	</div>
 	<!-- Connection Info -->
 	<div id="tabs-2">
-		<table id="conninfotable" class="table table-striped">
+		<table id="conninfotable" class="table table-striped table-hover">
 			<tr>
 				<td><center><strong>Machine Name</strong></center></td>
 				<td><center><strong>Connection Protocol</strong></center></td>
@@ -158,11 +170,18 @@
 <script type="text/javascript" src="dateFormat.js"></script>
 <script type="text/javascript" src="navbarcontrols.js"></script> 
 <script type="text/javascript" src="getandschedule.js"></script>
-<script type="text/javascript" src="vmcObjs.js"></script> 
+<script type="text/javascript" src="vmcObjs.js"></script>
+<style>
+	.qtip-bootstrap{
+		font-size: 11px;
+	}
+</style> 
 <script>
 	$(function() {
 		//initialize tab UI but hide until user is verified and the tabs have been properly loaded
 		$("#tabs").tabs();
+		//set up tooltips for network diagram
+		setNDTooltips();
 		$("#tabs").hide();
 
 		//load the user's instance
@@ -259,7 +278,170 @@
 		$(".tabwhitespace, .tabIframeWrapper").click(function(){
 			$("iframe").focus();
 		});
+
+		//clicking a row in the conninfo table
+		$('.clickrow').click(function(){
+			//grab the first td i.e. the name of the machine
+			var machine = $(this).find('td:first').text();
+			//redirect to appropriate tab
+			switch(machine){
+				case 'Kaseya Server':
+					window.open("http://university-cdn.kaseya.net/vsapres/web20/core/login.aspx");
+					break;
+				case 'dc (Domain Controller)':
+					currentTabSelected = 2;
+					$('#tabs').tabs("option", "active", 2);
+					$('a.rdptab').triggerHandler("click");
+					break;
+				case 'ws1 (Workstation 1)':
+					currentTabSelected = 3;
+					$('#tabs').tabs({active: 3});
+					$('a.rdptab').triggerHandler("click");
+					break;
+				case 'ws2 (Workstation 2)':
+					currentTabSelected = 4;
+					$('#tabs').tabs({active: 4});
+					$('a.rdptab').triggerHandler("click");
+					break;
+				case 'reception':
+					currentTabSelected = 5;
+					$('#tabs').tabs({active: 5});
+					$('a.rdptab').triggerHandler("click");
+					break;
+				case 'laptop-ceo':
+					currentTabSelected = 6;
+					$('#tabs').tabs({active: 6});
+					$('a.rdptab').triggerHandler("click");
+					break;
+			}
+		});
 	});
+
+function setNDTooltips(){
+	$('#kasrect').qtip({
+		content: {
+			text: function(event, api){
+				return buildTooltip(1);
+			}
+		},
+		position:{
+			my: 'top left',
+			at: 'bottom center'
+		},
+		style:{
+			classes: 'qtip-bootstrap'
+		}
+	});
+	$('#dcrect').qtip({
+		content: {
+			text: function(event, api){
+				return buildTooltip(2);
+			}
+		},
+		position:{
+			my: 'top center',
+			at: 'bottom center'
+		},
+		style:{
+			classes: 'qtip-bootstrap'
+		}
+	});
+	$('#ws1rect').qtip({
+		content: {
+			text: function(event, api){
+				return buildTooltip(3);
+			}
+		},
+		position:{
+			my: 'top center',
+			at: 'bottom center'
+		},
+		style:{
+			classes: 'qtip-bootstrap'
+		}
+	});
+	$('#ws2rect').qtip({
+		content: {
+			text: function(event, api){
+				return buildTooltip(4);
+			}
+		},
+		position:{
+			my: 'bottom right',
+			at: 'top center'
+		},
+		style:{
+			classes: 'qtip-bootstrap'
+		}
+	});
+	$('#recrect').qtip({
+		content: {
+			text: function(event, api){
+				return buildTooltip(5);
+			}
+		},
+		position:{
+			my: 'top center',
+			at: 'bottom center'
+		},
+		style:{
+			classes: 'qtip-bootstrap'
+		}
+	});
+	$('#laprect').qtip({
+		content: {
+			text: function(event, api){
+				return buildTooltip(6);
+			}
+		},
+		position:{
+			my: 'bottom center',
+			at: 'top center'
+		},
+		style:{
+			classes: 'qtip-bootstrap'
+		}
+	});
+}
+
+function buildTooltip(row){
+	var row = $('#conninfotable tr:eq(' + row + ')');
+	var tip = "<strong>Machine Name: </strong>" + row.find('td:nth-child(1)').text() + "<br><strong>Connection Protocol: </strong>" + row.find('td:nth-child(2)').text() 
+		+ "<br><strong>Host Name: </strong>" + row.find('td:nth-child(3)').text() + "<br><strong>Host Port: </strong>" 
+		+ row.find('td:nth-child(4)').text() + "<br><strong>Username: </strong>" + $('#username').val();
+	//alert(tip);
+	return tip; 
+}
+
+function changeTab(machine){
+	switch(machine){
+		case 'dc':
+			currentTabSelected = 2;
+			$('#tabs').tabs("option", "active", 2);
+			$('a.rdptab').triggerHandler("click");
+			break;
+		case 'ws1':
+			currentTabSelected = 3;
+			$('#tabs').tabs({active: 3});
+			$('a.rdptab').triggerHandler("click");
+			break;
+		case 'ws2':
+			currentTabSelected = 4;
+			$('#tabs').tabs({active: 4});
+			$('a.rdptab').triggerHandler("click");
+			break;
+		case 'reception':
+			currentTabSelected = 5;
+			$('#tabs').tabs({active: 5});
+			$('a.rdptab').triggerHandler("click");
+			break;
+		case 'laptop-ceo':
+			currentTabSelected = 6;
+			$('#tabs').tabs({active: 6});
+			$('a.rdptab').triggerHandler("click");
+			break;
+	}
+}
 
 function changeRes(){
 	var currSrc = getRdpTabInfo('veInsURL', currentTabSelected);

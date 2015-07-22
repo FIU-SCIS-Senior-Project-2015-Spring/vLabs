@@ -386,13 +386,16 @@ function getBppValue($email){
     try {  		
    	//$sql = "SELECT data FROM module_vlabs_user_info_data WHERE email = ".$email." and field_id = 19";
 		$bppdata = eF_getTableData("module_vlabs_user_info_data", "data", "email='$email' and field_id=19");
+		if(empty($bppdata)){
+			return "default";
+		}
 		foreach($bppdata as $bpp){
 			$bppval = $bpp['data'];
 			return $bppval;
 		}
     } catch (Exception $e) {
         //echo $e->getMessage();
-		return null;
+		return "default";
     }
 }
 
@@ -430,13 +433,16 @@ function getResolutionValue($email){
     try {  		
    	//$sql = "SELECT data FROM module_vlabs_user_info_data WHERE email = ".$email." and field_id = 19";
 		$res = eF_getTableData("module_vlabs_user_info_data", "data", "email='$email' and field_id=20");
+		if(empty($res)){
+			return "default";
+		}
 		foreach($res as $resolution){
 			$resval = $resolution['data'];
 			return $resval;
 		}
     } catch (Exception $e) {
         //echo $e->getMessage();
-		return null;
+		return "default";
     }
 }
 function setResolution($email, $resolution){

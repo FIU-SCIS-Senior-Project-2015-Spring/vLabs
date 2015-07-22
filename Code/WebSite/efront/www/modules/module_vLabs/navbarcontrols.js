@@ -426,7 +426,7 @@ function showCmdMessages(command){
 		message = "This virtual machine is being restarted! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
 		$('#iframetab' + currentTabSelected).attr('src','webRDPMessage.php?message='+message);	
 	
-	}else if(command == "refresh" || command == "refreshall"){
+	}else if(command == "refresh" || command == "refreshAll"){
 		markCurrentInstanceState('disabled');
 		message = "This virtual machine(s) is being refreshed! This process may take from 20 seconds up to 2 minutes. So, please be patient! If you see a Terminal Server Connection Error message, you should wait for 10 seconds and try reloading the tab.";
 		$('#iframetab' + currentTabSelected).attr('src','webRDPMessage.php?message='+message);
@@ -486,6 +486,7 @@ function getVMControlHTML(){
 			'<option>default</option>' +
 			'<option>640x480</option>' +
 			'<option>800x600</option>' +
+			'<option value="1024x768">1024x768</option>' +
 		'</select>' +
 		'<label for="color">Color Depth: </label>' +
 		'<select name="color" id="cdepth" width="100px">' +

@@ -158,36 +158,36 @@ function getCurDevaInsInfo() {
 								
                             }else{
                             	//load the tabs and fill in the connection info table
-                            	$('#conninfotable').append("<tr><td><center>Kaseya Server</center></td><td><center>http</center></td><td><center>" 
+                            	$('#conninfotable').append("<tr class='clickrow'><td><center>Kaseya Server</center></td><td><center>http</center></td><td><center>" 
                             		+ vms.kserver.name + ":" + vms.kserver.httpPort + "</center></td><td><center>" 
                             		+ vms.kserver.httpPort + "</center></td><td><center>" 
                             		+ vms.kserver.username +"</center></td><td><center>" 
                             		+ hideVMPassword(vms.kserver.password) + "</center></td><td><center></center></td></tr>");
-                            	$('#conninfotable').append("<tr><td><center>" + vms.vmInfo[0].name + "</center></td><td><center>RDP</center></td><td><center>" 
+                            	$('#conninfotable').append("<tr class='clickrow'><td><center>" + vms.vmInfo[0].name + "</center></td><td><center>RDP</center></td><td><center>" 
                             		+ vms.vmInfo[0].accessAddress + "</center></td><td><center>" 
                             		+ vms.vmInfo[0].accessPort + "</center></td><td><center>" 
                             		+ vms.vmInfo[0].username +"</center></td><td><center>" 
                             		+ hideVMPassword(vms.vmInfo[0].password) + "</center></td><td><center>"
                             		+ vms.vmInfo[0].domain + "</center></td></tr>");
-                            	$('#conninfotable').append("<tr><td><center>" + vms.vmInfo[1].name + "</center></td><td><center>RDP</center></td><td><center>" 
+                            	$('#conninfotable').append("<tr class='clickrow'><td><center>" + vms.vmInfo[1].name + "</center></td><td><center>RDP</center></td><td><center>" 
                             		+ vms.vmInfo[1].accessAddress + "</center></td><td><center>" 
                             		+ vms.vmInfo[1].accessPort + "</center></td><td><center>" 
                             		+ vms.vmInfo[1].username +"</center></td><td><center>" 
                             		+ hideVMPassword(vms.vmInfo[1].password) + "</center></td><td><center>"
                             		+ vms.vmInfo[1].domain + "</center></td></tr>");
-                            	$('#conninfotable').append("<tr><td><center>" + vms.vmInfo[2].name + "</center></td><td><center>RDP</center></td><td><center>" 
+                            	$('#conninfotable').append("<tr class='clickrow'><td><center>" + vms.vmInfo[2].name + "</center></td><td><center>RDP</center></td><td><center>" 
                             		+ vms.vmInfo[2].accessAddress + "</center></td><td><center>" 
                             		+ vms.vmInfo[2].accessPort + "</center></td><td><center>" 
                             		+ vms.vmInfo[2].username +"</center></td><td><center>" 
                             		+ hideVMPassword(vms.vmInfo[2].password) + "</center></td><td><center>"
                             		+ vms.vmInfo[2].domain + "</center></td></tr>");
-                            	$('#conninfotable').append("<tr><td><center>" + vms.vmInfo[3].name + "</center></td><td><center>RDP</center></td><td><center>" 
+                            	$('#conninfotable').append("<tr class='clickrow'><td><center>" + vms.vmInfo[3].name + "</center></td><td><center>RDP</center></td><td><center>" 
                             		+ vms.vmInfo[3].accessAddress + "</center></td><td><center>" 
                             		+ vms.vmInfo[3].accessPort + "</center></td><td><center>" 
                             		+ vms.vmInfo[3].username +"</center></td><td><center>" 
                             		+ hideVMPassword(vms.vmInfo[3].password) + "</center></td><td><center>"
                             		+ vms.vmInfo[3].domain + "</center></td></tr>");
-                            	$('#conninfotable').append("<tr><td><center>" + vms.vmInfo[4].name + "</center></td><td><center>RDP</center></td><td><center>" 
+                            	$('#conninfotable').append("<tr class='clickrow'><td><center>" + vms.vmInfo[4].name + "</center></td><td><center>RDP</center></td><td><center>" 
                             		+ vms.vmInfo[4].accessAddress + "</center></td><td><center>" 
                             		+ vms.vmInfo[4].accessPort + "</center></td><td><center>" 
                             		+ vms.vmInfo[4].username +"</center></td><td><center>" 
@@ -201,7 +201,7 @@ function getCurDevaInsInfo() {
 									vms.vmInfo[i].accessAddress+'&guac.port='+vms.vmInfo[i].accessPort+
 									'&guac.domain='+vms.vmInfo[i].domain+
 									'&guac.username='+escape(vms.vmInfo[i].username)+
-									'&guac.password=' +$('#encryptedPassword').val();	//vms.vmInfo[i].password 
+									'&guac.encrypted_password=' +$('#encryptedPassword').val();	//vms.vmInfo[i].password 
 
 									//alert("linkurl= " +linkURL);
 
