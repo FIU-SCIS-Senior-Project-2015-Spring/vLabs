@@ -206,6 +206,7 @@
 			var tab = $(this).attr("href");
 
 			//get vm controls
+			$('#vmcontrols').hide();
 			$('#vmcontrols').empty();
 			$('#vmcontrols').append(getVMControlHTML());
 
@@ -239,6 +240,7 @@
 						},
 						complete: function(){
 							setupVMControlButtons();
+							$('#vmcontrols').show();
 							//bind the event handlers for the selects
 							$('#cdepth').change(function(){changeBpp()});
 							$('#resolution').change(function(){changeRes()});
