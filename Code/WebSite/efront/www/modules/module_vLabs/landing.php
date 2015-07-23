@@ -116,19 +116,19 @@
 		<li><a class="nonrdptab" href="#tabs-2">Connection Info</a></li>
 
 		<li><a class="rdptab" href="#tabs-3">Domain Controller</a>
-		<span id="2" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="2" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!" style="display:inline-block; width: 16px;"></span><li>
 		
 		<li><a class="rdptab" href="#tabs-4">Workstation 1</a>
-		<span id="3" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span></li>
+		<span id="3" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!" style="display:inline-block; width: 16px;"></span></li>
 		
 		<li><a class="rdptab" href="#tabs-5">Workstation 2</a>
-		<span id="4" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="4" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!" style="display:inline-block; width: 16px;"></span><li>
 		
 		<li><a class="rdptab" href="#tabs-6">Reception</a>
-		<span id="5" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="5" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!" style="display:inline-block; width: 16px;"></span><li>
 		
 		<li><a class="rdptab" href="#tabs-7">Laptop-Ceo</a>
-		<span id="6" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!"></span><li>
+		<span id="6" class="ui-icon ui-icon-extlink" role="presentation" title="Open RDP session in a new tab!" style="display:inline-block; width: 16px;"></span><li>
 	</ul>
 	<!-- Network Diagram -->
 	<div id="tabs-1"> 
