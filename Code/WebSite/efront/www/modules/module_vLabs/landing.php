@@ -14,7 +14,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
-<!-- jQueryUI-->
+<!-- set the module theme -->
 <?php
 	//grab the theme parameter passed from the url
 	$themeset = $_GET['theme'];
@@ -40,10 +40,14 @@
 			break;
 	}
 ?>
+
+<!-- jQueryUI-->
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<!-- qTips2 minified JS/CSS as well as added image support -->
 <link rel="stylesheet" href="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.css">
 <script src="http://cdn.jsdelivr.net/qtip2/2.2.1/jquery.qtip.min.js"></script>
 <script src="http://imagesloaded.desandro.com/imagesloaded.pkgd.min.js"></script>
+<!-- jQ countdown -->
 <script src="jqtimer/jquery.countdown.js"></script>
 
 </head>
@@ -164,8 +168,10 @@
 	<div id="tabs-7" class="tabwhitespace">
 	</div>
 </div>
+<!-- waiting progress div -->
 <div id="wait" style="display:none" align="center"><img src="wait.gif"><br>Please Wait...</div>
 </body>
+<!-- local js files -->
 <script type="text/javascript" src="scheduler/fullcalendar/fullcalendar.js"></script>
 <script type="text/javascript" src="dateFormat.js"></script>
 <script type="text/javascript" src="navbarcontrols.js"></script> 
@@ -192,7 +198,9 @@
 
 		//clicking a rdp tab
 		$("a.rdptab").click(function(){
-			currentTabSelected = $('#tabs').tabs("option", "active");	//0 based index
+			var span = $(this).next().attr('id');
+			//currentTabSelected = $('#tabs').tabs("option", "active"); replaced to fix bug: upon first scheduled access index would be incorrect.
+			currentTabSelected = span;
 			var srcUrl = getRdpTabInfo('veInsURL', currentTabSelected);
 			var paramstoadd = "";
 			var tab = $(this).attr("href");
