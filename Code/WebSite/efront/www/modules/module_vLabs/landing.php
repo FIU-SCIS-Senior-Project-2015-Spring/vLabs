@@ -74,7 +74,7 @@
 	?>
 
 <!-- nav bar -->
-<div id="toolbar" class="ui-widget-header ui-corner-all">
+<div id="toolbar" class="ui-widget-header ui-corner-all" style="display:none">
 	<div style="display:inline">
 		<div id="timecontrols" style="display:inline">
 		 minutes: <input type="text" id="timetochange" name="timetochange" value="5" placeholder="5" maxlength="2" size="2">
@@ -110,7 +110,7 @@
 </div>
 
 <!-- Tabs -->
-<div id="tabs">
+<div id="tabs" style="display:none">
 	<ul>
 		<li><a class="nonrdptab" href="#tabs-1">Network Diagram</a></li>
 		<li><a class="nonrdptab" href="#tabs-2">Connection Info</a></li>
@@ -184,11 +184,11 @@
 </style> 
 <script>
 	$(function() {
-		//initialize tab UI but hide until user is verified and the tabs have been properly loaded
+		//initialize tab UI but do not show until user is verified and the tabs have been properly loaded
+		//$("#tabs").hide();
 		$("#tabs").tabs();
 		//set up tooltips for network diagram
 		setNDTooltips();
-		$("#tabs").hide();
 
 		//load the user's instance
 		$("#wait").show();

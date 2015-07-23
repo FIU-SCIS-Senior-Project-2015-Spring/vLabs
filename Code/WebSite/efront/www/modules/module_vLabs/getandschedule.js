@@ -110,6 +110,8 @@ function getCurDevaInsInfo() {
 
 				setupTimeControlButtons();
 				setupVMControlButtons();
+				$('#toolbar').show();
+
 				if(vms != null) {
 					if (vms.success) {
 						//vmc_init();
