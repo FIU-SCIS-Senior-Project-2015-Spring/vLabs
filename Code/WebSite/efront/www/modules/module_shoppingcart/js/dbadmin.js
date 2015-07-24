@@ -343,8 +343,9 @@ function dbadmin_exportData(id,moduleName)
             },
             success: function (data) {
                 //window.alert("in ajax section within success function");
-                if(data=='pass'){
-                    alert("Data export successful!");
+                if(data.length > 0){
+                   download('module_vlabs_shoppingcart_data.sql', data);
+
                 }else{
                     alert("Data export failed!");
                 }
@@ -358,6 +359,21 @@ function dbadmin_exportData(id,moduleName)
 
     }
 
+}
+
+function download(filename, text) {
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
 }
 
 function dbadmin_exportSchema(id,moduleName)
@@ -381,8 +397,8 @@ function dbadmin_exportSchema(id,moduleName)
             },
             success: function (data) {
                 //window.alert("in ajax section within success function");
-                if(data=='pass'){
-                    alert("Schema export successful!");
+                if(data.length > 0){
+                    download('module_vlabs_shoppingcart_schema.sql', data);
                 }else{
                     alert("Schema export failed!");
                 }

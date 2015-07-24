@@ -156,6 +156,7 @@
 <script type="text/javascript" src="/modules/jquery/jquery-ui/js/jquery-1.4.2.min.js"></script>
 jh repaced below
 -->
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
 <script type="text/javascript" src="jquery/jquery-ui/js/jquery-ui-1.8.4.custom.min.js"></script>
 <!--

@@ -68,60 +68,10 @@ if ($action == "getModules") {
 	//Reload all orders of all users. Only used for administartor view
 }
 
-if ($action =="exportData"){
+if ($action =="exportData") {
 
-$moduleId ="";
-$outputfile = "NEW_module_vlabs_shoppingcart_data.sql";
-if (isset($_POST['modId'])) {
-    $moduleId = $_POST['modId'];
-} else {
     $moduleId = "";
-}
-
-
-//echo "moduleId is: " .$moduleId . PHP_EOL;
-
-    if($moduleId!=""){
-        $modulePrefix = eF_getTableData('module_vlabs_shoppingcart_dbadmin', 'moduleprefix', 'id='. $moduleId);
-
-        //echo '<script type="text/javascript">alert("Current theme  is: ' . $tid[0]['name'] . '")</script>';
-/*jh this is a good Idea but since the order in which tables are exported
-and exported matters due to referential contraints, this can be done
-as a second phase since time is of the escence now!
-
-        $tableList ="";
-
-        $sql = 'select TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE "' . $modulePrefix[0]['moduleprefix'] .'%"';
-        $result = eF_executeQuery($sql);
-        $tables_array = array();
-        if($result!=null){
-            foreach($result as $r){
-                $t_array = array(
-                    "tableName"=>$r['TABLE_NAME']
-                );
-                array_push($tables_array,$t_array);
-                $tableList .= $r['TABLE_NAME'] . " ";
-            }
-
-
-        }
-        //echo "list of tables: " .PHP_EOL;
-        //echo $tableList;
-        //var_dump($tables_array);
-        $output = shell_exec('mysqldump -u '.G_DBUSER.' -p'.G_DBPASSWD.' --no-create-info efront ' . $tableList .' >'. G_ROOTPATH .'www/modules/NEW_module_vlabs_shoppingcart_data.sql');
-*/
-        $output = shell_exec('mysqldump -u '.G_DBUSER.' -p'.G_DBPASSWD.' --no-create-info efront module_vlabs_shoppingcart module_vlabs_shoppingcart_store_inventory module_vlabs_shoppingcart_order module_vlabs_shoppingcart_payment_method module_vlabs_shoppingcart_user_payment module_vlabs_shoppingcart_order_summary module_vlabs_shoppingcart_package_summary module_vlabs_shoppingcart_preassignment module_vlabs_shoppingcart_log >'. G_ROOTPATH .'www/modules/'.$outputfile);
-
-        echo "pass";
-    }else{
-       echo "failed";
-    }
-}
-
-if ($action =="exportSchema"){
-
-    $moduleId ="";
-    $outputfile = "NEW_module_vlabs_shoppingcart_schema.sql";
+    $outputfile = "NEW_module_vlabs_shoppingcart_data.sql";
     if (isset($_POST['modId'])) {
         $moduleId = $_POST['modId'];
     } else {
@@ -131,8 +81,8 @@ if ($action =="exportSchema"){
 
 //echo "moduleId is: " .$moduleId . PHP_EOL;
 
-    if($moduleId!=""){
-        $modulePrefix = eF_getTableData('module_vlabs_shoppingcart_dbadmin', 'moduleprefix', 'id='. $moduleId);
+    if ($moduleId != "") {
+        $modulePrefix = eF_getTableData('module_vlabs_shoppingcart_dbadmin', 'moduleprefix', 'id=' . $moduleId);
 
         //echo '<script type="text/javascript">alert("Current theme  is: ' . $tid[0]['name'] . '")</script>';
         /*jh this is a good Idea but since the order in which tables are exported
@@ -160,12 +110,74 @@ if ($action =="exportSchema"){
                 //var_dump($tables_array);
                 $output = shell_exec('mysqldump -u '.G_DBUSER.' -p'.G_DBPASSWD.' --no-create-info efront ' . $tableList .' >'. G_ROOTPATH .'www/modules/NEW_module_vlabs_shoppingcart_data.sql');
         */
-        $output = shell_exec('mysqldump -u '.G_DBUSER.' -p'.G_DBPASSWD.' --no-data efront module_vlabs_shoppingcart module_vlabs_shoppingcart_store_inventory module_vlabs_shoppingcart_order module_vlabs_shoppingcart_payment_method module_vlabs_shoppingcart_user_payment module_vlabs_shoppingcart_order_summary module_vlabs_shoppingcart_package_summary module_vlabs_shoppingcart_preassignment module_vlabs_shoppingcart_log >'. G_ROOTPATH .'www/modules/'.$outputfile);
+        $output = shell_exec('mysqldump -u ' . G_DBUSER . ' -p' . G_DBPASSWD . ' --no-create-info efront module_vlabs_shoppingcart module_vlabs_shoppingcart_store_inventory module_vlabs_shoppingcart_order module_vlabs_shoppingcart_payment_method module_vlabs_shoppingcart_user_payment module_vlabs_shoppingcart_order_summary module_vlabs_shoppingcart_package_summary module_vlabs_shoppingcart_preassignment module_vlabs_shoppingcart_log >' . G_ROOTPATH . 'www/modules/' . $outputfile);
 
-        echo "pass";
-    }else{
-        echo "failed";
+        $fp = file_get_contents(G_ROOTPATH . 'www/modules/' . $outputfile);
+        if ($fp) {
+            //echo "read data is: " . PHP_EOL;
+            //var_dump($fp);
+            echo $fp;
+        } else {
+            echo "";
+        }
     }
+}
+
+if ($action =="exportSchema"){
+
+    $moduleId ="";
+    $outputfile = "NEW_module_vlabs_shoppingcart_schema.sql";
+    if (isset($_POST['modId'])) {
+        $moduleId = $_POST['modId'];
+    } else {
+        $moduleId = "";
+    }
+
+
+//echo "moduleId is: " .$moduleId . PHP_EOL;
+
+    if($moduleId!="") {
+        $modulePrefix = eF_getTableData('module_vlabs_shoppingcart_dbadmin', 'moduleprefix', 'id=' . $moduleId);
+
+        //echo '<script type="text/javascript">alert("Current theme  is: ' . $tid[0]['name'] . '")</script>';
+        /*jh this is a good Idea but since the order in which tables are exported
+        and exported matters due to referential contraints, this can be done
+        as a second phase since time is of the escence now!
+
+                $tableList ="";
+
+                $sql = 'select TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE "' . $modulePrefix[0]['moduleprefix'] .'%"';
+                $result = eF_executeQuery($sql);
+                $tables_array = array();
+                if($result!=null){
+                    foreach($result as $r){
+                        $t_array = array(
+                            "tableName"=>$r['TABLE_NAME']
+                        );
+                        array_push($tables_array,$t_array);
+                        $tableList .= $r['TABLE_NAME'] . " ";
+                    }
+
+
+                }
+                //echo "list of tables: " .PHP_EOL;
+                //echo $tableList;
+                //var_dump($tables_array);
+                $output = shell_exec('mysqldump -u '.G_DBUSER.' -p'.G_DBPASSWD.' --no-create-info efront ' . $tableList .' >'. G_ROOTPATH .'www/modules/NEW_module_vlabs_shoppingcart_data.sql');
+        */
+
+        $output = shell_exec('mysqldump -u ' . G_DBUSER . ' -p' . G_DBPASSWD . ' --no-data efront module_vlabs_shoppingcart module_vlabs_shoppingcart_store_inventory module_vlabs_shoppingcart_order module_vlabs_shoppingcart_payment_method module_vlabs_shoppingcart_user_payment module_vlabs_shoppingcart_order_summary module_vlabs_shoppingcart_package_summary module_vlabs_shoppingcart_preassignment module_vlabs_shoppingcart_log >' . G_ROOTPATH . 'www/modules/' . $outputfile);
+        //echo "about to open file using file_get_contents";
+        $fp = file_get_contents(G_ROOTPATH . 'www/modules/' . $outputfile);
+        if ($fp) {
+            //echo "read data is: " . PHP_EOL;
+            //var_dump($fp);
+            echo $fp;
+        } else {
+            echo "";
+        }
+    }
+
 }
 
 
