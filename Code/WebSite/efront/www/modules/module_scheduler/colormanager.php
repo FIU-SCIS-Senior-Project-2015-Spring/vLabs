@@ -9,7 +9,7 @@
 
 //require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
 //require_once($CFG->libdir .'/ddllib.php');
-
+include("../../../libraries/configuration.php");
 //require_login($course, true, $cm);
 
 ?>
@@ -45,11 +45,11 @@
 
 <script language="javascript">
 
-$(document).ready(function() {
+jQuery(document).ready(function() {
 //$(function(){
 	//grab all a tags
 	
-	$('#addNewColor').click(function(){
+	jQuery('#addNewColor').click(function(){
 
 		insertColorDialogBox();
 		
@@ -120,7 +120,7 @@ $(document).ready(function() {
     	<th>Order</th><th>Color Code</th><th></th><th>Status</th><th></th><th></th></tr>
     </tr>
 <?php
-
+/*
 if(table_exists($table)){
 	$order = 0;
 	$records = get_records('scheduler_colormap');
@@ -142,6 +142,25 @@ if(table_exists($table)){
 		echo "<td><a id='delete-".$record->id."' class='colorDelete'>delete</a></td>";
 		echo "</tr>";
 	}
+}*/
+$order = 0;
+//$records = get_records('scheduler_colormap');
+$records = eF_getTableData('module_vlabs_scheduler_colormap');
+foreach($records as $record){
+	$order++;
+	$status = "disabled";
+	if($record['enabled']){
+		$status = "enabled";
+	}
+	echo "<tr>";
+	echo "<td>".$order."</td>";
+	echo "<td id='code-".$record['id']."'>".$record['colorcode']."</td>";
+	echo "<td><div id='scheduled-".$record['id']."' class='colorcode-scheduled' style='background-color: #".$record['colorcode']."'>S</div>";
+	echo "<div id='available-".$record['id']."' class='colorcode-available' style='background-color: #".$record['colorcode']."'>A</div></td>";
+	echo "<td><a id='status-".$record['id']."' class='colorStatus ".$status."'>".$status."</a></td>";
+	echo "<td><a id='edit-".$record['id']."' class='colorEdit'>edit</a></td>";
+	echo "<td><a id='delete-".$record['id']."' class='colorDelete'>delete</a></td>";
+	echo "</tr>";
 }
 ?>
     

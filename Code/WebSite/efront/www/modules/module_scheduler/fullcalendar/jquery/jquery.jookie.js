@@ -28,9 +28,9 @@
   OTHER DEALINGS IN THE SOFTWARE.
 */
 
-(function($) {
+(function(jQuery) {
 
-    $.Jookie = {
+    jQuery.Jookie = {
         Data:         {},
         Debug:        function(a)     { Debug(a)        },
         Delete:       function(a)     { Delete(a)       },    // delete cookie
@@ -45,14 +45,14 @@
         var lsRegExp = /\+/g;
         var sJSON = unescape(String(Extract(sName)).replace(lsRegExp, " "));
         alert("Name: " + sName +
-              "\nLifespan: " + $.Jookie.Data[sName].iLifespan +
-              " minutes\nCookie Existed Prior to Init: " + $.Jookie.Data[sName].bMadeEarlier + "\n\n" +
+              "\nLifespan: " + jQuery.Jookie.Data[sName].iLifespan +
+              " minutes\nCookie Existed Prior to Init: " + jQuery.Jookie.Data[sName].bMadeEarlier + "\n\n" +
               sJSON);
     }
 
     // PUBLIC: delete a cookie
     function Delete(sName) {
-        delete $.Jookie.Data[sName];
+        delete jQuery.Jookie.Data[sName];
         document.cookie = (sName + "=; expires=" + (new Date(1990, 6, 3)).toGMTString() + "; path=/");
 		//document.cookie = sName + '=; expires=Thu, 01-Jan-70 00:00:01 GMT;';
     }
@@ -82,12 +82,12 @@
 
     // PUBLIC: retrieve a cookie's value
     function Get(sName, sVariableName) {
-        return $.Jookie.Data[sName].oValues[sVariableName];
+        return jQuery.Jookie.Data[sName].oValues[sVariableName];
     }
 
     // PUBLIC: Initialise the plugin
     function Initialise(sName, iLifespanInMinutes) {
-        if (typeof $.Jookie.Data[sName] == "undefined") {
+        if (typeof jQuery.Jookie.Data[sName] == "undefined") {
             var oRetrievedValues = {};
             var bCookieExists = false;
 
@@ -99,7 +99,7 @@
             }
 
             // add cookie details to object
-            $.Jookie.Data[sName] = { iLifespan    : iLifespanInMinutes,
+            jQuery.Jookie.Data[sName] = { iLifespan    : iLifespanInMinutes,
                                      bMadeEarlier : bCookieExists,
                                      oValues      : oRetrievedValues };
             Save(sName);
@@ -109,25 +109,25 @@
     // PRIVATE: write cookie to user's browser
     function Save(sName) {
         var sExpires = "";
-        if ($.Jookie.Data[sName].iLifespan > 0) {
+        if (jQuery.Jookie.Data[sName].iLifespan > 0) {
             var dtDate = new Date();
-            dtDate.setMinutes(dtDate.getMinutes() + $.Jookie.Data[sName].iLifespan);
+            dtDate.setMinutes(dtDate.getMinutes() + jQuery.Jookie.Data[sName].iLifespan);
             sExpires = ("; expires=" + dtDate.toGMTString());
         }
         document.cookie = (sName + "=" +
-                           escape(JSON.stringify($.Jookie.Data[sName].oValues)) +
+                           escape(JSON.stringify(jQuery.Jookie.Data[sName].oValues)) +
                            sExpires + "; path=/");
     }
 
     // PUBLIC: set and save a cookie's value
     function Set(sName, sVariableName, vValue) {
-        $.Jookie.Data[sName].oValues[sVariableName] = vValue;
+        jQuery.Jookie.Data[sName].oValues[sVariableName] = vValue;
         Save(sName);
     }
 
     // PUBLIC: delete a single variable from a cookie
     function Unset(sName, sVariableName) {
-        delete $.Jookie.Data[sName].oValues[sVariableName];
+        delete jQuery.Jookie.Data[sName].oValues[sVariableName];
         Save(sName);
     }
 
@@ -246,7 +246,7 @@
                 var a;
                 if (typeof value === 'string') {
                     a =
-/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
+/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)ZjQuery/.exec(value);
                     if (a) {
                         return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
                             +a[5], +a[6]));
@@ -576,7 +576,7 @@ if (!this.JSON) {
 // we look to see that the remaining characters are only whitespace or ']' or
 // ',' or ':' or '{' or '}'. If that is so, then the text is safe for eval.
 
-                if (/^[\],:{}\s]*$/.
+                if (/^[\],:{}\s]*jQuery/.
 test(text.replace(/\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g, '@').
 replace(/"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g, ']').
 replace(/(?:^|:|,)(?:\s*\[)+/g, ''))) {

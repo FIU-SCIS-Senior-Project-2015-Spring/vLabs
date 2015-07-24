@@ -224,7 +224,13 @@ $.fn.fullCalendar = function(options) {
 		function changeView(v) {
 			if (v != viewName) {
 				ignoreWindowResize++; // because setMinHeight might change the height before render (and subsequently setSize) is reached
-				
+				if (v.substring(0, 1) == "'")  {
+					if(v.substring(1, v.length-1).length >0)
+  						v = v.substring(1, v.length-1);
+  					else
+  						return;
+  					//console.log(v);
+  				}
 				var oldView = view,
 					newViewElement;
 					
@@ -246,7 +252,9 @@ $.fn.fullCalendar = function(options) {
 				if (viewInstances[v]) {
 					(view = viewInstances[v]).element.show();
 				}else{
-					view = viewInstances[v] = $.fullCalendar.views[v](
+					
+					
+					view = viewInstances[v] = jQuery.fullCalendar.views[v](
 						newViewElement = absoluteViewElement =
 							$("<div class='fc-view fc-view-" + v + "' style='position:absolute'/>")
 								.appendTo(content),

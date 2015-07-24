@@ -1,6 +1,7 @@
 <html>
 <head>
 <!-- CSS -->
+
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}jquery/css/custom-theme/jquery-ui-1.8.6.custom.css" rel="stylesheet" />
 <link type="text/css" href="{$T_QS_MODULE_BASELINK}jquery/dataTables/media/css/demo_table_jui.css" rel="stylesheet" />
 {*<link type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/datatables/1.9.1/css/demo_table_jui.css" />*}
@@ -13,28 +14,28 @@
 
 
 <!-- js Libraries -->
-<script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery-1.4.2.min.js"></script>
-{*<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js"></script>*}
+{*<script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery-1.4.2.min.js"></script>*}
+<script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery-ui-1.8.4.custom.min.js"></script>
-{*<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>*}
-{*<script type='text/javascript' src='{$T_QS_MODULE_BASELINK}jquery/dataTables/media/js/jquery.dataTables.min.js'></script>*}
-<script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.9.2/jquery.dataTables.min.js'></script>
+{*doesn belong<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.4/jquery-ui.min.js"></script>*}
+<script type='text/javascript' src='{$T_QS_MODULE_BASELINK}jquery/dataTables/media/js/jquery.dataTables.min.js'></script>
+{*current veresion is 1.7, but this is 1.9.2 <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/datatables/1.9.2/jquery.dataTables.min.js'></script>*}
 <script type='text/javascript' src='{$T_QS_MODULE_BASELINK}js/DateFormat.js'></script>
 <script type='text/javascript' src='{$T_QS_MODULE_BASELINK}js/date.js'></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/jquery.ui.timepicker.js"></script>
-{*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.1/jquery.timepicker.js"></script>*}
+{*not correct timepicker and cant find online<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timepicker/1.8.1/jquery.timepicker.js"></script>*}
 
 <!-- Reports (flot) -->
-<script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/excanvas.js"></script>
+{*<script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/excanvas.js"></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.js"></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.navigate.js"></script>
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.selection.js"></script>
-<script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.stack.js"></script>
-{*<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/excanvas.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.navigate.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.selection.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.8/jquery.flot.stack.min.js"></script>*}
+<script type="text/javascript" src="{$T_QS_MODULE_BASELINK}jquery/flot/jquery.flot.stack.js"></script>*}
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.6.0/excanvas.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.6.0/jquery.flot.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.6.0/jquery.flot.navigate.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.6.0/jquery.flot.selection.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/flot/0.6.0/jquery.flot.stack.min.js"></script>
 
 <!-- LiveValidation -->
 <script type="text/javascript" src="{$T_QS_MODULE_BASELINK}js/livevalidation/livevalidation.js"></script>

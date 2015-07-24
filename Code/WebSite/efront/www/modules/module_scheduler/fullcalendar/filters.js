@@ -28,7 +28,7 @@ function deleteViewCookie(username){
 	var role = jQuery('#role').val();
 	var cookieName;
 	
-	if(role == 'admin'){
+	if(role == 'administrator'){
 		cookieName = jQuery('#username').val() + '-filterOpts';
 	}else{
 		cookieName = username + '-filterOpts';
@@ -40,8 +40,7 @@ function setViewCookie(username){
 	var role = jQuery('#role').val();
 	//var cookieName = username + '-filterOpts';
 	var cookieName, savedView;
-	
-	if(role == 'admin'){
+	if(role == 'administrator'){
 		cookieName = jQuery('#username').val() + '-filterOpts';
 		savedView = jQuery('#calendar').fullCalendar('getView');
 	}else{
@@ -67,7 +66,7 @@ function getViewCookie(username){
 	//var cookieName = username + '-filterOpts';
 	var cookieName, viewName;
 	
-	if(role == 'admin'){
+	if(role == 'administrator'){
 		cookieName = jQuery('#username').val() + '-filterOpts';
 	}else{
 		cookieName = username + '-filterOpts';
@@ -92,8 +91,8 @@ function setFilterCookies(username, filterOpts){
 	//alert('setFilterCookies');
 	var role = jQuery('#role').val();
 	var cookieName;
-	
-	if(role == 'admin'){
+	//alert(role);
+	if(role == 'administrator'){
 		cookieName = jQuery('#username').val() + '-filterOpts';
 	}else{
 		cookieName = username + '-filterOpts';
@@ -130,12 +129,11 @@ function getFilterCookies(username){
 	var cookieName;
 	var savedfilter = []; 
 	
-	if(role == 'admin'){
+	if(role == 'administrator'){
 		cookieName = jQuery('#username').val() + '-filterOpts';
 	}else{
 		cookieName = username + '-filterOpts';
 	}
-	
 	var flength = parseInt(jQuery.Jookie.Get(cookieName, "filter-length"));
 	
 	if(flength > 0){
@@ -259,10 +257,12 @@ function filterEvents(events, filters){
 	avail_course_listing = [];
 	avail_resource_listing = [];
 	
+	//console.log(filters);
 	// Sets the filters in a Cookie
 	setFilterCookies(currentUser, filters);
 	
 	//var msg="";
+	//console.log("running filter");
 
 	var filteredEvents = [];
     if(filters.length > 0){ 
@@ -324,7 +324,9 @@ function getEventsByAttribute(attribute,value, events)
 	{
 		var event = events[i];
 		//msg += event[attribute].toLowerCase() + " : " + value.toLowerCase() + "\n";
-       
+       if(isNaN(i)){
+       	break;
+       }
 	   	var eventAttr = event[attribute].replace(/ /g, "-").toLowerCase()
 		eventAttr = eventAttr.replace(/\./g,"");
 		/*

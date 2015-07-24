@@ -22,6 +22,8 @@
 <link href="{$T_SCHEDULER_MODULE_BASELINK}fullcalendar/css/cmxformTemplate.css" rel="stylesheet" type="text/css" />
 <link href="{$T_SCHEDULER_MODULE_BASELINK}fullcalendar/css/cmxform.css" rel="stylesheet" type="text/css" />
 <link rel='stylesheet' type='text/css' href='{$T_SCHEDULER_MODULE_BASELINK}fullcalendar/css/flexigrid/flexigrid.css' />
+<link rel='stylesheet' type='text/css' href='{$T_S_MODULE_THEME_CSS}' />
+
 
 <script type='text/javascript' src='{$T_SCHEDULER_MODULE_BASELINK}fullcalendar/jquery/jquery-1.4.2.min.js'></script>
 <script type='text/javascript' src='{$T_SCHEDULER_MODULE_BASELINK}fullcalendar/jquery/jquery-ui-1.8.9.custom.min.js'></script>
@@ -110,7 +112,7 @@
 		width: 25px;
 		height: 25px;
 		margin: 5px;
-		background-image: url(fullcalendar/images/list_edit_25px.png);
+		background-image: url(/modules/module_scheduler/fullcalendar/images/list_edit_25px.png);
 		cursor: pointer;
 	} 
 	.ui-accordion .ui-accordion-content-active .actions-cancel {
@@ -119,7 +121,7 @@
 		width: 25px;
 		height: 25px;
 		margin: 5px;
-		background-image: url(fullcalendar/images/list_delete_25px.png);
+		background-image: url(/modules/module_scheduler/fullcalendar/images/list_delete_25px.png);
 		cursor: pointer;
 	} 
 	.ui-accordion .ui-accordion-content-active .actions-confirm {
@@ -128,7 +130,7 @@
 		width: 25px;
 		height: 25px;
 		margin: 5px;
-		background-image: url(fullcalendar/images/list_confirm_25px.png);
+		background-image: url(/modules/module_scheduler/fullcalendar/images/list_confirm_25px.png);
 		cursor: pointer;
 	} 
 	.ui-accordion .ui-accordion-content-active .actions-info {
@@ -137,12 +139,12 @@
 		width: 25px;
 		height: 25px;
 		margin: 5px;
-		background-image: url(fullcalendar/images/list_info_25px.png);
+		background-image: url(/modules/module_scheduler/fullcalendar/images/list_info_25px.png);
 		cursor: pointer;
 	} 
 	
 	.ui-progressbar-value { 
-		background-image: url(fullcalendar/images/pbar-ani.gif);
+		background-image: url(/modules/module_scheduler/fullcalendar/images/pbar-ani.gif);
 	}
 
 	
@@ -235,6 +237,9 @@
 		margin: 0 auto;
 	}
 	*/
+.flexigrid tr td.sorted, .flexigrid div.hDiv th, .flexigrid div.bDiv td {
+	display: table-cell!important;
+}
 	
 {/literal}
 </style>
@@ -243,7 +248,7 @@
 <style type="text/css" id="dynamic_css"></style>
 
 </form>
-
+{$T_SCHEDULER_FIELD7}
 <script language="javascript">
 
 $(document).ready(function() {ldelim}
@@ -252,7 +257,7 @@ $(document).ready(function() {ldelim}
 	//$("#timezone-list").hide();
 	//$("#timezone-label").hide();
 	tz_init();
-	//alert('didSomething');
+	//alert(jQuery("#username").val() + " is the username");
 
 	//var top = $(document).height() / 2;
 	//var left = $(document).width() / 2;
@@ -270,7 +275,7 @@ $(document).ready(function() {ldelim}
 {literal}
 var courses = new Array(); // initializing the javascript array
 var schedColors = new Array();
-var availColors = 10;
+var availColors = checkAvailableColors();
 
 function checkAvailableColors(){
 
@@ -295,13 +300,17 @@ function getAvailableColors(){
 
 	//Colors
 	$stack = array();
-	//$colors = get_records('scheduler_colormap','enabled',1); 
-/* 	foreach ($colors as $color)
+	$colors = $this->get_template_vars('T_SCHEDULER_COLORS');//get_records('scheduler_colormap','enabled',1); 
+	//$count = $colors.length;
+ 	foreach ($colors as $color)
 	{
-		array_push($stack, $color->colorcode);		
-	} */
-	$color_str = "";//implode(",", $stack);
-	
+	//	$count++;
+		array_push($stack, $color['colorcode']);
+
+	} 
+	//array_push($stack, "".$count);
+	$color_str = implode(",", $stack);
+	//$color_str = $count;
 	//Courses
 	
 	/*
@@ -377,16 +386,18 @@ function getAvailableColors(){
 <form id="moodleInfo">
 
 {php}
-	if($role=='administrator')
+	if($role =='administrator')
 	{
 		echo '<input id="usersList" type="hidden" value="'.$users_str.'" />';
 	}
+
+
 {/php}
-<input id ="colorList" type="hidden" value="<?=$color_str?>" />
-<input id ="coursesList" type="hidden" value="<?=$course_str?>" />
+<input id ="colorList" type="hidden" value= "{php}echo $color_str;{/php}" />
+<input id ="coursesList" type="hidden" value="{php}echo $course_str;{/php}"/>
 <input id ="username" type="hidden" value= {$T_SCHEDULER_UNAME} />
 <input id ="role" type="hidden" value={$T_SCHEDULER_ROLE} />
-<input id ="calendarfeed" type="hidden" value="<?=$calendarfeed?>" />
+<input id ="calendarfeed" type="hidden" value="{php}echo $calendarfeed;{/php}" />
 
 <div id='debug'></div>
 <div class="wrapper">

@@ -6,7 +6,7 @@ function loadUserAppointments(start, end, init, username) {
 		$('#calendar').fullCalendar('loading', view, true);
 	}
 	//$("#progressbar").progressbar( "value" , 100 );
-	
+	username = 'admin';
 	getCourses();
 	getResourcesAvailable(username);
 	
@@ -210,7 +210,7 @@ function getCourses(username) {
 
 	$.ajax({
 		type: 'POST',
-		url: 'fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar2.php',
 		dataType: 'xml',
 		async: false,
 		data: {
@@ -230,6 +230,8 @@ function getCourses(username) {
 				
 				if(nodes.length!=0)
 				{
+					conlose.log(nodes.length);
+					conlose.log(nodes[0]);
 					for(var n =0; n<nodes.length; n++)
 					{
 						courses.push(nodes[n].childNodes[0].nodeValue);

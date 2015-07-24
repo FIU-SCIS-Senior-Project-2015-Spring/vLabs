@@ -92,7 +92,7 @@ function constructOptionTable(courses, types){
 	}else{
 		customLabel = "COURSES";
 	}
-	
+	//console.log
 	table += '<form id="form-options">';
 	table += '<table style="border:2px solid #444;border-collapse:collapse;" cellpadding="5" cellspacing="5" border="1"id="table-options"><thead>';
 	table += '<tr>';
@@ -105,6 +105,9 @@ function constructOptionTable(courses, types){
 	}
 	table += '</tr></thead><tbody>';
 	for(var j = 0; j<courses.length; j++){
+		//if(courses[j].indexOf('.') == -1) {
+		//	break;
+		//}
 		var course = (jQuery.trim(courses[j])).replace(/ /g,"-").toLowerCase();	// Fixes any issues with type name with spaces.
 		table += '<tr>';
 		table += '<td><input class="course-item '+ course.replace(/\./g,"") +' checkbox" type="checkbox" value="' + types.length + '" name="fltcourse-'+j+'" id="fltcourse-'+j+'" />' + courses[j] + '</td>'; // Name Displayed
@@ -135,7 +138,7 @@ function constructOptionTable(courses, types){
 }
 
 function constructMentorOptionTable(courses, types){
-	//alert('courses: '+courses.length+' types:'+types.length);
+	alert('courses: '+courses.length+' types:'+types.length);
 	var table = "";
 	var customLabel = "COURSES";
 	
@@ -480,7 +483,8 @@ function setupFilterOptions(){
 	
 	jQuery("#filterOptions_TopResources").click(function () {
 	 // jQuery("#options_pane").slideToggle("slow");
-	 jQuery("#form-options").slideToggle("slow");
+		//jQuery("#form-options").slideToggle("slow");
+		$("#options_pane").slideToggle("slow");
 	});
 	
 	
@@ -559,6 +563,7 @@ function setupFilterOptions(){
 					//alert('addClass: 3');
 					jQuery(this).addClass("mixed-state");
 					this.checked = true;
+					console.log("in here");
 				});
 			}
 			
@@ -570,11 +575,11 @@ function setupFilterOptions(){
 	
 	
 	// manages the state of the mixed checkboxes
-	jQuery("#form-options input:checkbox").click(function(){
+	jQuery("input:checkbox").click(function(){
 		//showProgressBar(true);
 		
 		if(this.id == 'courses'){
-		
+			console.log("in some check box");
 			jQuery("#form-options input:checkbox").each(function(){
 				var checked_status = jQuery("#courses").attr("checked");
 				
@@ -680,6 +685,7 @@ function checkBoxStatus(cb){
 			jQuery("input[class^='"+type+"']").each(function() { 
 				checked = (this.checked) ? checked + 1: checked;
 				//alert('type: '+type+', checked: '+checked);
+
 			});
 		
 			

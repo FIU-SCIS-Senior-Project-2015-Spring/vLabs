@@ -3,8 +3,8 @@
  * Configuration file for module ...
  *
 */
-
-$WEF_SERVICES_HOST = "http://vlabs.cis.fiu.edu";
+require_once('config.php');
+/*$WEF_SERVICES_HOST = "http://vlabs.cis.fiu.edu";
 $WEB_SERVICES_PORT = "6060";
 $WEB_SERVICES_URL  = $WEF_SERVICES_HOST . ":" . $WEB_SERVICES_PORT . "/axis2/services/";
 $VIRTUAL_LABS_WSDL     = $WEB_SERVICES_URL . "VirtualLabs?wsdl";
@@ -14,7 +14,7 @@ $QUOTA_SYSTEM_WSDL     = $WEB_SERVICES_URL . "QuotaSystem?wsdl";
 
 $GUACAMOLE_HOST = "vlabs.cis.fiu.edu";
 $GUACAMOLE_PORT = "8080";
-$GUACAMOLE_URL  = $GUACAMOLE_HOST . ":" . $GUACAMOLE_PORT . "/guacamole/";
+$GUACAMOLE_URL  = $GUACAMOLE_HOST . ":" . $GUACAMOLE_PORT . "/guacamole/";*/
 //define('WSDL_VL', 'http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs?wsdl');
 //define('LOCATION_VL','http://vlabs.cis.fiu.edu:6060/axis2/services/VirtualLabs');
 define('WSDL_VL', $VIRTUAL_LABS_WSDL);

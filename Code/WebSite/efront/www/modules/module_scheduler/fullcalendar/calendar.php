@@ -892,7 +892,7 @@ $file = file_get_contents('calendarEvents4.xml');
 			$result = $client->SetUserDefaultTimeZoneId($params);
 			
 			//setUserTimeZone($user->id, $timeZoneId);	// Set after webservice is called
-			setUserTimeZone($user[0]['id'], $timeZoneId);
+			setUserTimeZone($user[0]['email'], $timeZoneId);
 			$xml = new array2xml('results');
 			
 			$xml->createNode( $result );
@@ -925,7 +925,7 @@ $file = file_get_contents('calendarEvents4.xml');
 		//$user = get_record('user','username',$username);
 		$user = eF_getTableData('users', '*', "login = '" . $username . "'");
 		//$filter = getUserFilterOptions($user->id);
-		$filter = getUserFilterOptions($user[0]['id']);
+		$filter = getUserFilterOptions($user[0]['email']);
 		echo json_encode($filter);
 		
 	}else{
@@ -946,8 +946,8 @@ $file = file_get_contents('calendarEvents4.xml');
 		//$user = get_record('user','username',$username);
 		$user = eF_getTableData('users', '*', "login = '" . $username . "'");
 		//$filter = getUserFilterOptions($user->id);
-		$filter = getUserFilterOptions($user[0]['id']);
-		setUserFilterOptions($user[0]['id'], $filter);
+		$filter = getUserFilterOptions($user[0]['email']);
+		setUserFilterOptions($user[0]['email'], $filter);
 		
 		
 	}else{
@@ -1687,27 +1687,44 @@ define('CONTEXT_BLOCK', 80);
 	if ($username == 'ALL_STUDENTS') {
 		//TN get course
 		//$courses = get_records('course');
+		$courses = eF_getTableData('module_vlabs_quotasystem_course');
 		foreach ($courses as $course) {
-			if($course->id > 1){
-				array_push($stack, $course->fullname);	
+			if($course['id'] > 1){
+				array_push($stack, $course['fullname']);	
 			}
 		}
 	} else {
 		//TN need to re evaluate this when not tired
 		//$user = get_record('user','username',$username);
-		$user = eF_getTableData('users', '*', "login = '" . $username . "'");
+		$user = eF_getTableData('module_vlabs_quotasystem_user_profile', '*', "username = '" . $username . "'");
 		//$courses = get_my_courses($user->id, 'visible DESC,sortorder ASC', '*', false, 0);
-		$role = eF_getTableData('users', '*', " login = '" .$username . "'");
+		//$roles = eF_getTableData('users', '*', " login = '" .$username . "'");
 		//$roles = get_records('role_assignments','userid',$user->id,'timemodified ASC');
 		
-		foreach ($roles as $role)
+		/*foreach ($roles as $role)
+		{
+			//$context = get_record('context','id',$role->contextid,'contextlevel',50);
+			$course =  get_record('course','id',$context->instanceid);
+			if($course['id'] > 1){
+				array_push($stack, $course['fullname']);	
+			}
+		}*/
+		$enrolled = eF_getTableData('module_vlabs_quotasystem_course_enrollment', '*', 'user_id = ' . $user[0]['id']);
+		foreach ($enrolled as $enroll)
 		{
 			//$context = get_record('context','id',$role->contextid,'contextlevel',50);
 			//$course =  get_record('course','id',$context->instanceid);
-			if($course->id > 1){
-				array_push($stack, $course->fullname);	
+			$course = eF_getTableData('module_vlabs_quotasystem_course', '*', 'id = ' . $enroll['course_id']);
+			if($course[0]['id'] > 1){
+				array_push($stack, $course[0]['fullname']);	
+			}
+			else{
+				array_push($stack, $course[0]['id']);
+				array_push($stack, $enroll['id']);
+				array_push($stack, $enroll['course_id']);
 			}
 		}
+		
 	}
 	/*
 	$user = get_record('user','username',$username);
@@ -1865,11 +1882,11 @@ function setUserTimeZone($userId, $timeZoneId){
 // TN changing id into email
 function getUserFilterOptions($userEmail){
    	try {  		
-		$userEmail = 'sadjadi@cis.fiu.edu';
+		//$userEmail = 'sadjadi@cis.fiu.edu';
    		$sql = "SELECT data FROM module_vlabs_user_info_data WHERE email = '".$userEmail."' and field_id = 10";
 	    //$filter = get_record_sql($sql);
-		$filter = eF_getTableData('module_vlabs_user_info_data', '*', "email = '" . $userEmail."' and field_id = 10");
-        return $filter;
+		$filter = eF_getTableData('module_vlabs_user_info_data', 'data', "email = '" . $userEmail."' and field_id = 10");
+        return $filter[0]['data'];
     } catch (Exception $e) {
         echo $e->getMessage();
     }	
@@ -1877,7 +1894,7 @@ function getUserFilterOptions($userEmail){
 
 function setUserFilterOptions($userId, $options){
    	try {
-   		
+   		//$userEmail = 'sadjadi@cis.fiu.edu';
    		//TN look into efront for exists, this is insertorupdate
 	    //echo execute_sql($sql,false);
 		/*if(record_exists('user_info_data', 'userid', $userId, 'field_id', 10)){
@@ -1894,8 +1911,8 @@ function setUserFilterOptions($userId, $options){
 			eF_ExecuteQuery($sql);
 			//echo $sql;
 		}*/
-		$fields = array('email' => $userEmail, 'field_id' => 12, 'data' => "'".$view."'");
-		eF_insertOrupdateTableData('module_vlabs_user_info_data', $fields, "email = '".$userEmail."' and field_id = 12");
+		$fields = array('email' => $userEmail, 'field_id' => 10, 'data' => $options);
+		eF_insertOrupdateTableData('module_vlabs_user_info_data', $fields, "email = '".$userEmail."' and field_id = 10");
 	    
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -1904,10 +1921,10 @@ function setUserFilterOptions($userId, $options){
 //TN changing id to email
 function getUserView($userEmail){
    	try {  	
-		$userEmail = 'sadjadi@cis.fiu.edu';
+		//$userEmail = 'sadjadi@cis.fiu.edu';
    		$sql = "SELECT data FROM module_vlabs_user_info_data WHERE email = '".$userEmail."' and field_id = 12";
 	    //$filter = get_record_sql($sql);
-		$filter = eF_ExecuteQuery($sql);
+		$filter = eF_getTableData('module_vlabs_user_info_data', '*', "email = '".$userEmail."' and field_id = 12");
         return $filter;
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -1916,7 +1933,7 @@ function getUserView($userEmail){
 // TN changing userID to userEmail
 function setUserView($userEmail, $view){
    	try {
-   		
+   		//$userEmail = 'sadjadi@cis.fiu.edu';
 	    //$filter = get_record_sql($sql);
 	    /*//echo execute_sql($sql,false);
 		//if(record_exists('user_info_data', 'userid', $userId, 'field_id', 12)){
@@ -1933,7 +1950,7 @@ function setUserView($userEmail, $view){
 			eF_ExecuteQuery($sql);
 			//echo $sql;
 		}*/
-		$fields = array('email' => $userEmail, 'field_id' => 12, 'data' => "'".$view."'");
+		$fields = array('email' => $userEmail, 'field_id' => 12, 'data' => $view);
 		eF_insertOrupdateTableData('module_vlabs_user_info_data', $fields, "email = '".$userEmail."' and field_id = 12");
 
     } catch (Exception $e) {

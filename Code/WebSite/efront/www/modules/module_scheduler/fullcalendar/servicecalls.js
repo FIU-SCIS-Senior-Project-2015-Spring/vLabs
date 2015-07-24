@@ -5,10 +5,9 @@ var debugSTR = "";
 
 function getRequestType(user){
 	var requestType;
-	
-	if(is_admin_user){
+	if(is_admin_user == true){
 		requestType = "Host";
-	}else if(is_mentor_user){
+	}else if(is_mentor_user == true){
 		requestType = "Mentor";
 	}else{
 		requestType = "User";
@@ -60,7 +59,7 @@ function loadAppointments(start, end, init, username) {
 	getHostsCourses();
 	getResourcesAvailable(username);
 	//types = ["MENTORING","CLASSES","VIRTUAL LAB"];
-	
+	//console.log("before requestType currentUser: " +currentUser);
 	requestType = getRequestType(currentUser);
 	
 	//debugging("loadAppointments: ajax called 'getAppointments'");
@@ -109,7 +108,6 @@ function loadAppointments(start, end, init, username) {
 	
 						}
 		*/
-		
 						parseAppointment(appointments[j]);
 		
 		/*
@@ -196,6 +194,7 @@ function loadAppointments(start, end, init, username) {
 				}
 				// change the id of the event to the affiliation id - to group them in the calendar
 				//  -- will need to switch the id back when editing.
+				//console.log("affiliationId");
 				for(var i = 0; i<tags.length; i++){
 					
 					if(tags[i].recurring){
@@ -213,7 +212,7 @@ function loadAppointments(start, end, init, username) {
 						}
 					}
 				}
-					
+				//console.log("init");	
 				if(init){	// for the initial events loading.
 	
 					//alert("Initial loading");
@@ -231,13 +230,12 @@ function loadAppointments(start, end, init, username) {
 					jQuery('#calendar').fullCalendar('addEventSource', filteredEvents); 
 					
 				}
-				
 				resetCheckboxFilters(filters);
 				
 		
 				
 			}else{
-				
+				//alert("is empty");
 				jQuery('#calendar').fullCalendar('removeEventSource',filteredEvents);
 				renderedEvents = 0;
 				//filteredEvents = [];
@@ -798,14 +796,14 @@ function getCourses(username) {
 		success: function(data) {
 	
 			//jQuery("#coursesList").val(courses.split(",",coursesLimit));
-			
+			//console.log(data);
 			courses = [];
 			// hardcoded mentor 'all courses'
 			
 			if(is_mentor_user){
 				courses.push("All Courses");	
 			}
-			
+			//console.log(data);
 			jQuery(data).find('courses').each(function() {
 			
 				var nodes  = this.getElementsByTagName('node');
@@ -816,7 +814,6 @@ function getCourses(username) {
 					{
 						courses.push(nodes[n].childNodes[0].nodeValue);
 					}
-					
 				}
 				/*else
 				{
@@ -868,6 +865,9 @@ function getHosts(username) {
 				if(data.length > 0){
 					
 					for(h in data){
+						if(isNaN(h)){
+							break;
+						}
 						courses.push(data[h].name);
 					}	
 				}else{
@@ -1256,9 +1256,11 @@ function parseAppointment(appointment){
 	var isRecurring = false;
 	var isEditable = (appointment.availabilityStatus.toLowerCase() == "scheduled") ? true : false;
 	//var appointmentId = parseInt(jQuery(this).find('appointmentId').text());
+
 	var appointmentId = appointment.id;
 	var affiliation = appointment.affiliationId;
-
+	//console.log(appointment);
+	//console.log(affiliation);
 	if(appointmentId){
 		currId = appointmentId;
 	}else{
@@ -1267,7 +1269,6 @@ function parseAppointment(appointment){
 	}
 	//alert('debug: #5');
 	// tracking the appointment affiliation
-	
 	if(affiliation){
 		
 		var found = false;

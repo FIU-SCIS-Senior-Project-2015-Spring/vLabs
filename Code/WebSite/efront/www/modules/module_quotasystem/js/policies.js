@@ -13,13 +13,13 @@ function pol_init(){
     	pol_openForm("#addPolicyForm", true);
     	jQuery("#add-policy").button("disable");
     });
-
     pol_loadTable();
 }
 
 /*
  * Load Policies table
  */
+
 function pol_loadTable()
 {
     jQuery("#policiesTableContainer").html("");
@@ -28,7 +28,7 @@ function pol_loadTable()
 
     jQuery.ajax({
         type: 'POST',
-        url: 'modules/module_quotasystem/server/policyManager.php',
+        url: '/modules/module_quotasystem/server/policyManager.php',
         dataType: 'json',
         data: {
             action: 'getPolicies'
@@ -37,7 +37,7 @@ function pol_loadTable()
         	if(data){
         		if(!jQuery.isArray(data))
 	        		data = [data];
-
+				//console.log(data);
 	        	removeLoadingDivAfter("#policiesTableContainer");
 
 	        	jQuery('#policiesTableContainer').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="policiesTable"></table>' );
@@ -48,9 +48,9 @@ function pol_loadTable()
 	                { "bVisible": false },
 	                { "sTitle": "Name" },
 	                { "sTitle": "Type" },
-	                { "sTitle": "Absolute" , "fnRender": function (oObj) { return oObj.aData[3]=="true" ? "Yes" : "No"; } },
-	                { "sTitle": "Active" , "fnRender": function (oObj) { return oObj.aData[4]=="true" ? "Yes" : "No"; } },
-	                { "sTitle": "Assignable" , "fnRender": function (oObj) { return oObj.aData[5]=="true" ? "Yes" : "No"; } },
+	                { "sTitle": "Absolute" , "fnRender": function (oObj) { return oObj.aData[3]== "true" ? "Yes" : "No"; } },
+	                { "sTitle": "Active" , "fnRender": function (oObj) { return oObj.aData[4]== "true" ? "Yes" : "No"; } },
+	                { "sTitle": "Assignable" , "fnRender": function (oObj) { return oObj.aData[5]== "true" ? "Yes" : "No"; } },
 	                { "bVisible": false },
 	                { "bVisible": false },
 	                { "bVisible": false },
@@ -58,9 +58,9 @@ function pol_loadTable()
 	                { "bVisible": false },
 	                { "bVisible": false },
 	                { "sTitle": "Period quota" },
-	                { "bVisible": false }
+	                { "bVisible": false },
 	                ],
-	                "bjQueryUI": true,
+	                "bJQueryUI": true,
 	        		"sPaginationType": "full_numbers"
 	        	});
 
@@ -124,7 +124,7 @@ function pol_openDetailsRow( nTr )
 	jQuery("#deletePolicy"+aData[0]).button();
 
 	var divId = "#policyDetails"+aData[0];
-
+	
 	jQuery("#modifyPolicy"+aData[0]).click(function(){
 		jQuery(nTr).css("color","#c5dbec");
 		jQuery(divId).empty();
@@ -416,7 +416,7 @@ function pol_openForm(containerId, add, nTr, policyId)
 	jQuery(containerId).empty();
 	jQuery(containerId).hide();
 
-    jQuery(containerId).load("modules/module_quotasystem/policyForm.html", function(){
+    jQuery(containerId).load("/modules/module_quotasystem/policyForm.html", function(){
         pol_hideAllFormFields(containerId);
         pol_hideButtons(containerId);
 
@@ -464,16 +464,17 @@ function pol_openForm(containerId, add, nTr, policyId)
 
             jQuery(containerId).addClass("ui-state-highlight");
 	        jQuery(containerId+" .submit").click(function(){
-	        	var time = jQuery(containerId+" .startTimePolicy").val();        	
-	        	var date = jQuery(containerId+" .startDatePolicy").val();
+				
+	        	var time = jQuery(containerId+" .startTimePolicy").val();
+		    	var date = jQuery(containerId+" .startDatePolicy").val();
+				
 	        	var startDate = new Date(date+" "+time);
-	        	
 	        	if(pol_isValidForm(containerId)){
 	            	var policyType = jQuery(containerId+" .typePolicy").val();
 	            	var absolute = jQuery(containerId+" .absPolicy").is(':checked');
             		var active = jQuery(containerId+" .activePolicy").is(':checked');
             		var assignable = jQuery(containerId+" .assignablePolicy").is(':checked');
-
+					
             		jQuery(containerId).slideUp(400, function(){
             			if(policyType=="NOEXPIRATION"){
     	            		pol_addNoExpPolicy(containerId,
@@ -546,7 +547,7 @@ function pol_openForm(containerId, add, nTr, policyId)
             		});
 	        	}
 	        	else{
-	        		//alert("The Create Policy form contained some errors.\nPlease confirm all required fields have been correctly field before saving.");
+	        		alert("The Create Policy form contained some errors.\nPlease confirm all required fields have been correctly field before saving.");
 	        	}
 	        });
 
@@ -578,7 +579,7 @@ function pol_openForm(containerId, add, nTr, policyId)
 	            	jQuery(containerId).slideUp(400,function(){
 
 	            		var startDate = null;
-	            		var startDateFormatted = null;
+	            		
         				if(absolute){
             	        	var time = jQuery(containerId+" .startTimePolicy").val();        	
             	        	var date = jQuery(containerId+" .startDatePolicy").val();
@@ -601,7 +602,6 @@ function pol_openForm(containerId, add, nTr, policyId)
 
 		            	}else if(policyType=="FIXED"){
 		            		var expDate = null;
-							var expDateFormatted = null;
             				if(absolute){
             		        	var date = jQuery(containerId+" .expDatePolicy").val();
             		        	var expDate  = new Date(date+" "+time);
@@ -780,7 +780,7 @@ function pol_fillOutForm(containerId, nTr, id){
 
 	  jQuery.ajax({
 	        type: 'POST',
-	        url: 'modules/module_quotasystem/server/policyManager.php',
+	        url: '/modules/module_quotasystem/server/policyManager.php',
 	        dataType: 'json',
 	        data: {
 	            action: 'getPolicy',
@@ -788,15 +788,15 @@ function pol_fillOutForm(containerId, nTr, id){
 	        },
 	        success: function(data){
 	        	removeLoadingDivAfter(containerId);
-
+				//console.log(data);
 	    		pol_showButtons(containerId);
 
-	        	var policy = data.policy;
+	        	var policy = data[0];
 	        	var absolute = policy.absolute;
-
-        		if(absolute){
+				//console.log(data.policy[0]['id']);
+        		if(absolute==1){
         			jQuery(containerId+" .absPolicy").attr("checked",absolute);
-        			var startDate = Date.parse(policy.startDate.substring(0,19));
+        			var startDate = Date.parse(policy.start_date.substring(0,19));
         			var date = startDate.format("mm/dd/yyyy");
 
         			var time = startDate.format("HH:MM");
@@ -805,66 +805,66 @@ function pol_fillOutForm(containerId, nTr, id){
             		
         		}else{
         			jQuery(containerId+" .relPolicy").attr("checked",true);
-            		jQuery(containerId+" .noDaysToStartPolicy").val(policy.daysToRelStart);
+            		jQuery(containerId+" .noDaysToStartPolicy").val(policy.days_to_rel_start);
         		}
 
-        		if(policy.policyType=="NOEXPIRATION"){
+        		if(policy.policy_type=="NOEXPIRATION"){
 
     				jQuery(containerId+" .namePolicy").val(policy.name);
         			jQuery(containerId+" .typePolicy").val(policy.policyType);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description),
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
             		pol_showBasicFormFields(containerId);
                 	pol_showFixedPolicyFields(containerId);
 
 
-            	}else if(policy.policyType=="FIXED"){
+            	}else if(policy.policy_type=="FIXED"){
             		
-            		if(absolute){
-            			var expDate = startDate;
-            			expDate.setDate(expDate.getDate()+policy.daysInPeriod);
+            		if(absolute==1){
+            			var expDate = start_date;
+            			expDate.setDate(expDate.getDate()+policy.days_in_period);
             		}
 
             		jQuery(containerId+" .expDatePolicy").val(expDate.format("mm/dd/yyyy"));
     				jQuery(containerId+" .namePolicy").val(policy.name);
-        			jQuery(containerId+" .typePolicy").val(policy.policyType);
+        			jQuery(containerId+" .typePolicy").val(policy.policy_type);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
-            		jQuery(containerId+" .noDaysPolicy").val(policy.daysInPeriod);
+            		jQuery(containerId+" .noDaysPolicy").val(policy.days_in_period);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description),
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
 
             		pol_showBasicFormFields(containerId);
                 	pol_showFixedPolicyFields(containerId);
 
-            	}else if(policy.policyType == "GRADUAL"){
+            	}else if(policy.policy_type == "GRADUAL"){
 
     				jQuery(containerId+" .namePolicy").val(policy.name);
-        			jQuery(containerId+" .typePolicy").val(policy.policyType);
+        			jQuery(containerId+" .typePolicy").val(policy.policy_type);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
-            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.daysInPeriod);
+            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.days_in_period);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description);
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
             		jQuery(containerId+" .maxQuotaPolicy").val(policy.maximum);
-            		jQuery(containerId+" .noPeriodsPolicy").val(policy.numberOfPeriods);
+            		jQuery(containerId+" .noPeriodsPolicy").val(policy.number_of_periods);
             		pol_showBasicFormFields(containerId);
             		pol_showGradualPolicyFields(containerId);
 
-            	}else if(policy.policyType == "MINMAX"){
+            	}else if(policy.policy_type == "MINMAX"){
 
     				jQuery(containerId+" .namePolicy").val(policy.name);
-        			jQuery(containerId+" .typePolicy").val(policy.policyType);
+        			jQuery(containerId+" .typePolicy").val(policy.policy_type);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
-            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.daysInPeriod);
+            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.days_in_period);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description);
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
             		jQuery(containerId+" .maxQuotaPolicy").val(policy.maximum);
             		jQuery(containerId+" .minQuotaPolicy").val(policy.minimum);
-            		jQuery(containerId+" .noPeriodsPolicy").val(policy.numberOfPeriods);
+            		jQuery(containerId+" .noPeriodsPolicy").val(policy.number_of_periods);
             		pol_showBasicFormFields(containerId);
             		pol_showMinMaxPolicyFields(containerId);
             	}
@@ -885,10 +885,9 @@ function pol_fillOutForm(containerId, nTr, id){
 function pol_addNoExpPolicy(containerId, name, type, absolute, active, assignable, startDate, noDaysToStart, noDays, description, quotaInPeriod){
 
 	createLoadingDivAfter(containerId,"Creating No Expiration Policy");
-
 	jQuery.ajax({
 		type: 'POST',
-		url: 'modules/module_quotasystem/server/policyManager.php',
+		url: '/modules/module_quotasystem/server/policyManager.php',
 		dataType: 'json',
 		data: {
 			action: 'addPolicy',
@@ -910,7 +909,10 @@ function pol_addNoExpPolicy(containerId, name, type, absolute, active, assignabl
 					startDate = null;
 				}
 				displayMessage(containerId,"Policy ["+name+"] successfully added");
-
+				//console.log(data);
+				//console.log(absolute);
+				//console.log(active);
+				//console.log(assignable);
 				pol_table.fnAddData( [
 				                      data.id,
 					                  name,
@@ -945,7 +947,7 @@ function pol_addFixedPolicy(containerId, name, type, absolute, active, assignabl
 	
 	jQuery.ajax({
 		type: 'POST',
-		url: 'modules/module_quotasystem/server/policyManager.php',
+		url: '/modules/module_quotasystem/server/policyManager.php',
 		dataType: 'json',
 		data: {
 			action: 'addPolicy',
@@ -970,9 +972,9 @@ function pol_addFixedPolicy(containerId, name, type, absolute, active, assignabl
 				                      data.id,
 				                      name,
 				                      type,
-				                      absolute ? "true" : "false",
-				                      active ? "true" : "false",
-				                      assignable ? "true" : "false",
+					                  absolute ? "true" : "false",
+					                  active ? "true" : "false",
+					                  assignable ? "true" : "false",
 				                      description,
 				                      startDate,
 				                      noDays,
@@ -1001,7 +1003,7 @@ function pol_addGradualPolicy(containerId, name, type, absolute, noPeriods, acti
 
     jQuery.ajax({
     	type: 'POST',
-    	url: 'modules/module_quotasystem/server/policyManager.php',
+    	url: '/modules/module_quotasystem/server/policyManager.php',
     	dataType: 'json',
     	data: {
     		action: 'addPolicy',
@@ -1058,7 +1060,7 @@ function pol_addMinMaxPolicy(containerId, name, type, absolute, noPeriods, activ
 
 	jQuery.ajax({
 		type: 'POST',
-		url: 'modules/module_quotasystem/server/policyManager.php',
+		url: '/modules/module_quotasystem/server/policyManager.php',
 		dataType: 'json',
 		data: {
 			action: 'addPolicy',
@@ -1085,9 +1087,9 @@ function pol_addMinMaxPolicy(containerId, name, type, absolute, noPeriods, activ
 				                      data.id,
 				                      name,
 				                      type,
-				                      absolute ? "true" : "false",
-				                      active ? "true" : "false",
-				                      assignable ? "true" : "false",
+					                  absolute ? "true" : "false",
+					                  active ? "true" : "false",
+					                  assignable ? "true" : "false",
 				                      description,
 				                      startDate,
 				                      noDaysInPeriod,
@@ -1115,7 +1117,7 @@ function pol_modifyNoExpPolicy(containerId, nTr, id, name, type, absolute, activ
 
 	jQuery.ajax({
 		type: 'POST',
-		url: 'modules/module_quotasystem/server/policyManager.php',
+		url: '/modules/module_quotasystem/server/policyManager.php',
 		dataType: 'json',
 		data: {
 			action: 'modifyPolicy',
@@ -1190,7 +1192,7 @@ function pol_modifyFixedPolicy(containerId, nTr, id, name, type, absolute, activ
 
 	jQuery.ajax({
 		type: 'POST',
-		url: 'modules/module_quotasystem/server/policyManager.php',
+		url: '/modules/module_quotasystem/server/policyManager.php',
 		dataType: 'json',
 		data: {
 			action: 'modifyPolicy',
@@ -1266,7 +1268,7 @@ function pol_modifyGradualPolicy(containerId, nTr,id, name, type, absolute, noPe
 
 	jQuery.ajax({
 		type: 'POST',
-		url: 'modules/module_quotasystem/server/policyManager.php',
+		url: '/modules/module_quotasystem/server/policyManager.php',
 		dataType: 'json',
 		data: {
 			action: 'modifyPolicy',
@@ -1341,7 +1343,7 @@ function pol_modifyMinMaxPolicy(containerId, nTr,id, name, type, absolute, noPer
 
 	jQuery.ajax({
 		type: 'POST',
-		url: 'modules/module_quotasystem/server/policyManager.php',
+		url: '/modules/module_quotasystem/server/policyManager.php',
 		dataType: 'json',
 		data: {
 			action: 'modifyPolicy',
@@ -1420,7 +1422,7 @@ function pol_delete(divId, nTr, id){
     
     jQuery.ajax({
         type: 'POST',
-        url: 'modules/module_quotasystem/server/policyManager.php',
+        url: '/modules/module_quotasystem/server/policyManager.php',
         dataType: 'json',
         data: {
             action: 'deletePolicy',

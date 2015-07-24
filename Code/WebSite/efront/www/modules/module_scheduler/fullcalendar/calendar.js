@@ -76,14 +76,15 @@
 
 	jQuery(document).ready(function() {
 		var today = new Date();
-				
+		//console.log(jQuery('#username').val());
 		//jQuery('input[id=scheduled]').attr('checked', false);//TODO:get bool from session
 		//jQuery('input[id=available]').attr('checked', false);//TODO:get bool from session
 
 		// Check if the adminCookie exist - returns selected user.
 		if(getSeeCalendarAsCookies(jQuery('#username').val())){
 			currentUser = getSeeCalendarAsCookies(jQuery('#username').val());
-			
+			//currentUser = 'admin';
+			//console.log("This is the user name from ready true: "+currentUser);
 			//getCourses(currentUser);
 			
 			//var courses_str = getCourses(currentUser);
@@ -91,6 +92,7 @@
 			
 		}else{
 			currentUser = jQuery('#username').val();
+			//console.log("This is the user name from ready: "+currentUser);
 			//getHostsCourses();
 		}
 		
@@ -146,7 +148,7 @@ function startCalendarTab(initial) {
 		
 		
 		var savedFilter = getFilterCookies(currentUser);
-	
+		
 		if(savedFilter.length){
 			filters = savedFilter;
 		
@@ -1163,8 +1165,8 @@ function getHostsCourses(){
     //    courses =  courses_str.split(",",coursesLimit);
 	//var courses_str = getCourses(currentUser);
 	//courses =  courses_str.split(",",coursesLimit);
-	
-	if(is_admin_user){
+	//console.log(is_admin_user);
+	if(is_admin_user ==true){
 		getHosts(currentUser);
 	}else{
 		getCourses(currentUser);
@@ -1658,17 +1660,17 @@ function GetUserFilterOptions(){
 			username:  jQuery('#username').val()
 		},
 		success: function(data){
-			var arr = jQuery.parseJSON(data[0]['data']);
-			console.log(arr);
-			if(jQuery.isArray(arr)){
-				filtOpt = arr;
+			if(data){
+				var arr = jQuery.parseJSON(data);
+				if(jQuery.isArray(arr)){
+					filtOpt = arr;
+				}
 			}
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
 			
 		}
 	});
-	
 	return filtOpt;
 
 }
@@ -1944,15 +1946,15 @@ function createVEConfigurationForm(){
 
 	var dialogContent = jQuery("#tabs-2").load('modules/module_scheduler/fullcalendar/ve_configuration_form.html',function() {
 			//Initialize date and time pickers
-		jQuery("#ve_scheduler_form #startDate_admin").datepicker();
-		jQuery("#ve_scheduler_form #endDate_admin").datepicker();
-		jQuery("#ve_scheduler_form #start_admin").ptTimeSelect(); 
-		jQuery("#ve_scheduler_form #end_admin").ptTimeSelect();
+		jQuery("#startDate_admin").datepicker();
+		jQuery("#endDate_admin").datepicker();
+		jQuery("#start_admin").ptTimeSelect(); 
+		jQuery("#end_admin").ptTimeSelect();
 		
-	    jQuery("#ve_scheduler_form #startDate_user").datepicker();
-		jQuery("#ve_scheduler_form #endDate_user").datepicker();
-		jQuery("#ve_scheduler_form #start_user").ptTimeSelect(); 
-		jQuery("#ve_scheduler_form #end_user").ptTimeSelect(); 
+	    jQuery("#startDate_user").datepicker();
+		jQuery("#endDate_user").datepicker();
+		jQuery("#start_user").ptTimeSelect(); 
+		jQuery("#end_user").ptTimeSelect(); 
 		
 		var timezoneFieldOptions = "";
 		
@@ -1960,15 +1962,15 @@ function createVEConfigurationForm(){
 			//console.log(zones[i]);
 			timezoneFieldOptions += "<option>"+zones[i]+"</option>";
 		}
-		jQuery("#ve_scheduler_form #timezone").html(timezoneFieldOptions);
+		jQuery("#timezone").html(timezoneFieldOptions);
 		//console.log("after html");
-		jQuery("#ve_scheduler_form #timezone").val(currentTimeZone);
+		jQuery("#timezone").val(currentTimeZone);
 		
-		jQuery("#ve_scheduler_form #timezone").change(function () {
+		jQuery("#timezone").change(function () {
 			
 			showProgressBar(true);
 			
-			var timezone = jQuery("#ve_scheduler_form #timezone").val();
+			var timezone = jQuery("#timezone").val();
 			if(SetUserDefaultTimeZone(timezone)){
 				
 				//if(currentUser == jQuery('#username').val()){
@@ -1989,7 +1991,7 @@ function createVEConfigurationForm(){
 				showProgressBar(false);
 				
 				// timezone was not changed. Revert
-				jQuery("#ve_scheduler_form #timezone").val(jQuery.trim(currentTimeZone));
+				jQuery("#timezone").val(jQuery.trim(currentTimeZone));
 				
 				var header = "Set Default Time Zone";
 				var message = "We were unable to set your new timezone.";
@@ -2000,39 +2002,39 @@ function createVEConfigurationForm(){
 		});
 		
 		jQuery("input").focus(function() {
-			jQuery("#ve_scheduler_form #startDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #startDate_user").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_user").datepicker('hide');
+			jQuery("#startDate_admin").datepicker('hide');
+			jQuery("#endDate_admin").datepicker('hide');
+			jQuery("#startDate_user").datepicker('hide');
+			jQuery("#endDate_user").datepicker('hide');
 			jQuery("#ptTimeSelectCntr").hide();
 		});
 		
-		jQuery("#ve_scheduler_form #start_admin").focus(function() {
-			jQuery("#ve_scheduler_form #startDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #startDate_user").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_user").datepicker('hide');
+		jQuery("#start_admin").focus(function() {
+			jQuery("#startDate_admin").datepicker('hide');
+			jQuery("#endDate_admin").datepicker('hide');
+			jQuery("#startDate_user").datepicker('hide');
+			jQuery("#endDate_user").datepicker('hide');
 			jQuery("#ptTimeSelectCntr").hide();
 		});
-		jQuery("#ve_scheduler_form #end_admin").focus(function() {
-			jQuery("#ve_scheduler_form #startDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #startDate_user").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_user").datepicker('hide');
+		jQuery("#end_admin").focus(function() {
+			jQuery("#startDate_admin").datepicker('hide');
+			jQuery("#endDate_admin").datepicker('hide');
+			jQuery("#startDate_user").datepicker('hide');
+			jQuery("#endDate_user").datepicker('hide');
 			jQuery("#ptTimeSelectCntr").hide();
 		});
-		jQuery("#ve_scheduler_form #start_user").focus(function() {
-			jQuery("#ve_scheduler_form #startDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #startDate_user").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_user").datepicker('hide');
+		jQuery("#start_user").focus(function() {
+			jQuery("#startDate_admin").datepicker('hide');
+			jQuery("#endDate_admin").datepicker('hide');
+			jQuery("#startDate_user").datepicker('hide');
+			jQuery("#endDate_user").datepicker('hide');
 			jQuery("#ptTimeSelectCntr").hide();
 		});
-		jQuery("#ve_scheduler_form #end_user").focus(function() {
-			jQuery("#ve_scheduler_form #startDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_admin").datepicker('hide');
-			jQuery("#ve_scheduler_form #startDate_user").datepicker('hide');
-			jQuery("#ve_scheduler_form #endDate_user").datepicker('hide');
+		jQuery("#end_user").focus(function() {
+			jQuery("#startDate_admin").datepicker('hide');
+			jQuery("#endDate_admin").datepicker('hide');
+			jQuery("#startDate_user").datepicker('hide');
+			jQuery("#endDate_user").datepicker('hide');
 			jQuery("#ptTimeSelectCntr").hide();
 		});
 		
@@ -2042,22 +2044,22 @@ function createVEConfigurationForm(){
 		
 		jQuery("#ve_configuration_save").click(function(){
 
-			var user_startDate = jQuery("#ve_scheduler_form #startDate_user").val();
-			var user_startTime=jQuery("#ve_scheduler_form #start_user").val();
+			var user_startDate = jQuery("#startDate_user").val();
+			var user_startTime=jQuery("#start_user").val();
 			var startUser = new Date(user_startDate+" "+user_startTime);
 			
-			var user_endDate = jQuery("#ve_scheduler_form #endDate_user").val();
-			var user_endTime = jQuery("#ve_scheduler_form #end_user").val();
+			var user_endDate = jQuery("#endDate_user").val();
+			var user_endTime = jQuery("#end_user").val();
 			var endUser = new Date(user_endDate+" "+user_endTime);
 	
 			
-			var admin_endDate = jQuery("#ve_scheduler_form #endDate_admin").val();
-			var admin_endTime = jQuery("#ve_scheduler_form #end_admin").val();
+			var admin_endDate = jQuery("#endDate_admin").val();
+			var admin_endTime = jQuery("#end_admin").val();
 			var endAdmin = new Date(admin_endDate+" "+admin_endTime);
 			
 			
-			var admin_startDate =jQuery("#ve_scheduler_form #startDate_admin").val();
-			var admin_startTime =jQuery("#ve_scheduler_form #start_admin").val();
+			var admin_startDate =jQuery("#startDate_admin").val();
+			var admin_startTime =jQuery("#start_admin").val();
 			var startAdmin = new Date(admin_startDate+" "+admin_startTime);
 			
 			setConfiguration(startUser.format(dateformatter),endUser.format(dateformatter),
@@ -2091,23 +2093,23 @@ function getConfiguration(){
 			
 				//var startUser = new Date(data.userStartTime);
 				var startUser = new Date(jQuery.fullCalendar.parseISO8601(data.userStartTime, true));
-				jQuery("#ve_scheduler_form #startDate_user").val(startUser.format(dayformatter));
-				jQuery("#ve_scheduler_form #start_user").val(startUser.format(timeformatter));
+				jQuery("#startDate_user").val(startUser.format(dayformatter));
+				jQuery("#start_user").val(startUser.format(timeformatter));
 				
 				//var endUser = new Date(data.userEndTime);
 				var endUser = new Date(jQuery.fullCalendar.parseISO8601(data.userEndTime, true));
-				jQuery("#ve_scheduler_form #endDate_user").val(endUser.format(dayformatter));
-				jQuery("#ve_scheduler_form #end_user").val(endUser.format(timeformatter));
+				jQuery("#endDate_user").val(endUser.format(dayformatter));
+				jQuery("#end_user").val(endUser.format(timeformatter));
 		
 				//var endAdmin = new Date(data.adminEndTime);
 				var endAdmin = new Date(jQuery.fullCalendar.parseISO8601(data.adminEndTime, true));
-				jQuery("#ve_scheduler_form #endDate_admin").val(endAdmin.format(dayformatter));
-				jQuery("#ve_scheduler_form #end_admin").val(endAdmin.format(timeformatter));
+				jQuery("#endDate_admin").val(endAdmin.format(dayformatter));
+				jQuery("#end_admin").val(endAdmin.format(timeformatter));
 	
 				//var startAdmin = new Date(data.adminStartTime);
 				var startAdmin = new Date(jQuery.fullCalendar.parseISO8601(data.adminStartTime, true));
-				jQuery("#ve_scheduler_form #startDate_admin").val(startAdmin.format(dayformatter));
-				jQuery("#ve_scheduler_form #start_admin").val(startAdmin.format(timeformatter));
+				jQuery("#startDate_admin").val(startAdmin.format(dayformatter));
+				jQuery("#start_admin").val(startAdmin.format(timeformatter));
 				
 				/*
 				// sets the date range for getUserAppointments Call
@@ -2120,8 +2122,8 @@ function getConfiguration(){
 				}
 				*/
 			
-				//jQuery("#ve_scheduler_form #timezone_admin").html(timezoneFieldOptions);
-				//jQuery("#ve_scheduler_form #timezone_user").html(timezoneFieldOptions);
+				//jQuery("#timezone_admin").html(timezoneFieldOptions);
+				//jQuery("#timezone_user").html(timezoneFieldOptions);
 				
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -2424,7 +2426,7 @@ function InitializeInterface(){
 		var users_str = new String(inputText);
 	    var users =  users_str.split(",",7);
 		
-		 users =  users_str.split(",");
+		users =  users_str.split(",");
 	    
 	    var selection = getSeeCalendarAsCookies( jQuery('#username').val());
 		
@@ -2470,7 +2472,7 @@ function InitializeInterface(){
 			
 			currentUser = username;
 			
-			//checkUserType(currentUser);
+			checkUserType(currentUser);
 			
 			//getCourses(username);
 			//getResourcesAvailable(username);
@@ -2507,7 +2509,7 @@ function InitializeInterface(){
 			//if(currentUser == jQuery('#username').val()){
 				//if(is_admin_user){
 					//alert("#timezone-list");
-					jQuery("#ve_scheduler_form #timezone").val(jQuery.trim(timezone));
+					jQuery("#timezone").val(jQuery.trim(timezone));
 					getConfiguration();
 				//}
 				

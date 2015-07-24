@@ -16,7 +16,7 @@
 
 //echo $CFG->libdir;
 		
-
+include("../../../../libraries/configuration.php");
 if (isset($_POST['action'])){
 	$action = $_POST['action'];   
 }
@@ -162,10 +162,11 @@ if ($action=='insertEventColor'){
 
 function getAvailColors(){
 	$stack = array();
-	$colors = get_records('scheduler_colormap','enabled',1); 
+	//$colors = get_records('scheduler_colormap','enabled',1); 
+	$colors = eF_getTableData('module_vlabs_scheduler_colormap','*',"enabled = 1");
 	foreach ($colors as $color)
 	{
-		array_push($stack, $color->colorcode);		
+		array_push($stack, $color['colorcode']);		
 	}
 	$color_str = implode(",", $stack);
 	
@@ -173,16 +174,21 @@ function getAvailColors(){
 }
 
 function countAvailColors(){
-	return count_records('scheduler_colormap','enabled',1); 
+	//return count_records('scheduler_colormap','enabled',1); 
+	$count = eF_countTableData('module_vlabs_scheduler_colormap','*',"enabled = 1");
+	return $count[0]['count'];
 }
 function countAllColors(){
-	return count_records('scheduler_colormap'); 
+	//return count_records('scheduler_colormap'); 
+	$count = eF_countTableData('module_vlabs_scheduler_colormap');
+	return $count[0]['count'];
 }
 
 function colorExists($code){
-	$cnt = count_records('scheduler_colormap','colorcode', $code);
+	//$cnt = count_records('scheduler_colormap','colorcode', $code);
+	$cnt = eF_countTableData('module_vlabs_scheduler_colormap','*',"colorcode = '". $code ."'" );
 	$result = false;
-	if($cnt > 0){
+	if($cnt[0]['count']> 0){
 		$result = true;
 	}
 	return $result;
@@ -197,7 +203,10 @@ function insertEventColor($code, $status){
 			$flag = 0;
 		}
 			
-		return insert_record('scheduler_colormap',array(
+		//return insert_record('scheduler_colormap',array(
+		//				'colorcode'=>$code,
+		//				'enabled'=>$flag ));
+		return eF_insertTableData('module_vlabs_scheduler_colormap',array(
 						'colorcode'=>$code,
 						'enabled'=>$flag ));
 	}else{
@@ -214,7 +223,11 @@ function updateEventColor($id, $code, $status){
 		$flag = 0;
 	}
 	
-	return update_record('scheduler_colormap',array(
+	//return update_record('scheduler_colormap',array(
+	//				'id'=>$id,
+	//				'colorcode'=>$code,
+	//				'enabled'=>$flag ));
+	return eF_updateTableData('module_vlabs_scheduler_colormap',array(
 					'id'=>$id,
 					'colorcode'=>$code,
 					'enabled'=>$flag ));
@@ -222,7 +235,8 @@ function updateEventColor($id, $code, $status){
 
 // returns a true | false value for the success of the delete
 function deleteEventColor($id){
-	return delete_records('scheduler_colormap', 'id', $id);
+	//return delete_records('scheduler_colormap', 'id', $id);
+	return eF_deleteTableData('module_vlabs_scheduler_colormap', 'id = '. $id);
 }
 
 

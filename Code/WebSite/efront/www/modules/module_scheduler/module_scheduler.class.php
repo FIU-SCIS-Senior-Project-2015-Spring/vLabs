@@ -61,15 +61,47 @@ class module_scheduler extends EfrontModule {
 		$smarty->assign("T_SCHEDULER_UID", $uid[0]['id']);
 		$smarty->assign("T_SCHEDULER_ROLE", $this->getCurrentUser()->user['user_type']);
 		$smarty->assign("T_SCHEDULER_UNAME", $userlogin);
-		//$colorcount = 10;//eF_countTableData('module_vlabs_scheduler','*',"enable = 1");
-		//$smarty->assign("T_SCHEDULER_COLORCOUNT", $colorcount);
-		//$colors = 10;//eF_getTableData('module_vlabs_scheduler','*',"enable = 1");
-		//$smarty->assign("T_SCHEDULER_COLORS", $colors);
-		$email = 'sadjadi@cis.fiu.edu';
+		$colorcount = eF_countTableData('module_vlabs_scheduler_colormap','*',"enabled = 1");
+		$smarty->assign("T_SCHEDULER_COLORCOUNT", $colorcount);
+		$colors = eF_getTableData('module_vlabs_scheduler_colormap','*',"enabled = 1");
+		$smarty->assign("T_SCHEDULER_COLORS", $colors);
+		//echo $colors[0]['colorcode'];
+		$email = $this->getCurrentUser()->user['login'];//'sadjadi@cis.fiu.edu';
 		$field7 = eF_getTableData('module_vlabs_user_info_data','*',"email = '" . $email. "' and field_id = 7");
 		$smarty->assign("T_SCHEDULER_FIELD7", $field7[0]['data']);
 		$users = eF_getTableData('module_vlabs_quotasystem_user_profile', '*', '', 'username');
 		$smarty->assign("T_SCHEDULER_USERS", $users);
+		$tid = $_SESSION['s_theme'];
+		$tname = eF_getTableData('themes', '*', 'id = ' .$tid);
+		switch($tname[0]['name']){
+			case '1default':
+			case 'eFront2013': 
+			case 'IE6':
+				//default
+				$smarty -> assign("T_S_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/default/jquery-ui.css");	
+				break;
+			case 'blue':
+			case 'enterprise':
+				//blue
+				$smarty -> assign("T_S_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/blue/jquery-ui.css");	
+				break;
+			case 'blue_html5':
+			case 'modern':
+				//bluehtml
+				$smarty -> assign("T_S_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/bluehtml/jquery-ui.css");	
+				break;
+			case 'green':
+				//green
+				$smarty -> assign("T_S_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/green/jquery-ui.css");	
+				break;
+			case 'modern_uk':
+				//flatgrey
+				$smarty -> assign("T_S_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/flatgrey/jquery-ui.css");	
+				break;
+			default:
+				$smarty -> assign("T_S_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/default/jquery-ui.css");	
+				break;
+		}
         return true;
     }
 
@@ -83,8 +115,11 @@ class module_scheduler extends EfrontModule {
 		return $this->moduleBaseDir . "module_scheduler.tpl";
 
 	}
-/*
+
 	public function onInstall(){
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_user_info_fields");
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_user_info_data");
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_scheduler_colormap");
 		eF_ExecuteQuery("create table module_vlabs_user_info_fields(    
 			id bigint(10) unsigned NOT NULL AUTO_INCREMENT,
 			shortname varchar(255) NOT NULL,
@@ -105,20 +140,31 @@ class module_scheduler extends EfrontModule {
 			param4 longtext,
 			param5 longtext,
 			PRIMARY KEY(id)
-		);")
-		eF_ExecuteQuery("create table module_vlabs_user_info_fields(    
+		);");
+		eF_ExecuteQuery("create table module_vlabs_user_info_data( 
+    		id bigint(10) NOT NULL AUTO_INCREMENT,
 			email varchar(150) NOT NULL,
 			field_id bigint(10) unsigned NOT NULL,
-			data longtext NOT NULL
-		);")
-
+			data longtext NOT NULL,
+    		PRIMARY KEY (id)
+		);");
+		eF_ExecuteQuery("create table module_vlabs_scheduler_colormap(
+			id bigint(10) NOT NULL AUTO_INCREMENT,
+			colorcode varchar (10),
+			enabled bigint(10) NOT NULL,
+			primary key (id)
+		);");
+		return true;
 	}
 	public function onUninstall(){
-
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_user_info_fields");
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_user_info_data");
+		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_scheduler_colormap");
+		return true;
 	}
  	public function onUpgrade(){
-
-	} */
+		return true;
+	} 
    
     /**
 	 * (non-PHPdoc)
