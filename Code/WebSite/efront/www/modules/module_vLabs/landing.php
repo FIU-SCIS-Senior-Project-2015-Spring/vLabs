@@ -196,7 +196,11 @@
 		margin-left: 25px;
 	}
 	#resolution{
+		margin-left: 2px;
 		margin-right: 15px;
+	}
+	#cdepth{
+		margin-left: 2px;
 	}
 </style> 
 <script>
