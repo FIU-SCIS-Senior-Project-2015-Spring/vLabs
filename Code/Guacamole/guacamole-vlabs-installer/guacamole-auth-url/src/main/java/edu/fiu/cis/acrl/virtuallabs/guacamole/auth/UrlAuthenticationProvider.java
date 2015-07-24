@@ -1,8 +1,10 @@
 /***
  *	This Guacamole plugin allows for the authentication parameters to be passed 
  *	directly in the URL.
- *  The other class in this package (Crypt) is used to decrypt the password parameter
+ *  Other class in this package (Crypt) is used to decrypt the password parameter
  *  which comes encrypted from the caller, using a similar php class.
+ *  Finally the Limit class is used to check hostname and port and allow or
+ *  denny access based on that.
  *	
  *	Author: Juan Riano
  *	FIU / Senior Project / Summer 2015
@@ -121,6 +123,15 @@ public class UrlAuthenticationProvider extends SimpleAuthenticationProvider {
 		// Extract the parameters from the request
 		Map<String, String[]> params = request.getParameterMap();
 
+		/* Connections can be denied based on hostname and port, this
+		 * block checks for that and returns the empty config on fail */
+		String hostname = request.getParameter("guac.hostname");
+		String port = request.getParameter("guac.port");
+		if ( ! Limit.isAuthorized(hostname + ":" + port)) {
+			logger.info("This connection (hostname and port) is not authorized.");
+			return config;
+		}	
+
 		// Go through the elements of the parameters and set the config object
 		for (String name : params.keySet()) {
 			String value = request.getParameter(name);
@@ -187,8 +198,6 @@ public class UrlAuthenticationProvider extends SimpleAuthenticationProvider {
 		// Get the username
 		username = theParameters.get("username");
 		logger.debug(" - getUserContext - username: {}", username);
-		logger.debug("configs: {}", configs.toString());
-		logger.debug(" - getUserContext - username is set, returning SimpleUserContext.");
 
 		return new SimpleUserContext(username, configs);
 	}
