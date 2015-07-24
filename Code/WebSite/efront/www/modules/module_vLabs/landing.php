@@ -75,7 +75,7 @@
 
 <!-- nav bar -->
 <div id="toolbar" class="ui-widget-header ui-corner-all" style="display:none">
-	<div style="display:inline">
+	<div id="timewrapper" style="display:inline">
 		<div id="timecontrols" style="display:inline">
 		 minutes: <input type="text" id="timetochange" name="timetochange" value="5" placeholder="5" maxlength="2" size="2">
 	 	<button id="addtime">Add time to your virtual-lab appointment</button>
@@ -92,20 +92,22 @@
 		<button id="pausevm">Pause</button>
 		<button id="refreshvm">Refresh</button>
 		<button id="refreshall">Refresh All</button>
-		<label for="res">Resolution: </label>
-		<select name="res" id="resolution" width="100px">
-			<option value="default">default</option>
-			<option value="640x480">640x480</option>
-			<option value="800x600">800x600</option>
-			<option value="1024x768">1024x768</option>
-		</select>
-		<label for="color">Color Depth: </label>
-		<select name="color" id="cdepth" width="100px">
-			<option value="default">default</option>
-			<option value="8">8</option>
-			<option value="16">16</option>
-			<option value="24">24</option>
-		</select>
+		<div id="selectwrapper" style="display:inline">
+			<label for="res">Resolution: </label>
+			<select name="res" id="resolution" width="100px">
+				<option value="default">default</option>
+				<option value="640x480">640x480</option>
+				<option value="800x600">800x600</option>
+				<option value="1024x768">1024x768</option>
+			</select>
+			<label for="color">Color Depth: </label>
+			<select name="color" id="cdepth" width="100px">
+				<option value="default">default</option>
+				<option value="8">8</option>
+				<option value="16">16</option>
+				<option value="24">24</option>
+			</select>
+		</div>
 	</div>
 </div>
 
@@ -180,6 +182,21 @@
 <style>
 	.qtip-bootstrap{
 		font-size: 11px;
+	}
+	#toolbar{
+		padding: 4px;
+	}
+	#timecontrols{
+		margin-right: 5px;
+	}
+	#timewrapper{
+		margin-right: 25px;
+	}
+	#selectwrapper{
+		margin-left: 25px;
+	}
+	#resolution{
+		margin-right: 15px;
 	}
 </style> 
 <script>
@@ -572,9 +589,9 @@ function generateGuacUrl(src, depth, dim){
 	//order as follows: port always at beginning, then depth if there, then resolution width, height
 	if(depth == null){ id = port + dim[0] + dim[1]; }
 	else if(dim == null){ id = port + depth; }
-	else{ id = port + depth + dim[0] + depth[1];}
+	else{ id = port + depth + dim[0] + dim[1];}
 
-	id = (id.length < 15) ? id : id.substring(0, 15); //if id is longer than 15 chars then take the first 15
+	id = (id.length <= 15) ? id : id.substring(0, 15); //if id is longer than 15 chars then take the first 15
 	newSrc = guacUrl + id + "?id=" + id + params;
 	return newSrc;
 }	

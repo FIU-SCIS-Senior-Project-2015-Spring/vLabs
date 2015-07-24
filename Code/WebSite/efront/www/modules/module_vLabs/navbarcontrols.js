@@ -119,23 +119,27 @@ function setupVMControlButtons(){
     	text: false,
     	icons: {primary: "ui-icon-trash"}
     }).click(function(){
-    	var instanceId = $('#veInsId').val();
-    	var state = getRdpTabInfo('state', currentTabSelected);
-		var vmname = getRdpTabInfo('veName', currentTabSelected);
-    	markCurrentInstanceState("disabled");
-    	var bvObj = new vmcObj();
-		setTimeout(function(){ buttonBundleClick('refresh', instanceId, vmname, bvObj); },3000);
+    	if(confirm('Are you sure you want to refresh all virtual machines? All unsaved work will be lost!')){
+    		var instanceId = $('#veInsId').val();
+	    	var state = getRdpTabInfo('state', currentTabSelected);
+			var vmname = getRdpTabInfo('veName', currentTabSelected);
+	    	markCurrentInstanceState("disabled");
+	    	var bvObj = new vmcObj();
+    		setTimeout(function(){ buttonBundleClick('refresh', instanceId, vmname, bvObj); },3000);
+    	}
     });
 
     $("#refreshall").button({
     	icons: {primary: "ui-icon-arrowrefresh-1-e"}
     }).click(function(){
-    	var instanceId = $('#veInsId').val();
-    	var state = getRdpTabInfo('state', currentTabSelected);
-		var vmname = getRdpTabInfo('veName', currentTabSelected);
-    	markCurrentInstanceState("disabled");
-    	var bvObj = new vmcObj();
-		setTimeout(function(){ buttonBundleClick('refreshAll', instanceId, vmname, bvObj); },3000);	//need to figure out cmd
+    	if(confirm('Are you sure you want to refresh all virtual machines? All unsaved work will be lost!')){
+    		var instanceId = $('#veInsId').val();
+	    	var state = getRdpTabInfo('state', currentTabSelected);
+			var vmname = getRdpTabInfo('veName', currentTabSelected);
+	    	markCurrentInstanceState("disabled");
+	    	var bvObj = new vmcObj();
+    		setTimeout(function(){ buttonBundleClick('refreshAll', instanceId, vmname, bvObj); },3000);	//need to figure out cmd
+    	}
     });
   //   if(state)
 		// markCurrentInstanceState(state);
@@ -481,6 +485,7 @@ function getVMControlHTML(){
 		'<button id="pausevm">Pause</button>' +
 		'<button id="refreshvm">Refresh</button>' +
 		'<button id="refreshall">Refresh All</button>' +
+		'<div id="selectwrapper" style="display:inline">' +
 		'<label for="res">Resolution: </label>' +
 		'<select name="res" id="resolution" width="100px">' +
 			'<option>default</option>' +
@@ -494,6 +499,7 @@ function getVMControlHTML(){
 			'<option value="8">8</option>' +
 			'<option value="16">16</option>' +
 			'<option value="24">24</option>' +
-		'</select>';
+		'</select>' + 
+		'</div>';
 	return html;
 }

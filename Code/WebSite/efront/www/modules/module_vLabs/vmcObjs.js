@@ -90,7 +90,6 @@ vmcObj.prototype.isRDPMachineReady = function(instanceId, vmname, hostName, host
 									
 									var currentSRC = $(".iframetab").attr('src');
 
-									alert("url is: " + url + "   src is: " + currentSRC);
 									//$("#mainscreenid").attr('src',url.replace(/&amp;/g,"&"));
 									
 									if(currentSRC == url){
