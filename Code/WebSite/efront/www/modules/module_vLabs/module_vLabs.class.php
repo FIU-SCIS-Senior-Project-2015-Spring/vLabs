@@ -179,7 +179,11 @@ class module_vLabs extends EfrontModule {
 					//bluehtml
 					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=bluehtml&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;
-				case 'green':
+				case 'modern_uk':
+                    //uk
+                    $smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=uk&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");    
+                    break;
+                case 'green':
 					//green
 					$smarty -> assign("T_LANDING", $this -> moduleBaseLink . "landing.php?theme=green&course=$courseid&username=$username&uid=$userID&email=$userEmail&hours=$hours&minutes=$minutes&username_encoded=$username_encoded&encrypted_password=$encrypted_password");	
 					break;

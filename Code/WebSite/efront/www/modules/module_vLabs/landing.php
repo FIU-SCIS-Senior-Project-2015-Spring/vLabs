@@ -26,6 +26,7 @@
 		case 'blue':
 			echo "<link type='text/css' rel='stylesheet' href='jquery-ui-themes/themes/blue/jquery-ui.css'>";
 			break;
+		case 'uk':
 		case 'bluehtml':
 			echo "<link type='text/css' rel='stylesheet' href='jquery-ui-themes/themes/bluehtml/jquery-ui.css'>";
 			break;
@@ -34,7 +35,7 @@
 			break;
 		case 'flatgrey':
 			echo "<link type='text/css' rel='stylesheet' href='jquery-ui-themes/themes/flatgrey/jquery-ui.css'>";
-			break;
+			break;	
 		default:
 			echo "<link type='text/css' rel='stylesheet' href='jquery-ui-themes/themes/default/jquery-ui.css'>";
 			break;
@@ -49,7 +50,6 @@
 <script src="http://imagesloaded.desandro.com/imagesloaded.pkgd.min.js"></script>
 <!-- jQ countdown -->
 <script src="jqtimer/jquery.countdown.js"></script>
-
 </head>
 <body id="docbody">
 	<input id="userid" type="hidden" value="<?php echo $_GET['uid']; ?>" />
@@ -419,7 +419,6 @@ function buildTooltip(row){
 	var tip = "<strong>Machine Name: </strong>" + row.find('td:nth-child(1)').text() + "<br><strong>Connection Protocol: </strong>" + row.find('td:nth-child(2)').text() 
 		+ "<br><strong>Host Name: </strong>" + row.find('td:nth-child(3)').text() + "<br><strong>Host Port: </strong>" 
 		+ row.find('td:nth-child(4)').text() + "<br><strong>Username: </strong>" + $('#username').val();
-	//alert(tip);
 	return tip; 
 }
 
@@ -510,7 +509,6 @@ function changeBpp(){
 	var rval = $("#resolution option:selected").text();
 
 	//write the new cdpeth value to database
-	alert("ajax with: " + dval);
 	$.ajax({
 		url: "vmcontrols.php",
 		type: "post",
