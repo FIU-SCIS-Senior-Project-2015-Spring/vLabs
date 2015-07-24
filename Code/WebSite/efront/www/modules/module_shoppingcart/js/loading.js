@@ -4,7 +4,7 @@ function createLoadingDivAfter(containerId, message){
 	var msg = message || "Loading";
 	var loadingDivId = containerId.substring(1)+"_loading";
     var div ='<div id="'+loadingDivId+'" class="message">';
-    div+= '<span class="image"><img alt="loading" src="../css/loading_1.gif" /></span>';
+    div+= '<span class="image"><img alt="loading" src="/modules/module_shoppingcart/css/loading_1.gif" /></span>';
     div+= '<p class="loading">'+msg+'</p>';
     div+='</div>';
 
@@ -19,7 +19,7 @@ function removeLoadingDivAfter(containerId){
 }
 
 function createLoadingInId(id){
-	$(id).html('<img alt="loading" src="/modules/css/loading_2.gif" />');
+	$(id).html('<img alt="loading" src="/modules/module_shoppingcart/css/loading_2.gif" />');
 }
 
 function removeLoadingInId(id){
@@ -30,7 +30,7 @@ function displayError(containerId, message, afterFunction){
 	var msg = message || "Error";
 	var errorDivId = containerId.substring(1)+"_error";
     var div ='<div id="'+errorDivId+'" class="message">';
-    div+= '<span class="image"><img src="/modules/css/warning.png" /></span>';
+    div+= '<span class="image"><img src="/modules/module_shoppingcart/css/warning.png" /></span>';
     div+= '<p class="error">'+message+'</p>';
     div+='</div>';
 
@@ -48,7 +48,7 @@ function displayMessage(containerId, message, afterFunction){
 	var msg = message || "";
 	var messageDivId = containerId.substring(1)+"_message";
     var div ='<div id="'+messageDivId+'" class="message">';
-    div+= '<span class="image"><img src="/modules/css/check.png" /></span>';
+    div+= '<span class="image"><img src="/modules/module_shoppingcart/css/check.png" /></span>';
     div+= '<p class="msg">'+message+'</p>';
     div+='</div>';
 
