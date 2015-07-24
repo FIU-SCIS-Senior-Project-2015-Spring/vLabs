@@ -13,8 +13,8 @@ from storages import *
 # HOME = "/disk/serval/serval-vm-storage/portal/exams"
 # HOME = os.environ["STORAGES[storage_id]"]+"/exams"
 
-# VMNAT = "/home/sadjadi-vmstorage/sadjadi-vms/it-auto-kvm/vmnat.sh"
-VMNAT = os.environ["VMNAT"]
+VMNAT = "~/exams/bin/vmnat.sh"
+#VMNAT = os.environ["VMNAT"]
 
 XP_PARAMS = {"memory": 1024, "ncpus": 1}
 DC_PARAMS = {"memory": 2048, "ncpus": 1}
@@ -133,7 +133,7 @@ ve_symlink = "%s" % (unique_instance_name)
 #    first_time = 0
 
 if needs_provision(): #first_time == 1:
-    provision_cmd = "provisioner.py %s %s " % (ve_type, storage_id)
+    provision_cmd = "~/exams/bin/provisioner.py %s %s " % (ve_type, storage_id)
     print provision_cmd
     subprocess.call([provision_cmd], shell=True)
     # get the first provisioned ve that is not used
@@ -171,14 +171,14 @@ if True:
     try:
         # SMS 6/8/2014
         # starting the corresponding router
-        register_cmd = "virt-install --connect qemu:///system --ram %d --name %s --os-type=linux --network network:default --network network:%s --network network:%s --network network:%s --disk path=%s,device=disk,format=qcow2 --vcpus=%d --vnc --keymap=en-us --force --accelerate --noautoconsole --import" % (XP_PARAMS["memory"], router_name, network_name, network_name, network_name, router_qcow2, XP_PARAMS["ncpus"])
+        register_cmd = "virt-install --connect qemu:///system --ram %d --name %s --os-type=linux --network network:default --network network:%s --network network:%s --network network:%s --disk path=%s,device=disk,format=qcow2 --vcpus=%d --vnc --force --accelerate --noautoconsole --import" % (XP_PARAMS["memory"], router_name, network_name, network_name, network_name, router_qcow2, XP_PARAMS["ncpus"])
         cmd = register_cmd
         print "Command: " + cmd
         subprocess.call([cmd], shell=True)
        
         # add rules to the firewall to forward traffic to a given router
         vmnat_cmd = "sudo %s add %d %s %d %d" % (VMNAT, first_port, router_ip, RPORT_START, num_ports)
-        print "() Call sudo vmnat.sh add %d %s %d %d" % (first_port, router_ip, RPORT_START, num_ports)
+        print "() Call sudo ~/exams/bin/vmnat.sh add %d %s %d %d" % (first_port, router_ip, RPORT_START, num_ports)
         retcode = subprocess.call([vmnat_cmd],shell=True)
         if retcode < 0:
             print >>sys.stderr, "sudo as terminated by signal", -retcode
@@ -218,7 +218,7 @@ if True:
             # if there was a match, get the number after w7 
             w7_iteration = int(match_w7.group(1))
             # begin the installation or restart of the VM 
-            start_cmd = "start_vm.py %s %s %s %d %d %s %s" %(snap_file, unique_instance_name, "windows", XP_PARAMS["memory"], XP_PARAMS["ncpus"], network_name, mac)
+            start_cmd = "~/exams/bin/start_vm.py %s %s %s %d %d %s %s" %(snap_file, unique_instance_name, "windows", XP_PARAMS["memory"], XP_PARAMS["ncpus"], network_name, mac)
             print start_cmd
             subprocess.call([start_cmd], shell=True)
             print "============="
@@ -230,7 +230,7 @@ if True:
                 mac2 = generate_mac(offset_index)
                 print "mac2: " + mac2
             
-                start_cmd = "start_vm.py %s %s %s %d %d %s %s %s " %(snap_file, unique_instance_name, "windows", DC_PARAMS["memory"], DC_PARAMS["ncpus"],network_name, mac, mac2)
+                start_cmd = "~/exams/bin/start_vm.py %s %s %s %d %d %s %s %s " %(snap_file, unique_instance_name, "windows", DC_PARAMS["memory"], DC_PARAMS["ncpus"],network_name, mac, mac2)
                 print start_cmd
                 subprocess.call([start_cmd], shell=True)
                 print "============="

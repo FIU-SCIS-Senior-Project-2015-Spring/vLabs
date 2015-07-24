@@ -24,7 +24,7 @@ HOME = os.environ["HOME"]+"/exams"
 try:
     dom = conn.lookupByName(name)
     # command to suspend the virtual machine
-    dom.suspend()
+    # dom.suspend()
     print "Domain %s has been suspended"% name
     # command to save the current state of the virtual machine
     # the restore_file is in the same location as the qcow2_file

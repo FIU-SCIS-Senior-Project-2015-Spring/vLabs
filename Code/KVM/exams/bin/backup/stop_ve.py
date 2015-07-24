@@ -11,8 +11,8 @@ from storages import *
 # HOME = "/disk/serval/serval-vm-storage/portal/exams"
 # HOME = os.environ["HOME"]+"/exams"
 
-# VMNAT = "/home/sadjadi-vmstorage/sadjadi-vms/it-auto-kvm/vmnat.sh"
-VMNAT = os.environ["VMNAT"]
+VMNAT = "~/exams/bin/vmnat.sh"
+#VMNAT = os.environ["VMNAT"]
 
 # FIXME: this information already exists in start_ve
 NUM_ROUTERS = 12
@@ -132,7 +132,7 @@ if True:
             # subprocess.call([combined_cmd],shell=True)
       
             # stop_vm_cmd = "stop_vm.py %s &" % vmx
-            stop_vm_cmd = "stop_vm.py %s %s" % (qcow2, unique_instance_name)
+            stop_vm_cmd = "~/exams/bin/stop_vm.py %s %s" % (qcow2, unique_instance_name)
             print "Command: " + stop_vm_cmd
             subprocess.call([stop_vm_cmd], shell=True)
 

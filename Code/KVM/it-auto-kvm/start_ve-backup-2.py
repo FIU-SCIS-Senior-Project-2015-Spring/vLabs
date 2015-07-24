@@ -4,6 +4,7 @@ import sys
 import re
 import os
 import subprocess
+import libvirt
 
 #from vmxutil import vmx
 from storages import *
@@ -69,6 +70,7 @@ force_resume_file = os.path.join(STORAGES[storage_id], "input/force-resume.input
 force_discard_file = os.path.join(STORAGES[storage_id], "input/force-discard.input")
 
 router_qcow2 = ROUTERS + "/" + ve_type + "/Router" + str(router_id) + "/DSL.qcow2"
+router_restore = router_qcow2 +".restore"
 print router_qcow2
 
 # the network name is the same as the router name
@@ -81,14 +83,14 @@ unique_instance_name = "%s-%s-%d" % (username, ve_type, first_port)
 
 
 # finding and removing all the files ending with LOCK
-#exam_dir = os.path.join(ASSIGNED, unique_instance_name)
-#print 'exam_dir is %s ' % exam_dir
+exam_dir = os.path.join(ASSIGNED, unique_instance_name)
+print 'exam_dir is %s ' % exam_dir
 #cmd = 'find %s/ -name "*LOCK" -print' % exam_dir         # find is a standard Unix tool
 #print cmd
 
-#if not os.path.exists(exam_dir):
-#    register_action = "0"
-#    print 'exam_dir %s does not exist! Therefore, the register_action is now %s' % (exam_dir, register_action)
+if not os.path.exists(exam_dir):
+    register_action = "0"
+    print 'exam_dir %s does not exist! Therefore, the register_action is now %s' % (exam_dir, register_action)
 
 #for file in os.popen(cmd).readlines():     # run find command
 #    num  = 1
@@ -171,10 +173,17 @@ if True:
     try:
         # SMS 6/8/2014
         # starting the corresponding router
-        register_cmd = "virt-install --connect qemu:///system --ram %d --name %s --os-type=linux --network network:default --network network:%s --network network:%s --network network:%s --disk path=%s,device=disk,format=qcow2 --vcpus=%d --vnc --keymap=en-us --force --accelerate --noautoconsole --import" % (XP_PARAMS["memory"], router_name, network_name, network_name, network_name, router_qcow2, XP_PARAMS["ncpus"])
-        cmd = register_cmd
-        print "Command: " + cmd
-        subprocess.call([cmd], shell=True)
+        if os.path.exists(router_restore):
+            try:
+              conn = libvirt.open("qemu:///system")
+              conn.restore(router_restore)
+            except:
+              print "The router has already been restored!"
+        else :
+            register_cmd = "virt-install --connect qemu:///system --ram %d --name %s --os-type=linux --network network:default --network network:%s --network network:%s --network network:%s --disk path=%s,device=disk,format=qcow2 --vcpus=%d --vnc --keymap=en-us --force --accelerate --noautoconsole --import" % (XP_PARAMS["memory"], router_name, network_name, network_name, network_name, router_qcow2, XP_PARAMS["ncpus"])
+            cmd = register_cmd
+            print "Command: " + cmd
+            subprocess.call([cmd], shell=True)
        
         # add rules to the firewall to forward traffic to a given router
         vmnat_cmd = "sudo %s add %d %s %d %d" % (VMNAT, first_port, router_ip, RPORT_START, num_ports)

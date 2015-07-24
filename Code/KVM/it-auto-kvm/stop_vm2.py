@@ -24,12 +24,17 @@ HOME = os.environ["HOME"]+"/exams"
 try:
     dom = conn.lookupByName(name)
     # command to suspend the virtual machine
-    dom.suspend()
+    # dom.suspend()
     print "Domain %s has been suspended"% name
+
     # command to save the current state of the virtual machine
     # the restore_file is in the same location as the qcow2_file
-    dom.save(restore_file)
+
+    # dom.save(restore_file)
+    save_cmd = "virsh --connect qemu:///system save %s %s" % (name, restore_file)
+    subprocess.call([save_cmd],shell=True)
     print "Domain %s has been saved"% name
+
     # the Virtual Machine is then undefine so that it won't appear in virt-manager
     dom.undefine()
     print "Domain %s has been undefined"% name

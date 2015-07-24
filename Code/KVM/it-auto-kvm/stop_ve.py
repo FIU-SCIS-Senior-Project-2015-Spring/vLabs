@@ -74,7 +74,7 @@ full_paths = map(lambda x: os.path.join(ASSIGNED, x), exams)
 if True:
     # SMS 6/8/2014
     # stoping the corresponding router
-    stop_cmd  = "virsh --connect qemu:///system destroy %s" % router_name
+    stop_cmd  = "virsh --connect qemu:///system save %s %s" % (router_name, restore_router)
     cmd = stop_cmd
     print "Command: " + cmd
     subprocess.call([cmd], shell=True)

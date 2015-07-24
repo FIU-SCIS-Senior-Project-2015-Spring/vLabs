@@ -81,14 +81,14 @@ unique_instance_name = "%s-%s-%d" % (username, ve_type, first_port)
 
 
 # finding and removing all the files ending with LOCK
-#exam_dir = os.path.join(ASSIGNED, unique_instance_name)
-#print 'exam_dir is %s ' % exam_dir
+exam_dir = os.path.join(ASSIGNED, unique_instance_name)
+print 'exam_dir is %s ' % exam_dir
 #cmd = 'find %s/ -name "*LOCK" -print' % exam_dir         # find is a standard Unix tool
 #print cmd
 
-#if not os.path.exists(exam_dir):
-#    register_action = "0"
-#    print 'exam_dir %s does not exist! Therefore, the register_action is now %s' % (exam_dir, register_action)
+if not os.path.exists(exam_dir):
+    register_action = "0"
+    print 'exam_dir %s does not exist! Therefore, the register_action is now %s' % (exam_dir, register_action)
 
 #for file in os.popen(cmd).readlines():     # run find command
 #    num  = 1

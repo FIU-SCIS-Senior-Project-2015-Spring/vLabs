@@ -36,7 +36,50 @@ elif len(sys.argv) == 8:
     # if the restore_file exists restore the Virtual Machine from the restore_file
     # the restore_file is generated whenever stop_vm.py is called, this implies that the machine has been created before and is now being restarted.
     if(os.path.isfile(restore_file)):
-        conn.restore(restore_file)           
+
+        chown_cmd = "sudo /home/sadjadi-vmstorage/sadjadi-vms/it-auto-kvm/change_owner.sh %s" % restore_file
+        retcode = subprocess.call([chown_cmd],shell=True)
+        if retcode < 0:
+            print >>sys.stderr, "sudo as terminated by signal", -retcode
+        else:
+            print >>sys.stderr, "sudo returned", retcode
+        
+ 
+        # restore_file2 = restore_file + "2"
+        # fin = open(restore_file, "r")
+        # fout = open(restore_file2, "w")
+
+        replace = "'%s'" % network
+
+        output = ""
+        try:
+            find_cmd = "head -100 %s | grep -a -m 1 %s" % (restore_file, replace)
+            print "Command: "  + find_cmd
+            output = subprocess.call([find_cmd], shell=True)
+        except:
+            print "No Match Found"
+
+        print "The output is: %d" % output
+        if output == 1:
+            replace_cmd = "sed -i 's/'Router[0-9]'/%s/g' %s" % (replace, restore_file)
+            print "Command: " + replace_cmd + " started!"
+            subprocess.call([replace_cmd],shell=True)
+            print "Command: " + replace_cmd + " ended!"
+
+        # for line in fin:
+        #    match = re.match("      \<source network.*", line)
+        #    if match:
+        #        fout.write(replace)
+        #    else:
+        #        fout.write(line)
+        #fin.close()
+        #fout.close()
+        
+
+        # conn.restore(restore_file2)           
+        # restore_cmd = "virsh --connect qemu:///system restore %s" % restore_file2 
+        restore_cmd = "virsh --connect qemu:///system restore %s" % restore_file
+        subprocess.call([restore_cmd],shell=True);
         print "Domain %s has been restored"% name       
         # since the VM is suspsended in stop_vm.py before it is saved it must be resumed after it has been restored
         try:
@@ -44,20 +87,20 @@ elif len(sys.argv) == 8:
             dom.resume() 
             print "Domain %s is being resumed"% name
             if dom.isActive():
-                os.remove(restore_file)    
-                print "The restore file has been removed"
+                os.remove(restore_file)
+                print "The restore files have been removed"
             # if the VM is not persistent make it so
             if not dom.isPersistent():
                 # first get the xml file from storage by the VM name and store it
-                cmd = "virsh --connect qemu:///system dumpxml %s > %s.xml" % (name, name)
+                cmd = "virsh --connect qemu:///system dumpxml %s > /tmp/%s.xml" % (name, name)
                 print "Command: " + cmd
                 subprocess.call([cmd], shell=True)
                 # use the xml file to define, make persistent, the VM
-                cmd = "virsh --connect qemu:///system define %s.xml" % name
+                cmd = "virsh --connect qemu:///system define /tmp/%s.xml" % name
                 print "Command: " + cmd
                 subprocess.call([cmd], shell=True)
                 # remove the xml file we stored earlier
-                cmd = "rm %s.xml" % name
+                cmd = "rm /tmp/%s.xml" % name
                 print "Command: " + cmd
                 subprocess.call([cmd], shell=True)
         except:
@@ -99,8 +142,51 @@ elif len(sys.argv) == 9:
     start_cmd = None    
     # if the restore file exists restore the VM with that name
     if(os.path.isfile(restore_file)):
-        conn.restore(restore_file)
+
+        chown_cmd = "sudo /home/sadjadi-vmstorage/sadjadi-vms/it-auto-kvm/change_owner.sh %s" % restore_file
+        retcode = subprocess.call([chown_cmd],shell=True)
+        if retcode < 0:
+            print >>sys.stderr, "sudo as terminated by signal", -retcode
+        else:
+            print >>sys.stderr, "sudo returned", retcode
+
+        # restore_file2 = restore_file + "2"
+        # fin = open(restore_file, "r")
+        # fout = open(restore_file2, "w")
+
+        # replace = "      <source network='%s'/>\n" % network
+        replace = "'%s'" % network
+
+        output = ""
+        try:
+            find_cmd = "head -100 %s | grep -a -m 1 %s" % (restore_file, replace)
+            print "Command: "  + find_cmd
+            output = subprocess.call([find_cmd], shell=True)
+        except:
+            print "No Match Found"
+
+        print "The output is: %d" % output
+        if output == 1:
+            replace_cmd = "sed -i 's/'Router[0-9]'/%s/g' %s" % (replace, restore_file)
+            print "Command: " + replace_cmd + " started!"
+            subprocess.call([replace_cmd],shell=True)
+            print "Command: " + replace_cmd + " ended!"
+        # for line in fin:
+        #    match = re.match("      \<source network.*", line)
+        #    if match:
+        #        fout.write(replace)
+        #    else:
+        #        fout.write(line)
+        #fin.close()
+        #fout.close()
+
+
+        # conn.restore(restore_file2)
+        # restore_cmd = "virsh --connect qemu:///system restore %s" % restore_file2
+        restore_cmd = "virsh --connect qemu:///system restore %s" % restore_file
+        subprocess.call([restore_cmd],shell=True);
         print "Domain %s has been restored"% name
+        
         # since the VM is suspsended before it is saved it must be resumed
         try:
             dom = conn.lookupByName(name)
@@ -108,19 +194,19 @@ elif len(sys.argv) == 9:
             print "Domain %s is being resumed"% name
             if dom.isActive():
                 os.remove(restore_file)
-                print "The restore file has been removed"
+                print "The restore files have been removed"
             # if the VM is not persistent make it so
             if not dom.isPersistent():
                 # first get the xml file from storage by the VM name and store it
-                cmd = "virsh --connect qemu:///system dumpxml %s > %s.xml" % (name, name)
+                cmd = "virsh --connect qemu:///system dumpxml %s > /tmp/%s.xml" % (name, name)
                 print "Command: " + cmd
                 subprocess.call([cmd], shell=True)
                 # use the xml file to define, make persistent, the VM
-                cmd = "virsh --connect qemu:///system define %s.xml" % name
+                cmd = "virsh --connect qemu:///system define /tmp/%s.xml" % name
                 print "Command: " + cmd
                 subprocess.call([cmd], shell=True)
                 # remove the xml file we stored earlier
-                cmd = "rm %s.xml" % name
+                cmd = "rm /tmp/%s.xml" % name
                 print "Command: " + cmd
                 subprocess.call([cmd], shell=True)
         except:
