@@ -20,6 +20,10 @@ GUACAMOLE_PROPERTIES=guacamole.properties
 # the file containing the password decrypting string
 KEY_FILE=key.key
 
+# the file for restricting connections allowed by Guacamole
+# based on host.doman.name:port-range
+RESTRICTIONS_FILE=restrictions.txt
+
 # guacamole_auth_url.jar file names
 GUACAMOLE_JAR_WITH_VERSION=guacamole-auth-url-1.0-SNAPSHOT.jar
 GUACAMOLE_JAR=guacamole-auth-url.jar
@@ -68,6 +72,17 @@ if [ -f ./$KEY_FILE ]; then
 else
 	echo -e "Error: missing key.key file. Please create it. Check README.txt for information."
 	exit 1
+fi
+
+# copy restrictions.txt to the classpath directory
+echo -e "Processing restrictions.txt..."
+# copy it only if there is not one already present
+if [ ! -f $GUACAMOLE_CLASSPATH_FOLDER$RESTRICTIONS_FILE ]; then
+    if [ ! -f ./$RESTRICTIONS_FILE ]; then
+        echo -e "Error: missing restrictions.txt file. Please create it. Check README.txt for information."
+        exit 1
+    fi
+    cp ./$RESTRICTIONS_FILE $GUACAMOLE_CLASSPATH_FOLDER$RESTRICTIONS_FILE
 fi
 
 # copy guacamole.properties to its required location

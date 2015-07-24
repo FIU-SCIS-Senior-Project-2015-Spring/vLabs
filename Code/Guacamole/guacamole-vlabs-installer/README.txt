@@ -13,7 +13,7 @@ refer to the project documentation section of this project.
 THE SHORT VERSION
 ------------------------------------------
 
-Getting a Guacamole server ready for vLabs is easy, just complete these 22 steps: 
+Getting a Guacamole server ready for vLabs is easy, just complete these 2 steps: 
 
 1) Create the text file key.key with a single line with the encription string
    for URL password encryption. (16 characters), save it in this directory.
@@ -26,7 +26,7 @@ sudo guacamole-auth-url-installer.sh
 THE LONG VERSION
 -----------------------------------------
 
-This folder has 7 files and 1 folder, this is all that is needed
+This folder has 8 files and 1 folder, this is all that is needed
 to install Guacamole and the authentication plugin.
 
 The installation process will create additional folders, 
@@ -38,7 +38,7 @@ hopefully it will need very little modifications to work in
 future versions.
 
 
-The initial 7 files and 1 folder are required
+The initial 8 files and 1 folder are required
 ---------------------------------------------
 firewal.sh
 guacamole-installer.sh
@@ -46,6 +46,7 @@ guacamole-auth-url-installer.sh
 guacamole.properties
 guacamole-VERSION-dependency.list.txt
 server.xml
+restrictions.txt
 README.txt
 ./guacamole-auth-url/
 
@@ -55,6 +56,9 @@ containing a 16 character key to decrypt the password.
 ----------------------------------------------------------------
 key.key
 
+Modify restrictions.txt to restrict access to certain domains
+and port combinations. i.e. 
+-------------------------------------------------------------
 
 Plus these files will be created and downloaded by this instaler
 ----------------------------------------------------------------
@@ -102,6 +106,13 @@ key.key
 -------
 A text file you need to create with a single line containing the unencrypting key for Guacamole.
 This string needs to be 16 url safe characters.
+
+restrictions.txt
+----------------
+Used to restrict access to some domain:port combinations, the format used is:
+host.domain.com:port-range 
+*.cis.fiu.edu:40000-60000
+This file is copied to /var/lib/guacamole/classpath
 
 README.txt
 ----------
