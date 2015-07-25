@@ -299,6 +299,10 @@ class module_shoppingcart extends EfrontModule {
 				//blue
 				$theme="blue";	
 				break;
+			case 'modern_uk':
+				//modern_uk
+				$theme="modern_uk";	
+				break;
 			case 'blue_html5':
 				//bluehtml
 				$theme="bluehtml";	

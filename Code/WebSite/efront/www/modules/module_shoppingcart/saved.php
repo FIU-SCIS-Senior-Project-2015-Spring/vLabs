@@ -85,6 +85,25 @@
 
 
 			break;
+		case 'modern_uk':
+			echo '<link type="text/css"  href="jquery/jquery-ui-themes/themes/bluehtml/jquery-ui.css" rel="stylesheet">';
+			echo	'<style type="text/css" media="screen">';
+	
+			echo	'@import "jquery/jquery-ui-themes/themes/bluehtml/demo_table_jui.css";';
+	
+					/*
+					 * Override styles needed due to the mix of three different CSS sources! For proper examples
+					 * please see the themes example in the 'Examples' section of this site
+					 */
+
+			echo		'.dataTables_info { padding-top: 0; }';
+			echo		'.dataTables_paginate { padding-top: 0; }';
+			echo		'.css_right { float: right; }';
+			echo		'#example_wrapper .fg-toolbar { font-size: 0.8em }';
+			echo		'#theme_links span { float: left; padding: 2px 10px; }';
+	
+			echo 	'</style>';
+			break;
 		case 'green':
 			echo '<link type="text/css"  href="jquery/jquery-ui-themes/themes/green/jquery-ui.css" rel="stylesheet">';
 
