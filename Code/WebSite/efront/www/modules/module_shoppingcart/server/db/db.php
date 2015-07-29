@@ -754,22 +754,22 @@ function db_addItem($itemname,$itemdesc, $itemid, $itemprice, $billable,$referen
 
 function db_getUserByEmail($email)
 {
-	$sql = "SELECT * FROM users WHERE LOWER(email) = '" . strtolower($email) . "'";
-    return eF_executeQuery($sql);	
+	$sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE LOWER(email) = '" . strtolower($email) . "'";
+    return user_array(eF_executeQuery($sql));
 	
 }
 
 
 function db_getUserById($userid)
 {
-	$sql = "SELECT * FROM users WHERE login = '".$userid."'";
-    return eF_executeQuery($sql);	
+	$sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE username = '".$userid."'";
+    return user_array(eF_executeQuery($sql));
 }
 
 
 function refactored_db_getUserById($userid)
 {
-    $sql = "SELECT * FROM users WHERE id =".$userid;
+    $sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE username =".$userid;
     return user_array(eF_executeQuery($sql));
 }
 
@@ -891,7 +891,7 @@ function db_getCoursesByUser($userid){
 				"(SELECT instanceid FROM module_vlabs_context WHERE contextlevel = 50 AND id in ".
 					"(SELECT contextid FROM module_vlabs_role_assignments WHERE userid =".$userid." and roleid = 5))";
 	*/
-    $sql = "SELECT * FROM courses";
+    $sql = "SELECT * FROM module_vlabs_quotasystem_course";
 
 	return courses_array(eF_executeQuery($sql));
 	
@@ -899,7 +899,7 @@ function db_getCoursesByUser($userid){
 
 function db_getCourses(){
 	
-	$sql = "SELECT * FROM courses";
+	$sql = "SELECT * FROM module_vlabs_quotasystem_course";
 	return eF_executeQuery($sql);
 	
 }
@@ -910,9 +910,9 @@ function courses_array($result){
     if($result!=null){
         foreach($result as $r){
             $r_array = array("id"=>$r['id'],
-            "name"=>$r['name'],
-            "active"=>$r['active'],
-            "description"=>$r['description']);
+            "name"=>$r['shortname'],
+            "active"=>'1',
+            "description"=>$r['fullname']);
         array_push($c_array,$r_array);
         }
     return $c_array;
@@ -923,7 +923,7 @@ function courses_array($result){
 
 function db_getCourseById($courseid){
 	//echo '<script type="text/javascript">alert("in db.php db_getCourseById courseid ='. $courseid .'")</script>';
-	$sql = "SELECT * FROM courses WHERE id =".$courseid;  //originally module_vlabs_course
+	$sql = "SELECT * FROM module_vlabs_quotasystem_course WHERE id =".$courseid;  //originally module_vlabs_course
 	$result  = courses_array(eF_executeQuery($sql));
 	return $result;
 	
@@ -975,7 +975,7 @@ function db_getAdministrators_new(){
 function db_getUserTimeZone($userId){
 		//jh modified to use efront timezone info
    	//jh original: $sql = "SELECT data FROM module_vlabs_user_info_data WHERE userid = ".$userId." and fieldid = 4";
-	$sql = "SELECT timezone FROM users WHERE login = '".$userId."'";
+	$sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE username = '".$userId."'";
 	return user_array(eF_executeQuery($sql));
 	
 }
@@ -987,10 +987,10 @@ function user_array($result){
     if($result!=null){
         foreach($result as $r) {
             $u_array = array("id" => $r['id'],
-            "login" => $r['login'],
-            "timezone" => $r['timezone'],
-            "name" => $r['name'],
-            "surname" => $r['surname'],
+            "login" => $r['username'],
+            "timezone" => 'GMT-05:00 US/Eastern', //currently getting user data from Quota system which does not provide time zone.  Bypassing
+            "name" => 'QuotaSystem name', // jh Need this data from Quota System
+            "surname" =>'QuotaSystem surname', //jh Need this data from Quota System
             "email" => $r['email']);
         array_push($u_array, $u_array);
         }
@@ -1016,9 +1016,9 @@ function db_setUserTimeZone($userId, $timeZoneId){
 function db_getUserName($userId){
    	try {
    		
-   		$sql = "SELECT username FROM module_vlabs_user WHERE id = ".$userId;
+   		$sql = "SELECT username FROM module_vlabs_quotasystem_user_profile WHERE id = ".$userId;
 	    $username = eF_executeQuery($sql);
-        return $username;
+        return user_array($username);
     } catch (Exception $e) {
         echo $e->getMessage();
         return null;

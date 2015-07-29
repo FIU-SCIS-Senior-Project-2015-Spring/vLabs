@@ -1,11 +1,14 @@
 /*
- * Orders.js
- * @author Vanessa Ramirez
+ * dbadmin.js
+ * @author Johann Henao
  *
+ * This file contains the ajax calls and the client
+ *  side file system interaction logic that allows the upload and
+ *  download of the Quota Store database schema and data.
  */
 
 var dbadmin_table;
-var dbadminphpURL = "/modules/module_shoppingcart/server/dbadmin.php";   //jh original"../server/orders.php";
+var dbadminphpURL = "/modules/module_shoppingcart/server/dbadmin.php";
 
 var dbadmin_open_validation_forms = new Array();
 
@@ -25,13 +28,9 @@ function dbadmin_reload()
 	createLoadingDivAfter("#dbadminContainer","Loading DB Admin");
 
 	var role = $("#role").val();
-	//window.alert("userid = " + userid +  " role is: " + role);
-	//var userid = "admin";  //jh changed:$("#userid").val()
-	//var role = "admin";  //jh changed:$("#role").val();
-	
+
 	var action = 'getModules';
 
-	 //window.alert("BEFORE ajax section role= "+ role);
     $.ajax({
         type: 'POST',
         url: dbadminphpURL,
@@ -41,7 +40,7 @@ function dbadmin_reload()
             role: role
         },
         success: function(data){
-         //window.alert("in ajax section within success function");
+
         	removeLoadingDivAfter("#dbadminContainer");
           	
         	$('#dbadminContainer').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="dbadminTable"></table>' ); //jh $('resource').html('something') adds something to resource
@@ -83,7 +82,6 @@ function dbadmin_rowClickHandler(){
 	var nTr = this.parentNode;
 	var open=false;
 	
-
 	try{
 		if($(nTr).next().children().first().hasClass("ui-state-highlight"))
 			open=true;
@@ -107,9 +105,6 @@ function dbadmin_openDetailsRow(nTr){
 	dbadmin_table.fnOpen( nTr, dbadmin_formatDetails(dbadmin_table, nTr), "ui-state-highlight" );
 	var aData = dbadmin_table.fnGetData( nTr );
 
-	//window.alert("in ord_openDetailsRow: " + "#seeDetails"+aData[0] );	
-
-
 	var containerId = "#dbadminDetails"+aData[0];
 	jQuery("#schemaFunctions"+aData[0]).button();
 	jQuery("#schemaFunctions"+aData[0]).click(function(){  //jh here is the event handler for this button!!
@@ -124,7 +119,6 @@ function dbadmin_openDetailsRow(nTr){
         $(containerId).empty();
         dataFunctions_load(containerId,nTr,aData[0],aData[2]);
     });
-
 
 }
 
@@ -142,12 +136,9 @@ function dbadmin_formatDetails ( oTable, nTr )
 
 	sOut += '	</div>';
 	sOut += '</div>';
-	//window.alert("in ord_formatDetails: " + sOut );
+
 	return sOut;
 }
-
-
-
 
 function schemaFunctions_load(containerId, nTr, id,moduleName)
 {
@@ -166,9 +157,8 @@ function schemaFunctions_load(containerId, nTr, id,moduleName)
 
             $(containerId+" .importS").click(function(){
 
-                // jh code before ajax
                 document.getElementById("inputS").click();
-                //document.getElementById("inputF").click();
+
                 var control = document.getElementById("inputS");
 
                 control.addEventListener("change", function(event) {
@@ -192,7 +182,6 @@ function schemaFunctions_load(containerId, nTr, id,moduleName)
                     var reader = new FileReader();
                     reader.onload = function(event) {
                         var contents = event.target.result;
-                        //console.log("File contents: " + contents);
                         var xhr = new XMLHttpRequest;
                         xhr.open('POST', '/modules/module_shoppingcart/server/datahandlerS.php', true);
                         xhr.send(contents);
@@ -204,21 +193,17 @@ function schemaFunctions_load(containerId, nTr, id,moduleName)
                     };
 
                     reader.readAsText(this.files[0]);
-
-                    console.log("HELLO!! File contents: " + contents);
-
                 }, false);
 
-                //dbadmin_importData(id,moduleName);
             });
 
             $(containerId+" .exportS").click(function(){
-                /*alert("in dataFunctions_load");*/
+
                 dbadmin_exportSchema(id,moduleName);
             });
 
             $(containerId+" .deleteS").click(function(){
-                /*alert("in dataFunctions_load");*/
+
                 dbadmin_deleteSchema(id,moduleName);
             });
 
@@ -229,7 +214,6 @@ function schemaFunctions_load(containerId, nTr, id,moduleName)
                     dbadmin_table.fnClose( nTr );
                     pre_removeValidationForm(containerId);
                 });
-                /*alert("in dataFunctions_load");*/
             });
         });
 
@@ -247,15 +231,11 @@ function dataFunctions_load(containerId, nTr, id,moduleName)
         $(containerId+" .exportD").button();
         $(containerId+" .importD").button();
         $(containerId+" .deleteD").button();
-        //$(containerId+" .inputFile").input();
         $(containerId).show();
-
 
         $(containerId+" .importD").click(function(){
 
-            // jh code before ajax
             document.getElementById("inputF").click();
-            //document.getElementById("inputF").click();
             var control = document.getElementById("inputF");
 
             control.addEventListener("change", function(event) {
@@ -279,7 +259,6 @@ function dataFunctions_load(containerId, nTr, id,moduleName)
                 var reader = new FileReader();
                 reader.onload = function(event) {
                     var contents = event.target.result;
-                    //console.log("File contents: " + contents);
                     var xhr = new XMLHttpRequest;
                     xhr.open('POST', '/modules/module_shoppingcart/server/datahandlerD.php', true);
                     xhr.send(contents);
@@ -292,20 +271,17 @@ function dataFunctions_load(containerId, nTr, id,moduleName)
 
                 reader.readAsText(this.files[0]);
 
-                console.log("HELLO!! File contents: " + contents);
-
             }, false);
 
-            //dbadmin_importData(id,moduleName);
         });
 
         $(containerId+" .exportD").click(function(){
-            /*alert("in dataFunctions_load");*/
+
             dbadmin_exportData(id,moduleName);
         });
 
         $(containerId+" .deleteD").click(function(){
-            /*alert("in dataFunctions_load");*/
+
             dbadmin_deleteData(id,moduleName);
         });
 
@@ -316,7 +292,7 @@ function dataFunctions_load(containerId, nTr, id,moduleName)
                 dbadmin_table.fnClose( nTr );
                 pre_removeValidationForm(containerId);
             });
-             /*alert("in dataFunctions_load");*/
+
         });
     });
 
@@ -325,13 +301,9 @@ function dataFunctions_load(containerId, nTr, id,moduleName)
 function dbadmin_exportData(id,moduleName)
 {
     var role = $("#role").val();
-    //window.alert("userid = " + userid +  " role is: " + role);
-    //var userid = "admin";  //jh changed:$("#userid").val()
-    //var role = "admin";  //jh changed:$("#role").val();
 
     var action = 'exportData';
 
-    //window.alert("BEFORE ajax section role= "+ role);
     if(role=="administrator") {
         $.ajax({
             type: 'POST',
@@ -342,10 +314,9 @@ function dbadmin_exportData(id,moduleName)
                 modId:id
             },
             success: function (data) {
-                //window.alert("in ajax section within success function");
+
                 if(data.length > 0){
                    download('module_vlabs_shoppingcart_data.sql', data);
-
                 }else{
                     alert("Data export failed!");
                 }
@@ -379,13 +350,9 @@ function download(filename, text) {
 function dbadmin_exportSchema(id,moduleName)
 {
     var role = $("#role").val();
-    //window.alert("userid = " + userid +  " role is: " + role);
-    //var userid = "admin";  //jh changed:$("#userid").val()
-    //var role = "admin";  //jh changed:$("#role").val();
 
     var action = 'exportSchema';
 
-    //window.alert("BEFORE ajax section role= "+ role);
     if(role=="administrator") {
         $.ajax({
             type: 'POST',
@@ -396,7 +363,7 @@ function dbadmin_exportSchema(id,moduleName)
                 modId:id
             },
             success: function (data) {
-                //window.alert("in ajax section within success function");
+
                 if(data.length > 0){
                     download('module_vlabs_shoppingcart_schema.sql', data);
                 }else{
@@ -417,16 +384,12 @@ function dbadmin_exportSchema(id,moduleName)
 function dbadmin_deleteSchema(id,moduleName){
 
     var role = $("#role").val();
-    //window.alert("userid = " + userid +  " role is: " + role);
-    //var userid = "admin";  //jh changed:$("#userid").val()
-    //var role = "admin";  //jh changed:$("#role").val();
 
     var action = 'deleteSchema';
 
-    //window.alert("BEFORE ajax section role= "+ role);
     if(role=="administrator") {
 
-        var r = confirm("Deleting schema for module: " + moduleName + " Make sure you have a backup of the data/schema and confirm.");
+        var r = confirm("Deleting schema for module: " + moduleName + ".  Make sure you have a backup of the data/schema and confirm.");
         if (r == true) {
             $.ajax({
                 type: 'POST',
@@ -437,7 +400,7 @@ function dbadmin_deleteSchema(id,moduleName){
                     modId:id
                 },
                 success: function (data) {
-                    //window.alert("in ajax section within success function");
+
                     if (data == 'pass') {
                         alert("Schema deletion successful!");
                     } else {
@@ -460,16 +423,12 @@ function dbadmin_deleteSchema(id,moduleName){
 function dbadmin_deleteData(id,moduleName)
 {
     var role = $("#role").val();
-    //window.alert("userid = " + userid +  " role is: " + role);
-    //var userid = "admin";  //jh changed:$("#userid").val()
-    //var role = "admin";  //jh changed:$("#role").val();
 
     var action = 'deleteData';
 
-    //window.alert("BEFORE ajax section role= "+ role);
     if(role=="administrator") {
 
-        var r = confirm("Deleting data for module: " + moduleName + " Make sure you have a backup of the data and confirm.");
+        var r = confirm("Deleting data for module: " + moduleName + ".  Make sure you have a backup of the data and confirm.");
         if (r == true) {
             $.ajax({
                 type: 'POST',
@@ -480,7 +439,7 @@ function dbadmin_deleteData(id,moduleName)
                     modId:id
                 },
                 success: function (data) {
-                    //window.alert("in ajax section within success function");
+
                     if (data == 'pass') {
                         alert("Data deletion successful!");
                     } else {
@@ -498,48 +457,3 @@ function dbadmin_deleteData(id,moduleName)
     }
 }
 
-function dbadmin_importSchema(id,moduleName){
-
-}
-/*
-function dbadmin_importData(id,moduleName)
-{
-    var role = $("#role").val();
-    //window.alert("userid = " + userid +  " role is: " + role);
-    //var userid = "admin";  //jh changed:$("#userid").val()
-    //var role = "admin";  //jh changed:$("#role").val();
-
-    var action = 'importData';
-
-    //window.alert("BEFORE ajax section role= "+ role);
-    if(role=="administrator") {
-
-
-
-            $.ajax({
-                type: 'POST',
-                url: dbadminphpURL,
-                dataType: 'text',
-                data: {
-                    action:action,
-                    modId:id
-                },
-                success: function (data) {
-                    //window.alert("in ajax section within success function");
-                    if (data == 'pass') {
-                        alert("Data deletion successful!");
-                    } else {
-                        alert("Data deletion failed!");
-                    }
-
-                },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    removeLoadingDivAfter("#dbadminContainer");
-                    displayError("#dbadminContainer", errorThrown);
-                }
-            });
-
-        }
-
-}
-*/

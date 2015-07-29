@@ -7,7 +7,6 @@
  *
  */
 
-
 var storephpURL = '/modules/module_shoppingcart/server/store.php';
 
 var sto_table;
@@ -29,7 +28,6 @@ function openStoreManagerTab()
 function sto_reloadStore()
 {
 	createLoadingDivAfter("#storeContainer","Loading store inventory");
-
 
     $.ajax({
         type: 'POST',
@@ -62,7 +60,6 @@ function sto_reloadStore()
 	     				},
 	     				"aTargets": [ 3 ]
 	     			}
-	     			
 
 	     		],
         		"bJQueryUI": true,
@@ -83,7 +80,6 @@ function sto_reloadStore()
 	    		
 	    	}
 
-        
         },
         error: function(XMLHttpRequest, textStatus, errorThrown){
         	removeLoadingDivAfter("#storeContainer");
@@ -102,7 +98,7 @@ function sto_reloadStoreManager()
 	$("#storeManagerContainer").html("");
 	
 	createLoadingDivAfter("#storeManagerContainer","Loading Store Inventory");
-	//alert("In sto_reloadStoreManager.");	
+
     $.ajax({
         type: 'POST',
         url: storephpURL,
@@ -111,7 +107,7 @@ function sto_reloadStoreManager()
             action: 'getInventory'
         },
         success: function(data){
-         //alert("In sto_reloadStoreManager AJAX call.");
+
         	removeLoadingDivAfter("#storeManagerContainer");
         	
         	$('#storeManagerContainer').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="storeManagerTable"></table>' );
@@ -133,15 +129,12 @@ function sto_reloadStoreManager()
         		"bAutoWidth": false,
         		"sPaginationType": "full_numbers"
         	});
-        	
-        	
-        	
+
         	$("#storeManagerTable").removeAttr("style");
 
         	$('#storeManagerTable tbody tr td').die();
         	
         	$('#storeManagerTable tbody tr td').live('click', sto_rowClickHandler );
-
 
         },
         error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -211,7 +204,6 @@ function sto_formatStoreManagerDetails ( oTable, nTr )
 	return sOut;
 }
 
-
 function sto_openForm(containerId, add, nTr, itemId)
 {
 	$(containerId).empty();
@@ -226,10 +218,9 @@ function sto_openForm(containerId, add, nTr, itemId)
 
 function sto_loadForm(containerId, add, nTr, itemId)
 {	
-	//window.alert("On sto_loadForm function");
+
 	createLoadingDivAfter(containerId,"Loading references");
-	
-	
+
     $.ajax({
         type: 'POST',
         url: storephpURL,
@@ -334,7 +325,6 @@ function sto_loadForm(containerId, add, nTr, itemId)
             				sto_removeValidationForm(containerId); 
             			});
 
-
             		}
 
             	});
@@ -383,7 +373,6 @@ function sto_showForm(containerId){
     $(containerId).show();
 }
 
-
 function sto_fillOutForm(containerId,itemId, nTr){
 	
 	createLoadingDivAfter(containerId,"Loading item data");
@@ -428,8 +417,6 @@ function sto_fillOutForm(containerId,itemId, nTr){
 	            });
 	        }
 	    });	
-	  
-
 }
 
 function isArray(obj) {
@@ -439,8 +426,6 @@ function isArray(obj) {
         return true;
 }
 
-
- 
 function sto_addItem(containerId, name, description, price, reference, referenceName,  active, type, notbillable)
 {
 	createLoadingDivAfter(containerId,"Creating Item");
@@ -643,7 +628,6 @@ function sto_isValidForm(containerId){
 	}
 	return false;
 }
-
 
 function sto_hideAllFormFields(containerId){
 	$(containerId+" form fieldset div div").each(function(index) {

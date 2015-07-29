@@ -16,46 +16,10 @@ ini_set('display_errors',1);
 
 require_once((dirname(__FILE__)).'/db/db.php');
 
-
-
-//require_once('checkout/google_checkout/lib/googlerequest.php');
-//require_once('checkout/google_checkout/lib/googleitem.php');
-
 require_once('packages.php');
 require_once('transactions.php');
 require_once('mailing.php');
 
-
-
-//$config_file = "checkout/google_checkout/google.conf"; jh
-//$comment = "#"; jh
-
-/*
-$fp = fopen($config_file, "r");
-
-while (!feof($fp)) {
-  $line = trim(fgets($fp));
-  if ($line && !ereg("^$comment", $line)) {
-    $pieces = explode("=", $line);
-    $option = trim($pieces[0]);
-    $value = trim($pieces[1]);
-    $config_values[$option] = $value;
-  }
-}
-fclose($fp);
-*/ 
-
-
-/*
-print_r($config_values);
-
-$merchant_id = $config_values['CONFIG_MERCHANT_ID'];  
-$merchant_key = $config_values['CONFIG_MERCHANT_KEY'];  
-$server_type = $config_values['CONFIG_SERVER_TYPE'];  
-$currency = $config_values['CONFIG_CURRENCY'];
-
-$Grequest = new GoogleRequest($merchant_id, $merchant_key, $server_type, $currency);
-*/
 
 if (isset($_POST['action'])) {
 	$action = $_POST['action'];
@@ -81,31 +45,20 @@ if ($action == "reloadOrders") {
 	} else {
 		$userid = "";
 	}
-	//echo '<script type="text/javascript">alert("user id is: '.$userid .'")</script>';
-	//call to the db
 	$userdata = db_getUserById($userid);
-	//echo '<script type="text/javascript">alert("after db_getUserById")</script>';
 	$timeZoneId = "";
 	$user = "";
 	foreach ($userdata as $u){
 		$user = $u['id'];
-		$timeZoneId = $u['timezone'];
+		$timeZoneId = 'GMT-05:00 US/Eastern';//jh getting user info from quota system which does not have timezoneid
 	}
 	$orders = db_getOrdersByUser($user);
-	//echo '<script type="text/javascript">alert("after db_getOrdersByUser")</script>';
-
-
-	//echo '<script type="text/javascript">alert("before userdate foreach loop")</script>';
-
-
-	//	$timeZoneId = db_getUserTimeZone($userid)->data; //jh this info is stored in the users table in efront no need to invoke this function.
-	// $compatibleTimezone = substr($timeZoneId,10);  //jh timezone in efront already has the right format.
 	date_default_timezone_set($timeZoneId);
-   //echo '<script type="text/javascript">alert("after date_default_timezone_set,  timeZoneId is: '.$timeZoneId.'")</script>';
+
 	$formattedOrders= array();
 
 			foreach ($orders as $order) {
-			//echo '<script type="text/javascript">alert("In foreach loop")</script>';
+
 			$purchaseDate = date(DATE_ATOM, ($order['purchasedate']/1000));
 					
 			$o = array($order['id'],
@@ -125,12 +78,11 @@ if ($action == "reloadOrders") {
     echo json_encode($formattedOrders);
 
 	//Reload all orders of all users. Only used for administartor view
-} else if ($action == "reloadOrdersAll") {	//jh original:  $action == "reloadOrdersAll"
+} else if ($action == "reloadOrdersAll") {
 
     $sql = 'SELECT COUNT(*) FROM information_schema.tables  WHERE table_schema = "efront"  AND table_name = "module_vlabs_shoppingcart_order"';
     $tcount = eF_executeQuery($sql);
-    //echo "checking if orders table exists: " . PHP_EOL;
-    //var_dump($tcount);
+
     foreach($tcount as $t){
         if($t['COUNT(*)'] < 1 ) {
             echo json_encode(array());
@@ -138,46 +90,13 @@ if ($action == "reloadOrders") {
         }
     }
 
-	//$adminId = "admin"; //jh 
-	//$adminId = $_SESSION["userid"];
-	//echo "adminId is: " . $adminId;
-	//$timeZoneId = db_getUserTimeZone($adminId)->data;  jh
-	//$compatibleTimezone = substr($timeZoneId,10); jh 
-	//date_default_timezone_set($compatibleTimezone);  jh
-
-	//call to the db
-	//$currentUser = $this -> getCurrentUser();
-	//$currentUser -> getRole($this -> getCurrentLesson());
-	//echo "current user is: ".$currentUser;
-	//echo "root path is: " . G_ROOTPATH;
-
-
 	$orders = db_getOrders();
 
-	//echo "TESTING mysql_result";
-	//var_dump($orders);  //jh this displays the array contents
-	//echo $orders=>['fields']=>['id'];
-	//$row = mysqli_fetch_array($orders, MYSQLI_NUM);
-	//$finfo = $orders->fetch_fields();
-	//echo $finfo;
-	//echo "END TESTING mysql_result";
-	//echo $orders
-
 	$formattedOrders= array();
-
-//	if (is_array($orders)) {
-
 
 		foreach($orders as $row) {
 			$user = refactored_db_getUserById($row['userid']);
 			$purchaseDate = date(DATE_ATOM, ($row['purchasedate']/1000)); 
-
-          /*
-          if($row['ordernumber']=='IA55a4429095d17') {
-              echo "user array for userid: " . $row['userid']." is ".PHP_EOL;
-              var_dump($user);
-          }
-          */
 
 			$o = array($row['id'],
 			$row['ordernumber'],
@@ -192,13 +111,10 @@ if ($action == "reloadOrders") {
 			array_push($formattedOrders, $o);
 	
 		}
-//	}
+
 		
     echo json_encode($formattedOrders);
-//	 echo("{'id':'1,'ordernumber':'11','username':'johann','purchasedDate':'1','lastmodification':'1','fulfillmentorderstate':'test','financialorderstate':'test','total':'1'}");
 
-	//Show details of every order which contain what items were purchased,
-	//quantities, and price
 } else if ($action == "reloadOrderItems") {
 
 
@@ -208,21 +124,16 @@ if ($action == "reloadOrders") {
 	} else {
 		$orderid = "";
 	}
-	//echo '<script type="text/javascript">alert("In orders.php reloadOrderItems, orderid= '.$orderid.'")</script>';
-	
+
 	$ordertotal= 0;
 	$orderItems = db_getOrderItems($orderid);
 	$order = db_getOrderById($orderid);
-	
-	
 
 	$formattedOrderItems= array();
-//	if (is_array($orderItems)) {
-	 
+
 		foreach ($orderItems as $orderitem) {
 			$subtotal = $orderitem['quantity'] * $orderitem['unitprice'];						
 			$description = ord_getItemDescription($orderitem['itemid'], $orderid); //jh this needs a lot of work, it's making a soap call
-			//$description = "needs work";
 			$item = db_getItem($orderitem['itemid']);
 	
 			$itemid = "";
@@ -254,8 +165,7 @@ if ($action == "reloadOrders") {
 			$ordertotal += $subtotal;
 			array_push($formattedOrderItems, $oi);
 		}
-//	}
-    
+
 	$result = array('orderItems' => $formattedOrderItems, "orderTotal" => $ordertotal);
 	echo json_encode($result);
 
@@ -275,9 +185,9 @@ if ($action == "reloadOrders") {
 	}
 	
 
-	$adminId = $userlogin; //jh original $_SESSION["userid"];
+	$adminId = $userlogin;
 	$userdata = db_getUserById($userlogin);
-	//echo '<script type="text/javascript">alert("after db_getUserById")</script>';
+
 	$timeZoneId = "";
 
 	foreach ($userdata as $u){
@@ -401,20 +311,17 @@ if ($action == "reloadOrders") {
 	}
 
 
-	$adminId = $userlogin;//jh original =$_SESSION["userid"];
+	$adminId = $userlogin;
 	$userdata = db_getUserById($userlogin);
 
 	$timeZoneId = "";
 
 	foreach ($userdata as $u){
-		$timeZoneId = $u['timezone'];
+		$timeZoneId = 'GMT-05:00 US/Eastern';
 	}
 
 	date_default_timezone_set($timeZoneId);
 
-	//jh not needed on efront $compatibleTimezone = substr($timeZoneId,10);
-	//jh not needed on efront date_default_timezone_set($compatibleTimezone);
-	
 	//Get order details
 	$dbOrder = db_getOrderById($orderid);
 
@@ -434,7 +341,7 @@ if ($action == "reloadOrders") {
     $user_name="";
     foreach($user as $u) {
 
-    $user_name = $u['login'];
+    $user_name = $u['username'];
     }
 	$body= '<p>Order '.$dbOrder_ordernumber.' has been declined.<p>';
 	//sendEmail($user, 'Order Declined', $body);  jh NOTE: come back to this !!!
@@ -487,14 +394,14 @@ if ($action == "reloadOrders") {
 		$userlogin = "";
 	}
 	
-	$adminId = $userlogin; //jh original = $_SESSION["userid"];
+	$adminId = $userlogin;
 
 	$userdata = db_getUserById($userlogin);
 
 	$timeZoneId = "";
 
 	foreach ($userdata as $u){
-		$timeZoneId = $u['timezone'];
+		$timeZoneId = 'GMT-05:00 US/Eastern'; //jh Geting data from quota system which does not currently have timezone
 	}
 
 	date_default_timezone_set($timeZoneId);
@@ -521,9 +428,6 @@ if ($action == "reloadOrders") {
 
 	$assignmentsResponse = cancelTransaction($orderid);
 
-	//print_r($assignmentResponse);
-	//print_r($dbOrderItems);
-	
 	$i=0;	
 	foreach ($dbOrderItems as $dbOrderItem){
 		$ar = $assignmentsResponse[$i++];
@@ -588,7 +492,7 @@ if ($action == "reloadOrders") {
 	$user= db_getUserById($dbOrder_userid);
 	$user_name = "";
 	foreach($user as $u){
-		$user_name = $u['name'];
+		$user_name = $u['username'];
 	}
 	// sms: 5/19/2011
 	// sendEmail($user, 'Order['.$dbOrder->ordernumber.'] Cancellation', $body);
@@ -694,23 +598,16 @@ if ($action == "reloadOrders") {
 			array_push($assignmentsRequest, $assignment);			
 		}
 		
-		$assignmentsResponse = ws_cancelQuotaAssignment($assignmentsRequest); //jh NOTE: come back to this !!! 7/7/2015
+		$assignmentsResponse = ws_cancelQuotaAssignment($assignmentsRequest);
 		
-//		print_r($assignmentsResponse);
-	
-		$i=0;		
+		$i=0;
 		foreach ($packageItems as $pi){
 			$percentageReturned = $assignmentsResponse[$i++]->percentageReturned; //jh NOTE: this is tied to the above call!!
 			$subtotal = $pi['quantity']*$dbOrderItem['quantity']*$pi['price'];
 			$partialRefund = ($subtotal * $percentageReturned)/100;	
 			$refundAmount = $refundAmount + $partialRefund;		
-			
-//			echo "subtotal ".$subtotal;
-//			echo "partial refund ".$partialRefund;
-//			echo "refund subtotal ".$refundAmount;
 		}
-		
-//		echo "refund total ".$refundAmount;
+
 	}else{
 		$assignment = array("creditTypeId"=>$dbItem_referenceid,
 							"quantity"=>$dbOrderItem['quantity'],
@@ -720,15 +617,10 @@ if ($action == "reloadOrders") {
 		array_push($assignmentsRequest, $assignment);
 		
 		$assignmentResponse = ws_cancelQuotaAssignment($assignmentsRequest);
-		
-//		print_r($assignmentResponse);
-		
+
 		$percentageReturned = $assignmentResponse->percentageReturned;
 		$subtotal = $dbOrderItem->quantity*$dbItem->price;	
 		$refundAmount = ($subtotal * $percentageReturned)/100;
-		
-//		echo "subtotal ".$subtotal;
-//		echo "refund ".$refundAmount;
 	}
 
 
@@ -816,7 +708,6 @@ if ($action == "reloadOrders") {
             $gresponse  = $Grequest->SendCancelOrder($dbOrder->ordernumber,
                                     "Order has been cancelled due to a partial or complete refund.".
                                      "Contact the administrator for further details.");
-
             */
         }else{
             db_cancelOrder($dbOrder_id);
@@ -830,14 +721,9 @@ if ($action == "reloadOrders") {
     }
 
     $orderitem = db_getOrderItemById($id);
-
-
     $subtotal = $orderitem['quantity'] * $orderitem['unitprice'];
     $item = refactored_db_getItem($orderitem['itemid']);
-
     $user= db_getUserById($dbOrder_userid);
-
-
     $description = ord_getItemDescription($item['id'], $dbOrder_id);
 
     $oi = array(
@@ -872,9 +758,7 @@ function ord_getItemDescription($itemid, $orderid){
 
     //Test with ordernumber:  IA4f310f1212c9b
 
-    $order = db_getOrderById($orderid);  //jh candidate for removal since this info was already obtained in calling section:  reloadOrderItems.  maybe is better to pass these individual values as arguments???
-    //printr($order);
-
+    $order = db_getOrderById($orderid);
 
     $order_userid = "";
     foreach($order as $o)
@@ -882,28 +766,25 @@ function ord_getItemDescription($itemid, $orderid){
         $order_userid = $o['userid'];
     }
 
-    $item = db_getItem($itemid);  //jh again candidate for removal, this was already obtained in calling section. maybe is better to pass these individual values as arguments???
+    $item = db_getItem($itemid);
     $itemtype="";
     foreach($item as $i)
     {
         $itemtype=$i['type'];
     }
 
-//	echo '<script type="text/javascript">alert("In orders.php ord_getItemDescription  after db_getItem itemid= '.$itemid .' orderid= ' . $orderid .'")</script>';
-
-    $timeZoneId = 'GMT-05:00 US/Eastern'; //jh original was(need input from the Professor): db_getUserTimeZone($order_userid)->data;
+    $timeZoneId = 'GMT-05:00 US/Eastern'; //jh Quota system currently not providing timeZone info.
     $description = "";
 
     if($itemtype=="PACKAGE"){
 
-//	echo '<script type="text/javascript">alert("In orders.php ord_getItemDescription in if package section")</script>';
         $items = array();
         $packageItems = db_getPackageItems($itemid);
 
         foreach($packageItems as $packageItem){
-            //jh here the logic is getting the items
+
             $item = db_getItem($packageItem['itemid']);
-            //$item->quantity = $packageItem->quantity; //replaced by foreach loop below.  I cannot use object->field because getting back  a mixed mysqli array
+            // jh NOTE: $item->quantity = $packageItem->quantity; //replaced by foreach loop below.  I cannot use object->field because getting back  a mixed mysqli array
 
             foreach($item as $i)
             {
@@ -912,45 +793,26 @@ function ord_getItemDescription($itemid, $orderid){
 
 
             array_push($items, $item);
-//			echo '<script type="text/javascript">alert("in orders.php $packageItems foreach loop i->quantity='. $packageItem['quantity'].'")</script>'; //jh remove this
-
         }
 
-    //	echo '<script type="text/javascript">alert("in orders.php after $packageItems foreach loop")</script>';
-    //	echo "items array with item array elements";
-    //	var_dump($items);
         $description .= "<ul>";
 
         foreach ($items as $item){
-            //jh we also need to do a foreach loop for each $item
             $itemname="";
             $itemquantity="";
             $item_referenceid="";
-            //check array size first.
-    //		echo '<script type="text/javascript">alert("in orders.php after $packageItems foreach loop first items foreach loop item size is:'.sizeof($item). '")</script>';
 
             foreach($item as $i)
             {
-                //echo "items sub loop, size of item is: " . sizeof($i);
                 $itemname=$i['name'];
                 $itemquantity=$i['quantity'];
                 $item_referenceid=['referenceid'];
             }
 
-    //		echo '<script type="text/javascript">alert("in orders.php after $packageItems after foreach items, item before soap call")</script>';
-            //echo "Right before ws_getCreditTypeById() call";
-            $creditType = ws_getCreditTypeById($item_referenceid); //jh here another getCreditTypeById. Replace with Ajax call
+            $creditType = ws_getCreditTypeById($item_referenceid);
             //jh CAREFUL!!!! NEED TO TEST IF creditType returned is null else it will look ugly
 
-            //echo '<script type="text/javascript">alert("in orders.php after $packageItems about to dump creditType")</script>';
-            //echo "credit type var_dump ";
-            //var_dump($creditType);
-
-				
-			$course = db_getCourseById($creditType->courseId); //jh needs to be put back once credittype ajax call is available
-			
-
-			
+			$course = db_getCourseById($creditType->courseId);
 			$course_name = "";
 			foreach($course as $c)
 			{
@@ -976,8 +838,6 @@ function ord_getItemDescription($itemid, $orderid){
 			}		
 
 		$creditType = ws_getCreditTypeById($item_referenceid);
-		//echo "creditType vardump: ";
-		//var_dump($creditType);
 		$course = db_getCourseById($creditType->courseId);
 		$course_name="";
 		foreach($course as $c)
@@ -986,14 +846,9 @@ function ord_getItemDescription($itemid, $orderid){
 		}
 	//	$description .=  "This item allows students enrolled in the course ".$course->shortname."  to use the resource ".$creditType->resource." for ";	//jh original code needs retrofitting, efront course table does not have a shortname field
 		$description .=  "This item allows students enrolled in the course ".$course_name."  to use the resource ".$creditType->resource." for ";
-		//echo "description data: " . $description;
 		$description .= ord_getPolicyDescription($creditType->policyId, $timeZoneId);
 		
 	}
-
-
-//		$description .=  "Else section Needs a lot of Work (orders.php ord_getItemDescription) ";	//jh remove
-//		$description .= "You have 1 millisecond left of Quota";  //jh remove
 
 	return $description;
 	
@@ -1004,15 +859,11 @@ function ord_getItemDescription($itemid, $orderid){
 function ord_getPolicyDescription($policyId, $timeZoneId){
 
 	$policy = ws_getPolicyById($policyId, $timeZoneId);	
-	//echo "policy vardump: ";  //jh remove
-   //var_dump($policy);		  //jh remove		
 	$policyType = $policy->policyType;
 	$absolute = $policy->absolute;
-	
 	$compatibleTimezone = substr($timeZoneId,10);
 	date_default_timezone_set($compatibleTimezone);
-	
-		
+
 	if($policyType =="NOEXPIRATION"){
 		$description .= $policy['quotaInPeriod']." minutes. ";
 		$description .= "This item does not expire. ";
@@ -1060,8 +911,5 @@ function ord_getPolicyDescription($policyId, $timeZoneId){
 	return $description;
 	 	
 }
-
-
-
 
 ?>

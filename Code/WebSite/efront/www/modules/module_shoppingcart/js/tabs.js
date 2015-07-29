@@ -2,20 +2,14 @@
 $(document).ready(function() {
 	tz_init();
     reloadStoreFront(); 
-    //testCheckoutHandler();
-    //alert("hi");
 });
 
 function reloadStoreFront()
 {
 
 	 var role = $("#role").val();
-	 //window.alert("role is: " + role);
-    //var role = "admin"; //$("#role").val(); jh
-
 
     $("#placeorderdiv").hide();
-
 
     //Clean tabs div to build it
 
@@ -92,7 +86,6 @@ function reloadStoreFront()
         div+='</div>';
         $("#tabs").append(div);
         $("#add-preassignment").button();
-		  //alert("before Pre-assignment, pre_load() call");
         pre_reload();
 
         //vLabs DB Administration
@@ -107,7 +100,6 @@ function reloadStoreFront()
         div+='			<div id="dbadminWrapper" class="container"></div>';
         div+='	</div>';
         $("#tabs").append(div);
-        //alert("before Pre-assignment, pre_load() call");
         dbadmin_reload();
 
 
@@ -167,7 +159,6 @@ function reloadStoreFront()
     $('#tabs').tabs({
 		select: function(event, ui) {
 			clearAllTabs();
-			//alert('select');
 		}
 	});
     clearAllTabs
@@ -187,9 +178,7 @@ function reloadStoreFront()
     	pre_openForm("#preassignmentForm", true);
     	$("#add-preassignment").button("disable");
     });
-
 }
-
 
 function testCheckoutHandler(){
 	

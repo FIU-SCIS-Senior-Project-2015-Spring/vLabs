@@ -33,7 +33,6 @@ function checkout()
         
     });
 
-
     $.ajax({
         type: 'POST',
         url: checkoutphpURL,

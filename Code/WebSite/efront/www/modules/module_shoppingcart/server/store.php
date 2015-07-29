@@ -1,16 +1,11 @@
 <?php
 
-//require_once(dirname(dirname(dirname(dirname(dirname(__FILE__))))).'/libraries/configuration.php');
+
 require_once(dirname(__FILE__).'/db/db.php');
 require_once (dirname(__FILE__).'/ws/webserviceconfig.php');
-//require_once(dirname(__FILE__).'/shoppingcart_utilities.php');
 require_once (dirname(__FILE__).'/packages.php');
 
-
-
 ini_set("soap.wsdl_cache_enabled", "0");
-
-
 
 if (isset($_POST['action'])) {
 	$action = $_POST['action'];
@@ -21,7 +16,6 @@ if (isset($_POST['action'])) {
 
 if ($action == "reload") {
 	header('Content-Type: text/x-json');
-	//echo '<script type="text/javascript">alert("In store.php action == reload")</script>';
 
 	if (isset($_POST['user'])) {
 		$user = $_POST['user'];
@@ -159,7 +153,6 @@ if ($action == "reload") {
 	 $item = db_getItem($id);
     $formattedItem= array();
     foreach ($item as $i) {
-        //echo '<script type="text/javascript">alert("In store.php getItem foreach loop")</script>';
 
         $formattedItem = array("name"=>$i['name'],
             "type"=>$i['type'],
@@ -168,21 +161,16 @@ if ($action == "reload") {
             "description"=>$i['description'],
             "price"=>$i['price'],
             "referenceid"=>$i['referenceid'] );
-
-        //array_push($formattedItem, $i);
-
     }
 
 	echo json_encode($formattedItem);
 
 }else if ($action == "getInventory") {
 
- //echo "<script type='text/javascript'>alert('In store.php')</script>";
 
     $sql = 'SELECT COUNT(*) FROM information_schema.tables  WHERE table_schema = "efront"  AND table_name = "module_vlabs_shoppingcart_order"';
     $tcount = eF_executeQuery($sql);
-    //echo "checking if orders table exists: " . PHP_EOL;
-    //var_dump($tcount);
+
     foreach($tcount as $t){
         if($t['COUNT(*)'] < 1 ) {
             echo json_encode(array());
@@ -194,10 +182,6 @@ if ($action == "reload") {
 
 	$formattedInventory= array();
 
-	//echo '<script type="text/javascript">alert("Writing to log")</script>';	
-	//error_log("store.php getInventory output:\n");
-	//error_log(array_values($inventory));
-				
 	foreach ($inventory as $item) {
 		
 
@@ -206,14 +190,10 @@ if ($action == "reload") {
 		else
 			$price = 'Not Billable';
 
-		//echo '<script type="text/javascript">alert("about to go into SoapClient call")</script>';
-
-        // jh NOTE: this needs to get executed, since soap calls are really slow commenting temporarily
 		try {
 			$client = new SoapClient(WSDL_QS, array('location' => LOCATION_QS));
         	$creditType = $client->getCreditTypeById($item->referenceid);
-        	//print_r($creditType);
-        	
+
 	    } catch (Exception $e) {	
 			$creditType = null;
 	
@@ -221,7 +201,6 @@ if ($action == "reload") {
 			$creditType = null;
 	
 	    }
-        //jh end commenting soap calls */
 
 $creditType = "TestCreditType";
 		if($creditType!=null)
@@ -235,14 +214,11 @@ $creditType = "TestCreditType";
 			$item['active'],
 			$item['creationdate']
 			);	
-			//error_log("In for each loop ". array_values($i));
 			array_push($formattedInventory, $i);
 		}	
 			
 	}
 	
-	//print_r($inventory);
-	//print_r($formattedInventory);
 	echo json_encode($formattedInventory);
 	
 } else if ($action == "getReferences") {
@@ -250,7 +226,6 @@ $creditType = "TestCreditType";
 	try {
 
 		$client = new SoapClient(WSDL_QS, array('location' => LOCATION_QS));
-       //echo '<script type="text/javascript">alert("SoapClient call succeeded")</script>';
 		$references = $client->getAssignableCreditTypes();
 		$creditTypes = $references->creditType;
 		$policies = $references->policy;
@@ -279,8 +254,6 @@ $creditType = "TestCreditType";
 			$result = array('references' => $creditTypes);
 
 		}
-        //echo '<script type="text/javascript">alert("SoapClient call succeeded")</script>';
-		 //var_dump($result);
 
 		echo json_encode($result);
 		
@@ -351,12 +324,8 @@ $creditType = "TestCreditType";
 	if (db_addItem($itemname,$itemdesc, $itemid, $itemprice, $billable,$referenceid, $type, $active)) {
 
 		$item = db_getItemByName($itemname);
-
-        //echo '<script type="text/javascript">alert("added item successfully")</script>';
-        //echo "dumping item_array: ";
-        //var_dump($item_array);
-
 		$result = array('success' => true, 'item' => $item);
+
 	} else {
 		$result = array('success' => false, 'message' => "Item could not be saved");
 	}
@@ -487,7 +456,6 @@ $creditType = "TestCreditType";
 		$sql = 'DELETE FROM module_vlabs_shoppingcart_store_inventory ';
 		$sql .='WHERE id= ' . $itemid . '';
 
-	
 		if(isItemBeingUsed($itemid)){
 			$result = array('success' => false, 'message' => "Item is being used and cannot be modified.");
 			
@@ -664,8 +632,5 @@ function sto_getPolicyDescription($policyId, $timeZoneId){
 	
 	return $description;
 }
-
-
-
 
 ?>

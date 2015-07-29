@@ -5,10 +5,8 @@
  */
 
 var packagesphpURL = '/modules/module_shoppingcart/server/packages.php';
-
 var pac_table;
 var pac_open_validation_forms = new Array();
-
 var pacitem_table;
 var pacitem_open_validation_forms = new Array();
 
@@ -59,7 +57,6 @@ function pac_reload()
 
         }
     });
-
 }
 
 function pac_rowClickHandler(){

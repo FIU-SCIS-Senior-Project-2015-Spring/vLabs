@@ -8,8 +8,6 @@ var ord_table;
 var orditems_table;
 var ordersphpURL = "/modules/module_shoppingcart/server/orders.php";   //jh original"../server/orders.php";
 
-
-
 function openOrdersTab(){
 	 $('#tabs').tabs("select","#ordersTab");
 }
@@ -17,31 +15,19 @@ function openOrdersTab(){
 function ord_reload()
 {
 
-
-
-
-	$("#orderItemsWrapper").hide();
-
+    $("#orderItemsWrapper").hide();
     $("#ordersWrapper").show();
-    
     $('#ordersContainer').empty();
     
 	createLoadingDivAfter("#ordersContainer","Loading orders");
 
 	var userid= $("#userid").val();
 	var role = $("#role").val();	
-	//window.alert("userid = " + userid +  " role is: " + role);
-	//var userid = "admin";  //jh changed:$("#userid").val()
-	//var role = "admin";  //jh changed:$("#role").val();
-	
 	var action = 'reloadOrders';
 	if(role=="administrator"){
-		//echo '<script type="text/javascript">alert("in orders.jh role is admin")</script>';
 		action = 'reloadOrdersAll';
-		//window.alert("target url is: " + ordersphpURL);
 	}
 
-	 //window.alert("BEFORE ajax section role= "+ role);
     $.ajax({
         type: 'POST',
         url: ordersphpURL,
@@ -51,15 +37,13 @@ function ord_reload()
             userid: userid
         },
         success: function(data){
-         //window.alert("in ajax section within success function");
+
         	removeLoadingDivAfter("#ordersContainer");
           	
         	$('#ordersContainer').html( '<table cellpadding="0" cellspacing="0" border="0" class="display" id="ordersTable"></table>' ); //jh $('resource').html('something') adds something to resource 
            
-        	//console.log(data);
         	if(role=="administrator"){
         		
-	        	
 	        	ord_table = $("#ordersTable").dataTable({
 	                "aaData": data,
 	                "aaSorting": [[ 3, "desc" ]],
@@ -111,12 +95,10 @@ function ord_reload()
     });
 }
 
-
 function ord_rowClickHandler(){
 
 	var nTr = this.parentNode;
 	var open=false;
-	
 
 	try{
 		if($(nTr).next().children().first().hasClass("ui-state-highlight"))
@@ -134,16 +116,12 @@ function ord_rowClickHandler(){
 	}
 }
 
-
 function ord_openDetailsRow(nTr){
 
 
 	ord_table.fnOpen( nTr, ord_formatDetails(ord_table, nTr), "ui-state-highlight" );	
 	var aData = ord_table.fnGetData( nTr );
-
-	//window.alert("in ord_openDetailsRow: " + "#seeDetails"+aData[0] );	
-
-	var containerId = "#orderDetails"+aData[0];			
+	var containerId = "#orderDetails"+aData[0];
 	jQuery("#seeDetails"+aData[0]).button();
 	jQuery("#seeDetails"+aData[0]).click(function(){  //jh here is the event handler for this button!!
 		orditems_reload(aData[0],aData[1]);
@@ -202,17 +180,15 @@ function ord_formatDetails ( oTable, nTr )
 
 	sOut += '	</div>';
 	sOut += '</div>';
-	//window.alert("in ord_formatDetails: " + sOut );
+
 	return sOut;
 }
 
 function orditems_reload(orderid, ordernumber)
 {
 
-	//window.alert("in orditems_reload");
 	$("#ordersWrapper").hide();
 	
-	//construct the container for order items 
 	var div = '';
     div+='		<p class="tableTop">';
     div+='			<span class="page-title">Order '+ordernumber+'</span>';
@@ -235,7 +211,6 @@ function orditems_reload(orderid, ordernumber)
 	
 	createLoadingDivAfter("#orderItemsContainer","Loading orders items");
 
-	//window.alert("in orders.js , orderitems_reload, before ajax call");
 	//Load Table
     $.ajax({
         type: 'POST',
@@ -324,8 +299,7 @@ function orditems_openDetailsRow(nTr){
 function orditems_formatDetails ( oTable, nTr )
 {
 
-	
-	var role = $("#role").val();	
+	var role = $("#role").val();
 	var aData = oTable.fnGetData( nTr );
 	var id = aData[0];
 	var sOut = '';
@@ -460,8 +434,6 @@ function orditems_cancel(containerId, nTr, id)
  			                      false,
  			                      false); 
 	                
-
-
 	        },
 	        error: function(XMLHttpRequest, textStatus, errorThrown){
 	        	removeLoadingDivAfter(containerId);
@@ -534,7 +506,6 @@ function ord_cancel(containerId, nTr, orderid)
 	        }
 	    });
 }
-
 
 function ord_decline(containerId, nTr, orderid)
 {

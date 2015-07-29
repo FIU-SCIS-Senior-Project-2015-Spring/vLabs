@@ -1,6 +1,5 @@
 <?php
 
-
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 /*
@@ -11,33 +10,7 @@ error_reporting(E_ALL);
  *
  */
 
-
 require_once((dirname(__FILE__)).'/db/db.php');
-
-
-//$config_file = "checkout/google_checkout/google.conf"; jh
-//$comment = "#"; jh
-
-/*
-$fp = fopen($config_file, "r");
-
-while (!feof($fp)) {
-  $line = trim(fgets($fp));
-  if ($line && !ereg("^$comment", $line)) {
-    $pieces = explode("=", $line);
-    $option = trim($pieces[0]);
-    $value = trim($pieces[1]);
-    $config_values[$option] = $value;
-  }
-}
-fclose($fp);
-*/ 
-
-
-/*
-
-$Grequest = new GoogleRequest($merchant_id, $merchant_key, $server_type, $currency);
-*/
 
 if (isset($_POST['action'])) {
 	$action = $_POST['action'];
@@ -56,16 +29,9 @@ if (isset($_POST['email'])) {
 //Reload orders of an specific user depending on who is logged in
 if ($action == "getModules") {
 
-	//echo '<script type="text/javascript">alert("In reloadOrders")</script>';
-	
-		//echo '<script type="text/javascript">alert("user id is: '.$userid .'")</script>';
-	//call to the db
 	$modules = db_getModules();
-	//echo '<script type="text/javascript">alert("after db_getUserById")</script>';
-
     echo json_encode($modules);
 
-	//Reload all orders of all users. Only used for administartor view
 }
 
 if ($action =="exportData") {
@@ -77,9 +43,6 @@ if ($action =="exportData") {
     } else {
         $moduleId = "";
     }
-
-
-//echo "moduleId is: " .$moduleId . PHP_EOL;
 
     if ($moduleId != "") {
         $modulePrefix = eF_getTableData('module_vlabs_shoppingcart_dbadmin', 'moduleprefix', 'id=' . $moduleId);
@@ -114,8 +77,6 @@ if ($action =="exportData") {
 
         $fp = file_get_contents(G_ROOTPATH . 'www/modules/' . $outputfile);
         if ($fp) {
-            //echo "read data is: " . PHP_EOL;
-            //var_dump($fp);
             echo $fp;
         } else {
             echo "";
@@ -132,9 +93,6 @@ if ($action =="exportSchema"){
     } else {
         $moduleId = "";
     }
-
-
-//echo "moduleId is: " .$moduleId . PHP_EOL;
 
     if($moduleId!="") {
         $modulePrefix = eF_getTableData('module_vlabs_shoppingcart_dbadmin', 'moduleprefix', 'id=' . $moduleId);
@@ -167,11 +125,8 @@ if ($action =="exportSchema"){
         */
 
         $output = shell_exec('mysqldump -u ' . G_DBUSER . ' -p' . G_DBPASSWD . ' --no-data efront module_vlabs_shoppingcart module_vlabs_shoppingcart_store_inventory module_vlabs_shoppingcart_order module_vlabs_shoppingcart_payment_method module_vlabs_shoppingcart_user_payment module_vlabs_shoppingcart_order_summary module_vlabs_shoppingcart_package_summary module_vlabs_shoppingcart_preassignment module_vlabs_shoppingcart_log >' . G_ROOTPATH . 'www/modules/' . $outputfile);
-        //echo "about to open file using file_get_contents";
         $fp = file_get_contents(G_ROOTPATH . 'www/modules/' . $outputfile);
         if ($fp) {
-            //echo "read data is: " . PHP_EOL;
-            //var_dump($fp);
             echo $fp;
         } else {
             echo "";
@@ -179,7 +134,6 @@ if ($action =="exportSchema"){
     }
 
 }
-
 
 if ($action =="deleteData"){
 
@@ -192,12 +146,9 @@ if ($action =="deleteData"){
     }
 
     $passfail = "";
-//echo "moduleId is: " .$moduleId . PHP_EOL;
 
     if($moduleId!=""){
         $modulePrefix = eF_getTableData('module_vlabs_shoppingcart_dbadmin', 'moduleprefix', 'id='. $moduleId);
-
-
 
                 $sql = 'select TABLE_NAME from INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME LIKE "' . $modulePrefix[0]['moduleprefix'] .'%"';
                 $result = eF_executeQuery($sql);
@@ -209,8 +160,6 @@ if ($action =="deleteData"){
                         if ($r['TABLE_NAME'] != "module_vlabs_shoppingcart_dbadmin") {
                             $sql = 'DELETE ' . $r['TABLE_NAME'] . ' FROM ' . $r['TABLE_NAME'];
                             $resultSql = eF_executeQuery($sql);
-                            //echo "data deletion action result is: " .PHP_EOL;
-                            //var_dump($result);
                             if ($resultSql != null) {
                                 $passfail = "pass";
                             } else {
@@ -219,12 +168,7 @@ if ($action =="deleteData"){
                             }
                         }
                     }
-
                 }
-                //echo "list of tables: " .PHP_EOL;
-                //echo $tableList;
-                //var_dump($tables_array);
-
 
         echo $passfail;
     }else{
@@ -234,15 +178,11 @@ if ($action =="deleteData"){
 
 if ($action =="deleteSchema") {
 
-
     if (isset($_POST['modId'])) {
         $moduleId = $_POST['modId'];
     } else {
         $moduleId = "";
     }
-
-
-//echo "moduleId is: " .$moduleId . PHP_EOL;
 
     $result = eF_executeQuery("drop table if exists module_vlabs_shoppingcart");
     if ($result == null) {
@@ -289,7 +229,6 @@ if ($action =="deleteSchema") {
         return "fail";
         return;
     }
-
 
     echo "pass";
 

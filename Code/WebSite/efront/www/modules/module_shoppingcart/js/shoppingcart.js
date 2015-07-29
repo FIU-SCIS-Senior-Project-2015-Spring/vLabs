@@ -5,7 +5,6 @@
  *
  */
 
-
 var shoppingcartphpURL = '/modules/module_shoppingcart/server/shoppingcart.php';
 
 function openShoppingCartTab()

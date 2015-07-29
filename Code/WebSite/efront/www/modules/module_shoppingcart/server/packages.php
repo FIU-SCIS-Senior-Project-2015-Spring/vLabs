@@ -12,16 +12,12 @@ if (isset($_POST['action'])) {
 	$action = "";
 }
 
-
-
-
 if ($action == "reloadPackages") {
 
 
     $sql = 'SELECT COUNT(*) FROM information_schema.tables  WHERE table_schema = "efront"  AND table_name = "module_vlabs_shoppingcart_order"';
     $tcount = eF_executeQuery($sql);
-    //echo "checking if orders table exists: " . PHP_EOL;
-    //var_dump($tcount);
+
     foreach($tcount as $t){
         if($t['COUNT(*)'] < 1 ) {
             echo json_encode(array());
@@ -31,11 +27,6 @@ if ($action == "reloadPackages") {
 	$packages = db_getPackages();
 
 	$formattedPackages= array();
-
-	//if (is_array($packages)) {
-	//echo "TESTING mysql_result";
-   //var_dump($packages);
-	//echo "END TESTING mysql_result";
 
 		foreach ($packages as $package) {
 
@@ -50,14 +41,10 @@ if ($action == "reloadPackages") {
 
 			array_push($formattedPackages, $p);
 		}
-		 
-//	}
 
 	echo json_encode($formattedPackages);
 
-
 } else if ($action == "getPackageItems") {
-
 
     if (isset($_POST['packageId'])) {
         $packageId = $_POST['packageId'];
@@ -66,7 +53,6 @@ if ($action == "reloadPackages") {
     }
 
     $package = refactored_db_getItem($packageId);
-
     $summary = refactored_db_getPackageSummary($packageId);
     $formattedPackageItems = array();
     $packageTotal = 0;
@@ -77,7 +63,6 @@ if ($action == "reloadPackages") {
 
             $subtotal = $packageDetail['quantity'] * $packageDetail['price'];
             $total += $subtotal;
-
             $item = refactored_db_getItem($packageDetail['itemid']);
 
             if($item!=null)
@@ -99,7 +84,6 @@ if ($action == "reloadPackages") {
     }
 
     echo json_encode(array("package"=>$package, "items"=>$formattedPackageItems));
-	//echo json_encode(array("package"=>$package_array, "items"=>$formattedPackageItems));
 
 }else if($action=="getPkgItem"){
 
@@ -112,12 +96,7 @@ if ($action == "reloadPackages") {
 
 	
 	$packageDetail = db_getPackageItem($id);
-    //echo "packageDetail is: ";
-    //var_dump($packageDetail);
-    //echo "packageDetail->itemid is: " . $packageDetail['itemid'];
 	$item = refactored_db_getItem($packageDetail['itemid']);
-	//echo "refactored_db_getItem is: ";
-    //var_dump($item);
 	$subtotal = $packageDetail['quantity'] * $packageDetail['price'];
 				
 	if($item!=null && $packageDetail!=null)
@@ -223,9 +202,6 @@ if ($action == "reloadPackages") {
 	else
 	$active=0;
 
-
-
-
 	if (isPackageBeingUsed($packageid)) {
 		$result = array('success' => false, 'message' => 'Package cannot be deleted since it is being referenced in existing orders');
 	} else {
@@ -233,22 +209,7 @@ if ($action == "reloadPackages") {
 
 		if (db_modifyPackage($packageid,$packagename,$packagedesc ,$active , $billable)) {
 
-          //$p_array = array();
 			$package = refactored_db_getItem($packageid);
-          /*
-			if(package!=null){
-				foreach($package as $p) {
-                    $p_array = array("id" => $p['id'],
-                        "name" => $p['name'],
-                        "description" => $p['description'],
-                        "billable" => $p['billable'],
-                        "active" => $p['active'],
-                        "price" => $p['price'],
-                        "creationdate" => $p['creationdate']
-                    );
-                }
-			}
-	        */
 			$result = array('success' => true, 'package' => $package);
 		} else {
 			$result = array('success' => false, 'message' => "Package could not be modified");
@@ -277,7 +238,6 @@ if ($action == "reloadPackages") {
 		}
 	}
 
-
 	echo json_encode($result);
 } else if ($action == "getElegibleItems") {
 
@@ -295,16 +255,8 @@ if ($action == "reloadPackages") {
    }
 	$billable = $package_billable;
 	$billable = $billable==1;
-
-
 	$output[] = '';
-
-	
 	$result = db_getElegibleItemsForPackage($packageid);
-
-    //echo "db_getElegibleItemsForPackage is: " .PHP_EOL;
-    //var_dump ($result);
-    //echo PHP_EOL;
 
 	if ($result == null)
 		$result = array();
@@ -315,32 +267,19 @@ if ($action == "reloadPackages") {
 		    $result = array_merge($result, $itemtoinclude);
 	}
 
-    //echo "after array merge: " . PHP_EOL;
-    //var_dump($result);
-    //echo PHP_EOL;
-
-
 	$priceArr = array();
 	
 	foreach ($result as $item) {
 		
 		array_push($priceArr, array("id"=>$item['id'], "price"=>$item['price']));
-		
-		
+
 		if($billable)
 			$output[] = '<option value="' . $item['id'] . '">' . $item['name'] . '- $' . $item['price'] . '</option>';
 		else 
 			$output[] = '<option value="' . $item['id'] . '">' . $item['name'] . '- Not billable </option>';
 	}
 
-
-
-
 	$content = join('', $output);
-
-    //echo "content is: " . PHP_EOL;
-    //var_dump($content);
-    //echo PHP_EOL;
 
 	$response = array("content" => $content,"billable" => $billable, "prices"=>$priceArr);
 	echo json_encode($response);
@@ -370,8 +309,6 @@ if ($action == "reloadPackages") {
 			);		
 		
 	}
-
-
 
 	echo json_encode($p);
 	
@@ -468,21 +405,16 @@ if ($action == "reloadPackages") {
 		$price = 0.0;
 	}
 
-
-
 	if (!isPackageBeingUsed($packageid)) {
 		$sql = 'UPDATE module_vlabs_shoppingcart_package_summary ';
 		$sql .= 'SET quantity = ' . $itemqty . ', ';
 		$sql .= 'price = ' . $price . ' ';
 		$sql .= 'WHERE id  = ' . $id ;
 
-		
 		if (db_execute($sql)) {			
 			db_updatePackageTotal($packageid);			
 			$packageDetail = db_getPackageItem($id);	//refactored db call : )
 			$item = refactored_db_getItem($packageDetail['itemid']);
-
-			
 			$subtotal = $packageDetail['quantity'] * $packageDetail['price'];
 						
 			if($item!=null && $packageDetail!=null)
@@ -558,7 +490,6 @@ if ($action == "reloadPackages") {
 	
 }else if ($action == "changeStatus") {
 
-
 	if (isset($_POST['packageid'])) {
 		$packageid = $_POST['packageid'];
 	} else {
@@ -566,7 +497,6 @@ if ($action == "reloadPackages") {
 	}
 
 	$success = db_changePackageStatus($packageid);
-	
 	$response = array('success' => $success);
 	
 	echo json_encode($response);
@@ -580,10 +510,7 @@ function getPackagesWithItems($items) {
 	}
 
 	$values = substr($values, 0, -1);
-
 	$values.=")";
-
-
 	$sql = "SELECT DISTINCT * FROM module_vlabs_shoppingcart_store_inventory WHERE active = 1 and id IN ";
 	$sql .= "(SELECT DISTINCT packageid FROM module_vlabs_shoppingcart_package_summary WHERE itemid IN " . $values . ")";
 	
@@ -596,7 +523,6 @@ function getPackagesWithItems($items) {
 		$addPackage = true;
 		$summary = refactored_db_getPackageSummary($p['id']);
 
-		
 		foreach($summary as $s){
 			$elegible = false;
 
@@ -626,7 +552,7 @@ function isPackageBeingUsed($packageid) {
 	$sql .= "WHERE itemid = " . $packageid;
 
 	$order_items = db_getrecords($sql);
-    $counter = 0;
+   $counter = 0;
     foreach($order_items as $o){
         $counter++;
     }
@@ -636,7 +562,5 @@ function isPackageBeingUsed($packageid) {
 	else
 	    return false;
 }
-
-
 
 ?>

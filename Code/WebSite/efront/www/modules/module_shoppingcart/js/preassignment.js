@@ -9,9 +9,7 @@
 
 var pre_table;
 var pre_open_validation_forms = new Array();
-
 var preassignphpURL = "/modules/module_shoppingcart/server/preassignment.php";
-
 
 function openPreassignmentTab()
 {
@@ -19,12 +17,10 @@ function openPreassignmentTab()
 
 }
 
-
 function pre_reload()
 {
 	$("#preassignmentContainer").html("");
 	
-	//alert("In preassignment.js, pre_load() function");
 	createLoadingDivAfter("#preassignmentContainer","Loading preassignments");
 
     $.ajax({
@@ -525,10 +521,7 @@ function pre_deletePreassignment(containerId,nTr, id){
         	displayError(containerId,errorThrown); 
         }
     });
-	
-	
 }
-
 
 function pre_addFormValidation(containerId){
 
@@ -600,7 +593,6 @@ function pre_showBasicFormFields(containerId){
 
 function pre_showForm(containerId){
 
-	
 	  $(containerId+" .itemPreSpan").show();
 	  $(containerId+" .coursePreSpan").show();
 	  $(containerId+" .quantityPreSpan").show();

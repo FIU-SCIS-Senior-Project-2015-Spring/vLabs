@@ -1,6 +1,4 @@
 
-
-
 function tz_init(){
 	//Remove unused update button
 	$("#page .navbar .navbutton").empty();

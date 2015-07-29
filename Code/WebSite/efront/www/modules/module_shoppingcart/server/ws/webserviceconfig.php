@@ -88,7 +88,7 @@ function ws_isResourceAvailable($itemId, $qty) {
 		}		
 	}else{
 		
-		$timeZoneId = db_getUserTimeZone($userId)['data'];
+		$timeZoneId = db_getUserTimeZone($userId)['timezone'];
 		$item = refactored_db_getItem($itemId);
 	    $creditType = ws_getCreditTypeById($item['referenceid']);
 	    $course = db_getCourseById($creditType->courseId);

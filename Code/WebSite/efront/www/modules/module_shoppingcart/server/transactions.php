@@ -103,18 +103,8 @@ function saveTransaction($orderid, $payment) {
             	}
             }          
         }
-
-        //echo "Item success = ".$orderItemsSuccess[$itemIndex]["success"];
 		$itemIndex++;
     }
-    
-    
-    //print_r($orderItemsSuccess);
-    //print_r($itemsIndexArr);
-    
-    //echo "Single Items :";
-    //print_r($itemsArr);
-    
     //Send request for order items that were not packages. if there are any
     $successIndex = 0;
 	$assignments =  array();
@@ -126,32 +116,24 @@ function saveTransaction($orderid, $payment) {
     	}else{
     		array_push($assignments, $response);
     	}
-    	
-    	
-    	//print_r("assign quota response ".$assignments);
-    	
+
     	$i = 0;    	 
     	//Go thorugh the response to check which item failed
     	foreach ($assignments as $assignment) {
     		
     		$index = $itemsIndexArr[$i++];
-    		
-    		//print_r("index ".$index);
-    		
     		$orderItemsSuccess[$index]["success"]=$assignment->active;
     	}
     	     	
     }
 
-    //echo "OrderItemsSuccess :";
-    //print_r($orderItemsSuccess);
     return $orderItemsSuccess;
 }
 
 
 function cancelTransaction($orderid){
 	
-	//Get orde details
+	//Get order details
 	$order = db_getOrderById($orderid);
 	$order_userid = "";
 	$order_ordernumber = "";
@@ -222,8 +204,5 @@ function cancelTransaction($orderid){
 	return $assignmentsResponse;
 	
 }
-
-
-
 
 ?>

@@ -7,9 +7,8 @@ require_once('db/db.php');
 
 require_once('packages.php');
 require_once ('transactions.php');
-
-//header("Content-type: text/x-json");
-
+//jh 7/28/2015 remove header if issues !!!
+header("Content-type: text/x-json");
 
 if (isset($_POST['action'])) {
 	$action = $_POST['action'];
@@ -21,26 +20,19 @@ if ($action == "reload") {
 
     $sql = 'SELECT COUNT(*) FROM information_schema.tables  WHERE table_schema = "efront"  AND table_name = "module_vlabs_shoppingcart_order"';
     $tcount = eF_executeQuery($sql);
-    //echo "checking if orders table exists: " . PHP_EOL;
-    //var_dump($tcount);
+
     foreach($tcount as $t){
         if($t['COUNT(*)'] < 1 ) {
             echo json_encode(array());
             return;
         }
     }
-	
-
 
 	$preassignments = db_getPreassignments(); //refactored db call : )
-
-
-	
 	$formattedPreasssignments = array();
 	
 	foreach ($preassignments as $p){
 		$item = refactored_db_getItem($p['itemid']);
-		//echo '<script type="text/javascript">alert("foreach loop, preassignment.php source itemid: '. $itemid . '")</script>';
 		$course = db_getCourseById($p['courseid']);
 		$course_id = "";
 		$course_shortn = "";
@@ -48,8 +40,7 @@ if ($action == "reload") {
 		foreach ($course as $c)
 		{
 			$course_id = $c['id'];
-			$course_shortn = $c['name'];
-			//echo '<script type="text/javascript">alert("For each loop, preassignment.php courseid: '. $courseid . ' course shortname: '. $courseshortn.'")</script>';
+			$course_shortn = $c['shortname'];
 		}
 
 		$preassignment = array($p['id'],
@@ -75,7 +66,7 @@ if ($action == "reload") {
 	foreach ($courses as $c){
 		$course = array(
 				"id"=>$c['id'],
-				"name"=>$c['name']);
+				"name"=>$c['shortname']);
 		array_push($formattedCourses, $course);
 	}
 
@@ -93,8 +84,6 @@ if ($action == "reload") {
 	$courses_arr = array();
 	array_push($courses_arr,$courseId);
 
-    //echo "courseid argument is:" . $courseId . "<br>";
-
 	try {
 		
 		$params = array('courseId' => $courses_arr);
@@ -106,56 +95,33 @@ if ($action == "reload") {
 		else
 			$references = $response->creditType;
 
-        //echo "references: " . PHP_EOL;
-        //var_dump($references);
-		
 		$items = array();
 		$itemsForPackages = array();
 
 		foreach ($references as $reference) {
 			$itemsbyref = db_getItemsByReference($reference->id);
 
-           //echo "itemsbyref reference->id = ".$reference->id. ": ". PHP_EOL;
-           //var_dump($itemsbyref);
-
 			if ($itemsbyref != null)
 				array_merge($items, $itemsbyref);
 
-            //echo "after array_push of items and itemsbyref: ". PHP_EOL;
-            //var_dump($items);
-			//Get elegible items for packages
 			$itemsForPkgbyref= db_getPackageItemsByReference($reference->id);
-          //echo "db_getPackageItemsByReference:  ".PHP_EOL;
-          //var_dump($itemsForPkgbyref);
-          //echo PHP_EOL;
 
 			if ($itemsForPkgbyref != null)
 				$itemsForPackages = array_merge($itemsForPackages, $itemsForPkgbyref);
 
 		}
 
-        //echo "items array after foreach(references)loop:  ".PHP_EOL;
-        //var_dump($items);
-        //echo PHP_EOL;
-
 		$formattedStoreItems = array();
 
 		if (is_array($items)) {
 			foreach ($items as $item) {
-              //echo '<script type="text/javascript">alert("id: '. $item['id']. ' , name:  '. $item['name'] . ' , type: ' .$item['type'] . '")</script>';
-              //echo PHP_EOL;
-              //echo "within foreach items,  item array is: ". PHP_EOL;
-              //echo var_dump($item);
+
 				$item_array = array("id" => $item['id'],
                     "name" => $item['name'],
                     "type" => $item['type']);
 				 array_push($formattedStoreItems, $item_array);
 			}
-           //echo "formattedStoreItems: " . PHP_EOL;
-           //var_dump($formattedStoreItems);
 
-           // echo "itemsForPackages: ";
-           // var_dump($itemsForPackages);
         if($itemsForPackages!=null) {
             $packages = getPackagesWithItems($itemsForPackages);
 
@@ -165,21 +131,6 @@ if ($action == "reload") {
             }
         }
 		}
-		
-		
-/*		//Filter Items that has been assigned to that course already
-		$filteredItems = array();
-		foreach ($formattedStoreItems as $item) {
-			$preassignment = db_getPreassignment($courseId, $item["id"]);
-			//print_r($preassignment);
-			if($preassignment == null){
-				array_push($filteredItems, $item);				
-			}
-		}*/
-
-       //echo PHP_EOL;
-       //echo "before json encode, array is: " . PHP_EOL;
-       //var_dump($formattedStoreItems);
 
 		echo json_encode($formattedStoreItems);
 		
@@ -191,7 +142,6 @@ if ($action == "reload") {
 		echo $soapfault->getMessage();
 	}
 		
-	
 } else if ($action == "addPreassignment") {
 
 	
@@ -321,7 +271,7 @@ if ($action == "reload") {
     foreach($course as $c){
 
         $course_id = $c['id'];
-        $course_name = $c['name'];
+        $course_name = $c['shortname'];
     }
 	$preassignmentResponse = array(
 			"id"=>$id,
@@ -337,9 +287,6 @@ if ($action == "reload") {
 	$assignments = array();
 		
 	$preassignment = db_getPreassignmentById($purchaseId);
-
-    //echo "refactored db call preassignment array is: " . PHP_EOL;
-    //var_dump($preassignment);
 
 	if($item['type']=="PACKAGE"){
 		$packageItems = db_getPackageItems($item['id']);
@@ -368,10 +315,7 @@ if ($action == "reload") {
 	}else{
 		array_merge($assignmentsResultArr,$assignmentsResult);
 	}
-	
-	
-	//print_r($assignmentsResultArr);
-	
+
 	foreach ($assignmentsResultArr as $ar){
 		if(!$ar->active){
 			$preassignmentResponse["active"] =0;
@@ -388,7 +332,6 @@ if ($action == "reload") {
 	
 	echo json_encode(array("success"=>$success, "preassignment"=>$preassignmentResponse, "message"=>$message));
 	
-	
 }else if ($action == "deletePreassignment") {
 
 	if (isset($_POST['id'])) {
@@ -402,10 +345,8 @@ if ($action == "reload") {
 	$item = db_getItem($preassignment['itemid']);
     $purchaseId = $id."".$item->id;
 	$assignments = array();
-		
-    $quantity = $preassignment['quantity'];
+   $quantity = $preassignment['quantity'];
 
-	
 	if($item->type=="PACKAGE"){
 		$packageItems = db_getPackageItems($item->id);
 		foreach($packageItems as $pi){
@@ -440,7 +381,6 @@ if ($action == "reload") {
 	
 	echo json_encode(array("success"=>$success, "message"=>$message));
 
-	
 }else if ($action == "getPreassignment") {
 
 	if (isset($_POST['id'])) {
