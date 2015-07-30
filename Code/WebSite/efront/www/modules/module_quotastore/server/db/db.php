@@ -760,16 +760,25 @@ function db_getUserByEmail($email)
 }
 
 
+function db_getUserByUID($uid)
+{
+
+    $sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE id =".$uid;
+    return user_array(eF_executeQuery($sql));
+
+}
+
+
 function db_getUserById($userid)
 {
-	$sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE username = '".$userid."'";
+	$sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE username ='".$userid."'";
     return user_array(eF_executeQuery($sql));
 }
 
 
 function refactored_db_getUserById($userid)
 {
-    $sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE username =".$userid;
+    $sql = "SELECT * FROM module_vlabs_quotasystem_user_profile WHERE username ='".$userid."'";
     return user_array(eF_executeQuery($sql));
 }
 

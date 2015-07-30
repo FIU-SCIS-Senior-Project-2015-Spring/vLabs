@@ -104,10 +104,10 @@ if ($action == "proceedToCheckout") {
     $xml_obj = simplexml_load_string(stripslashes(urldecode($cart)));
 
     $ordernumber = uniqid("IA",false);
-
+    $uid = refactored_db_getUserById($userid);
     //Insert order in database
     // jh NOTE come back to this one, you need to resolve issue with getting user id if(!db_addNoPaymentOrder(refactored_db_getUserById($userid)['id'], $ordernumber))
-    if(!db_addNoPaymentOrder(4, $ordernumber))
+    if(!db_addNoPaymentOrder($uid['id'], $ordernumber))
     {
     	$result = array("success"=>false, "message" => "Order could not be added");
     	echo json_encode($result);
@@ -186,7 +186,7 @@ if ($action == "proceedToCheckout") {
 
     //Send Email to customer
   
-	$buyer = refactored_db_getUserById($dborder_userid);
+	$buyer = db_getUserByUID($dborder_userid);
 
     // Buyer Information: added by JAM - 06/18/2012	
     //$profile_fields = profile_user_record($dborder_userid);  jh  7/13/2015 Note: need to look for a comparable function in efront.
