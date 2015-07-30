@@ -516,8 +516,10 @@ function pacitem_reload(packageId, packageName){
 	//Add Listener to add item to package button	
 	$("#packageItemsWrapper #add-package_item"+packageId).button();	
 	$("#packageItemsWrapper #add-package_item"+packageId).die();	
-	$("#packageItemsWrapper #add-package_item"+packageId).live("click", function() {	
-		$("#packageItemsWrapper #add-package_item"+packageId).button("disable");	
+	//$("#packageItemsWrapper #add-package_item"+packageId).live("click", function() {
+   $("#packageItemsWrapper #add-package_item"+packageId).click(function() {
+		//$("#packageItemsWrapper #add-package_item"+packageId).button("disable");
+       //$("#packageItemsWrapper #add-package_item"+packageId).prop("disabled",true);
 		var containerId = "#addItemToPackageForm"+packageId;
 		pacitem_openForm(containerId, true, packageId, packageName);
 	});
@@ -558,7 +560,7 @@ function pacitem_reload(packageId, packageName){
 		                {  "sClass": "center", "sTitle": "Quantity" }, 
 		                { "sTitle": "Unit price","fnRender": function ( oObj ) {return '$ '+oObj.aData[5];}},
 		        		{ "sTitle": "New price", "fnRender": function ( oObj ) {return '$ '+oObj.aData[6];}},
-		        		{ "sTitle": "Subtotal", "fnRender": function ( oObj ) {return '$ '+oObj.aData[7];}},
+		        		{ "sTitle": "Subtotal", "fnRender": function ( oObj ) {return '$ '+oObj.aData[7];}}
 		                ],
 		        		"bJQueryUI": true,
 		        		"bAutoWidth": false,
@@ -578,7 +580,7 @@ function pacitem_reload(packageId, packageName){
 		                { "sClass": "center", "sTitle": "Quantity" }, 
 		                {  "bVisible": false },
 		        		{  "bVisible": false },
-		        		{  "bVisible": false },
+		        		{  "bVisible": false }
 		                ],
 		        		"bJQueryUI": true,
 		        		"bAutoWidth": false,
@@ -755,7 +757,7 @@ function loadOrderPackageItemsTable(packageId,packageName, data, orderid, ordern
    					return '$ '+oObj.aData[6];
    				},
    			 	"aTargets": [ 6 ]
-   		},
+   		}
         ],
 		"bJQueryUI": true,
 		"sPaginationType": "full_numbers"
@@ -768,7 +770,9 @@ function loadOrderPackageItemsTable(packageId,packageName, data, orderid, ordern
 
 function pacitem_openForm(containerId, add, nTr, id)
 {
-	
+
+    //$("#packageItemsWrapper #add-package_item"+packageId).button("enable");
+    $("#packageItemsWrapper #add-package_item"+packageId).button("disable");
 	var packageId = $("#packageItemsWrapper .package-id").val();
 
 	
