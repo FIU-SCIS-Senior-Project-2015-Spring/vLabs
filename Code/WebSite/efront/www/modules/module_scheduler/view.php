@@ -14,7 +14,37 @@
 <link href="fullcalendar/css/cmxformTemplate.css" rel="stylesheet" type="text/css" />
 <link href="fullcalendar/css/cmxform.css" rel="stylesheet" type="text/css" />
 <link rel='stylesheet' type='text/css' href='fullcalendar/css/flexigrid/flexigrid.css' />
-
+<?php 
+	require_once("../../../libraries/configuration.php");
+	//session_start();
+	$tid = eF_getTableData('themes', 'name', 'id='. $_SESSION['s_theme']);
+	switch($tid[0]['name']){
+		case 'default':
+		case 'eFront2013': 
+		case 'IE6':
+			//default
+			 echo "<link rel='stylesheet' type='text/css' href='jquery-ui-themes/themes/default/jquery-ui.css' />";	
+			break;
+		case 'blue':
+		case 'enterprise':
+			//blue
+			 echo "<link rel='stylesheet' type='text/css' href='jquery-ui-themes/themes/blue/jquery-ui.css' />";	
+			break;
+		case 'blue_html5':
+		case 'modern':
+		case 'modern_uk':
+			//bluehtml
+			 echo "<link rel='stylesheet' type='text/css' href='jquery-ui-themes/themes/bluehtml/jquery-ui.css' />";	
+			break;
+		case 'green':
+			//green
+			 echo "<link rel='stylesheet' type='text/css' href='jquery-ui-themes/themes/green/jquery-ui.css' />";	
+			break;
+		default:
+			 echo "<link rel='stylesheet' type='text/css' href='jquery-ui-themes/themes/default/jquery-ui.css' />";	
+			break;
+	} 
+?>
 <script type='text/javascript' src='fullcalendar/jquery/jquery-1.4.2.min.js'></script>
 <script type='text/javascript' src='fullcalendar/jquery/jquery-ui-1.8.9.custom.min.js'></script>
 <script type='text/javascript' src='fullcalendar/jquery/jquery.ptTimeSelect.js'></script>
@@ -270,7 +300,7 @@ $(document).ready(function() {
 });
 var courses = new Array(); // initializing the javascript array
 var schedColors = new Array();
-var availColors = <?= 10 ?>;
+var availColors = <?=10?>;
 
 function checkAvailableColors(){
 
@@ -285,24 +315,26 @@ function getAvailableColors(){
 */
 
 <?php
-	//session_start();
+
+
 	//$fetched = $smarty->fetch('module_scheduler.tpl');
 	//$thing = $smarty->getTemplateVars('T_SCHEDULER_ROLE');
 	//echo $thing;
 	// Google calendar Feed
 	//$calendarfeed = getGoogleCalURL($USER->username);
-	//$newuser = get_record('user','username',$USER->username);
-	//$userprofile = get_record('user_info_data','fieldid',7,'userid',$newuser->id);
-	$calendarfeed = "";//$userprofile->data;
-
+  	$uid = $_REQUEST['currentUser'];
+  	//$newuser = get_record('user','username',$USER->username);
+  	$uname = eF_getTableData('users', '*', "login = '". $uid . "'"); 
+	$userprofile = eF_getTableData('module_vlabs_user_info_data', '*', "field_id = 7 and email = '". $uname[0]['email']."'");// get_record('user_info_data','fieldid',7,'userid',$newuser->id);
+	$calendarfeed = $userprofile[0]['data'];
 	//Colors
 	$stack = array();
-	//$colors = get_records('scheduler_colormap','enabled',1); 
-/* 	foreach ($colors as $color)
+	$colors = eF_getTableData('module_vlabs_scheduler_colormap', '*', 'enabled = 1');//get_records('scheduler_colormap','enabled',1); 
+ 	foreach ($colors as $color)
 	{
-		array_push($stack, $color->colorcode);		
-	} */
-	$color_str = "";//implode(",", $stack);
+		array_push($stack, $color['colorcode']);		
+	} 
+	$color_str = implode(",", $stack);
 	
 	//Courses
 	
@@ -346,10 +378,9 @@ function getAvailableColors(){
 	//echo $this->get_template_vars('T_SCHEDULER_ROLE');
 	// this will output nothing as the template has not been executed
 	// fetch the template to a variable
-	$role = "";//$role_obj->shortname;
-	
+	$role = $uname[0]['user_type'];//$_SESSION['s_login'];//$role_obj->shortname;
 	//Users...
-	//if($role=='admin')
+	if($role=='administrator')
 	{
 	
 		//Users
@@ -357,17 +388,16 @@ function getAvailableColors(){
 		//$sql = "SELECT * FROM {$CFG->prefix}user";
 		//$sql = "SELECT * FROM {$CFG->prefix}user WHERE username NOT IN('Guest')";
 		//$users = get_records_sql($sql);
-		//$users = get_users_listing("username");
+		$users = eF_getTableData('module_vlabs_quotasystem_user_profile', '*', '', 'username');//get_users_listing("username");
 	
 	
 		// Added by SMS: 8/7/2011
 		// To provide admin with the view of schedules for all the students.
 		array_push($usersArr, "ALL_STUDENTS");
-
-/* 		foreach ($users as $user)
+ 		foreach ($users as $user)
 		{
-			array_push($usersArr, $user->username);		
-		} */
+			array_push($usersArr, $user['username']);		
+		} 
 			
 		$users_str = implode(",", $usersArr);		
 		
@@ -386,8 +416,8 @@ function getAvailableColors(){
 ?>
 <input id ="colorList" type="hidden" value="<?=$color_str?>" />
 <input id ="coursesList" type="hidden" value="<?=$course_str?>" />
-<input id ="username" type="hidden" value="<?=$_SESSION['s_login']?>" />
-<input id ="role" type="hidden" value="<?=$role?>" />
+<input id ="username" type="hidden" value="<?=$uname[0]['login']?>" />
+<input id ="role" type="hidden" value="<?=$uname[0]['user_type']?>" />
 <input id ="calendarfeed" type="hidden" value="<?=$calendarfeed?>" />
 
 <?php

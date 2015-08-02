@@ -74,16 +74,13 @@ class module_quotasystem extends EfrontModule {
 				break;
 			case 'blue_html5':
 			case 'modern':
+			case 'modern_uk':
 				//bluehtml
 				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/bluehtml/jquery-ui.css");	
 				break;
 			case 'green':
 				//green
 				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/green/jquery-ui.css");	
-				break;
-			case 'modern_uk':
-				//flatgrey
-				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/flatgrey/jquery-ui.css");	
 				break;
 			default:
 				$smarty -> assign("T_QS_MODULE_THEME_CSS", $this -> moduleBaseLink . "jquery-ui-themes/themes/default/jquery-ui.css");	
@@ -109,7 +106,7 @@ class module_quotasystem extends EfrontModule {
 	}
 
 	public function onInstall(){
-
+		
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_used_quota");
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_user_assigned_quota");
 		eF_executeQuery("DROP TABLE IF EXISTS module_vlabs_quotasystem_course_assigned_quota");
@@ -145,7 +142,7 @@ class module_quotasystem extends EfrontModule {
 		)");
 		$res6 = eF_executeQuery("CREATE TABLE module_vlabs_quotasystem_user_profile (
 								id integer NOT NULL,
-								username character varying(45) NOT NULL,
+								username character varying(100) NOT NULL,
 								email character varying(255) NOT NULL,
 								update_ts timestamp DEFAULT now() ON UPDATE now(),
 								PRIMARY KEY (id), 

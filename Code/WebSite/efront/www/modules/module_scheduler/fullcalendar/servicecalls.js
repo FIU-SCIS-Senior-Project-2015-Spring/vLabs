@@ -5,9 +5,10 @@ var debugSTR = "";
 
 function getRequestType(user){
 	var requestType;
-	if(is_admin_user == true){
+	
+	if(is_admin_user){
 		requestType = "Host";
-	}else if(is_mentor_user == true){
+	}else if(is_mentor_user){
 		requestType = "Mentor";
 	}else{
 		requestType = "User";
@@ -17,7 +18,7 @@ function getRequestType(user){
 }
 
 function showDebug(){
-	jQuery("#debug1").html(debugSTR);	
+	$("#debug1").html(debugSTR);	
 }
 
 function clearDebug(){
@@ -43,7 +44,7 @@ function loadAppointments(start, end, init, username) {
 	var requestType;
 	var retry = 2;
 	
-	view = jQuery('#calendar').fullCalendar('getView');
+	view = $('#calendar').fullCalendar('getView');
 	//alert("IE Test: view: "+view.name);
 	start = view.visStart;
 	end = view.visEnd;
@@ -54,25 +55,25 @@ function loadAppointments(start, end, init, username) {
 	if(init){
 		showProgressBar(true);
 	}
-	//jQuery("#progressbar").progressbar( "value" , 100 );
+	//$("#progressbar").progressbar( "value" , 100 );
 	
 	getHostsCourses();
 	getResourcesAvailable(username);
 	//types = ["MENTORING","CLASSES","VIRTUAL LAB"];
-	//console.log("before requestType currentUser: " +currentUser);
+	
 	requestType = getRequestType(currentUser);
 	
 	//debugging("loadAppointments: ajax called 'getAppointments'");
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		timeout: 4000,
 		data: {
 			action:'getAppointments',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username,
 			start: start.format(dateformatter),
 			end: end.format(dateformatter),
@@ -96,18 +97,19 @@ function loadAppointments(start, end, init, username) {
 				//alert('appointments != null');
 				//alert('debug: #4');
 				
-				if(jQuery.isArray(appointments)){
+				if($.isArray(appointments)){
 					for (var j=0; j<appointments.length; j++){
 	
 	/*
 						if(eventLoader < appointments.length){
 							eventLoader++;
 							var value = (eventLoader/appointments.length) * 100;
-							jQuery("#progressbar").progressbar( "value" , value );
-							jQuery("#debug").html(value);
+							$("#progressbar").progressbar( "value" , value );
+							$("#debug").html(value);
 	
 						}
 		*/
+		
 						parseAppointment(appointments[j]);
 		
 		/*
@@ -115,7 +117,7 @@ function loadAppointments(start, end, init, username) {
 						var currId;
 						var isRecurring = false;
 						var isEditable = (appointments[j].availabilityStatus.toLowerCase() == "scheduled") ? true : false;
-						//var appointmentId = parseInt(jQuery(this).find('appointmentId').text());
+						//var appointmentId = parseInt($(this).find('appointmentId').text());
 						var appointmentId = appointments[j].id;
 						var affiliation = appointments[j].affiliationId;
 					
@@ -194,7 +196,6 @@ function loadAppointments(start, end, init, username) {
 				}
 				// change the id of the event to the affiliation id - to group them in the calendar
 				//  -- will need to switch the id back when editing.
-				//console.log("affiliationId");
 				for(var i = 0; i<tags.length; i++){
 					
 					if(tags[i].recurring){
@@ -212,34 +213,35 @@ function loadAppointments(start, end, init, username) {
 						}
 					}
 				}
-				//console.log("init");	
+					
 				if(init){	// for the initial events loading.
 	
 					//alert("Initial loading");
-					//jQuery('#calendar').fullCalendar('removeEventSource',filteredEvents);
+					//$('#calendar').fullCalendar('removeEventSource',filteredEvents);
 					filteredEvents = filterEvents(allEvents, filters);  
 					//alert('filteredEvents: '+filteredEvents.length);
-					jQuery('#calendar').fullCalendar('addEventSource', filteredEvents); 
+					$('#calendar').fullCalendar('addEventSource', filteredEvents); 
 					
 				}else{
 					//alert('not inital');
-					jQuery('#calendar').fullCalendar('removeEventSource',filteredEvents);
+					$('#calendar').fullCalendar('removeEventSource',filteredEvents);
 					renderedEvents = 0;
 					filteredEvents = filterEvents(allEvents, filters);  
-					//jQuery('#calendar').fullCalendar('refetchEvents');
-					jQuery('#calendar').fullCalendar('addEventSource', filteredEvents); 
+					//$('#calendar').fullCalendar('refetchEvents');
+					$('#calendar').fullCalendar('addEventSource', filteredEvents); 
 					
 				}
+				
 				resetCheckboxFilters(filters);
 				
 		
 				
 			}else{
-				//alert("is empty");
-				jQuery('#calendar').fullCalendar('removeEventSource',filteredEvents);
+				
+				$('#calendar').fullCalendar('removeEventSource',filteredEvents);
 				renderedEvents = 0;
 				//filteredEvents = [];
-				//jQuery('#calendar').fullCalendar('addEventSource', filteredEvents); 
+				//$('#calendar').fullCalendar('addEventSource', filteredEvents); 
 			
 				// if no appointments stop loading gif
 				showProgressBar(false);	
@@ -260,7 +262,7 @@ function loadAppointments(start, end, init, username) {
 			}
 			
 			// check if filter options are selected - for loading bar
-			jQuery("#courses").each(function() {
+			$("#courses").each(function() {
 				if(!this.checked){
 					showProgressBar(false);	
 				}
@@ -274,7 +276,7 @@ function loadAppointments(start, end, init, username) {
 			var icon = "alert";
 			
 			//Removes Appointments from calendar on error
-			jQuery('#calendar').fullCalendar('removeEventSource',filteredEvents);
+			$('#calendar').fullCalendar('removeEventSource',filteredEvents);
 			renderedEvents = 0;
 			
 			//if(retry > 0){
@@ -317,16 +319,16 @@ function scheduleAppointment(event, view){
 	
 	requestType = getRequestType(currentUser);
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		timeout: 4000,
 		data: {
 			action: 'scheduleAppointments',
 			id: '',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username,
 			start: startDate,
 			// Modified by SMS: 8/7/2011
@@ -417,16 +419,16 @@ function confirmAppointment(event, view){
 	
 	requestType = getRequestType(currentUser);
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		timeout: 4000,
 		data: {
 			action: 'scheduleAppointments',
 			id: '',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username,
 			start: startDate,
 			end: event.end.format(dateformatter),
@@ -462,16 +464,16 @@ function confirmAppointment(event, view){
 					event.availabilityStatus = appointment.availabilityStatus;
 					event.actions = getActionList(appointment.action);
 						
-					//jQuery('#calendar').fullCalendar('newEvent', event);
+					//$('#calendar').fullCalendar('newEvent', event);
 					
 					//var message = "A new appointment was scheduled.";
 					
 					var divid = '#'+view.name+"-event-"+event.id;
-					jQuery(divid).removeClass('available');
-					jQuery(divid).addClass('scheduled');
+					$(divid).removeClass('available');
+					$(divid).addClass('scheduled');
 					
 					//alert(appointment.id);
-					//jQuery('#calendar').fullCalendar('updateEvent', event);
+					//$('#calendar').fullCalendar('updateEvent', event);
 					loadAppointments(view.visStart, view.visEnd, false, currentUser);
 				
 					success = true;
@@ -513,15 +515,15 @@ function cancelAllAppointments(affiliationId, requestType){
 	
 	showProgressBar(true);
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		timeout: 4000,
 		data: {
 			action: 'cancelAllAppointments',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username,
 			affiliationId: affiliationId,
 			requestType: requestType
@@ -530,19 +532,19 @@ function cancelAllAppointments(affiliationId, requestType){
 			
 			var successText, reason, successInt;
 			
-			jQuery(data).find('reason').each(function() {
-				reason = jQuery(this).text();					  
+			$(data).find('reason').each(function() {
+				reason = $(this).text();					  
 			});
-			jQuery(data).find('success').each(function() {
-				successText = jQuery(this).text();								  
+			$(data).find('success').each(function() {
+				successText = $(this).text();								  
 			});
 			
 			successInt = parseInt(successText);
 			if(successInt > 0){
 				success = true;
-				//jQuery('#calendar').fullCalendar("removeEvents", event.id);
+				//$('#calendar').fullCalendar("removeEvents", event.id);
 				loadAppointments(view.visStart, view.visEnd, false, currentUser);
-				//jQuery('#calendar').fullCalendar('refetchEvents');
+				//$('#calendar').fullCalendar('refetchEvents');
 			}else{
 				success = false;
 				showProgressBar(false);
@@ -586,15 +588,15 @@ function cancelAppointment(event, createNew){
 		requestType = getRequestType(currentUser);
 	}
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		timeout: 4000,
 		data: {
 			action: 'cancelAppointment',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username,
 			id: event.id,
 			requestType: requestType
@@ -603,20 +605,20 @@ function cancelAppointment(event, createNew){
 			
 			var successText, reason, successInt;
 			
-			jQuery(data).find('reason').each(function() {
-				reason = jQuery(this).text();					  
+			$(data).find('reason').each(function() {
+				reason = $(this).text();					  
 			});
-			jQuery(data).find('success').each(function() {
-				successText = jQuery(this).text();								  
+			$(data).find('success').each(function() {
+				successText = $(this).text();								  
 			});
 			
 			successInt = parseInt(successText);
 			
 			if(successInt > 0){
 				success = true;
-				//jQuery('#calendar').fullCalendar("removeEvents", event.id);
+				//$('#calendar').fullCalendar("removeEvents", event.id);
 				//loadAppointments(view.visStart, view.visEnd, false, username);
-				//jQuery('#calendar').fullCalendar('refetchEvents');
+				//$('#calendar').fullCalendar('refetchEvents');
 				
 				if(createNew){
 					//alert(printEvent(event));
@@ -669,15 +671,15 @@ function modifyAppointment(event, newStart, newEnd, multiple, hasRevert, revertF
 	
 	requestType = getRequestType(currentUser);
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		timeout: 4000,
 		data: {
 			action: 'modifyAppointment',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username,
 			id: event.id,
 			start: newStart.format(dateformatter),
@@ -688,11 +690,11 @@ function modifyAppointment(event, newStart, newEnd, multiple, hasRevert, revertF
 			
 			var successText, reason, successInt;
 			
-			jQuery(data).find('reason').each(function() {
-				reason = jQuery(this).text();					  
+			$(data).find('reason').each(function() {
+				reason = $(this).text();					  
 			});
-			jQuery(data).find('success').each(function() {
-				successText = jQuery(this).text();								  
+			$(data).find('success').each(function() {
+				successText = $(this).text();								  
 			});
 			
 			successInt = parseInt(successText);
@@ -701,7 +703,7 @@ function modifyAppointment(event, newStart, newEnd, multiple, hasRevert, revertF
 				success = true;
 				//event.start = newStart.format(dateformatter);
 				//event.end = newEnd.format(dateformatter);
-				//jQuery('#calendar').fullCalendar('updateEvent', event);
+				//$('#calendar').fullCalendar('updateEvent', event);
 				if(!multiple){	// prevents multiple calls
 					loadAppointments(view.visStart, view.visEnd, false, currentUser);
 				}
@@ -747,9 +749,9 @@ function modifyAppointment(event, newStart, newEnd, multiple, hasRevert, revertF
 function emailUserAppointmentInfo(emailtype, resource, course, newappointments, oldappointments) {
 
 	//alert ("emailUserAppointmentInfo");
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		data: {
@@ -759,7 +761,7 @@ function emailUserAppointmentInfo(emailtype, resource, course, newappointments, 
 			course: course,
 			appointments: JSON.stringify(newappointments),
 			oldappointments: JSON.stringify(oldappointments),
-			username: jQuery('#username').val()
+			username: $('#username').val()
 		},
 		success: function(data) {
 			if(data.success){
@@ -783,28 +785,28 @@ function emailUserAppointmentInfo(emailtype, resource, course, newappointments, 
 ///// --------------------------------------------------------- End - EMAIL USER
 function getCourses(username) {
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
 			action:'getCourses',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username
 		},
 		success: function(data) {
 	
-			//jQuery("#coursesList").val(courses.split(",",coursesLimit));
-			//console.log(data);
+			//$("#coursesList").val(courses.split(",",coursesLimit));
+			
 			courses = [];
 			// hardcoded mentor 'all courses'
 			
 			if(is_mentor_user){
 				courses.push("All Courses");	
 			}
-			//console.log(data);
-			jQuery(data).find('courses').each(function() {
+			
+			$(data).find('courses').each(function() {
 			
 				var nodes  = this.getElementsByTagName('node');
 				
@@ -814,10 +816,11 @@ function getCourses(username) {
 					{
 						courses.push(nodes[n].childNodes[0].nodeValue);
 					}
+					
 				}
 				/*else
 				{
-					courses.push(jQuery(this).text());
+					courses.push($(this).text());
 				}
 				*/
 				
@@ -844,14 +847,14 @@ function getHosts(username) {
 	
 	//debugging("getHosts: ajax called 'getHostList'");
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		data: {
 			action: 'getHostList',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username
 		},
 		success: function(data) {
@@ -865,9 +868,6 @@ function getHosts(username) {
 				if(data.length > 0){
 					
 					for(h in data){
-						if(isNaN(h)){
-							break;
-						}
 						courses.push(data[h].name);
 					}	
 				}else{
@@ -924,16 +924,16 @@ function scheduleRecurringAppointment(events){
 	}
 	//alert('scheduleRecurringAppointments');
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		timeout: 4000,
 		data: {
 			action: 'scheduleRecurringAppointments',
 			username: username,
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			appointments: recurrApps,
 			requestType: requestType
 		},
@@ -1255,12 +1255,10 @@ function parseAppointment(appointment){
 	var currId;
 	var isRecurring = false;
 	var isEditable = (appointment.availabilityStatus.toLowerCase() == "scheduled") ? true : false;
-	//var appointmentId = parseInt(jQuery(this).find('appointmentId').text());
-
+	//var appointmentId = parseInt($(this).find('appointmentId').text());
 	var appointmentId = appointment.id;
 	var affiliation = appointment.affiliationId;
-	//console.log(appointment);
-	//console.log(affiliation);
+
 	if(appointmentId){
 		currId = appointmentId;
 	}else{
@@ -1269,6 +1267,7 @@ function parseAppointment(appointment){
 	}
 	//alert('debug: #5');
 	// tracking the appointment affiliation
+	
 	if(affiliation){
 		
 		var found = false;
@@ -1309,7 +1308,7 @@ function parseAppointment(appointment){
 	
 	// Adjust time to be on the same day - for Available appointments
 	if(appointment.availabilityStatus.toLowerCase() == "available"){
-		var newEnd = jQuery.fullCalendar.parseISO8601(appointment.end);
+		var newEnd = $.fullCalendar.parseISO8601(appointment.end);
 		newEnd.setSeconds(newEnd.getSeconds() - 1);
 		appointment.end = newEnd;
 	}
@@ -1363,7 +1362,7 @@ function orderRecuringAppointment(list,isReverse){
 	   }
 	}
 	
-	if(jQuery.isArray(list)){
+	if($.isArray(list)){
 		ordered = list.sort(sort_by('start', isReverse));
 	}
 	

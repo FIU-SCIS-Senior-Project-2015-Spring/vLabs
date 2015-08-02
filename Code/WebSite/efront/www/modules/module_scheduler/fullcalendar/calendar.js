@@ -49,7 +49,7 @@
 
 	var tags = [];		// for the affiliation ids
 	
-	var currentUser; // = jQuery('#username').val();
+	var currentUser; // = $('#username').val();
 	var eventLoader = 0;
 	var renderedEvents = 0;
 	var debug = 4;
@@ -74,51 +74,49 @@
 	
 	//Initialization
 
-	jQuery(document).ready(function() {
+	$(document).ready(function() {
 		var today = new Date();
-		//console.log(jQuery('#username').val());
-		//jQuery('input[id=scheduled]').attr('checked', false);//TODO:get bool from session
-		//jQuery('input[id=available]').attr('checked', false);//TODO:get bool from session
+		//alert($('#username').val());
+		//$('input[id=scheduled]').attr('checked', false);//TODO:get bool from session
+		//$('input[id=available]').attr('checked', false);//TODO:get bool from session
 
 		// Check if the adminCookie exist - returns selected user.
-		if(getSeeCalendarAsCookies(jQuery('#username').val())){
-			currentUser = getSeeCalendarAsCookies(jQuery('#username').val());
-			//currentUser = 'admin';
-			//console.log("This is the user name from ready true: "+currentUser);
+		if(getSeeCalendarAsCookies($('#username').val())){
+			currentUser = getSeeCalendarAsCookies($('#username').val());
+			
 			//getCourses(currentUser);
 			
 			//var courses_str = getCourses(currentUser);
 			//courses = courses_str.split(",",coursesLimit);
 			
 		}else{
-			currentUser = jQuery('#username').val();
-			//console.log("This is the user name from ready: "+currentUser);
+			currentUser = $('#username').val();
 			//getHostsCourses();
 		}
-		
+		//console.log(currentUser);
 		checkUserType(currentUser);	
 		
 		InitializeCalendar();
 		
-		view = jQuery('#calendar').fullCalendar('getView');
+		view = $('#calendar').fullCalendar('getView');
 		
 		InitializeInterface();		// must be called before startCalendarTab - dependant
 
 		
 		
 
-		//getViewCookie(jQuery('#username').val());
-		//getViewCookie(currentUser);
-		//getViewCurrentDate();
+		//getViewCookie($('#username').val());
+		getViewCookie(currentUser);
+		getViewCurrentDate();
 		
-		selectedTab = jQuery("#tabs").tabs('option', 'selected');
+		selectedTab = $("#tabs").tabs('option', 'selected');
 		
 		if(selectedTab == 0){
 			startCalendarTab(true);
 		}
 		
 		/*
-	 	jQuery(".fc-button-month a, .fc-button-agendaWeek a, .fc-button-agendaDay a, .fc-button-agendaList a").click(function () {
+	 	$(".fc-button-month a, .fc-button-agendaWeek a, .fc-button-agendaDay a, .fc-button-agendaList a").click(function () {
 			setViewCookie(currentUser);
 		});
  	*/
@@ -132,7 +130,7 @@ function startCalendarTab(initial) {
 	if(!loadedtab){
 		loadedtab = true;
 		
-		//view = jQuery('#calendar').fullCalendar('getView');
+		//view = $('#calendar').fullCalendar('getView');
 		var newDate = new Date();
 		var year = newDate.getFullYear();
 		var month = newDate.getMonth();
@@ -148,7 +146,7 @@ function startCalendarTab(initial) {
 		
 		
 		var savedFilter = getFilterCookies(currentUser);
-		
+	
 		if(savedFilter.length){
 			filters = savedFilter;
 		
@@ -162,23 +160,23 @@ function startCalendarTab(initial) {
 		
 		getColors();
 		
-		currentTimeZone = jQuery.trim(GetUserDefaultTimeZone());
+		currentTimeZone = $.trim(GetUserDefaultTimeZone());
 		
 		/*var timezoneFieldOptions = "";
 		for(var i = 0; i<zones.length; i++){
 			timezoneFieldOptions += "<option>"+zones[i]+"</option>";
 		}
 		
-		jQuery("#timezone-list").html(timezoneFieldOptions);
+		$("#timezone-list").html(timezoneFieldOptions);
 		*/
-		jQuery("#timezone-list").val(currentTimeZone);
+		$("#timezone-list").val(currentTimeZone);
 		
 		
 		loadAppointments(SchedStart, SchedEnd, initial, currentUser); // initial load
 		//setAppointmentCSS(currentUser);			// --- Moved to the loadAppointments Function
 		//Initialize main filters
 	
-		jQuery("#scheduled").click(function () {
+		$("#scheduled").click(function () {
 			//showProgressBar(true);
 			//alert("CB Debug: 1");
 			checkboxClick();
@@ -189,7 +187,7 @@ function startCalendarTab(initial) {
 			*/
 		});
 	
-		jQuery("#available").click(function () {								
+		$("#available").click(function () {								
 			//showProgressBar(true);
 			//alert("CB Debug: 2");
 			checkboxClick();
@@ -215,16 +213,16 @@ function startCalendarTab(initial) {
 				if(!isloading_events){								// Check to see if the events are already being loaded.
 					
 					// close any error dialog boxes
-					jQuery("#calendar-notice").dialog('close');
+					$("#calendar-notice").dialog('close');
 					
 					showProgressBar(true);
 					loadAppointments(SchedStart, SchedEnd, false, currentUser);
 					//if(counter>0){
-					//	jQuery(isloading_eventsMessage).dialog('close');
+					//	$(isloading_eventsMessage).dialog('close');
 					//}
 					isloading_eventsMessage = noticeDialog2(header, message, icon, true);
 					setTimeout(function(){
-						jQuery(isloading_eventsMessage).dialog('close');		// closes the Notice after 10 seconds
+						$(isloading_eventsMessage).dialog('close');		// closes the Notice after 10 seconds
 					}, 10000);
 					
 				}
@@ -242,7 +240,7 @@ function InitializeCalendar(){
 
 	//initialExternalPanel();
 
-	jQuery('#calendar').fullCalendar({
+	$('#calendar').fullCalendar({
 
 		header: {
 
@@ -261,7 +259,7 @@ function InitializeCalendar(){
 			SchedEnd = view.visEnd;
 			
 			if(loadedtab){
-				var viewDate = jQuery('#calendar').fullCalendar('getDate');
+				var viewDate = $('#calendar').fullCalendar('getDate');
 				setViewCurrentDate(viewDate);
 			}
 			
@@ -276,8 +274,8 @@ function InitializeCalendar(){
 			//alert(message);
 			if(view.name == "agendaList"){
 				if(gcalEvents){
-					jQuery('#calendar').fullCalendar('removeEventSource',gcalEvents);
-					//jQuery('#calendar').fullCalendar('removeEventSource',filteredEvents);
+					$('#calendar').fullCalendar('removeEventSource',gcalEvents);
+					//$('#calendar').fullCalendar('removeEventSource',filteredEvents);
 					showingGoogle = false
 					renderedEvents = 0;
 				}
@@ -287,7 +285,7 @@ function InitializeCalendar(){
 				//alert("viewDisplay: " + view.name+" renderedEvents: "+renderedEvents + " loadedtab: "+loadedtab);
 				showProgressBar(true);
 				
-				var viewDate = jQuery('#calendar').fullCalendar('getDate');
+				var viewDate = $('#calendar').fullCalendar('getDate');
 				setViewCurrentDate(viewDate);
 				setViewCookie(currentUser);
 			
@@ -315,17 +313,17 @@ function InitializeCalendar(){
 		},
 		showGoogleCal: function(){
 			// user profile field: calendarfeed
-			var calendarfeed = jQuery('#calendarfeed').val();
+			var calendarfeed = $('#calendarfeed').val();
 			
 			if(view.name != "agendaList"){
 		
 				if(calendarfeed){
-					var timezone = jQuery("#tz").val();
+					var timezone = $("#tz").val();
 					if(gcalEvents){
-						jQuery('#calendar').fullCalendar('removeEventSource',gcalEvents);
+						$('#calendar').fullCalendar('removeEventSource',gcalEvents);
 						renderedEvents = 0;
 					}
-					gcalEvents = jQuery.fullCalendar.gcalFeed(
+					gcalEvents = $.fullCalendar.gcalFeed(
 											calendarfeed,
 											{
 												// put your options here
@@ -339,7 +337,7 @@ function InitializeCalendar(){
 						if(gcalEvents){
 							showingGoogle = true;
 							renderedEvents = 0;
-							jQuery('#calendar').fullCalendar('addEventSource', gcalEvents); 
+							$('#calendar').fullCalendar('addEventSource', gcalEvents); 
 							
 						}else{
 							noticeDialog("Addtional Calendar Appointments","No appointments availalble to load onto scheduler.","alert");	
@@ -381,7 +379,7 @@ function InitializeCalendar(){
 				// check available slots
 				//alert("allow");
 				//alert('isEditableDate(currentEventStart): '+isEditableDate(currentEventStart));
-				var oldStartDate = jQuery.fullCalendar.parseISO8601(currentEventStart);
+				var oldStartDate = $.fullCalendar.parseISO8601(currentEventStart);
 				if(!oldStartDate)
 					oldStartDate = new Date(currentEventStart);
 					
@@ -486,34 +484,34 @@ function InitializeCalendar(){
 			//}
 			
 			//alert(date.getFullYear());
-			//jQuery('#calendar').fullCalendar('gotoDate',date.getFullYear(), date.getMonth(), date.getDate());
+			//$('#calendar').fullCalendar('gotoDate',date.getFullYear(), date.getMonth(), date.getDate());
 			
 			
 			
 			
 			
-			//jQuery('#calendar').fullCalendar('gotoDate',date.getFullYear());
+			//$('#calendar').fullCalendar('gotoDate',date.getFullYear());
 /*
 			if(view.name =="month"){
 				// Highlights the currently selected day cell.
-				jQuery(".fc-not-today").addClass("fc-state-selected");
-				jQuery(".fc-today").addClass("fc-state-selected-today");
+				$(".fc-not-today").addClass("fc-state-selected");
+				$(".fc-today").addClass("fc-state-selected-today");
 				
-				jQuery(".fc-state-selected").addClass(function(){
-					if(jQuery(this).hasClass("fc-not-today") == false){
-						jQuery(this).addClass("fc-not-today");
+				$(".fc-state-selected").addClass(function(){
+					if($(this).hasClass("fc-not-today") == false){
+						$(this).addClass("fc-not-today");
 					}									  
 				});
-				jQuery(".fc-today").addClass(function(){
-					if(jQuery(this).hasClass("fc-state-highlight") == false){
-						jQuery(this).addClass("fc-state-highlight");
+				$(".fc-today").addClass(function(){
+					if($(this).hasClass("fc-state-highlight") == false){
+						$(this).addClass("fc-state-highlight");
 					}								  
 				});
 				
-				if(jQuery(this).hasClass("fc-today")){
-					jQuery(this).removeClass("fc-state-highlight");
-				}else if(jQuery(this).hasClass("fc-not-today")){
-					jQuery(this).removeClass("fc-not-today");
+				if($(this).hasClass("fc-today")){
+					$(this).removeClass("fc-state-highlight");
+				}else if($(this).hasClass("fc-not-today")){
+					$(this).removeClass("fc-not-today");
 				}
 			}
 			
@@ -558,10 +556,10 @@ function InitializeCalendar(){
 			if (!event.editable) {
 				return;
 			}
-			//jQuery(this).css('border-color', '#000000');
+			//$(this).css('border-color', '#000000');
 			
-			jQuery(".fc-event").removeClass('selectedEvent');
-			jQuery(this).addClass('selectedEvent');
+			$(".fc-event").removeClass('selectedEvent');
+			$(this).addClass('selectedEvent');
 			
 			return false;
 							
@@ -675,7 +673,7 @@ function InitializeCalendar(){
 		
 			var actions = event.actions;
 			var message;
-			if(jQuery.isArray(actions)){
+			if($.isArray(actions)){
 				for(var a = 0; a<actions.length; a++){
 					message = (actions[a].name == "info") ? actions[a].param : "";
 				}
@@ -686,13 +684,13 @@ function InitializeCalendar(){
 			
 			if(view.name != "agendaList"){
 				renderedEvents++;
-				//jQuery("#debug").html("eventRender: "+renderedEvents);
+				//$("#debug").html("eventRender: "+renderedEvents);
 			}
 			//setViewCookie(currentUser);
 		},
 		eventListRender: function() {		// Not being used or called
 			renderedEvents++;
-			//jQuery("#debug").html("eventRender: "+renderedEvents);
+			//$("#debug").html("eventRender: "+renderedEvents);
 		},
 		afterListRender: function() {
 			//alert("afterListRender renderedEvents: "+renderedEvents);
@@ -712,7 +710,7 @@ function InitializeCalendar(){
 		},
 		eventAfterRender: function(event, element, view) { 
 			
-			//jQuery("#debug").html("eventAfterRender: "+renderedEvents);
+			//$("#debug").html("eventAfterRender: "+renderedEvents);
 			//debugging("eventAfterRender: start - "+event.start);
 			
 			//getViewCookie(currentUser);
@@ -774,14 +772,14 @@ function InitializeCalendar(){
 						vitem = "#"+view.name+"-vitem-"+event.affiliation;
 						menuname = "#"+view.name+"-vmenu-"+event.affiliation;
 						menuid = view.name+"-vmenu-"+event.affiliation;
-						menu = jQuery(menuname); 
+						menu = $(menuname); 
 						listmenu = setContextMenu(event.affiliation, event.actions, view);
 						qtip = "#"+view.name+"-event-"+event.affiliation;
 						id = view.name+"-event-"+event.affiliation;
 						
-						jQuery(element).addClass("recurring");
+						$(element).addClass("recurring");
 						
-						jQuery('<span class="recurring" id="'+eventNameAffil+'" name="'+eventNameAffil+'"></span>').appendTo(element);
+						$('<span class="recurring" id="'+eventNameAffil+'" name="'+eventNameAffil+'"></span>').appendTo(element);
 
 						//alert("After: "+element);
 						/*
@@ -795,7 +793,7 @@ function InitializeCalendar(){
 						vitem = "#"+view.name+"-vitem-"+event.id;
 						menuname = "#"+view.name+"-vmenu-"+event.id;
 						menuid = view.name+"-vmenu-"+event.id;
-						menu = jQuery(menuname); 
+						menu = $(menuname); 
 						listmenu = setContextMenu(event.id, event.actions, view);
 						qtip = "#"+view.name+"-event-"+event.id;
 						id = view.name+"-event-"+event.id;
@@ -826,7 +824,7 @@ function InitializeCalendar(){
 					
 					
 					//alert(menuname+'\n debug: #2 \n'+ event.id);
-					//var menu = jQuery("#"+view.name+"-vmenu-"+event.id); 
+					//var menu = $("#"+view.name+"-vmenu-"+event.id); 
 					
 					// special case if event is recurring
 					/*
@@ -836,7 +834,7 @@ function InitializeCalendar(){
 							if(tags.tagId == event.affiliation){
 								for(var i=0; i<tags.length; i++){
 									if(tags.tagId == event.affiliation){
-										menu = jQuery("#"+view.name+"-vmenu-"+event.affiliation); 
+										menu = $("#"+view.name+"-vmenu-"+event.affiliation); 
 									}
 								}
 							}
@@ -853,11 +851,11 @@ function InitializeCalendar(){
 				// Assigns event Actions afterRender.
 				var actions = event.actions;
 				
-				if(jQuery.isArray(actions)){
+				if($.isArray(actions)){
 					//alert(event.actions);
 					for(var a=0; a<actions.length; a++){
 						var actionId = "#fc-"+view.name+"-event-"+actions[a].name+"-"+event.id;
-						var eventActionButton = jQuery(actionId);
+						var eventActionButton = $(actionId);
 						//alert(actionId+"\n"+actions[a].name);
 						if(actions[a].name == "edit"){
 							view.eventEditButtonHandler(event, eventActionButton);
@@ -877,8 +875,8 @@ function InitializeCalendar(){
 			if(renderedEvents > 0){
 				if(eventLoader < renderedEvents-1){
 						eventLoader++;
-						//jQuery("#debug1").html(eventLoader);
-						//jQuery("#debug2").html(renderedEvents);
+						//$("#debug1").html(eventLoader);
+						//$("#debug2").html(renderedEvents);
 	
 				}else{
 						//alert("addContextMenusToCalendar - gContextMenus: "+gContextMenus.length);
@@ -956,23 +954,23 @@ function addContextMenusToCalendar(contextMenus){
 		
 		//if(i<2){alert(printEvent(currentEvent));}
 		
-		jQuery(menuname).each(function(){
+		$(menuname).each(function(){
 			loaded = true;
-			jQuery(this).replaceWith(listmenu);
+			$(this).replaceWith(listmenu);
 		});
 		
 		if(!loaded){	
-			jQuery(listmenu).appendTo("#menu-wrap");		// prevents loading multiple
+			$(listmenu).appendTo("#menu-wrap");		// prevents loading multiple
 		}
 		
 		if (jQuery.browser.msie) {
-			jQuery(element).bind('contextmenu',function(e){
+			$(element).bind('contextmenu',function(e){
 				//menuObj
 				var current;
 		
-				if(jQuery(this).hasClass("recurring")){
+				if($(this).hasClass("recurring")){
 		
-					jQuery(this).find('span.recurring').each(function(){
+					$(this).find('span.recurring').each(function(){
 						current = "#"+this.id;
 						current = current.replace("span", "vmenu");
 						
@@ -986,25 +984,25 @@ function addContextMenusToCalendar(contextMenus){
 				
 				currentEvent = current.substring(current.indexOf("vmenu-")+6);
 				
-				jQuery(current).css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
-				//jQuery(".vmenu").css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
-				jQuery(".vmenu").bind('mouseleave', function(){ jQuery(this).hide(); });
+				$(current).css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
+				//$(".vmenu").css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
+				$(".vmenu").bind('mouseleave', function(){ $(this).hide(); });
 							
 				return false;
 			});
 		
 		}else{
 												 
-			jQuery(element).contextMenu({
+			$(element).contextMenu({
 					menu: menuid
 			},
 			function(action, el, pos) {
 				
 				var current;
 		
-				if(jQuery(this).hasClass("recurring")){
+				if($(this).hasClass("recurring")){
 		
-					jQuery(this).find('span.recurring').each(function(){
+					$(this).find('span.recurring').each(function(){
 						current = "#"+this.id;
 						current = current.replace("span", "vmenu");
 						
@@ -1018,9 +1016,9 @@ function addContextMenusToCalendar(contextMenus){
 				
 				currentEvent = current.substring(current.indexOf("vmenu-")+6);
 				
-				jQuery(current).css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
-				//jQuery(".vmenu").css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
-				jQuery(".vmenu").bind('mouseleave', function(){ jQuery(this).hide(); });
+				$(current).css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
+				//$(".vmenu").css({ left: e.pageX, top: e.pageY, zIndex: '2001' }).show();
+				$(".vmenu").bind('mouseleave', function(){ $(this).hide(); });
 							
 				return false;
 			
@@ -1028,30 +1026,30 @@ function addContextMenusToCalendar(contextMenus){
 		
 		}
 		
-		//jQuery(menu).find('.first_li').live('click',function() {
-		//jQuery(menu).find("#"+view.name+"-vitem-"+event.id).click(function() {
-		jQuery(menuname).find(vitem).click(function() {
+		//$(menu).find('.first_li').live('click',function() {
+		//$(menu).find("#"+view.name+"-vitem-"+event.id).click(function() {
+		$(menuname).find(vitem).click(function() {
 																   													   
-			if( jQuery(this).children().size() == 1 ) {
+			if( $(this).children().size() == 1 ) {
 				
-				jQuery(menuname).hide();
-				//jQuery('.overlay').hide();
+				$(menuname).hide();
+				//$('.overlay').hide();
 				//alert("clicked");
-				//alert(jQuery(this).children().text());
+				//alert($(this).children().text());
 				
 				//alert(printEvent(findEvent(currentEvent)));
-				jQuery(".vmenu").hide();
+				$(".vmenu").hide();
 				var currentEvent = this.id;
 				var idx = currentEvent.indexOf("vitem-")+6;
 				//alert(currentEvent.substr(idx));
-				performAction(findEvent(currentEvent.substr(idx)),jQuery(this).children().text(), view);
+				performAction(findEvent(currentEvent.substr(idx)),$(this).children().text(), view);
 				
 			}
 		});
 		
-		jQuery(menuname+ ".vmenu").bind('mouseleave', function(){ jQuery(this).hide(); });
+		$(menuname+ ".vmenu").bind('mouseleave', function(){ $(this).hide(); });
 		
-		if(jQuery.isArray(actions)){
+		if($.isArray(actions)){
 			// Produce the qTip if any information in the info action		
 			for(var a=0; a<actions.length; a++){
 				if(actions[a].name == "info"){
@@ -1065,15 +1063,15 @@ function addContextMenusToCalendar(contextMenus){
 		}
 	}
 	
-	jQuery(".first_li , .sec_li, .inner_li span").hover(function () {
-		jQuery(this).css({backgroundColor : '#E0EDFE' , cursor : 'pointer'});
-		if ( jQuery(this).children().size() >0 )
-			jQuery(this).find('.inner_li').show();
-			jQuery(this).css({cursor : 'default'});
+	$(".first_li , .sec_li, .inner_li span").hover(function () {
+		$(this).css({backgroundColor : '#E0EDFE' , cursor : 'pointer'});
+		if ( $(this).children().size() >0 )
+			$(this).find('.inner_li').show();
+			$(this).css({cursor : 'default'});
 	},
 	function () {
-		jQuery(this).css('background-color' , '#fff' );
-		//jQuery(this).find('.inner_li').hide();
+		$(this).css('background-color' , '#fff' );
+		//$(this).find('.inner_li').hide();
 	});
 	
 	//alert("END - addContextMenusToCalendar");
@@ -1165,8 +1163,8 @@ function getHostsCourses(){
     //    courses =  courses_str.split(",",coursesLimit);
 	//var courses_str = getCourses(currentUser);
 	//courses =  courses_str.split(",",coursesLimit);
-	//console.log(is_admin_user);
-	if(is_admin_user ==true){
+	
+	if(is_admin_user){
 		getHosts(currentUser);
 	}else{
 		getCourses(currentUser);
@@ -1195,7 +1193,7 @@ function days_between(date1, date2) {
 }
 
 function showProgressBar(show){
-	jQuery('#calendar').fullCalendar('loading', view, show);	
+	$('#calendar').fullCalendar('loading', view, show);	
 }
 
 function checkUserType(user){
@@ -1281,9 +1279,9 @@ function isEditableDate(selected){
 }
 
 function resetForm(dialogContent) {
-  jQuery(dialogContent).find("input").val("");
-  jQuery(dialogContent).find("select").val("");
-  jQuery(dialogContent).find("textarea").val("");
+  $(dialogContent).find("input").val("");
+  $(dialogContent).find("select").val("");
+  $(dialogContent).find("textarea").val("");
   
 }
 
@@ -1291,9 +1289,9 @@ function setupAccordion(){
 	// Resets the accord to prevent error in display
 
 
-	jQuery("#accordion").accordion("destroy");               
+	$("#accordion").accordion("destroy");               
 	// Add: accordion ability to List view
-	jQuery("#accordion").accordion({
+	$("#accordion").accordion({
 		 header: "h3",
 		 collapsible: true
 	});
@@ -1302,9 +1300,9 @@ function setupAccordion(){
 function isValidMentorUser(username){
 	var isValid = false;
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
@@ -1315,8 +1313,8 @@ function isValidMentorUser(username){
 			
 			var success, successInt;
 			
-			jQuery(data).find('node').each(function() {
-				success = jQuery(this).text();								  
+			$(data).find('node').each(function() {
+				success = $(this).text();								  
 			});
 			
 			successInt = parseInt(success);
@@ -1336,9 +1334,9 @@ function isValidMentorUser(username){
 function isValidAminUser(username){
 	var isValid = false;
 	//debugging("isValidAminUser: ajax called 'isValidAminUser'");
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
@@ -1350,8 +1348,8 @@ function isValidAminUser(username){
 			//debugging("isValidAminUser: ajax called success");
 			var success, successInt;
 			
-			jQuery(data).find('node').each(function() {
-				success = jQuery(this).text();								  
+			$(data).find('node').each(function() {
+				success = $(this).text();								  
 			});
 			
 			successInt = parseInt(success);
@@ -1379,7 +1377,7 @@ function renderQtip(eventObjId, content, isGoogle){
 	if(isGoogle)
 		title = "Appointment Description";
 	
-	jQuery(obj).qtip({
+	$(obj).qtip({
 		content: {
 			text: content
 			//title: { text: title }
@@ -1411,7 +1409,7 @@ function renderQtip(eventObjId, content, isGoogle){
 	
 	
 	/*
-	jQuery(obj).qtip({
+	$(obj).qtip({
 		content: content,
 		style: { 
 			tip: { // Now an object instead of a string
@@ -1447,17 +1445,17 @@ function setContextMenu(id, actions, view){
 	
 	var menuid = view.name+"-vmenu-"+id;
 	var listitemid = view.name+"-vitem-"+id;
-	var container = jQuery('<div id="'+menuid+'" class="vmenu" />');
+	var container = $('<div id="'+menuid+'" class="vmenu" />');
 	
-	if(jQuery.isArray(actions)){
+	if($.isArray(actions)){
 		for(i in actionNames){
 	
 			for(var a=0; a<actions.length; a++){
 				if(actions[a].name == actionNames[i]){
 					if(actions[a].name == "info"){
-						var listitem = jQuery('div class="sep_li"></div>').appendTo(container);
+						var listitem = $('div class="sep_li"></div>').appendTo(container);
 					}
-					var listitem = jQuery('<div id="'+listitemid+'" class="'+listitemid+' first_li"><span class="context-label">'+ actions[a].name +'</span></div>').appendTo(container);
+					var listitem = $('<div id="'+listitemid+'" class="'+listitemid+' first_li"><span class="context-label">'+ actions[a].name +'</span></div>').appendTo(container);
 					
 				}
 			}
@@ -1465,7 +1463,7 @@ function setContextMenu(id, actions, view){
 	}
 	
 	if(actions.length == 0){
-		var listitem = jQuery('<div class="first_li"><span class="context-label">no options</span></div>').appendTo(container);
+		var listitem = $('<div class="first_li"><span class="context-label">no options</span></div>').appendTo(container);
 	}
 	
 	return container;
@@ -1512,7 +1510,7 @@ function performAction(event, actionName, view){
 	}else if(actionName == "info"){
 		var actions = event.actions;
 		var message;
-		if(jQuery.isArray(actions)){
+		if($.isArray(actions)){
 			for(var a = 0; a<actions.length; a++){
 				message = (actions[a].name == "info") ? actions[a].param : "";
 			}
@@ -1527,20 +1525,20 @@ function getAvailTimeZones(){
 	var username = currentUser;
 	var success = false;
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
 			action: 'GetAvailableTimeZoneIds',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username: username
 		},
 		success: function(data){
 			
 			if(data){
-				jQuery(data).find('zones').each(function() {
+				$(data).find('zones').each(function() {
 				
 					var nodes  = this.getElementsByTagName('node');
 					if(nodes.length >0){
@@ -1570,21 +1568,21 @@ function GetUserDefaultTimeZone(){
 	var success = false;
 	var zone;
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
 			action: 'GetUserDefaultTimeZoneId',
-			requestingUser:  jQuery('#username').val(),
-			username:  jQuery('#username').val()
+			requestingUser:  $('#username').val(),
+			username:  $('#username').val()
 		},
 		success: function(data){
 			
 			if(data){
-				jQuery(data).find('timeZoneId').each(function() {
-					zone = jQuery(this).text();				
+				$(data).find('timeZoneId').each(function() {
+					zone = $(this).text();				
 				});
 
 			}
@@ -1602,15 +1600,15 @@ function SetUserDefaultTimeZone(timezone){
 	var username = currentUser;
 	var success = false;
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
 			action: 'SetUserDefaultTimeZoneId',
-			requestingUser:  jQuery('#username').val(),
-			username: jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
+			username: $('#username').val(),
 			timezone: timezone
 		},
 		success: function(data){
@@ -1618,11 +1616,11 @@ function SetUserDefaultTimeZone(timezone){
 			if(data){
 				var result, reason, successInt;
 				
-				jQuery(data).find('message').each(function() {
-					reason = jQuery(this).text();					  
+				$(data).find('message').each(function() {
+					reason = $(this).text();					  
 				});
-				jQuery(data).find('success').each(function() {
-					result = jQuery(this).text();								  
+				$(data).find('success').each(function() {
+					result = $(this).text();								  
 				});
 				
 				successInt = parseInt(result);
@@ -1649,28 +1647,28 @@ function GetUserFilterOptions(){
 	var success = false;
 	var filtOpt = null;
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		data: {
 			action: 'getUserFilterOptions',
-			requestingUser:  jQuery('#username').val(),
-			username:  jQuery('#username').val()
+			requestingUser:  $('#username').val(),
+			username:  $('#username').val()
 		},
 		success: function(data){
-			if(data){
-				var arr = jQuery.parseJSON(data);
-				if(jQuery.isArray(arr)){
-					filtOpt = arr;
-				}
+			//alert(data);
+			var arr = jQuery.parseJSON(data);
+			if($.isArray(arr)){
+				filtOpt = arr;
 			}
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
 			
 		}
 	});
+	
 	return filtOpt;
 
 }
@@ -1679,15 +1677,15 @@ function SetUserFilterOptions(filter){
 	var username = currentUser;
 	var success = false;
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		data: {
 			action: 'setUserFilterOptions',
-			requestingUser:  jQuery('#username').val(),
-			username: jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
+			username: $('#username').val(),
 			filter: JSON.stringify(filter)
 		},
 		success: function(data){
@@ -1713,22 +1711,22 @@ function GetUserView(){
 	var success = false;
 	var schedulerView = null;
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
 			action: 'getUserView',
-			requestingUser:  jQuery('#username').val(),
-			username:  jQuery('#username').val()
+			requestingUser:  $('#username').val(),
+			username:  $('#username').val()
 		},
 		success: function(data){
 			
 			if(data){
-				jQuery(data).find('data').each(function() {
-					schedulerView = jQuery(this).text();
-					jQuery('#calendar').fullCalendar('changeView', schedulerView);
+				$(data).find('data').each(function() {
+					schedulerView = $(this).text();
+					$('#calendar').fullCalendar('changeView', schedulerView);
 				});
 			}
 			
@@ -1747,15 +1745,15 @@ function SetUserView(schedulerView){
 	var username = currentUser;
 	var success = false;
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'text',
 		async: false,
 		data: {
 			action: 'setUserView',
-			requestingUser:  jQuery('#username').val(),
-			username: jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
+			username: $('#username').val(),
 			view: schedulerView
 		},
 		success: function(data){
@@ -1796,7 +1794,7 @@ function confirmEventEdit(event){
 function generateAppointments(events){
 	var appointments = [];
 	
-	if(jQuery.isArray(events)){
+	if($.isArray(events)){
 		
 		for(var i = 0; i < events.length; i++){
 			
@@ -1882,17 +1880,17 @@ function getActionList(actions){
 
 // Grabs the Event Obj from the create Apointment form
 function getCreateNewEventObj(formName){
-	var createDialog = jQuery(formName);
+	var createDialog = $(formName);
 	// Retrieve Form Objects
-	var startDate = jQuery(createDialog).find("input[name='startDate']");
-	var endDate = jQuery(createDialog).find("input[name='endDate']");
-	var startField = jQuery(createDialog).find("input[name='start']");
-	var endField = jQuery(createDialog).find("input[name='end']");
-	var typeField = jQuery(createDialog).find("select[name='type']");
-	var courseField = jQuery(createDialog).find("select[name='course']");
+	var startDate = $(createDialog).find("input[name='startDate']");
+	var endDate = $(createDialog).find("input[name='endDate']");
+	var startField = $(createDialog).find("input[name='start']");
+	var endField = $(createDialog).find("input[name='end']");
+	var typeField = $(createDialog).find("select[name='type']");
+	var courseField = $(createDialog).find("select[name='course']");
 	
-	var startNow = jQuery(createDialog).find("input[name='startNow']");
-	var isChecked = jQuery(startNow).attr('checked');
+	var startNow = $(createDialog).find("input[name='startNow']");
+	var isChecked = $(startNow).attr('checked');
 	
 	/// - start now option
 	if(isChecked){
@@ -1944,39 +1942,36 @@ function getCreateNewEventObj(formName){
 //VEConfiguration
 function createVEConfigurationForm(){
 
-	var dialogContent = jQuery("#tabs-2").load('modules/module_scheduler/fullcalendar/ve_configuration_form.html',function() {
+	var dialogContent = $("#tabs-2").load('fullcalendar/ve_configuration_form.html',function() {
 			//Initialize date and time pickers
-		jQuery("#startDate_admin").datepicker();
-		jQuery("#endDate_admin").datepicker();
-		jQuery("#start_admin").ptTimeSelect(); 
-		jQuery("#end_admin").ptTimeSelect();
+		$("#ve_scheduler_form #startDate_admin").datepicker();
+		$("#ve_scheduler_form #endDate_admin").datepicker();
+		$("#ve_scheduler_form #start_admin").ptTimeSelect(); 
+		$("#ve_scheduler_form #end_admin").ptTimeSelect();
 		
-	    jQuery("#startDate_user").datepicker();
-		jQuery("#endDate_user").datepicker();
-		jQuery("#start_user").ptTimeSelect(); 
-		jQuery("#end_user").ptTimeSelect(); 
+	    $("#ve_scheduler_form #startDate_user").datepicker();
+		$("#ve_scheduler_form #endDate_user").datepicker();
+		$("#ve_scheduler_form #start_user").ptTimeSelect(); 
+		$("#ve_scheduler_form #end_user").ptTimeSelect(); 
 		
 		var timezoneFieldOptions = "";
-		
 		for(var i = 0; i<zones.length; i++){
-			//console.log(zones[i]);
 			timezoneFieldOptions += "<option>"+zones[i]+"</option>";
 		}
-		jQuery("#timezone").html(timezoneFieldOptions);
-		//console.log("after html");
-		jQuery("#timezone").val(currentTimeZone);
+		$("#ve_scheduler_form #timezone").html(timezoneFieldOptions);
+		$("#ve_scheduler_form #timezone").val(currentTimeZone);
 		
-		jQuery("#timezone").change(function () {
+		$("#ve_scheduler_form #timezone").change(function () {
 			
 			showProgressBar(true);
 			
-			var timezone = jQuery("#timezone").val();
+			var timezone = $("#ve_scheduler_form #timezone").val();
 			if(SetUserDefaultTimeZone(timezone)){
 				
-				//if(currentUser == jQuery('#username').val()){
+				//if(currentUser == $('#username').val()){
 					//if(is_admin_user){
 						
-						jQuery("#timezone-list").val(jQuery.trim(timezone));
+						$("#timezone-list").val($.trim(timezone));
 						getConfiguration();
 						loadedtab = false;
 						
@@ -1986,12 +1981,12 @@ function createVEConfigurationForm(){
 				//}
 						showProgressBar(false);	
 				
-				//loadAppointments(SchedStart, SchedEnd, false, jQuery("#username").val());
+				//loadAppointments(SchedStart, SchedEnd, false, $("#username").val());
 			}else{
 				showProgressBar(false);
 				
 				// timezone was not changed. Revert
-				jQuery("#timezone").val(jQuery.trim(currentTimeZone));
+				$("#ve_scheduler_form #timezone").val($.trim(currentTimeZone));
 				
 				var header = "Set Default Time Zone";
 				var message = "We were unable to set your new timezone.";
@@ -2001,65 +1996,65 @@ function createVEConfigurationForm(){
 			}
 		});
 		
-		jQuery("input").focus(function() {
-			jQuery("#startDate_admin").datepicker('hide');
-			jQuery("#endDate_admin").datepicker('hide');
-			jQuery("#startDate_user").datepicker('hide');
-			jQuery("#endDate_user").datepicker('hide');
-			jQuery("#ptTimeSelectCntr").hide();
+		$("input").focus(function() {
+			$("#ve_scheduler_form #startDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #endDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #startDate_user").datepicker('hide');
+			$("#ve_scheduler_form #endDate_user").datepicker('hide');
+			$("#ptTimeSelectCntr").hide();
 		});
 		
-		jQuery("#start_admin").focus(function() {
-			jQuery("#startDate_admin").datepicker('hide');
-			jQuery("#endDate_admin").datepicker('hide');
-			jQuery("#startDate_user").datepicker('hide');
-			jQuery("#endDate_user").datepicker('hide');
-			jQuery("#ptTimeSelectCntr").hide();
+		$("#ve_scheduler_form #start_admin").focus(function() {
+			$("#ve_scheduler_form #startDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #endDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #startDate_user").datepicker('hide');
+			$("#ve_scheduler_form #endDate_user").datepicker('hide');
+			$("#ptTimeSelectCntr").hide();
 		});
-		jQuery("#end_admin").focus(function() {
-			jQuery("#startDate_admin").datepicker('hide');
-			jQuery("#endDate_admin").datepicker('hide');
-			jQuery("#startDate_user").datepicker('hide');
-			jQuery("#endDate_user").datepicker('hide');
-			jQuery("#ptTimeSelectCntr").hide();
+		$("#ve_scheduler_form #end_admin").focus(function() {
+			$("#ve_scheduler_form #startDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #endDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #startDate_user").datepicker('hide');
+			$("#ve_scheduler_form #endDate_user").datepicker('hide');
+			$("#ptTimeSelectCntr").hide();
 		});
-		jQuery("#start_user").focus(function() {
-			jQuery("#startDate_admin").datepicker('hide');
-			jQuery("#endDate_admin").datepicker('hide');
-			jQuery("#startDate_user").datepicker('hide');
-			jQuery("#endDate_user").datepicker('hide');
-			jQuery("#ptTimeSelectCntr").hide();
+		$("#ve_scheduler_form #start_user").focus(function() {
+			$("#ve_scheduler_form #startDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #endDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #startDate_user").datepicker('hide');
+			$("#ve_scheduler_form #endDate_user").datepicker('hide');
+			$("#ptTimeSelectCntr").hide();
 		});
-		jQuery("#end_user").focus(function() {
-			jQuery("#startDate_admin").datepicker('hide');
-			jQuery("#endDate_admin").datepicker('hide');
-			jQuery("#startDate_user").datepicker('hide');
-			jQuery("#endDate_user").datepicker('hide');
-			jQuery("#ptTimeSelectCntr").hide();
+		$("#ve_scheduler_form #end_user").focus(function() {
+			$("#ve_scheduler_form #startDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #endDate_admin").datepicker('hide');
+			$("#ve_scheduler_form #startDate_user").datepicker('hide');
+			$("#ve_scheduler_form #endDate_user").datepicker('hide');
+			$("#ptTimeSelectCntr").hide();
 		});
 		
 	    var wholeDateformatter = "yyyy-mm-dd'T'HH:MM:ss";	
 		var dayformatter = "mm/dd/yyyy";	// mmmm d, yyyy
 		var timeformatter = "h:MM TT";		// h:MM:ss TT 
 		
-		jQuery("#ve_configuration_save").click(function(){
+		$("#ve_configuration_save").click(function(){
 
-			var user_startDate = jQuery("#startDate_user").val();
-			var user_startTime=jQuery("#start_user").val();
+			var user_startDate = $("#ve_scheduler_form #startDate_user").val();
+			var user_startTime=$("#ve_scheduler_form #start_user").val();
 			var startUser = new Date(user_startDate+" "+user_startTime);
 			
-			var user_endDate = jQuery("#endDate_user").val();
-			var user_endTime = jQuery("#end_user").val();
+			var user_endDate = $("#ve_scheduler_form #endDate_user").val();
+			var user_endTime = $("#ve_scheduler_form #end_user").val();
 			var endUser = new Date(user_endDate+" "+user_endTime);
 	
 			
-			var admin_endDate = jQuery("#endDate_admin").val();
-			var admin_endTime = jQuery("#end_admin").val();
+			var admin_endDate = $("#ve_scheduler_form #endDate_admin").val();
+			var admin_endTime = $("#ve_scheduler_form #end_admin").val();
 			var endAdmin = new Date(admin_endDate+" "+admin_endTime);
 			
 			
-			var admin_startDate =jQuery("#startDate_admin").val();
-			var admin_startTime =jQuery("#start_admin").val();
+			var admin_startDate =$("#ve_scheduler_form #startDate_admin").val();
+			var admin_startTime =$("#ve_scheduler_form #start_admin").val();
 			var startAdmin = new Date(admin_startDate+" "+admin_startTime);
 			
 			setConfiguration(startUser.format(dateformatter),endUser.format(dateformatter),
@@ -2079,51 +2074,51 @@ function getConfiguration(){
 	var dayformatter = "mm/dd/yyyy";	// mmmm d, yyyy
 	var timeformatter = "h:MM TT";		// h:MM:ss TT 
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		data: {
 			action: 'getConfiguration',
-			requestingUser:  jQuery('#username').val(),
-			username: jQuery('#username').val()
+			requestingUser:  $('#username').val(),
+			username: $('#username').val()
 		},
 		success: function(data){
 			
 				//var startUser = new Date(data.userStartTime);
-				var startUser = new Date(jQuery.fullCalendar.parseISO8601(data.userStartTime, true));
-				jQuery("#startDate_user").val(startUser.format(dayformatter));
-				jQuery("#start_user").val(startUser.format(timeformatter));
+				var startUser = new Date($.fullCalendar.parseISO8601(data.userStartTime, true));
+				$("#ve_scheduler_form #startDate_user").val(startUser.format(dayformatter));
+				$("#ve_scheduler_form #start_user").val(startUser.format(timeformatter));
 				
 				//var endUser = new Date(data.userEndTime);
-				var endUser = new Date(jQuery.fullCalendar.parseISO8601(data.userEndTime, true));
-				jQuery("#endDate_user").val(endUser.format(dayformatter));
-				jQuery("#end_user").val(endUser.format(timeformatter));
+				var endUser = new Date($.fullCalendar.parseISO8601(data.userEndTime, true));
+				$("#ve_scheduler_form #endDate_user").val(endUser.format(dayformatter));
+				$("#ve_scheduler_form #end_user").val(endUser.format(timeformatter));
 		
 				//var endAdmin = new Date(data.adminEndTime);
-				var endAdmin = new Date(jQuery.fullCalendar.parseISO8601(data.adminEndTime, true));
-				jQuery("#endDate_admin").val(endAdmin.format(dayformatter));
-				jQuery("#end_admin").val(endAdmin.format(timeformatter));
+				var endAdmin = new Date($.fullCalendar.parseISO8601(data.adminEndTime, true));
+				$("#ve_scheduler_form #endDate_admin").val(endAdmin.format(dayformatter));
+				$("#ve_scheduler_form #end_admin").val(endAdmin.format(timeformatter));
 	
 				//var startAdmin = new Date(data.adminStartTime);
-				var startAdmin = new Date(jQuery.fullCalendar.parseISO8601(data.adminStartTime, true));
-				jQuery("#startDate_admin").val(startAdmin.format(dayformatter));
-				jQuery("#start_admin").val(startAdmin.format(timeformatter));
+				var startAdmin = new Date($.fullCalendar.parseISO8601(data.adminStartTime, true));
+				$("#ve_scheduler_form #startDate_admin").val(startAdmin.format(dayformatter));
+				$("#ve_scheduler_form #start_admin").val(startAdmin.format(timeformatter));
 				
 				/*
 				// sets the date range for getUserAppointments Call
 				if(current_user_role == 'admin'){
-					SchedStart = new Date(jQuery.fullCalendar.parseISO8601(data.adminStartTime));
-					SchedEnd = new Date(jQuery.fullCalendar.parseISO8601(data.adminEndTime));
+					SchedStart = new Date($.fullCalendar.parseISO8601(data.adminStartTime));
+					SchedEnd = new Date($.fullCalendar.parseISO8601(data.adminEndTime));
 				}else{
-					SchedStart = new Date(jQuery.fullCalendar.parseISO8601(data.userStartTime));
-					SchedEnd = new Date(jQuery.fullCalendar.parseISO8601(data.userEndTime));
+					SchedStart = new Date($.fullCalendar.parseISO8601(data.userStartTime));
+					SchedEnd = new Date($.fullCalendar.parseISO8601(data.userEndTime));
 				}
 				*/
 			
-				//jQuery("#timezone_admin").html(timezoneFieldOptions);
-				//jQuery("#timezone_user").html(timezoneFieldOptions);
+				//$("#ve_scheduler_form #timezone_admin").html(timezoneFieldOptions);
+				//$("#ve_scheduler_form #timezone_user").html(timezoneFieldOptions);
 				
 		},
 		error: function(XMLHttpRequest, textStatus, errorThrown){
@@ -2141,14 +2136,14 @@ function getConfiguration(){
 function setConfiguration(startUser, endUser, startAdmin, endAdmin){
 
 	
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		data: {
 			action: 'setConfiguration',
-			requestingUser:  jQuery('#username').val(),
-			username: jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
+			username: $('#username').val(),
 			startUser:startUser,
 			endUser:endUser,
 			startAdmin:startAdmin,
@@ -2162,15 +2157,15 @@ function setConfiguration(startUser, endUser, startAdmin, endAdmin){
 		    noticeDialog(header, message, icon);
 		    				
 			//if(see_calendar_as==null)
-			//	see_calendar_as = jQuery('#username').val();
+			//	see_calendar_as = $('#username').val();
 	
 			// sets the date range for getUserAppointments Call
 			if(current_user_role == 'admin'){
-				SchedStart = new Date(jQuery.fullCalendar.parseISO8601(startAdmin));
-				SchedEnd = new Date(jQuery.fullCalendar.parseISO8601(endAdmin));
+				SchedStart = new Date($.fullCalendar.parseISO8601(startAdmin));
+				SchedEnd = new Date($.fullCalendar.parseISO8601(endAdmin));
 			}else{
-				SchedStart = new Date(jQuery.fullCalendar.parseISO8601(startUser));
-				SchedEnd = new Date(jQuery.fullCalendar.parseISO8601(endUser));
+				SchedStart = new Date($.fullCalendar.parseISO8601(startUser));
+				SchedEnd = new Date($.fullCalendar.parseISO8601(endUser));
 			}
 			
 			
@@ -2198,14 +2193,14 @@ function setConfiguration(startUser, endUser, startAdmin, endAdmin){
 //Hosts
 function addHost(){
 	 
-	 var name = jQuery("#add-host-form").find("input[name='hname']");	 
-	 var sshPort = jQuery("#add-host-form").find("input[name='hsshport']");	
-	 var username = jQuery("#add-host-form").find("input[name='husername']");	
-	 var password = jQuery("#add-host-form").find("input[name='hpassword']");	
-	 var numberCap = jQuery("#add-host-form").find("input[name='hnumcap']");	
-	 var firstFreePort = jQuery("#add-host-form").find("input[name='hfreeport']");	
-	 var portNumber = jQuery("#add-host-form").find("input[name='hport']");	
-	 var activeChkbox = jQuery("#add-host-form").find("input[name='hactive']");
+	 var name = $("#add-host-form").find("input[name='hname']");	 
+	 var sshPort = $("#add-host-form").find("input[name='hsshport']");	
+	 var username = $("#add-host-form").find("input[name='husername']");	
+	 var password = $("#add-host-form").find("input[name='hpassword']");	
+	 var numberCap = $("#add-host-form").find("input[name='hnumcap']");	
+	 var firstFreePort = $("#add-host-form").find("input[name='hfreeport']");	
+	 var portNumber = $("#add-host-form").find("input[name='hport']");	
+	 var activeChkbox = $("#add-host-form").find("input[name='hactive']");
 	 
 	 var active = false;
 	 if(activeChkbox.is(':checked'))
@@ -2213,13 +2208,13 @@ function addHost(){
 	 	active = true;
 	 }
 	  
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		data: {
 			action: 'addHost',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			name:name.val(),
 			sshPort:sshPort.val(),
 			username:username.val(),
@@ -2237,7 +2232,7 @@ function addHost(){
 		    noticeDialog(header, message, icon);
 			
 			if(data.success){
-			    jQuery("#hosts").flexReload(); 
+			    $("#hosts").flexReload(); 
 			}
 		   
 		},
@@ -2259,13 +2254,13 @@ function addHost(){
 function deleteHost(id){
 
 
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		data: {
 			action: 'deleteHost',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			id:id
 		},
 		success: function(data){
@@ -2276,7 +2271,7 @@ function deleteHost(id){
 			noticeDialog(header, message, icon);
 			
 			if(data.success){
-				jQuery("#hosts").flexReload(); 
+				$("#hosts").flexReload(); 
 			}
 		   
 		},
@@ -2294,14 +2289,14 @@ function deleteHost(id){
 }
 
 function loadColorManager(){
- 	jQuery('#mycolormanager').load('modules/module_scheduler/colormanager.php');
+ 	$('#mycolormanager').load('colormanager.php');
 }
 
 function createHostsTable(){
 	
-	jQuery("#hosts").flexigrid({
+	$("#hosts").flexigrid({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/flexigrid.php',
+		url: 'fullcalendar/flexigrid.php',
 		dataType: 'json',
 		colModel : [
 			{display: 'Id', name : 'id', width : 30, sortable : true, align: 'center'},
@@ -2331,22 +2326,22 @@ function createHostsTable(){
 		rp: 15,	
 		showTableToggleBtn: false,
 		singleSelect: true,
-		requestingUser:  jQuery('#username').val()
+		requestingUser:  $('#username').val()
 	}); 
 
 }
 
 function doCommand(com, grid) {
 	if (com == 'Edit') {
-		jQuery('.trSelected', grid).each(function() {
-			var id = jQuery(this).attr('id');
+		$('.trSelected', grid).each(function() {
+			var id = $(this).attr('id');
 			id = id.substring(id.lastIndexOf('row')+3);
 			editHostDialogBox(id);
 
 		});
 	} else if (com == 'Delete') {
-		jQuery('.trSelected', grid).each(function() {
-			var id = jQuery(this).attr('id');
+		$('.trSelected', grid).each(function() {
+			var id = $(this).attr('id');
 			id = id.substring(id.lastIndexOf('row')+3);	
 			deleteHost(id);
 			
@@ -2361,7 +2356,7 @@ function doCommand(com, grid) {
 //Scheduling Host Maintenance
 function InitializeMaintenanceCalendar(){		
 
-	jQuery('#host_calendar').fullCalendar({
+	$('#host_calendar').fullCalendar({
 
 		header: {
 
@@ -2382,40 +2377,41 @@ function InitializeMaintenanceCalendar(){
 function InitializeInterface(){
 	
 	getAvailTimeZones();
-	currentTimeZone = jQuery.trim(GetUserDefaultTimeZone());
-	var timezoneFieldOptions = "TIME";
+	currentTimeZone = $.trim(GetUserDefaultTimeZone());
+	
+	var timezoneFieldOptions = "";
 	for(var i = 0; i<zones.length; i++){
 		timezoneFieldOptions += "<option>"+zones[i]+"</option>";
 	}
 	
-	current_user_role = jQuery('#role').val();
+	current_user_role = $('#role').val();
 	current_user_username = currentUser;
-
+	//console.log(current_user_role);
 	
-	jQuery("#timezones").append('<label id="timezone-label">Timezone &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label><select id="timezone-list" />');
-	jQuery("#timezone-list").html(timezoneFieldOptions);
-	//jQuery("#timezone-list").val("GMT-10:00 HST");
-	jQuery("#timezone-list").val(currentTimeZone);
+	$("#timezones").append('<label id="timezone-label">Timezone &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </label><select id="timezone-list" />');
+	$("#timezone-list").html(timezoneFieldOptions);
+	//$("#timezone-list").val("GMT-10:00 HST");
+	$("#timezone-list").val(currentTimeZone);
 
 	if(current_user_role=="administrator"){
 		//tab1
-		jQuery("#users").append('<label>See calendar as </label><select id="users-list" />');
-	
+		$("#users").append('<label>See calendar as </label><select id="users-list" />');
+		//alert('is in here');
 		//tab2
-		jQuery("#tabs ul").append('<li><a href="#tabs-2">VE Configuration</a></li>');
-		jQuery("#tabs").append('<div id="tabs-2"></div>');
+		$("#tabs ul").append('<li><a href="#tabs-2">VE Configuration</a></li>');
+		$("#tabs").append('<div id="tabs-2"></div>');
 		createVEConfigurationForm();
 		
 		//tab3
-		jQuery("#tabs ul").append('<li><a href="#tabs-3">Manage Host</a></li>');
-		jQuery("#tabs").append('<div id="tabs-3"></div>');
-		jQuery("#tabs-3").append('<div id="hosts"></div>');
+		$("#tabs ul").append('<li><a href="#tabs-3">Manage Host</a></li>');
+		$("#tabs").append('<div id="tabs-3"></div>');
+		$("#tabs-3").append('<div id="hosts"></div>');
 		createHostsTable();
 
 		//tab4
-		jQuery("#tabs ul").append('<li><a href="#tabs-4">Color Manager</a></li>');
-		jQuery("#tabs").append('<div id="tabs-4"></div>');
-		jQuery("#tabs-4").append('<div id="mycolormanager"></div>');
+		$("#tabs ul").append('<li><a href="#tabs-4">Color Manager</a></li>');
+		$("#tabs").append('<div id="tabs-4"></div>');
+		$("#tabs-4").append('<div id="mycolormanager"></div>');
 		loadColorManager();
 		
 		//InitializeMaintenanceCalendar();
@@ -2426,40 +2422,38 @@ function InitializeInterface(){
 		var users_str = new String(inputText);
 	    var users =  users_str.split(",",7);
 		
-		users =  users_str.split(",");
+		 users =  users_str.split(",");
 	    
-	    var selection = getSeeCalendarAsCookies( jQuery('#username').val());
+	    var selection = getSeeCalendarAsCookies( $('#username').val());
 		
 	
 
 		for(i in users){
 			var user = users[i];
-			if(isNaN(i)){
-				break;
-			}
-			if(selection==user){
-				jQuery("#users-list").append('<option value=\''+user+'\' selected=\'selected\'>'+user+'</option>');
-			}else{
-				jQuery("#users-list").append('<option value=\''+user+'\'>'+user+'</option>');
-			}
 
+			if(selection==user){
+				$("#users-list").append('<option value=\''+user+'\' selected=\'selected\'>'+user+'</option>');
+			}else{
+				$("#users-list").append('<option value=\''+user+'\'>'+user+'</option>');
+			}
+	
 		}
 		
-		jQuery("#users-list").change(function () {
+		$("#users-list").change(function () {
 			
 			showProgressBar(true);
 										  
-			var username = jQuery("#users-list").val();
-			setSeeCalendarAsCookies(jQuery("#username").val(), username);
+			var username = $("#users-list").val();
+			setSeeCalendarAsCookies($("#username").val(), username);
 			
 			// reset the filter options
 			
 			/*
-			jQuery('#filters').find('input').each(function (){
+			$('#filters').find('input').each(function (){
 				this.checked = false;
 			});
-			jQuery('#options_pane').find('input').each(function (){
-				jQuery(this).removeClass("mixed-state");		
+			$('#options_pane').find('input').each(function (){
+				$(this).removeClass("mixed-state");		
 				this.checked = false;
 			});
 			*/
@@ -2478,20 +2472,20 @@ function InitializeInterface(){
 			//getResourcesAvailable(username);
 			//alert(courses.length + ' ' + types.length);
 			
-			//jQuery("#options_pane").html(constructOptionTable(courses, types));
+			//$("#options_pane").html(constructOptionTable(courses, types));
 			
 			/*
 			getAvailTimeZones();
 			
-			currentTimeZone = jQuery.trim(GetUserDefaultTimeZone());
+			currentTimeZone = $.trim(GetUserDefaultTimeZone());
 	
 			var timezoneFieldOptions = "";
 			for(var i = 0; i<zones.length; i++){
 				timezoneFieldOptions += "<option>"+zones[i]+"</option>";
-			}*/
-			jQuery("#timezone-list").html(timezoneFieldOptions);
-			jQuery("#timezone-list").val(currentTimeZone);
-			
+			}
+			$("#timezone-list").html(timezoneFieldOptions);
+			$("#timezone-list").val(currentTimeZone);
+			*/
 			loadAppointments(SchedStart, SchedEnd, false, username);
 						
 		});
@@ -2499,17 +2493,17 @@ function InitializeInterface(){
 	}
 	
 	// Set up the drop down menu
-	jQuery("#timezone-list").change(function () {
+	$("#timezone-list").change(function () {
 			
 		showProgressBar(true);
 		
-		var timezone = jQuery("#timezone-list").val();
+		var timezone = $("#timezone-list").val();
 		if(SetUserDefaultTimeZone(timezone)){ 
 			//alert("current_user_role:"+current_user_role+" currentUser:"+currentUser);
-			//if(currentUser == jQuery('#username').val()){
+			//if(currentUser == $('#username').val()){
 				//if(is_admin_user){
 					//alert("#timezone-list");
-					jQuery("#timezone").val(jQuery.trim(timezone));
+					$("#ve_scheduler_form #timezone").val($.trim(timezone));
 					getConfiguration();
 				//}
 				
@@ -2519,7 +2513,7 @@ function InitializeInterface(){
 			showProgressBar(false);
 			
 			// timezone was not changed. Revert
-			jQuery("#timezone-list").val(jQuery.trim(currentTimeZone));
+			$("#timezone-list").val($.trim(currentTimeZone));
 			
 			var header = "Set Default Time Zone";
 			var message = "We were unable to set your new timezone.";
@@ -2531,7 +2525,7 @@ function InitializeInterface(){
 	//Filter of resources and courses
 	if (jQuery.browser.msie) {
 		//alert("IE:"+jQuery.browser.msie);
-		var filtersDiv = jQuery('#filters');
+		var filtersDiv = $('#filters');
 	
 		filtersDiv.append('<div class="dropDown_wrapper container_24" id="topResource_dropDown_wrapper">'+
 							 '<div class="filters" id="filters_pane">'+
@@ -2546,7 +2540,7 @@ function InitializeInterface(){
 		
 	}else{
 		
-		jQuery("#filters").append('<div class="dropDown_wrapper container_24" id="topResource_dropDown_wrapper">'+
+		$("#filters").append('<div class="dropDown_wrapper container_24" id="topResource_dropDown_wrapper">'+
 							 '<div class="filters" id="filters_pane">'+
 							 '<table><tr><td><input type="checkbox" id="scheduled" class="checkbox" name="filter" checked="checked" /><label>Scheduled Tasks</label></td></tr>'+
 							 '<tr><td><input type="checkbox" id="available" class="checkbox" name="filter" checked="checked" /><label>Available Time Slots</label></td></tr></table>'+
@@ -2554,15 +2548,15 @@ function InitializeInterface(){
 							 '<div id="options_pane"></div>'+
 							 '</div>');
 							 
-		jQuery("#filters").append('<div class="clear"></div>');    
-		jQuery("#filters").append('<a href="#filterOptions" id="filterOptions_TopResources"><span class="toolbar_title">Filter Options</span></a><br/><br/>');
+		$("#filters").append('<div class="clear"></div>');    
+		$("#filters").append('<a href="#filterOptions" id="filterOptions_TopResources"><span class="toolbar_title">Filter Options</span></a><br/><br/>');
 		//alert("filtersDiv.innerHTML: "+filtersDiv.innerHTML);
 	}
-	jQuery("#tabs").tabs();
+	$("#tabs").tabs();
 
-	jQuery('#tabs').bind('tabsshow', function(event, ui) {
+	$('#tabs').bind('tabsshow', function(event, ui) {
 		//alert("tabshow");
-		selectedTab = jQuery("#tabs").tabs('option', 'selected');
+		selectedTab = $("#tabs").tabs('option', 'selected');
 		//alert(ui.panel.id +' - tab change:'+selectedTab);
 	
 		if(selectedTab == 0){
@@ -2580,9 +2574,9 @@ function InitializeInterface(){
 		
 	});
 	/*
-	jQuery('#tabs').bind( "tabsselect", function(event, ui) {
+	$('#tabs').bind( "tabsselect", function(event, ui) {
 		alert("tabsselect");
-		selectedTab = jQuery("#tabs").tabs('option', 'selected');
+		selectedTab = $("#tabs").tabs('option', 'selected');
 		if(selectedTab == 0){
 			alert("loadedtab: "+loadedtab);
 			if(!loadedtab){
@@ -2597,7 +2591,7 @@ function InitializeInterface(){
 
 	
 	/*
-	jQuery("#tabs").tabs({
+	$("#tabs").tabs({
 		select: function(event, ui) {
 			
 		},
@@ -2613,7 +2607,7 @@ function InitializeInterface(){
 function setSeeCalendarAsCookies(username, userSelected){
 
 	var cookieName = username + "-seeCalendarAs";
-	jQuery.cookie(cookieName, userSelected);
+	$.cookie(cookieName, userSelected);
 	
 
 }
@@ -2622,7 +2616,7 @@ function getSeeCalendarAsCookies(username){
 
 	
 	var cookieName = username + "-seeCalendarAs";	
-	var userSelected = jQuery.cookie(cookieName);
+	var userSelected = $.cookie(cookieName);
 	
 	return userSelected;
 
@@ -2630,14 +2624,14 @@ function getSeeCalendarAsCookies(username){
 
 function setHost(id){
 
-	 var name = jQuery("#add-host-form").find("input[name='hname']");	 
-	 var sshPort = jQuery("#add-host-form").find("input[name='hsshport']");	
-	 var username = jQuery("#add-host-form").find("input[name='husername']");	
-	 var password = jQuery("#add-host-form").find("input[name='hpassword']");	
-	 var numberCap = jQuery("#add-host-form").find("input[name='hnumcap']");	
-	 var firstFreePort = jQuery("#add-host-form").find("input[name='hfreeport']");	
-	 var portNumber = jQuery("#add-host-form").find("input[name='hport']");	
-	 var activeChkbox = jQuery("#add-host-form").find("input[name='hactive']");
+	 var name = $("#add-host-form").find("input[name='hname']");	 
+	 var sshPort = $("#add-host-form").find("input[name='hsshport']");	
+	 var username = $("#add-host-form").find("input[name='husername']");	
+	 var password = $("#add-host-form").find("input[name='hpassword']");	
+	 var numberCap = $("#add-host-form").find("input[name='hnumcap']");	
+	 var firstFreePort = $("#add-host-form").find("input[name='hfreeport']");	
+	 var portNumber = $("#add-host-form").find("input[name='hport']");	
+	 var activeChkbox = $("#add-host-form").find("input[name='hactive']");
 	 
 	 var active = false;
 	 if(activeChkbox.is(':checked'))
@@ -2646,13 +2640,13 @@ function setHost(id){
 	 }
 		
 	 
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		data: {
 			action: 'setHost',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			id:id,
 			name:name.val(),
 			sshPort:sshPort.val(),
@@ -2669,7 +2663,7 @@ function setHost(id){
 			var message = data.message;
 			var icon = "alert";
 		    noticeDialog(header, message, icon);
-		    jQuery("#hosts").flexReload(); 
+		    $("#hosts").flexReload(); 
 
 		   
 		},

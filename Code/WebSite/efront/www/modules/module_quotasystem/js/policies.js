@@ -791,12 +791,12 @@ function pol_fillOutForm(containerId, nTr, id){
 				//console.log(data);
 	    		pol_showButtons(containerId);
 
-	        	var policy = data[0];
+	        	var policy = data.policy;
 	        	var absolute = policy.absolute;
-				//console.log(data.policy[0]['id']);
-        		if(absolute==1){
+				//console.log(absolute);
+        		if(absolute){
         			jQuery(containerId+" .absPolicy").attr("checked",absolute);
-        			var startDate = Date.parse(policy.start_date.substring(0,19));
+        			var startDate = Date.parse(policy.startDate.substring(0,19));
         			var date = startDate.format("mm/dd/yyyy");
 
         			var time = startDate.format("HH:MM");
@@ -805,66 +805,66 @@ function pol_fillOutForm(containerId, nTr, id){
             		
         		}else{
         			jQuery(containerId+" .relPolicy").attr("checked",true);
-            		jQuery(containerId+" .noDaysToStartPolicy").val(policy.days_to_rel_start);
+            		jQuery(containerId+" .noDaysToStartPolicy").val(policy.daysToRelStart);
         		}
 
-        		if(policy.policy_type=="NOEXPIRATION"){
+        		if(policy.policyType=="NOEXPIRATION"){
 
     				jQuery(containerId+" .namePolicy").val(policy.name);
         			jQuery(containerId+" .typePolicy").val(policy.policyType);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description),
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
             		pol_showBasicFormFields(containerId);
                 	pol_showFixedPolicyFields(containerId);
 
 
-            	}else if(policy.policy_type=="FIXED"){
+            	}else if(policy.policyType=="FIXED"){
             		
-            		if(absolute==1){
-            			var expDate = start_date;
-            			expDate.setDate(expDate.getDate()+policy.days_in_period);
+            		if(absolute){
+            			var expDate = startDate;
+            			expDate.setDate(expDate.getDate()+policy.quotaInPeriod);
             		}
 
             		jQuery(containerId+" .expDatePolicy").val(expDate.format("mm/dd/yyyy"));
     				jQuery(containerId+" .namePolicy").val(policy.name);
-        			jQuery(containerId+" .typePolicy").val(policy.policy_type);
+        			jQuery(containerId+" .typePolicy").val(policy.policyType);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
-            		jQuery(containerId+" .noDaysPolicy").val(policy.days_in_period);
+            		jQuery(containerId+" .noDaysPolicy").val(policy.daysInPeriod);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description),
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
 
             		pol_showBasicFormFields(containerId);
                 	pol_showFixedPolicyFields(containerId);
 
-            	}else if(policy.policy_type == "GRADUAL"){
+            	}else if(policy.policyType == "GRADUAL"){
 
     				jQuery(containerId+" .namePolicy").val(policy.name);
-        			jQuery(containerId+" .typePolicy").val(policy.policy_type);
+        			jQuery(containerId+" .typePolicy").val(policy.policyType);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
-            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.days_in_period);
+            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.daysInPeriod);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description);
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
             		jQuery(containerId+" .maxQuotaPolicy").val(policy.maximum);
-            		jQuery(containerId+" .noPeriodsPolicy").val(policy.number_of_periods);
+            		jQuery(containerId+" .noPeriodsPolicy").val(policy.numberOfPeriods);
             		pol_showBasicFormFields(containerId);
             		pol_showGradualPolicyFields(containerId);
 
-            	}else if(policy.policy_type == "MINMAX"){
+            	}else if(policy.policyType == "MINMAX"){
 
     				jQuery(containerId+" .namePolicy").val(policy.name);
-        			jQuery(containerId+" .typePolicy").val(policy.policy_type);
+        			jQuery(containerId+" .typePolicy").val(policy.policyType);
         			jQuery(containerId+" .assignablePolicy").attr("checked", policy.assignable);
         			jQuery(containerId+" .activePolicy").attr("checked", policy.active);
-            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.days_in_period);
+            		jQuery(containerId+" .noDaysPeriodPolicy").val(policy.daysInPeriod);
             		jQuery(containerId+" .descriptionPolicy").val(policy.description);
-            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quota_in_period);
+            		jQuery(containerId+" .quotaInPeriodPolicy").val(policy.quotaInPeriod);
             		jQuery(containerId+" .maxQuotaPolicy").val(policy.maximum);
             		jQuery(containerId+" .minQuotaPolicy").val(policy.minimum);
-            		jQuery(containerId+" .noPeriodsPolicy").val(policy.number_of_periods);
+            		jQuery(containerId+" .noPeriodsPolicy").val(policy.numberOfPeriods);
             		pol_showBasicFormFields(containerId);
             		pol_showMinMaxPolicyFields(containerId);
             	}

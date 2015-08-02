@@ -991,7 +991,7 @@ $file = file_get_contents('calendarEvents4.xml');
 		
 		//$user = get_record('user','username',$username);
 		$user = eF_getTableData('users', '*', "login = '" . $username . "'");
-		setUserView($user[0]['id'], $view);
+		setUserView($user[0]['email'], $view);
 		
 		
 	}else{
@@ -1374,9 +1374,9 @@ function createUserProfile($requestingUser, $usernew, $isSignup){
 	//$userRole = get_record('role_assignments', 'userid', $userold->id, 'contextid', 1);
 	//$role = get_record('role', 'id', $userRole->roleid);
 	$role = eF_getTableData('users', '*', " login = '" .$username . "'");
-	return true;
-	if (!empty($role->name)) {
-		$newrole = $role->name;
+	//return true;
+	if (!empty($role[0]['user_type'])) {
+		$newrole = $role[0]['user_type'];
 	}
 	
 	// Admin account screation password param is newpassword and student signup is password.
@@ -1429,9 +1429,9 @@ function editUserProfile($requestingUser, $userold){
 	$user = profile_user_record($userold->id);
 	//$zone = getUserTimeZone($userold->id);
 	//$zone = get_record('user_info_data','userid',$userold->id,'field_id',4);
-	$zone = eF_getTableData('module_vlabs_user_info_data', '*', "email = '" . $usernew[0]['email']."'");
-	if (!empty($zone->data)) {
-		$timezone = $zone->data;
+	$zone = eF_getTableData('module_vlabs_user_info_data', '*', "field_id = 4 and email = '" . $usernew[0]['email']."'");
+	if (!empty($zone[0]['data'])) {
+		$timezone = $zone[0]['data'];
 	}else{
 		//$timezone = "GMT-05:00 America/New_York";
 		$timezone = "";
@@ -1444,9 +1444,9 @@ function editUserProfile($requestingUser, $userold){
 	//$userRole = get_record('role_assignments', 'userid', $userold->id, 'contextid', 1);
 	//$role = get_record('role', 'id', $userRole->roleid);
 	$role = eF_getTableData('users', '*', " login = '" .$username . "'");
-	return true;
-	if (!empty($role->name)) {
-		$newrole = $role->name;
+	//return true;
+	if (!empty($role[0]['user_type'])) {
+		$newrole = $role[0]['user_type'];
 	}else{
 		$newrole = "Student";
 	}
@@ -1488,9 +1488,9 @@ function editUserProfilePassword($requestingUser, $username, $password){
 	
 	//$user = get_record('user','username',$username);
 	//$zone = get_record('user_info_data','userid',$user->id,'field_id',4);
-	$zone = eF_getTableData('module_vlabs_user_info_data', '*', "email = '" . $usernew[0]['email']."'");
-	if (!empty($zone->data)) {
-		$timezone = $zone->data;
+	$zone = eF_getTableData('module_vlabs_user_info_data', '*', "field_id = 4 and email = '" . $usernew[0]['email']."'");
+	if (!empty($zone[0]['data'])) {
+		$timezone = $zone[0]['data'];
 	}else{
 		//$timezone = "GMT-05:00 America/New_York";
 		$timezone = "";
@@ -1500,8 +1500,8 @@ function editUserProfilePassword($requestingUser, $username, $password){
 	//$role = get_record('role', 'id', $userRole->roleid);
 	$role = eF_getTableData('users', '*', " login = '" .$username . "'");
 	return true;
-	if (!empty($role->name)) {
-		$newrole = $role->name;
+	if (!empty($role[0]['name'])) {
+		$newrole = $role[0]['name'];
 	}else{
 		$newrole = "Student";
 	}
@@ -1548,9 +1548,9 @@ function editUserProfileRole($requestingUser, $userid, $roleid,$addingRole){
 	
 	//$user = get_record('user','id',$userid);
 	//$zone = get_record('user_info_data','userid',$user->id,'field_id',4);
-	$zone = eF_getTableData('module_vlabs_user_info_data', '*', "email = '" . $usernew[0]['email']."'");
-	if (!empty($zone->data)) {
-		$timezone = $zone->data;
+	$zone = eF_getTableData('module_vlabs_user_info_data', '*', "field_id = 4 and email = '" . $usernew[0]['email']."'");
+	if (!empty($zone[0]['data'])) {
+		$timezone = $zone[0]['data'];
 	}else{
 		//$timezone = "GMT-05:00 America/New_York";
 		$timezone = "";
@@ -1559,23 +1559,23 @@ function editUserProfileRole($requestingUser, $userid, $roleid,$addingRole){
 	//$role = get_record('role', 'id', $roleid);
 	//$rolename = get_field('role', 'name', 'id', $roleid);
 	$role = eF_getTableData('users', '*', " login = '" .$username . "'");
-	return true;
+	//return true;
 	//$records = get_records('role_assignments', 'userid', $userid);
-	foreach ($records as $record) {
+	//foreach ($records as $record) {
 		//$role = get_record('role', 'id', $record->roleid);
-		if($role->shortname == "admin"){
+		if($role['shortname'] == "administrator"){
 			$isAdmin = true;
-		}else if($role->shortname == "mentor"){
+		}else if($role['shortname'] == "mentor"){
 			$isMentor = true;
 		}
-	}
+	//}
 	
 	if ($isAdmin) {
-		$newrole = "Admin";
+		$newrole = "administrator";
 	}else if ($isMentor) {
 		$newrole = "Mentor";
 	}else{
-		$newrole = "Student";
+		$newrole = "student";
 	}
 
 	try {
@@ -1611,7 +1611,7 @@ function editUserProfileRole($requestingUser, $userid, $roleid,$addingRole){
 function deleteUserProfile($requestingUser, $userold){
 	//$wsdl="http://ita-provisioner.cis.fiu.edu:8080/axis2/services/VirtualLabs?wsdl";
 	//$location ="http://ita-provisioner.cis.fiu.edu:8080/axis2/services/VirtualLabs";
-	return true;
+	//return true;
 	try {
 		
 		$params = array('requestingUser' => $requestingUser,
@@ -1642,7 +1642,7 @@ function deleteUserProfile($requestingUser, $userold){
 function enrollUserInCourse($requestingUser, $username, $courseName, $enrolled){
 	//$wsdl="http://ita-provisioner.cis.fiu.edu:8080/axis2/services/VirtualLabs?wsdl";
 	//$location ="http://ita-provisioner.cis.fiu.edu:8080/axis2/services/VirtualLabs";
-	return true;
+	//return true;
 	try {
 		
 		$params = array('requestingUser' => $requestingUser,
@@ -1761,13 +1761,15 @@ function isEnrolledInCourse($username, $courseId){
 	//$user = get_record('user','username',$username);
 	
 	//$roles = get_records('role_assignments','userid',$user->id,'timemodified ASC');
-	$role = eF_getTableData('users', '*', " login = '" .$username . "'");
+	$role = eF_getTableData('module_vlabs_quotasystem_user_profile', '*', " username = '" .$username . "'");
 	foreach ($roles as $role)
 	{
 		//TN more course thing.......wait context?
 		//$context = get_record('context','id',$role->contextid,'contextlevel',50);
 		//$course =  get_record('course','id',$context->instanceid);
-		if($course->id == $courseId){
+		$course = eF_getTableData('module_vlabs_quotasystem_course_enrollment', '*', 'user_id = ' . $role['id']);
+
+		if($course[0]['id'] == $courseId){
 			$isEnrolled = true;
 		}
 	}

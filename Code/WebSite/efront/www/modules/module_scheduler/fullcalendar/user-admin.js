@@ -12,7 +12,7 @@ function loadHostAppointments(start, end, init, username) {
 	
 	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		timeout: 4000,
@@ -179,7 +179,7 @@ function getHosts(username) {
 
 	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		async: false,
 		data: {
@@ -223,7 +223,7 @@ function scheduleHostAppointment(event, view){
 	
 	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		data: {
 			action: 'scheduleAppointments',
@@ -304,7 +304,7 @@ function confirmHostAppointment(event, view){
 	
 	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'json',
 		data: {
 			action: 'scheduleAppointments',
@@ -395,7 +395,7 @@ function cancelAllHostAppointments(affiliationId){
 	
 	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		data: {
 			action: 'cancelAllAppointments',
@@ -457,7 +457,7 @@ function cancelHostAppointment(event, createNew){
 	
 	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		data: {
 			action: 'cancelAppointment',
@@ -532,7 +532,7 @@ function modifyHostAppointment(event, newStart, newEnd, multiple){
 	
 	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		data: {
 			action: 'modifyAppointment',

@@ -32,7 +32,7 @@ function random_color(format)
  switch(format)
  {
   case 'hex':
-   return ('#0' + rint.toString(16)).replace(/^#0([0-9a-f]{6})jQuery/i, '#jQuery1');
+   return ('#0' + rint.toString(16)).replace(/^#0([0-9a-f]{6})$/i, '#$1');
   break;
   
   case 'rgb':
@@ -52,14 +52,14 @@ function checkArrayOfBoxes(column, name, len){
 	var cnt = 0;
 
 	if(column){
-		jQuery("."+name).each(function(){
+		$("."+name).each(function(){
 			if(this.checked){cnt++;}
 			
 		});
 	
 	}else{		// Row
 		for(var i = 0; i<len; i++){
-			jQuery("#fltcourse-"+i).each(function(){
+			$("#fltcourse-"+i).each(function(){
 				if(this.checked){cnt++;}
 			});
 		}
@@ -92,7 +92,7 @@ function constructOptionTable(courses, types){
 	}else{
 		customLabel = "COURSES";
 	}
-	//console.log
+	
 	table += '<form id="form-options">';
 	table += '<table style="border:2px solid #444;border-collapse:collapse;" cellpadding="5" cellspacing="5" border="1"id="table-options"><thead>';
 	table += '<tr>';
@@ -105,9 +105,6 @@ function constructOptionTable(courses, types){
 	}
 	table += '</tr></thead><tbody>';
 	for(var j = 0; j<courses.length; j++){
-		//if(courses[j].indexOf('.') == -1) {
-		//	break;
-		//}
 		var course = (jQuery.trim(courses[j])).replace(/ /g,"-").toLowerCase();	// Fixes any issues with type name with spaces.
 		table += '<tr>';
 		table += '<td><input class="course-item '+ course.replace(/\./g,"") +' checkbox" type="checkbox" value="' + types.length + '" name="fltcourse-'+j+'" id="fltcourse-'+j+'" />' + courses[j] + '</td>'; // Name Displayed
@@ -138,7 +135,7 @@ function constructOptionTable(courses, types){
 }
 
 function constructMentorOptionTable(courses, types){
-	alert('courses: '+courses.length+' types:'+types.length);
+	//alert('courses: '+courses.length+' types:'+types.length);
 	var table = "";
 	var customLabel = "COURSES";
 	
@@ -201,33 +198,33 @@ function constructMentorOptionTable(courses, types){
 */
 
 
-(function(jQuery) {
+(function($) {
 
-    jQuery.fn.selectAllRows = function(callerSettings) {
+    $.fn.selectAllRows = function(callerSettings) {
         var settings;
         var headerCheckbox;
         var columnCheckboxes;
 
-        settings = jQuery.extend({
+        settings = $.extend({
             column: 'first',
             selectTip: 'Click to Select All',
             unselectTip: 'Click to Un-Select All'            
         }, callerSettings || {});
 
         if (isNaN(settings.column)) {
-            headerCheckbox = jQuery("thead tr th:" + settings.column + "-child input:checkbox", this);
-            columnCheckboxes = jQuery("tbody tr td:" + settings.column + "-child input:checkbox", this);
+            headerCheckbox = $("thead tr th:" + settings.column + "-child input:checkbox", this);
+            columnCheckboxes = $("tbody tr td:" + settings.column + "-child input:checkbox", this);
         }
         else {
-            headerCheckbox = jQuery("thead tr th:nth-child(" + settings.column + ") input:checkbox", this);
+            headerCheckbox = $("thead tr th:nth-child(" + settings.column + ") input:checkbox", this);
 			
 			// add a fix for the multiple tds in each rox/col
 			if(settings.column > 2){
 				var mlt = settings.column - 2;
 				var newCol = settings.column + (mlt * 2);
-				columnCheckboxes = jQuery("tbody tr td:nth-child(" + newCol + ") input:checkbox", this);
+				columnCheckboxes = $("tbody tr td:nth-child(" + newCol + ") input:checkbox", this);
 			}else{
-				 columnCheckboxes = jQuery("tbody tr td:nth-child(" + settings.column + ") input:checkbox", this);
+				 columnCheckboxes = $("tbody tr td:nth-child(" + settings.column + ") input:checkbox", this);
 			}
         }
 
@@ -242,17 +239,17 @@ function constructMentorOptionTable(courses, types){
             });
 
             if (checkedStatus == true) {
-                jQuery(this).attr("title", settings.unselectTip);
+                $(this).attr("title", settings.unselectTip);
             }
             else {
-                jQuery(this).attr("title", settings.selectTip);
+                $(this).attr("title", settings.selectTip);
             }
 			
 			//alert("CB Debug: 3");
 			checkboxClick();
         });
 
-        return jQuery(this);
+        return $(this);
     };
 })(jQuery);
 
@@ -304,18 +301,18 @@ function setAppointmentCSS(username){
 			css += "td"+divclass+" {border-color: #"+eventColor+"; background-color: #"+eventColor+";}\n";
 			
 			/*
-			jQuery(divclass + " a").css('background-color', '#'+eventColor);
-			jQuery(divclass + " a").css('color', '#FFFFFF');
+			$(divclass + " a").css('background-color', '#'+eventColor);
+			$(divclass + " a").css('color', '#FFFFFF');
 			
 											
-			jQuery(divclass+" .fc-event-time").css('border-color','#'+eventColor);
-			jQuery(divclass+" .fc-event-time").css('background-color','#'+eventColor);
+			$(divclass+" .fc-event-time").css('border-color','#'+eventColor);
+			$(divclass+" .fc-event-time").css('background-color','#'+eventColor);
 			
-			jQuery(divclass+" .fc-event-actions").css('border-color','#'+eventColor);
-			jQuery(divclass+" .fc-event-actions").css('background-color','#'+eventColor);
+			$(divclass+" .fc-event-actions").css('border-color','#'+eventColor);
+			$(divclass+" .fc-event-actions").css('background-color','#'+eventColor);
 			
-			jQuery("td"+divclass).css('border-color','#'+eventColor);
-			jQuery("td"+divclass).css('background-color','#'+eventColor);
+			$("td"+divclass).css('border-color','#'+eventColor);
+			$("td"+divclass).css('background-color','#'+eventColor);
 			*/
 		}
 			
@@ -340,7 +337,7 @@ function setAppointmentCSS(username){
 	*/
 	if (jQuery.browser.msie) {
 		//alert("HERE");
-		//var filtersDiv = jQuery('#dynamic_css');
+		//var filtersDiv = $('#dynamic_css');
 		//filtersDiv.append(css);
 		/*
 		//alert("1 IE:"+jQuery.browser.msie);
@@ -376,13 +373,13 @@ function setAppointmentCSS(username){
 		
 		//document.getElementById('debug2').innerHTML = ss1.styleSheet.cssText;
 	}else{
-		jQuery("#dynamic_css").html(css);
+		$("#dynamic_css").html(css);
 		//alert("WORLD");
 	}
 	
 	
 	 
-	 //jQuery("#dynamic_css").html(css);
+	 //$("#dynamic_css").html(css);
 	//alert(css);
 			
 }
@@ -398,15 +395,15 @@ function getResourcesAvailable(username){
 	
 	//debugging("getResourcesAvailable: ajax called 'getUserResourceTypes'");
 
-	jQuery.ajax({
+	$.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/calendar.php',
+		url: 'fullcalendar/calendar.php',
 		dataType: 'xml',
 		async: false,
 		data: {
 
 			action:'getUserResourceTypes',
-			requestingUser:  jQuery('#username').val(),
+			requestingUser:  $('#username').val(),
 			username:username
 
 		},
@@ -420,7 +417,7 @@ function getResourcesAvailable(username){
 		
 			if(data){
 				//getHostsCourses();
-				jQuery(data).find('resources').each(function() {
+				$(data).find('resources').each(function() {
 				
 					var nodes  = this.getElementsByTagName('node');
 					if(nodes.length >0){
@@ -481,15 +478,14 @@ function setupFilterOptions(){
 	//alert(totalBoxes);
 	
 	
-	jQuery("#filterOptions_TopResources").click(function () {
-	 // jQuery("#options_pane").slideToggle("slow");
-		//jQuery("#form-options").slideToggle("slow");
-		$("#options_pane").slideToggle("slow");
+	$("#filterOptions_TopResources").click(function () {
+	 // $("#options_pane").slideToggle("slow");
+	 $("#form-options").slideToggle("slow");
 	});
 	
 	
 	if (jQuery.browser.msie) {
-		var divOptions = jQuery('#options_pane');
+		var divOptions = $('#options_pane');
 		divOptions.empty();
 		
 		if(is_mentor_user){
@@ -501,9 +497,9 @@ function setupFilterOptions(){
 		
 	}else{
 		if(is_mentor_user){
-			jQuery("#options_pane").html(constructMentorOptionTable(courses, types));
+			$("#options_pane").html(constructMentorOptionTable(courses, types));
 		}else{
-			jQuery("#options_pane").html(constructOptionTable(courses, types));
+			$("#options_pane").html(constructOptionTable(courses, types));
 		}	
 	}
 	
@@ -515,12 +511,12 @@ function setupFilterOptions(){
 	//Set all Row select.
 	for(var i = 1; i<=types.length; i++){
 		var col = i+1;
-		jQuery("#table-options").selectAllRows({ column: col });
+		$("#table-options").selectAllRows({ column: col });
 	}
 	
 	for(var j = 0; j<courses.length; j++){
 		
-		jQuery("#fltcourse-"+j).click(function() { 
+		$("#fltcourse-"+j).click(function() { 
 	
 			for(var j = 0; j<courses.length; j++){
 				if(this.id == "fltcourse-"+j){
@@ -532,38 +528,37 @@ function setupFilterOptions(){
 					//alert(course);
 					
 					///------------------------------------------------------ HERE - find a way to optimize
-					jQuery("input[name^='"+course+"']").each(function() { 
+					$("input[name^='"+course+"']").each(function() { 
 						this.checked = checked_status; 
 						checkBoxStatus(this);				// ---- Commented
 					});
 				}
 			}
 			
-			var colHeader = jQuery("#courses");
-			//var total = jQuery(colHeader).val();
+			var colHeader = $("#courses");
+			//var total = $(colHeader).val();
 			var total = totalBoxes;
 			var checked = 0;
-			jQuery(".course-item").each(function() { 
+			$(".course-item").each(function() { 
 				checked = (this.checked) ? checked + 1: checked;
 			});
 	
 			if(checked == total){	//solid checkbox (row)
-				jQuery(colHeader).each(function(){
-					jQuery(this).removeClass("mixed-state");
+				$(colHeader).each(function(){
+					$(this).removeClass("mixed-state");
 					this.checked = true;
 				});
 				
 			}else if(checked == 0){	// not checked
-				jQuery(colHeader).each(function(){
-					jQuery(this).removeClass("mixed-state");
+				$(colHeader).each(function(){
+					$(this).removeClass("mixed-state");
 					this.checked = false;
 				});
 			}else{
-				jQuery(colHeader).each(function(){
+				$(colHeader).each(function(){
 					//alert('addClass: 3');
-					jQuery(this).addClass("mixed-state");
+					$(this).addClass("mixed-state");
 					this.checked = true;
-					console.log("in here");
 				});
 			}
 			
@@ -575,45 +570,45 @@ function setupFilterOptions(){
 	
 	
 	// manages the state of the mixed checkboxes
-	jQuery("input:checkbox").click(function(){
+	$("#form-options input:checkbox").click(function(){
 		//showProgressBar(true);
 		
 		if(this.id == 'courses'){
-			console.log("in some check box");
-			jQuery("#form-options input:checkbox").each(function(){
-				var checked_status = jQuery("#courses").attr("checked");
+		
+			$("#form-options input:checkbox").each(function(){
+				var checked_status = $("#courses").attr("checked");
 				
 				this.checked = checked_status;
 				if(!checked_status){
-					jQuery(this).removeClass("mixed-state");
-					//jQuery("#courses").val(0);
+					$(this).removeClass("mixed-state");
+					//$("#courses").val(0);
 				}
 			});
 			//alert("CB Debug: 4");	
 			checkboxClick();	// occurs only when the all courses checkbox is clicked
 			
-		}else if(jQuery(this).hasClass("types")){
+		}else if($(this).hasClass("types")){
 			//alert("header");
 			var cbClass = "."+this.id;
-			jQuery(cbClass).each(function(){
+			$(cbClass).each(function(){
 				checkBoxStatus(this);								
 			});
 			
 		}else{
 			//checkboxClick();
 			/*
-			if(jQuery(this).hasClass("course-item")){
+			if($(this).hasClass("course-item")){
 				
 				for(var j = 0; j<courses.length; j++){
 					var course = (courses[j]).replace(/ /g,"-").toLowerCase();// Fixes any issues with type name with spaces.
 					if(this.id == "fltcourse-"+j){
-						jQuery("input[name^='"+course+"']").each(function() { 
+						$("input[name^='"+course+"']").each(function() { 
 							checkBoxStatus(this);
 						});
 					}
 				}
-			}else if(jQuery(this).hasClass("types")){
-				jQuery(this).removeClass("mixed-state");
+			}else if($(this).hasClass("types")){
+				$(this).removeClass("mixed-state");
 				checkBoxStatus(this);
 				
 			}else{
@@ -621,7 +616,7 @@ function setupFilterOptions(){
 			}
 			*/
 			
-			//if(!(jQuery(this).hasClass("course-item")) && !(jQuery(this).hasClass("types"))){
+			//if(!($(this).hasClass("course-item")) && !($(this).hasClass("types"))){
 				checkBoxStatus(this);
 				
 				//alert("CB Debug: 5");
@@ -635,16 +630,16 @@ function setupFilterOptions(){
 		
 		if(this.id != 'courses'){
 			if(counter == totalboxes){							
-				jQuery(".types").removeClass("mixed-state");
-				jQuery("#courses").removeClass("mixed-state");
-				jQuery("#courses").attr("checked",true);
+				$(".types").removeClass("mixed-state");
+				$("#courses").removeClass("mixed-state");
+				$("#courses").attr("checked",true);
 			}else if(counter == 0){	// not checked
-				jQuery(".types").removeClass("mixed-state");
-				jQuery("#courses").removeClass("mixed-state");
-				jQuery("#courses").attr("checked",false);
+				$(".types").removeClass("mixed-state");
+				$("#courses").removeClass("mixed-state");
+				$("#courses").attr("checked",false);
 			}else{
-				jQuery("#courses").addClass("mixed-state");
-				jQuery("#courses").attr("checked",true);
+				$("#courses").addClass("mixed-state");
+				$("#courses").attr("checked",true);
 			}
 		}
 		
@@ -654,8 +649,8 @@ function setupFilterOptions(){
 	if(isJookie){
 		resetCheckboxFilters(Jookiefilter);	
 		isJookie=false;
-		jQuery.each( jQuery("#form-options input:checkbox") , function () { 
-			jQuery(this).removeClass("mixed-state");
+		$.each( $("#form-options input:checkbox") , function () { 
+			$(this).removeClass("mixed-state");
 			checkBoxStatus(this);
 		});				
 	}
@@ -667,73 +662,72 @@ function checkBoxStatus(cb){
 	//alert(cb.id);
 	totalboxes = types.length * courses.length;
 	counter = 0;
-	var colHeader = jQuery("#courses");
+	var colHeader = $("#courses");
 	
-	jQuery(colHeader).val(totalboxes); 
+	$(colHeader).val(totalboxes); 
 	for(var i = 0; i<types.length; i++){
 	
 		var type = jQuery.trim(types[i]);
 		type = (type).replace(/ /g,"-").toLowerCase();	// Fixes any issues with type name with spaces.
 		type = type.replace(/\./g,"");
 		
-		if(jQuery(cb).hasClass(type)){
+		if($(cb).hasClass(type)){
 			
-			var colHeader = jQuery("#"+type);
-			var total = jQuery(colHeader).val();
+			var colHeader = $("#"+type);
+			var total = $(colHeader).val();
 			//var total = totalboxes;
 			var checked = 0;
-			jQuery("input[class^='"+type+"']").each(function() { 
+			$("input[class^='"+type+"']").each(function() { 
 				checked = (this.checked) ? checked + 1: checked;
 				//alert('type: '+type+', checked: '+checked);
-
 			});
 		
 			
 			//alert('type: '+type+', checked: '+checked+', total: '+total);
 			if(checked == total){	//solid checkbox (column)
-				jQuery(colHeader).each(function(){
-					jQuery(this).removeClass("mixed-state");
+				$(colHeader).each(function(){
+					$(this).removeClass("mixed-state");
 					this.checked = true;
 				});
 				
 			}else if(checked == 0){	// not checked
-				jQuery(colHeader).each(function(){
-					jQuery(this).removeClass("mixed-state");
+				$(colHeader).each(function(){
+					$(this).removeClass("mixed-state");
 					this.checked = false;
 				});
 			}else{
-				jQuery(colHeader).each(function(){
+				$(colHeader).each(function(){
 					//alert('addClass: 1');
-					jQuery(this).addClass("mixed-state");
+					$(this).addClass("mixed-state");
 					this.checked = true;
 				});
 			}
 			//alert("here");
-			jQuery("."+cb.name).each(function(){
+			$("."+cb.name).each(function(){
 	
-				var rowHeader = jQuery("#"+this.id);
-				var total = jQuery(rowHeader).val();
+				var rowHeader = $("#"+this.id);
+				var total = $(rowHeader).val();
 				var checked = 0;
 				
-				jQuery("input[name^='"+cb.name+"']").each(function() { 
+				$("input[name^='"+cb.name+"']").each(function() { 
 					checked = (this.checked) ? checked + 1: checked;
 				});
 				
 				if(checked == total){	//solid checkbox (row)
-					jQuery(rowHeader).each(function(){
-						jQuery(this).removeClass("mixed-state");
+					$(rowHeader).each(function(){
+						$(this).removeClass("mixed-state");
 						this.checked = true;
 					});
 					
 				}else if(checked == 0){	// not checked
-					jQuery(rowHeader).each(function(){
-						jQuery(this).removeClass("mixed-state");
+					$(rowHeader).each(function(){
+						$(this).removeClass("mixed-state");
 						this.checked = false;
 					});
 				}else{
-					jQuery(rowHeader).each(function(){
+					$(rowHeader).each(function(){
 						//alert('addClass: 2');  
-						jQuery(this).addClass("mixed-state");
+						$(this).addClass("mixed-state");
 						this.checked = true;
 					});
 				}
@@ -743,7 +737,7 @@ function checkBoxStatus(cb){
 		}
 		//counter = counter+checked;
 		
-		jQuery("input[class^='"+type+"']").each(function() { 
+		$("input[class^='"+type+"']").each(function() { 
 			counter = (this.checked) ? counter + 1: counter;
 		});
 		
@@ -757,28 +751,28 @@ function checkBoxStatus(cb){
 		course = course.replace(/\./g,"");
 		
 		//if(cb.name == course){
-			var rowHeader = jQuery("#fltcourse-"+j);
-			var total = jQuery(rowHeader).val();
+			var rowHeader = $("#fltcourse-"+j);
+			var total = $(rowHeader).val();
 			var checked = 0;
-			jQuery("input[name^='"+course+"']").each(function() { 
+			$("input[name^='"+course+"']").each(function() { 
 				checked = (this.checked) ? checked + 1: checked;
 			});
 			alert("checked:"+checked + " total:"+total);
 			if(checked == total){	//solid checkbox (row)
-				jQuery(rowHeader).each(function(){
-					jQuery(this).removeClass("mixed-state");
+				$(rowHeader).each(function(){
+					$(this).removeClass("mixed-state");
 					this.checked = true;
 				});
 				
 			}else if(checked == 0){	// not checked
-				jQuery(rowHeader).each(function(){
-					jQuery(this).removeClass("mixed-state");
+				$(rowHeader).each(function(){
+					$(this).removeClass("mixed-state");
 					this.checked = false;
 				});
 			}else{
-				jQuery(rowHeader).each(function(){
+				$(rowHeader).each(function(){
 					//alert('addClass: 2');  
-					jQuery(this).addClass("mixed-state");
+					$(this).addClass("mixed-state");
 					this.checked = true;
 				});
 			}

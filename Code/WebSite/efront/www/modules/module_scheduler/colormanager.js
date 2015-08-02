@@ -2,9 +2,9 @@
 
 function loadColorOptions(){
 
-	jQuery('a.colorEdit').each(function(){
+	$('a.colorEdit').each(function(){
 	
-		jQuery(this).click(function(){
+		$(this).click(function(){
 		
 			var status, code, id;
 							
@@ -19,9 +19,9 @@ function loadColorOptions(){
 			return false;
 		});
 	});
-	jQuery('a.colorDelete').each(function(){
+	$('a.colorDelete').each(function(){
 	
-		jQuery(this).click(function(){
+		$(this).click(function(){
 		
 			var status, code, id;
 			
@@ -37,14 +37,14 @@ function loadColorOptions(){
 		});
 		
 	});
-	jQuery('a.colorStatus').each(function(){
+	$('a.colorStatus').each(function(){
 	
-		jQuery(this).click(function(){
+		$(this).click(function(){
 		
 			var status, code, id;
-			if(jQuery(this).hasClass('disabled')){
+			if($(this).hasClass('disabled')){
 				status = "enabled";
-			}else if(jQuery(this).hasClass('enabled')){
+			}else if($(this).hasClass('enabled')){
 				status = "disabled";
 			}
 			
@@ -56,10 +56,10 @@ function loadColorOptions(){
 			if(updateColor(id, code, status)){
 			
 				var tagname = '#status-'+id;
-				jQuery(tagname).removeClass('enabled');
-				jQuery(tagname).removeClass('disabled');
+				$(tagname).removeClass('enabled');
+				$(tagname).removeClass('disabled');
 				
-				jQuery(tagname).addClass(status);
+				$(tagname).addClass(status);
 				document.getElementById('status-'+id).innerHTML = status;
 			
 			}
@@ -74,42 +74,42 @@ function loadColorOptions(){
 
 function noticeDialog(header, message, icon){
 	
-	var noticeContent = jQuery("<div id='calendar-notice' />").html('<p><span class="ui-icon ui-icon-'+icon+'" style="float:left; margin:0 7px 20px 0;"></span>'+message+'</p>');
+	var noticeContent = $("<div id='calendar-notice' />").html('<p><span class="ui-icon ui-icon-'+icon+'" style="float:left; margin:0 7px 20px 0;"></span>'+message+'</p>');
 	
-	jQuery(noticeContent).dialog({
+	$(noticeContent).dialog({
 		modal: true,
 		title: header,
 		buttons: {
 			Ok: function() {
-				jQuery(this).dialog('close');
+				$(this).dialog('close');
 			}
 		}
 	});
 	
-	jQuery(noticeContent).dialog('open');
+	$(noticeContent).dialog('open');
 }
 
 function deleteColorDialogBox(id){
 	
 	var message = "Are you sure you would like to delete this color? <br/> <i>** this change cannot be undone.</i>";
 
-	var confirmContent = jQuery("<div id='confirm-delete' />").html('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+message+'</p>');
+	var confirmContent = $("<div id='confirm-delete' />").html('<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>'+message+'</p>');
 				
-	jQuery(confirmContent).dialog({
+	$(confirmContent).dialog({
 		autoOpen: false,
 		resizable: false,
 		height: 140,
 		title: "Color Manager - Delete",
 		modal: true,
 		close: function() {
-		   jQuery(this).dialog("destroy");
-		   jQuery(this).hide();
+		   $(this).dialog("destroy");
+		   $(this).hide();
 		},
 		buttons: {
 			"delete" : function() {
 				if(deleteColor(id)){
-					var row = jQuery('#code-'+id).parent();
-					jQuery(row).empty();
+					var row = $('#code-'+id).parent();
+					$(row).empty();
 				
 				}else{
 					var header = "Color Manager - Delete";
@@ -117,64 +117,64 @@ function deleteColorDialogBox(id){
 					noticeDialog(header, message, 'alert');
 				}
 				
-				jQuery(this).dialog('close');
+				$(this).dialog('close');
 
 			},
 			close: function() {
-				jQuery(this).dialog('close');
+				$(this).dialog('close');
 			}
 		}
 	});
 	
-	jQuery(confirmContent).dialog('open');
+	$(confirmContent).dialog('open');
 
 }
 
 function editColorDialogBox(id, color, status){
 		
-	var dialogContent = jQuery("<div id='edit-color-dialog' />").load('modules/module_scheduler/fullcalendar/edit_color.html',function() {
+	var dialogContent = $("<div id='edit-color-dialog' />").load('fullcalendar/edit_color.html',function() {
 	
 		reseColorForm(this);
 	
-		jQuery('#edit-color-dialog #colorCode').val(color);
-		jQuery('#colorSelector2 div').css({ backgroundColor: '#'+color});
+		$('#edit-color-dialog #colorCode').val(color);
+		$('#colorSelector2 div').css({ backgroundColor: '#'+color});
 		
-		jQuery('#edit-color-dialog #status').val(status);
+		$('#edit-color-dialog #status').val(status);
 		
-		jQuery('#edit-color-dialog #colorCode').ColorPicker({
+		$('#edit-color-dialog #colorCode').ColorPicker({
 			
 			onSubmit: function(hsb, hex, rgb, el) {
-				jQuery(el).val(hex);
-				jQuery(el).ColorPickerHide();
+				$(el).val(hex);
+				$(el).ColorPickerHide();
 			},
 			onBeforeShow: function () {
-				jQuery(this).ColorPickerSetColor(this.value);
+				$(this).ColorPickerSetColor(this.value);
 			},
 			onChange: function (hsb, hex, rgb) {
-				jQuery('#edit-color-dialog #colorCode').val(hex);
-				jQuery('#colorSelector2 div').css('backgroundColor', '#' + hex);
+				$('#edit-color-dialog #colorCode').val(hex);
+				$('#colorSelector2 div').css('backgroundColor', '#' + hex);
 			}
 		})
 		.bind('keyup', function(){
-			jQuery(this).ColorPickerSetColor(this.value);
+			$(this).ColorPickerSetColor(this.value);
 		});
 		
 	});
 	
-	jQuery(dialogContent).dialog({
+	$(dialogContent).dialog({
 		autoOpen: false,
 		width: 300,
 		modal: true,
 		title: "Color Manager - Edit",
 		close: function() {
-		   jQuery(this).dialog("destroy");
-		   jQuery(this).hide();
+		   $(this).dialog("destroy");
+		   $(this).hide();
 		},
 		buttons: {
 			"change" : function() {
-				var colorId = jQuery(this).find("input[name='colorid']").val();
-				var colorStatus = jQuery(this).find("select[name='status']");
-				var colorCode = jQuery(this).find("input[name='colorCode']").val();
+				var colorId = $(this).find("input[name='colorid']").val();
+				var colorStatus = $(this).find("select[name='status']");
+				var colorCode = $(this).find("input[name='colorCode']").val();
 				
 				//var id = parseInt(colorId);
 				var status = colorStatus.val();
@@ -188,15 +188,15 @@ function editColorDialogBox(id, color, status){
 				if(id>0){
 					if(updateColor(id, code, status)){
 						var tagname = '#status-'+id;
-						jQuery(tagname).removeClass('enabled');
-						jQuery(tagname).removeClass('disabled');
+						$(tagname).removeClass('enabled');
+						$(tagname).removeClass('disabled');
 						
-						jQuery(tagname).addClass(status);
+						$(tagname).addClass(status);
 						document.getElementById('status-'+id).innerHTML = status;
 						document.getElementById('code-'+id).innerHTML = code;
 						
-						jQuery('#scheduled-'+id).css({ backgroundColor: '#'+code});
-						jQuery('#available-'+id).css({ backgroundColor: '#'+code});
+						$('#scheduled-'+id).css({ backgroundColor: '#'+code});
+						$('#available-'+id).css({ backgroundColor: '#'+code});
 					
 					}else{
 						var header = "Color Manager - Edit";
@@ -205,61 +205,61 @@ function editColorDialogBox(id, color, status){
 					}
 				}
 			
-				jQuery(this).dialog("close");
+				$(this).dialog("close");
 			},
 			close : function() {
-				jQuery(this).dialog("close");
+				$(this).dialog("close");
 			}
 		}
 	});
 	
-	jQuery(dialogContent).dialog('open');
+	$(dialogContent).dialog('open');
 	
 }
 
 function insertColorDialogBox(){
 	
-	var dialogContent = jQuery("<div id='insert-color-dialog' />").load('modules/module_scheduler/fullcalendar/edit_color.html',function() {
+	var dialogContent = $("<div id='insert-color-dialog' />").load('fullcalendar/edit_color.html',function() {
 		
 		reseColorForm(this);
 	
-		jQuery('#insert-color-dialog #colorCode').val('ffffff');
-		jQuery('#colorSelector2 div').css({ backgroundColor: '#ffffff'});
+		$('#insert-color-dialog #colorCode').val('ffffff');
+		$('#colorSelector2 div').css({ backgroundColor: '#ffffff'});
 	
-		jQuery('#insert-color-dialog #colorCode').ColorPicker({
+		$('#insert-color-dialog #colorCode').ColorPicker({
 			
 			onSubmit: function(hsb, hex, rgb, el) {
-				jQuery(el).val(hex);
-				jQuery(el).ColorPickerHide();
+				$(el).val(hex);
+				$(el).ColorPickerHide();
 			},
 			onBeforeShow: function () {
-				jQuery(this).ColorPickerSetColor(this.value);
+				$(this).ColorPickerSetColor(this.value);
 			},
 			onChange: function (hsb, hex, rgb) {
-				jQuery('#insert-color-dialog #colorCode').val(hex);
-				jQuery('#colorSelector2 div').css('backgroundColor', '#' + hex);
+				$('#insert-color-dialog #colorCode').val(hex);
+				$('#colorSelector2 div').css('backgroundColor', '#' + hex);
 			}
 		})
 		.bind('keyup', function(){
-			jQuery(this).ColorPickerSetColor(this.value);
+			$(this).ColorPickerSetColor(this.value);
 		});
 		
 	});
 	
-	jQuery(dialogContent).dialog({
+	$(dialogContent).dialog({
 		autoOpen: false,
 		width: 300,
 		modal: true,
 		title: "Color Manager - Create",
 		close: function() {
-		   jQuery(this).dialog("destroy");
-		   jQuery(this).hide();
+		   $(this).dialog("destroy");
+		   $(this).hide();
 		},
 		buttons: {
 			"create" : function() {
 			
-				var colorStatus = jQuery(this).find("select[name='status']");
-				var colorCode = jQuery(this).find("input[name='colorCode']").val();
+				var colorStatus = $(this).find("select[name='status']");
+				var colorCode = $(this).find("input[name='colorCode']").val();
 				
 				var status = colorStatus.val();
 				
@@ -286,18 +286,18 @@ function insertColorDialogBox(){
 						newRow += "<td><a id='delete-" + id + "' class='colorDelete'>delete</a></td>";
 						newRow += "</tr>";
 										
-						jQuery('#scheduler-colormap').html(jQuery('#scheduler-colormap').html() + newRow);  
+						$('#scheduler-colormap').html($('#scheduler-colormap').html() + newRow);  
 					}
 					var tagname = '#status-'+id;
-					jQuery(tagname).removeClass('enabled');
-					jQuery(tagname).removeClass('disabled');
+					$(tagname).removeClass('enabled');
+					$(tagname).removeClass('disabled');
 					
-					jQuery(tagname).addClass(status);
+					$(tagname).addClass(status);
 					document.getElementById('status-'+id).innerHTML = status;
 					document.getElementById('code-'+id).innerHTML = code;
 					
-					jQuery('#scheduled-'+id).css({ backgroundColor: '#'+code});
-					jQuery('#available-'+id).css({ backgroundColor: '#'+code});
+					$('#scheduled-'+id).css({ backgroundColor: '#'+code});
+					$('#available-'+id).css({ backgroundColor: '#'+code});
 					
 					loadColorOptions();
 				
@@ -308,23 +308,23 @@ function insertColorDialogBox(){
 				}
 				
 			
-				jQuery(this).dialog("close");
+				$(this).dialog("close");
 			},
 			close : function() {
-				jQuery(this).dialog("close");
+				$(this).dialog("close");
 			}
 		}
 	});
 	
-	jQuery(dialogContent).dialog('open');
+	$(dialogContent).dialog('open');
 	
 	
 }
 
 function reseColorForm(dialogContent) {
-	jQuery(dialogContent).find("input").val("");
-	jQuery(dialogContent).find("select").val("");
-	//jQuery(dialogContent).find("textarea").val("");
+	$(dialogContent).find("input").val("");
+	$(dialogContent).find("select").val("");
+	//$(dialogContent).find("textarea").val("");
   
 }
 
@@ -338,9 +338,9 @@ function reseColorForm(dialogContent) {
 	
 	var success = false;
  
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/usecolormanager.php',
+		url: 'fullcalendar/usecolormanager.php',
 		dataType: 'json',
 		async: false,	//cache: false,	//timeout: 30000,
 		data: {
@@ -372,9 +372,9 @@ function reseColorForm(dialogContent) {
  	
 	var success = false;
  
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/usecolormanager.php',
+		url: 'fullcalendar/usecolormanager.php',
 		dataType: 'json',
 		async: false,
 		cache: false,	//timeout: 30000,
@@ -405,9 +405,9 @@ function reseColorForm(dialogContent) {
  
 	var success = false;
  
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/usecolormanager.php',
+		url: 'fullcalendar/usecolormanager.php',
 		dataType: 'json',
 		async: false,	//cache: false,	//timeout: 30000,
 		data: {
@@ -437,9 +437,9 @@ function reseColorForm(dialogContent) {
  
 	var success = false;
  
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/usecolormanager.php',
+		url: 'fullcalendar/usecolormanager.php',
 		dataType: 'json',
 		async: false,	//cache: false,	//timeout: 30000,
 		data: {
@@ -467,9 +467,9 @@ function reseColorForm(dialogContent) {
  
 	var success = false;
  
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/usecolormanager.php',
+		url: 'fullcalendar/usecolormanager.php',
 		dataType: 'json',
 		async: false,	//cache: false,	//timeout: 30000,
 		data: {
@@ -497,9 +497,9 @@ function reseColorForm(dialogContent) {
  
 	var success = false;
  
-	 jQuery.ajax({
+	 $.ajax({
 		type: 'POST',
-		url: 'modules/module_scheduler/fullcalendar/usecolormanager.php',
+		url: 'fullcalendar/usecolormanager.php',
 		dataType: 'json',
 		async: false,	//cache: false,	//timeout: 30000,
 		data: {

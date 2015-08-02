@@ -44,15 +44,15 @@
  * 
  * USAGE:
  * 
- * 	-	See <jQuery(ele).ptTimeSelect()>
+ * 	-	See <$(ele).ptTimeSelect()>
  * 
  * 
  * 
  * LAST UPDATED:
  * 
- * 		- jQueryDate: 2009/06/08 22:26:53 jQuery
- * 		- jQueryAuthor: paulinho4u jQuery
- * 		- jQueryRevision: 1.4 jQuery
+ * 		- $Date: 2009/06/08 22:26:53 $
+ * 		- $Author: paulinho4u $
+ * 		- $Revision: 1.4 $
  * 
  * 
  **********************************************************************/
@@ -198,15 +198,15 @@ jQuery.ptTimeSelect._ptTimeSelectInit = function () {
 				// Add the events to the functions
 				e.find('.ptTimeSelectMin')
 					.bind("click", function(){
-						jQuery.ptTimeSelect.setMin(jQuery(this).text());
+						jQuery.ptTimeSelect.setMin($(this).text());
 	 				});
 				
 				e.find('.ptTimeSelectHr')
 					.bind("click", function(){
-						jQuery.ptTimeSelect.setHr(jQuery(this).text());
+						jQuery.ptTimeSelect.setHr($(this).text());
 	 				});
 				
-				jQuery(document).mousedown(jQuery.ptTimeSelect._doCheckMouseClick);			
+				$(document).mousedown(jQuery.ptTimeSelect._doCheckMouseClick);			
 			}//end if
 		}
 	);
@@ -358,12 +358,12 @@ jQuery.ptTimeSelect.openCntr = function (ele) {
  * 
  */
 jQuery.ptTimeSelect.closeCntr = function(i) {
-	if (jQuery("#ptTimeSelectCntr:visible").length) {
+	if ($("#ptTimeSelectCntr:visible").length) {
 		jQuery('#ptTimeSelectCntr')
 			.slideUp("fast", function(){
 				jQuery('#ptTimeSelectCntr').removeClass().css("width", "");
 				if (!i) {
-					i = jQuery(".isPtTimeSelectActive");
+					i = $(".isPtTimeSelectActive");
 				}
 				if (i) {
 					var opt = i.removeClass("isPtTimeSelectActive")
@@ -379,7 +379,7 @@ jQuery.ptTimeSelect.closeCntr = function(i) {
 
 
 jQuery.ptTimeSelect._doCheckMouseClick = function(ev){
-	if (!jQuery("#ptTimeSelectCntr:visible").length) {
+	if (!$("#ptTimeSelectCntr:visible").length) {
 		return;
 	}
 	if (!jQuery(ev.target).closest("#ptTimeSelectCntr").length){
@@ -390,7 +390,7 @@ jQuery.ptTimeSelect._doCheckMouseClick = function(ev){
 
 
 /***********************************************************************
- * METHOD: jQuery(ele).ptTimeSelect()
+ * METHOD: $(ele).ptTimeSelect()
  * 	Attaches a ptTimeSelect widget to each matched element. Matched
  * 	elements must be input fields that accept a values (input field).
  * 	Each element, when focused upon, will display a time selection 
@@ -431,7 +431,7 @@ jQuery.ptTimeSelect._doCheckMouseClick = function(ev){
  * 
  * EXAMPLE:
  * 
- * 	|		jQuery('#fooTime').ptTimeSelect();
+ * 	|		$('#fooTime').ptTimeSelect();
  * 
  */
 jQuery.fn.ptTimeSelect = function (opt) {
@@ -442,7 +442,7 @@ jQuery.fn.ptTimeSelect = function (opt) {
 			return this;
 		}
 		var thisOpt = {};
-		thisOpt = jQuery.extend(thisOpt, jQuery.ptTimeSelect.options, opt);
+		thisOpt = $.extend(thisOpt, jQuery.ptTimeSelect.options, opt);
 		e.addClass('hasPtTimeSelect').data("ptTimeSelectOptions", thisOpt);
 		
 		//Wrap the input field in a <div> element with

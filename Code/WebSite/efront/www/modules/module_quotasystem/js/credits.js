@@ -6,6 +6,7 @@ var ct_open_validation_forms = new Array();
 
 function ct_init(){
 	jQuery("#add-creditType").button();
+    jQuery("#add-creditType").button("enable");
 	jQuery("#add-creditType").click(function() {
     	ct_openForm("#addCreditTypeForm", true, null);
     	jQuery("#add-creditType").button("disable");
@@ -429,15 +430,17 @@ function ct_loadResourcesCoursesPolicies(containerId, add, nTr, creditTypeId)
 			//console.log("data from getresouces");
 			//console.log(data);
             //Fill out select boxes for resources and courses
-            //var resources = data.resources;
+            var resources = data.resources;
             var courses = data.courses;
 
-            for (var i in resources )
+            for (var i in resources ){
+                if(isNaN(i))
+                  break;
                 content_resources+="<option value='"+resources[i]+"'>"+resources[i]+"</option>";
-
+            }
             for (var i in courses ){
-				//if(isNaN(courses[i].id))
-				//	break;
+				if(isNaN(i))
+                  break;
 				content_courses+="<option value='"+courses[i].id+"'>"+courses[i].shortname+"</option>";
 			}
             jQuery(containerId+" .resourceCreditType").empty();
@@ -447,7 +450,7 @@ function ct_loadResourcesCoursesPolicies(containerId, add, nTr, creditTypeId)
             // load policies
             jQuery.ajax({
                 type: 'POST',
-                url: 'server/policyManager.php',
+                url: '/modules/module_quotasystem/server/policyManager.php',
                 dataType: 'json',
                 data: {
                     action: 'getAssignablePolicies'
@@ -458,8 +461,8 @@ function ct_loadResourcesCoursesPolicies(containerId, add, nTr, creditTypeId)
                 	removeLoadingDivAfter(containerId);
 					//TN 6/16/2015 addition to prevent undefined glitch
                     for (var p in data ){
-						//if(isNaN(data[p].id))
-						//	break;
+						if(isNaN(data[p].id))
+							break;
                         content_policies+="<option value='"+data[p].id+"'>"+data[p].name+" : "+data[p].type+"</option>";
 					}
                     jQuery(containerId+" .policyCreditType").empty();
