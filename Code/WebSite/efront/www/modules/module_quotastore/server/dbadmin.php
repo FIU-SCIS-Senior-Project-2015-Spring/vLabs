@@ -159,6 +159,7 @@ if ($action =="deleteData"){
                         //so that it works for all modules! so the table should be named
                         //module_vlabs_dbadmin instead.
                         if ($r['TABLE_NAME'] != "module_vlabs_shoppingcart_dbadmin") {
+                            echo "table name is" . $r['TABLE_NAME']  . PHP_EOL;
                             $sql = 'DELETE ' . $r['TABLE_NAME'] . ' FROM ' . $r['TABLE_NAME'];
                             $resultSql = eF_executeQuery($sql);
                             if ($resultSql != null) {

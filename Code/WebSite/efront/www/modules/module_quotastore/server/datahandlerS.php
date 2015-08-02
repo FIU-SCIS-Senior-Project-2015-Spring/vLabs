@@ -8,7 +8,19 @@ ini_set('display_errors',1);
 /* jh In production enable these values instead:
 ini_set('display_errors',0);
 ini_set('log_errors',1);
+
 */
+
+/*
+ * datahandlerS.php
+ *
+ * This file contains methods concerned with the eFront
+ * vLabs modules database administration.
+ * Here the table schema dump is delivered via a http POST
+ * then the http POST is saved in file in the server
+ * that file is then imported in MySQL.
+ *
+ */
 
     $fileName = "php_outfileS.sql";
 

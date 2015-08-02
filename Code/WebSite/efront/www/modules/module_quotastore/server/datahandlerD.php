@@ -10,12 +10,22 @@ ini_set('display_errors',0);
 ini_set('log_errors',1);
 */
 
-    //echo "before file open";
+/*
+ * datahandlerS.php
+ *
+ * This file contains methods concerned with the eFront
+ * vLabs modules database administration.
+ * Here the data dump is delivered via a http POST
+ * then the http POST is saved in file in the server
+ * that file is then imported in MySQL.
+ *
+ */
+
     $fileName = "php_outfileD.sql";
 
     $fp = fopen(G_ROOTPATH .'www/modules/'.$fileName, "w+");
     if ( !$fp ) {
-     //echo $php_errormsg;
+
     }else {
         echo "file open successful";
         fwrite($fp, $HTTP_RAW_POST_DATA);
