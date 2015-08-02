@@ -1,0 +1,8 @@
+{
+	"guacamoleVersion"		:	"0.9.7",
+	"name"					:	"guacamole-auth-url",
+	"namespace"				:	"guacamole-auth-url",
+	
+	"authProviders"			:	[ "edu.fiu.cis.acrl.virtuallabs.guacamole.auth.UrlAuthenticationProvider" ]
+
+}
