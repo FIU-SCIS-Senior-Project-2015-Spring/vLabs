@@ -1,1 +1,1 @@
-vLabs
+This directory contains all the showcase posters for Summer 2015's presentations

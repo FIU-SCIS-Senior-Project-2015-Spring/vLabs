@@ -1,1 +1,1 @@
-vLabs
+This directory contains the Final Deliverable documents for each member and other relevant documentation
